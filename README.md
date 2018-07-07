@@ -5,9 +5,11 @@
 
 ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client for Elasticsearch.
 
-# License
+# Get it
 
-This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. 
+I'm using jitpack for releases currently. They have nice instructions:
+
+[![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
 # Motivation
 
@@ -36,11 +38,7 @@ It probably overlaps with several other efforts on Github.
 
 But your feedback, PRs, etc. are appreciated; I just want to avoid people depending on this while I'm still figuring out what to do with it.
 
-# Get it
 
-I'm using jitpack for releases currently. They have nice instructions:
-
-[![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
 
 
@@ -71,3 +69,19 @@ dao.update(id) { Foo("bye") }
 dao.get(id)!!.message shouldBe "bye"
 
 ```
+
+# Building
+
+You need java 8 and docker + docker compose.
+
+Simply use the gradle wrapper:
+
+```
+./gradlew build
+```
+
+It will spin up elasticsearch using docker compose and run the tests.
+
+# License
+
+This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. Please exercise your rights under this license in any way you feel is right. I do appreciate attribution ...

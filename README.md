@@ -1,3 +1,6 @@
+[![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
+
+
 # Introduction
 
 ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client for Elasticsearch.
@@ -32,6 +35,14 @@ I'm planning to get a lot of code (re)written for inbot in the next weeks/months
 It probably overlaps with several other efforts on Github. 
 
 But your feedback, PRs, etc. are appreciated; I just want to avoid people depending on this while I'm still figuring out what to do with it.
+
+# Get it
+
+I'm using jitpack for releases currently. They have nice instructions:
+
+[![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
+
+
 
 # Example 
 

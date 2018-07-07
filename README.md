@@ -13,17 +13,17 @@ I'm using jitpack for releases currently. They have nice instructions:
 
 # Motivation
 
-I've been implementing my own http rest clients for various versions of Elasticsearch and have grown quite opionionated on the topic. Recently with v6, Elasticsearch released their own high level client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of ES.
+I've been implementing my own http rest clients for various versions of Elasticsearch and have grown quite opinionated on the topic. Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies.
 
-So, I decided to fix things by using kotlin to wrap the various things their client provides and doing some sensible things with it.
+However, I decided to try to use it anyway. Of course given that I use Kotlin, I can fix things myself by using kotlin to wrap the various things their client provides and doing some sensible things with it extension functions, the kotlin primitives for building DSLs, etc.
 
 Key things I'm after in this project:
 
-- provide opinionated way of dealing with anything elasticsearch
-- reuse as much of the DSL work in the elasticsearch client but make that a bit easier to use perhaps
+- provide opinionated way of dealing with anything elasticsearch. This runs as part of our production code and needs to be robust, easy to use, and not result in a lot of copy paste style 'reuse' to deal with all the boiler plate for error handling, setting things up, etc.
+- Reuse as much of the DSL work in the elasticsearch client but make that a bit easier to use perhaps.
 - add DAOs that do the right things with version checks, updates, creates, bulk behavior with the minimum amount of boilerplate
-- port over alias and schema management that I've used in Inbot for some years.
-- be jackson object mapper friendly, users should NEVER have to deal with XContent or any other low level stuff that the 'high' level client exposes.
+- port over alias and schema management that I've used in Inbot for some years and support migrations in a sane way
+- be jackson object mapper friendly; users should NEVER have to deal with XContent or any other low level stuff that the 'high' level client exposes.
 - be jsonj friendly too; this is my jackson add on that makes prototyping with json a bit easier. Jsonj will not be a required dependency though.
 - be kotlin friendly and centric. I write all new Java stuff in Kotlin these days. I'll try to keep this usable from Java though.
 

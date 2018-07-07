@@ -4,7 +4,7 @@ ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opini
 
 # License
 
-This project is licensed under the [MIT license](LICENSE).
+This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. 
 
 # Motivation
 
@@ -12,9 +12,24 @@ I've been implementing my own http rest clients for various versions of Elastics
 
 So, I decided to fix things by using kotlin to wrap the various things their client provides and doing some sensible things with it.
 
+Key things I'm after in this project:
+
+- provide opinionated way of dealing with anything elasticsearch
+- reuse as much of the DSL work in the elasticsearch client but make that a bit easier to use perhaps
+- add DAOs that do the right things with version checks, updates, creates, bulk behavior with the minimum amount of boilerplate
+- port over alias and schema management that I've used in Inbot for some years.
+- be jackson object mapper friendly, users should NEVER have to deal with XContent or any other low level stuff that the 'high' level client exposes.
+- be jsonj friendly too; this is my jackson add on that makes prototyping with json a bit easier. Jsonj will not be a required dependency though.
+- be kotlin friendly and centric. I write all new Java stuff in Kotlin these days. I'll try to keep this usable from Java though.
+
+
 # Development status
 
-This is an early prototype that I did on a weekend. I'm planning to get a lot of code (re)written for inbot in the next weeks/months on top of this and will likely be adding, refactoring quite heavily. API compatibility is not going to be a concern short term. There will be bugs and other sillyness.
+This is an early prototype that I did on a weekend. **It's very much a work in progress**. I will update this readme when this changes. 
+
+I'm planning to get a lot of code (re)written for inbot in the next weeks/months on top of this and will likely be adding, refactoring quite heavily. API compatibility is not going to be a concern short term. There will be bugs and other sillyness.
+
+It probably overlaps with several other efforts on Github. 
 
 But your feedback, PRs, etc. are appreciated; I just want to avoid people depending on this while I'm still figuring out what to do with it.
 

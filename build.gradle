@@ -1,0 +1,121 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.2.51'
+        elasticsearchVersion = '6.3.1'
+        junitVersion = '5.2.0'
+        jacksonVersion = '2.9.6'
+    }
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.8.0"
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0' // gradle dependencyUpdates -Drevision=release
+        classpath "de.thetaphi:forbiddenapis:2.5"
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.13.0'
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'docker-compose'
+apply plugin: 'project-report' // useful for gradle htmlDependencyReport
+apply plugin: 'com.diffplug.gradle.spotless'
+apply plugin: "de.thetaphi.forbiddenapis"
+apply plugin: 'com.github.ben-manes.versions'
+
+forbiddenApis {
+    // https://github.com/policeman-tools/forbidden-apis/wiki/GradleUsage
+    bundledSignatures = ["jdk-unsafe-9", "jdk-deprecated-9", "jdk-non-portable", "jdk-internal-9", "jdk-system-out"]
+    signaturesFiles = files("forbidden_signatures.txt")
+    ignoreFailures = false
+}
+
+// this intentionally breaks the build if you mess up the formatting; pro tip: use Save Actions plugin in intellij and auto format and organize imports on save
+spotless {
+    java {
+        removeUnusedImports() // removes any unused imports
+    }
+    // to fix violations: gradle spotlessApply
+    // in intellij also tweak kotlin imports to require 999 imports before wildcards and remove java.util for always using wildcards
+    // do the same for java imports
+    // wildcards are verboten!
+    // currentlyb breaks offline build due to fucked up transitive dependency on ktlint & kotlin
+    kotlin {
+        // optionally takes a version
+        ktlint()
+    }
+}
+
+afterEvaluate {
+    // just ffing run it, way to anal to break the build every time
+    tasks.getByName('spotlessCheck').dependsOn(tasks.getByName('spotlessApply'))
+}
+
+kotlin {
+    experimental {
+        // neeed for kotlin test
+        coroutines 'enable'
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        // for whatever reason defaults to 1.6. But since we don't care about android ...
+        jvmTarget = "1.8"
+    }
+}
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+    test.java.srcDirs += 'src/test/kotlin'
+}
+
+dockerCompose.isRequiredBy(test)
+
+dockerCompose {
+
+}
+
+group = 'io.inbot.search'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    compile("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+
+    compile "org.apache.commons:commons-lang3:3.7"
+
+    compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
+
+    compile("org.elasticsearch:elasticsearch:$elasticsearchVersion")
+    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion")
+
+    testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testCompile "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+
+    testCompile "io.mockk:mockk:1.8.5"
+//    testCompile "org.jboss.forge.addon:assertj:3.6.2"
+    // note, known issues with gradle 4.7: https://github.com/kotlintest/kotlintest/issues/336
+    testCompile "io.kotlintest:kotlintest-runner-junit5:3.1.8"
+}

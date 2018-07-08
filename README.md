@@ -39,7 +39,12 @@ It probably overlaps with several other efforts on Github.
 But your feedback, PRs, etc. are appreciated; I just want to avoid people depending on this while I'm still figuring out what to do with it.
 
 
+# Features (done)
 
+`ElasticSearchCrudDAO`:
+
+- index, get and delete of any jackson serializable object
+- reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
 
 
 # Example 
@@ -64,9 +69,10 @@ dao.get(id) shouldBe Foo("hi")
 dao.delete(id)
 dao.get(id) shouldBe null
 
-// this will eventually also deal with version conflicts and retry a couple of times
+// this will also deal with version conflicts and retry a configurable number of times (default 10) with a sleep to reduce chance of more conflicts
 dao.update(id) { Foo("bye") }
 dao.get(id)!!.message shouldBe "bye"
+
 
 ```
 

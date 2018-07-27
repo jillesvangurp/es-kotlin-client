@@ -45,11 +45,14 @@ But your feedback, PRs, etc. are appreciated; I just want to avoid people depend
 
 - index, get and delete of any jackson serializable object
 - reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
+- bulk indexing (WIP), more stuff coming here
 
 
 # Example 
 
 Code below liberally copy pasted from the tests, refer to the tests for working code.
+
+## Creating an ElasticSearchCrudDAO
 
 ```kotlin
 // create the official client
@@ -60,7 +63,13 @@ val objectMapper = ObjectMapper().findAndRegisterModules()
 
 // create a DAO for the test index that will store Foo objects
 val dao = ElasticSearchCrudDAO<Foo>("test", Foo::class, esClient, objectMapper)
+```
 
+This stuff probably goes in your spring configuration or whatever DI framework you use.
+
+## Simple Crud
+
+```kotlin
 val id = randomId()
 
 // create a new object, will fail if it already exists
@@ -69,11 +78,20 @@ dao.get(id) shouldBe Foo("hi")
 dao.delete(id)
 dao.get(id) shouldBe null
 
-// this will also deal with version conflicts and retry a configurable number of times (default 10) with a sleep to reduce chance of more conflicts
-dao.update(id) { Foo("bye") }
+// Foo is immutable but we can access the old Foo via `it`
+// update also deals with version conflicts and retries a configurable number of times (default 10) with a sleep to reduce chance of more conflicts
+dao.update(id) { Foo(it.message+"bye") }
 dao.get(id)!!.message shouldBe "bye"
 
+```
 
+## Bulk DSL
+
+```kotlin
+dao.bulk {
+  index("1", Foo("hello"))
+  index("2", Foo("world"))
+}
 ```
 
 # Building

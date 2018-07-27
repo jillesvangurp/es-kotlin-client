@@ -16,7 +16,7 @@ private val logger = KotlinLogging.logger {}
 
 class BulkIndexer<T : Any>(
     val client: RestHighLevelClient,
-    val elasticSearchCrudDAO: ElasticSearchCrudDAO<T>,
+    val dao: ElasticSearchCrudDAO<T>,
     val objectMapper: ObjectMapper,
     val bulkSize: Int = 100
 ) : AutoCloseable {
@@ -27,8 +27,8 @@ class BulkIndexer<T : Any>(
     fun index(id: String, obj: T, create: Boolean = true) {
         val indexRequest = IndexRequest()
             .create(create)
-            .index(elasticSearchCrudDAO.index)
-            .type(elasticSearchCrudDAO.index)
+            .index(dao.index)
+            .type(dao.type)
             .id(id)
             .source(objectMapper.writeValueAsBytes(obj), XContentType.JSON)
         rwLock.read { page.add(indexRequest) }

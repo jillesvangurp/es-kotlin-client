@@ -19,13 +19,14 @@ class ElasticSearchCrudDAO<T : Any>(
     val client: RestHighLevelClient,
     val objectMapper: ObjectMapper,
     val maxUpdateTries: Int = 10,
-    val refreshAllowed: Boolean = false
+    val refreshAllowed: Boolean = false,
+    val type: String = index // default to using index as the type but allow user to override
 ) {
 
     fun index(id: String, obj: T, create: Boolean = true, version: Long? = null) {
         val indexRequest = IndexRequest()
             .index(index)
-            .type(index)
+            .type(type)
             .id(id)
             .create(create)
             .source(objectMapper.writeValueAsString(obj), XContentType.JSON)
@@ -73,11 +74,11 @@ class ElasticSearchCrudDAO<T : Any>(
     }
 
     fun delete(id: String) {
-        client.delete(DeleteRequest().index(index).type(index).id(id))
+        client.delete(DeleteRequest().index(index).type(type).id(id))
     }
 
     fun get(id: String): T? {
-        val response = client.get(GetRequest().index(index).type(index).id(id))
+        val response = client.get(GetRequest().index(index).type(type).id(id))
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
@@ -87,13 +88,13 @@ class ElasticSearchCrudDAO<T : Any>(
     }
 
     fun bulk(bulkSize: Int = 100, operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
-        val facade = bulkAPIFacade(bulkSize = bulkSize)
+        val facade = bulkIndexer(bulkSize = bulkSize)
         facade.use {
             operationsBlock.invoke(facade, facade)
         }
     }
 
-    fun bulkAPIFacade(bulkSize: Int = 100) = BulkIndexer(client, this, objectMapper, bulkSize)
+    fun bulkIndexer(bulkSize: Int = 100) = BulkIndexer(client, this, objectMapper, bulkSize)
 
     fun refresh() {
         if (refreshAllowed) {

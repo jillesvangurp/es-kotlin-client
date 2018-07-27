@@ -62,7 +62,7 @@ class ElasticSearchCrudServiceTests {
         dao.index(id, Foo("hi"))
         // do some concurrent updates; without retries this will fail
         0.rangeTo(30).toList().parallelStream().forEach { n ->
-            dao.update(id, { Foo("nr_$n")})
+            dao.update(id, { Foo("nr_$n") })
         }
     }
 
@@ -72,9 +72,9 @@ class ElasticSearchCrudServiceTests {
             index("1", Foo("hi"))
             index("2", Foo("world"))
             index("3", Foo("."))
-            index("4", Foo("!"),create = false)
+            index("4", Foo("!"), create = false)
             index("4", Foo("!!"))
-            index("4", Foo("?"),create = true)
+            index("4", Foo("?"), create = true)
             index("5", Foo("and good bye"))
         }
         dao.refresh()

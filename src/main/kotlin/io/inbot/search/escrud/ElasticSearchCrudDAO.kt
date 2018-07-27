@@ -49,9 +49,9 @@ class ElasticSearchCrudDAO<T : Any>(
             val sourceAsBytes = response.sourceAsBytes
             if (sourceAsBytes != null) {
                 val currentValue = objectMapper.readValue(sourceAsBytes, clazz.java)!!
-                val transformed = transformFunction.invoke(currentValue);
+                val transformed = transformFunction.invoke(currentValue)
                 index(id, transformed, create = false, version = currentVersion)
-                if(tries > 0) {
+                if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
                     logger.warn { "retry update $id succeeded after tries=$tries" }
                 }
@@ -61,11 +61,10 @@ class ElasticSearchCrudDAO<T : Any>(
         } catch (e: ElasticsearchStatusException) {
 
             if (e.status().status == 409) {
-                if( tries < maxUpdateTries) {
+                if ( tries < maxUpdateTries) {
                     // we got a version conflict, retry after sleeping a bit (without this failures are more likely
-                    Thread.sleep(RandomUtils.nextLong(50,500))
+                    Thread.sleep(RandomUtils.nextLong(50, 500))
                     update(tries + 1, id, transformFunction)
-
                 } else {
                     throw IllegalStateException("update of $id failed after $tries attempts")
                 }
@@ -87,19 +86,19 @@ class ElasticSearchCrudDAO<T : Any>(
         return null
     }
 
-    fun bulk(bulkSize:Int=100,operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
-        val facade= bulkAPIFacade(bulkSize=bulkSize)
+    fun bulk(bulkSize: Int = 100, operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
+        val facade = bulkAPIFacade(bulkSize = bulkSize)
         facade.use {
-            operationsBlock.invoke(facade,facade)
+            operationsBlock.invoke(facade, facade)
         }
     }
 
-    fun bulkAPIFacade(bulkSize:Int=100) = BulkIndexer(client, this, objectMapper,bulkSize)
+    fun bulkAPIFacade(bulkSize: Int = 100) = BulkIndexer(client, this, objectMapper, bulkSize)
 
     fun refresh() {
-        if(refreshAllowed) {
+        if (refreshAllowed) {
             // calling this is not safe in production settings but highly useful in tests
-            client.lowLevelClient.performRequest("POST","/${index}/_refresh")
+            client.lowLevelClient.performRequest("POST", "/$index/_refresh")
         } else {
             throw UnsupportedOperationException("refresh is not allowed; you need to opt in by setting refreshAllowed to true")
         }

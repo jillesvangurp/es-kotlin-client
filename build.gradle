@@ -71,6 +71,17 @@ sourceSets {
     test.java.srcDirs += 'src/test/kotlin'
 }
 
+test {
+    useJUnitPlatform()
+    testLogging {
+        // Make sure output from
+        // standard out or error is shown
+        // in Gradle output.
+        exceptionFormat = 'full'
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
 dockerCompose.isRequiredBy(test)
 
 dockerCompose {

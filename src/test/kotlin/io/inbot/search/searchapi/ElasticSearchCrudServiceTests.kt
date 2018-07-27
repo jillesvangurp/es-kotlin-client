@@ -6,6 +6,7 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.inbot.search.escrud.ElasticSearchCrudDAO
+import io.inbot.search.escrud.crudDao
 import org.apache.http.HttpHost
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.client.RestClient
@@ -28,7 +29,7 @@ class ElasticSearchCrudServiceTests {
         val esClient = RestHighLevelClient(restClientBuilder)
         val objectMapper = ObjectMapper().findAndRegisterModules()
         // each test gets a fresh index
-        dao = ElasticSearchCrudDAO<Foo>("test-"+ randomId(), Foo::class, esClient, objectMapper, refreshAllowed = true)
+        dao = esClient.crudDao<Foo>("test-"+ randomId(), refreshAllowed = true)
     }
 
     @Test

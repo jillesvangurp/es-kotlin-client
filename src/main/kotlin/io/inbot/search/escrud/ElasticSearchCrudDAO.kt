@@ -90,7 +90,7 @@ class ElasticSearchCrudDAO<T : Any>(
     fun bulk(bulkSize:Int=100,operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
         val facade= bulkAPIFacade(bulkSize=bulkSize)
         facade.use {
-            operationsBlock.invoke(facade)
+            operationsBlock.invoke(facade,facade)
         }
     }
 

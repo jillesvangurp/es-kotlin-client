@@ -18,7 +18,8 @@ class ElasticSearchCrudDAO<T : Any>(
     val clazz: KClass<T>,
     val client: RestHighLevelClient,
     val objectMapper: ObjectMapper,
-    val maxUpdateTries: Int = 10
+    val maxUpdateTries: Int = 10,
+    val refreshAllowed: Boolean = false
 ) {
 
     fun index(id: String, obj: T, create: Boolean = true, version: Long? = null) {
@@ -84,5 +85,23 @@ class ElasticSearchCrudDAO<T : Any>(
             return objectMapper.readValue(sourceAsBytes, clazz.java)
         }
         return null
+    }
+
+    fun bulk(bulkSize:Int=100,operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
+        val facade= bulkAPIFacade(bulkSize=bulkSize)
+        facade.use {
+            operationsBlock.invoke(facade)
+        }
+    }
+
+    fun bulkAPIFacade(bulkSize:Int=100) = BulkIndexer(client, this, objectMapper,bulkSize)
+
+    fun refresh() {
+        if(refreshAllowed) {
+            // calling this is not safe in production settings but highly useful in tests
+            client.lowLevelClient.performRequest("POST","/${index}/_refresh")
+        } else {
+            throw UnsupportedOperationException("refresh is not allowed; you need to opt in by setting refreshAllowed to true")
+        }
     }
 }

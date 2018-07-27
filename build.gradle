@@ -1,7 +1,7 @@
 buildscript {
     ext {
         kotlinVersion = '1.2.51'
-        elasticsearchVersion = '6.3.1'
+        elasticsearchVersion = '6.3.2'
         junitVersion = '5.2.0'
         jacksonVersion = '2.9.6'
     }
@@ -10,10 +10,10 @@ buildscript {
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.8.0"
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.8.2"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0' // gradle dependencyUpdates -Drevision=release
         classpath "de.thetaphi:forbiddenapis:2.5"
-        classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.13.0'
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.14.0'
     }
 }
 
@@ -99,8 +99,8 @@ repositories {
 
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    compile("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     compile "io.github.microutils:kotlin-logging:1.5.4"
 
     compile "org.apache.commons:commons-lang3:3.7"
@@ -109,21 +109,21 @@ dependencies {
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
 
-    compile("org.elasticsearch:elasticsearch:$elasticsearchVersion")
-    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion")
+    compile "org.elasticsearch:elasticsearch:$elasticsearchVersion"
+    compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
 
     // bring your own logging, but we need some in tests
     testCompile "org.slf4j:slf4j-api:1.7.25"
     testCompile "org.slf4j:jcl-over-slf4j:1.7.25"
     testCompile "org.slf4j:log4j-over-slf4j:1.7.25"
     testCompile "org.slf4j:jul-to-slf4j:1.7.25"
+    testCompile "org.apache.logging.log4j:log4j-to-slf4j:2.11.0" // es seems to insist on log4j2
     testCompile "ch.qos.logback:logback-classic:1.2.3"
 
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testCompile "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 
     testCompile "io.mockk:mockk:1.8.5"
-//    testCompile "org.jboss.forge.addon:assertj:3.6.2"
-    // note, known issues with gradle 4.7: https://github.com/kotlintest/kotlintest/issues/336
-    testCompile "io.kotlintest:kotlintest-runner-junit5:3.1.8"
+    testCompile 'com.willowtreeapps.assertk:assertk:0.10'
+
 }

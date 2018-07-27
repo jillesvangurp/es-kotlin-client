@@ -78,19 +78,27 @@ class ElasticSearchCrudDAO<T : Any>(
     }
 
     fun get(id: String): T? {
+        return getWithVersion(id)?.first
+    }
+
+    fun getWithVersion(id: String): Pair<T,Long>? {
         val response = client.get(GetRequest().index(index).type(type).id(id))
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
-            return objectMapper.readValue(sourceAsBytes, clazz.java)
+            val deserialized = objectMapper.readValue(sourceAsBytes, clazz.java)
+
+            return Pair(deserialized!!,response.version)
         }
         return null
     }
 
+
     fun bulk(bulkSize: Int = 100, operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
-        val facade = bulkIndexer(bulkSize = bulkSize)
-        facade.use {
-            operationsBlock.invoke(facade, facade)
+        val indexer = bulkIndexer(bulkSize = bulkSize)
+        // autocloseable so we flush all the items ...
+        indexer.use {
+            operationsBlock.invoke(indexer, indexer)
         }
     }
 

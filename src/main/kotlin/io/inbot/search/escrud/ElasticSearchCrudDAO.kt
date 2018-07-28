@@ -69,6 +69,9 @@ class ElasticSearchCrudDAO<T : Any>(
                 } else {
                     throw IllegalStateException("update of $id failed after $tries attempts")
                 }
+            } else {
+                // something else is wrong
+                throw e
             }
         }
     }

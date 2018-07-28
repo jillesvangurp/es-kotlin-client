@@ -59,13 +59,16 @@ val esClient = RestHighLevelClient(RestClient.builder(HttpHost("localhost", 9200
 val objectMapper = ObjectMapper().findAndRegisterModules()
 
 // create a DAO for the test index that will store Foo objects
-val dao = ElasticSearchCrudDAO<Foo>("test", Foo::class, esClient, objectMapper)
+// types are deprecated in ES so I default to simply using the index as the type
+val dao = ElasticSearchCrudDAO<Foo>("testindex", Foo::class, esClient, objectMapper)
+// you can add a type of course, if you want
+val dao = ElasticSearchCrudDAO<Foo>("testindex", Foo::class, esClient, objectMapper, type="icanhastypes")
 
 // OR
-val dao = esClient.crudDao<Foo>()
+val dao = esClient.crudDao<Foo>("testindex")
 
 // OR override some defaults
-val dao = esClient.crudDao<Foo>(objectMapper=objectMapper, refreshAllowed=true)
+val dao = esClient.crudDao<Foo>("testindex",objectMapper=objectMapper, refreshAllowed=true)
 ```
 
 This stuff probably goes in your spring configuration or whatever DI framework you use.

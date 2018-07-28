@@ -96,8 +96,8 @@ dao.delete(id)
 dao.get(id) 
 
 // updates apply a lambda function to the original in the index
-// update also deals with version conflicts and retries a configurable number of times (default 10) with a sleep to reduce chance of more conflicts
-dao.update(id) { it.message="bye" }
+// update also deals with version conflicts and retries a configurable number of times (default 2) with a sleep to reduce chance of more conflicts
+dao.update(id, maxUpdateRetries=5) { it.message="bye" }
 dao.get(id)!!.message shouldBe "bye"
 ```
 
@@ -113,9 +113,11 @@ dao.bulk(retryConflictingUpdates=2) {
   // succeeds because it overwrites the original
   index("3", Foo("world"), create=false) 
 
-  // updates the original that we get from the index 
+  // updates the original that we get from the index using the update lambda
   getAndUpdate("1",{originalFoo -> Foo("hi")}
-  // succeeds because we can retry even though the version is wrong here. You have to provide the original
+  // you can also look up the current version yourself; note you have to provide a version
+  // this succeeds because we can retry even though the version is wrong here. 
+  // retry simply falls back to a non bulk update and re-applies the lambda to the latest version in the index
   update("2",666,Foo("hi"), {foo -> Foo("hi wrld")}
 }
 ```

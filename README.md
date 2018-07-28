@@ -15,29 +15,26 @@ I'm using jitpack for releases currently. They have nice instructions:
 
 I've been implementing my own http rest clients for various versions of Elasticsearch and have grown quite opinionated on the topic. Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies.
 
-However, I decided to try to use it anyway. Of course given that I use Kotlin, I can fix things myself by using kotlin to wrap the various things their client provides and doing some sensible things with it extension functions, the kotlin primitives for building DSLs, etc.
+Instead of writing yet another client, I decided to try to use it and instead wrap it with a convenient Kotlin API. Of course given that I use Kotlin, I can fix things myself by using kotlin to wrap the various things their client provides and doing some sensible things with it extension functions, the kotlin primitives for building DSLs, etc.
 
 Key things I'm after in this project:
 
 - provide opinionated way of dealing with anything elasticsearch. This runs as part of our production code and needs to be robust, easy to use, and not result in a lot of copy paste style 'reuse' to deal with all the boiler plate for error handling, setting things up, etc.
 - Reuse as much of the DSL work in the elasticsearch client but make that a bit easier to use perhaps.
-- add DAOs that do the right things with version checks, updates, creates, bulk behavior with the minimum amount of boilerplate
+- add a DAO abstraction that does the right things with version checks/optimistic locking, updates, creates, bulk behavior, etc. with the minimum amount of boilerplate
 - port over alias and schema management that I've used in Inbot for some years and support migrations in a sane way
-- be jackson object mapper friendly; users should NEVER have to deal with XContent or any other low level stuff that the 'high' level client exposes.
-- be jsonj friendly too; this is my jackson add on that makes prototyping with json a bit easier. Jsonj will not be a required dependency though.
-- be kotlin friendly and centric. I write all new Java stuff in Kotlin these days. I'll try to keep this usable from Java though.
-
+- be jackson object mapper friendly; users should NEVER have to deal with XContent or any other low level stuff that the 'high' level client exposes and insists on.
+- be kotlin friendly and centric. I write all new Java stuff in Kotlin these days. I'll try to keep this usable from Java though but it is not a goal or something I test.
 
 # Development status
 
-This is an early prototype that I did on a weekend. **It's very much a work in progress**. I will update this readme when this changes. 
+**This is a work in progress**. I will update this readme when this changes. 
 
-I'm planning to get a lot of code (re)written for inbot in the next weeks/months on top of this and will likely be adding, refactoring quite heavily. API compatibility is not going to be a concern short term. There will be bugs and other sillyness.
+I'm planning to get a lot of code (re)written for inbot in the next weeks/months on top of this and will likely be adding new features and be refactoring quite heavily. API compatibility is not going to be a goal short term. Also, there will be bugs and other sillyness.
 
 It probably overlaps with several other efforts on Github. 
 
 But your feedback, PRs, etc. are appreciated; I just want to avoid people depending on this while I'm still figuring out what to do with it.
-
 
 # Features (done)
 
@@ -45,7 +42,7 @@ But your feedback, PRs, etc. are appreciated; I just want to avoid people depend
 
 - index, get and delete of any jackson serializable object
 - reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
-- bulk indexing (WIP), more stuff coming here
+- bulk indexer with support for index, update, and delete. Supports callbacks for items and takes care of sending and creating bulk requests. The default callback can take care of retrying updates if they fail with a conflict if you set retryConflictingUpdates to a non zero value.
 
 
 # Example 
@@ -63,6 +60,12 @@ val objectMapper = ObjectMapper().findAndRegisterModules()
 
 // create a DAO for the test index that will store Foo objects
 val dao = ElasticSearchCrudDAO<Foo>("test", Foo::class, esClient, objectMapper)
+
+// OR
+val dao = esClient.crudDao<Foo>()
+
+// OR override some defaults
+val dao = esClient.crudDao<Foo>(objectMapper=objectMapper, refreshAllowed=true)
 ```
 
 This stuff probably goes in your spring configuration or whatever DI framework you use.
@@ -70,27 +73,47 @@ This stuff probably goes in your spring configuration or whatever DI framework y
 ## Simple Crud
 
 ```kotlin
+// lets use a simple entity class
+data class Foo(var message: String)
+
 val id = randomId()
 
 // create a new object, will fail if it already exists
 dao.index(id, Foo("hi"))
-dao.get(id) shouldBe Foo("hi")
+// fails because we have create=true by default
+dao.index(id, Foo("hi again"))  
+// now it succeeds
+dao.index(id, Foo("hi again"),create=false)  
+// returns a Foo
+val aFoo = dao.get(id) 
+// useful if you are doing bulk updates
+val (aFoo,version) = dao.getWithVersion(id)
 dao.delete(id)
-dao.get(id) shouldBe null
+// returns null
+dao.get(id) 
 
-// Foo is immutable but we can access the old Foo via `it`
+// updates apply a lambda function to the original in the index
 // update also deals with version conflicts and retries a configurable number of times (default 10) with a sleep to reduce chance of more conflicts
-dao.update(id) { Foo(it.message+"bye") }
+dao.update(id) { it.message="bye" }
 dao.get(id)!!.message shouldBe "bye"
-
 ```
 
 ## Bulk DSL
 
 ```kotlin
-dao.bulk {
+dao.bulk(retryConflictingUpdates=2) {
   index("1", Foo("hello"))
   index("2", Foo("world"))
+  index("3", Foo("wrld"))
+  // fails becaue create=true by default
+  index("3", Foo("world")) 
+  // succeeds because it overwrites the original
+  index("3", Foo("world"), create=false) 
+
+  // updates the original that we get from the index 
+  getAndUpdate("1",{originalFoo -> Foo("hi")}
+  // succeeds because we can retry even though the version is wrong here. You have to provide the original
+  update("2",666,Foo("hi"), {foo -> Foo("hi wrld")}
 }
 ```
 

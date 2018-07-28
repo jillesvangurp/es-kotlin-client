@@ -52,16 +52,19 @@ Code below liberally copy pasted from the tests, refer to the tests for working 
 ## Creating an ElasticSearchCrudDAO
 
 ```kotlin
-// create the official client
+// lets use a simple entity class
+data class Foo(var message: String)
+
+// first, create the official client
 val esClient = RestHighLevelClient(RestClient.builder(HttpHost("localhost", 9200, "http")))
 
-// get a jackson object mapper
+// get a jackson object mapper so we can map Foo to json
 val objectMapper = ObjectMapper().findAndRegisterModules()
 
-// create a DAO for the test index that will store Foo objects
-// types are deprecated in ES so I default to simply using the index as the type
+// create a DAO for the test index that will store our Foo objects
+// types are deprecated in ES so we default to simply using the index as the type
 val dao = ElasticSearchCrudDAO<Foo>("testindex", Foo::class, esClient, objectMapper)
-// you can add a type of course, if you want
+// but you can add a type of course, if you want
 val dao = ElasticSearchCrudDAO<Foo>("testindex", Foo::class, esClient, objectMapper, type="icanhastypes")
 
 // OR
@@ -76,9 +79,6 @@ This stuff probably goes in your spring configuration or whatever DI framework y
 ## Simple Crud
 
 ```kotlin
-// lets use a simple entity class
-data class Foo(var message: String)
-
 val id = randomId()
 
 // create a new object, will fail if it already exists
@@ -124,7 +124,7 @@ dao.bulk(retryConflictingUpdates=2) {
 
 # Building
 
-You need java 8 and docker + docker compose.
+You need java >= 8  and docker + docker compose.
 
 Simply use the gradle wrapper:
 

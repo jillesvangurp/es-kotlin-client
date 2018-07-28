@@ -3,13 +3,16 @@ package io.inbot.search.escrud
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
+import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
-import java.util.concurrent.ConcurrentLinkedDeque
+import org.elasticsearch.rest.RestStatus
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -20,35 +23,59 @@ class BulkIndexer<T : Any>(
     val client: RestHighLevelClient,
     val dao: ElasticSearchCrudDAO<T>,
     val objectMapper: ObjectMapper,
-    val bulkSize: Int = 100
+    val bulkSize: Int = 100,
+    val retryConflictingUpdates: Int = 0,
+    val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
 ) : AutoCloseable { // autocloseable so we flush all the items ...
 
+    data class BulkOperation<T:Any>(
+        val operation:DocWriteRequest<*>,
+        val id:String, val updateFunction: ((T) -> T)? = null,
+        val itemCallback: (BulkOperation<T>,BulkItemResponse) -> Unit = {o,i -> }
+    )
     // adding things to a request should be thread safe
-    val page = ConcurrentLinkedDeque<DocWriteRequest<*>>()
+    private val page = mutableListOf<BulkOperation<T>>()
+    private val closed= AtomicBoolean(false)
 
     // we use rw lock to protect the current page. read here means using the list (to add stuff), write means  building the bulk request and clearing the list.
-    val rwLock = ReentrantReadWriteLock()
+    private val rwLock = ReentrantReadWriteLock()
 
-    fun index(id: String, obj: T, create: Boolean = true) {
+    fun defaultItemResponseCallback(o:BulkIndexer.BulkOperation<T>, itemResponse:BulkItemResponse) {
+        if (itemResponse.isFailed) {
+            if(retryConflictingUpdates>0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
+                dao.update(o.id,retryConflictingUpdates,o.updateFunction!!)
+                logger.debug { "retried updating ${o.id} after version conflict" }
+            } else {
+                logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
+            }
+        }
+    }
+
+    fun index(id: String, obj: T, create: Boolean = true, itemCallback: (BulkOperation<T>,BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
+        if(closed.get()) {
+            throw IllegalStateException("cannot add bulk operations after the BulkIndexer is closed")
+        }
         val indexRequest = IndexRequest()
             .index(dao.index)
             .type(dao.type)
             .id(id)
             .create(create)
             .source(objectMapper.writeValueAsBytes(obj), XContentType.JSON)
-        rwLock.read { page.add(indexRequest) }
+        rwLock.read { page.add(BulkOperation(indexRequest,id,itemCallback=itemCallback)) }
         flushIfNeeded()
     }
 
-    fun getAndUpdate(id: String,  updateFunction: (T)->T) {
+    fun getAndUpdate(id: String, itemCallback: (BulkOperation<T>,BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T)->T) {
         val pair = dao.getWithVersion(id)
         if(pair != null) {
-            update(id, pair.second, pair.first, updateFunction)
+            update(id, pair.second, pair.first,itemCallback, updateFunction)
         }
     }
 
-    fun update(id: String, version: Long, original: T, updateFunction: (T)->T) {
-        // FIXME we need some callback mechanism on flush to handle version conflicts and retry updates such that we don't overwrite stuff
+    fun update(id: String, version: Long, original: T, itemCallback: (BulkOperation<T>,BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T)->T) {
+        if(closed.get()) {
+            throw IllegalStateException("cannot add bulk operations after the BulkIndexer is closed")
+        }
         val updateRequest = UpdateRequest()
             .index(dao.index)
             .type(dao.type)
@@ -56,11 +83,14 @@ class BulkIndexer<T : Any>(
             .detectNoop(true)
             .version(version)
             .doc(objectMapper.writeValueAsBytes(updateFunction.invoke(original)), XContentType.JSON)
-        rwLock.read { page.add(updateRequest) }
+        rwLock.read { page.add(BulkOperation(updateRequest,id,updateFunction=updateFunction,itemCallback=itemCallback)) }
         flushIfNeeded()
     }
 
-    fun delete(id: String, version: Long?=null) {
+    fun delete(id: String, version: Long?=null,itemCallback: (BulkOperation<T>,BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
+        if(closed.get()) {
+            throw IllegalStateException("cannot add bulk operations after the BulkIndexer is closed")
+        }
         val deleteRequest = DeleteRequest()
             .index(dao.index)
             .type(dao.type)
@@ -68,33 +98,43 @@ class BulkIndexer<T : Any>(
         if(version != null) {
             deleteRequest.version(version)
         }
-        rwLock.read { page.add(deleteRequest) }
+        rwLock.read { page.add(BulkOperation(deleteRequest,id,itemCallback=itemCallback)) }
         flushIfNeeded()
     }
 
-    fun flushIfNeeded() {
+    private fun flushIfNeeded() {
         if (page.size >= bulkSize) {
             flush()
         }
     }
 
-    fun flush() {
+    private fun flush() {
         if (page.size > 0) {
             // make sure nobody writes to the list
-            val bulkRequest = BulkRequest()
+            val pageClone= mutableListOf<BulkOperation<T>>()
             rwLock.write {
                 // check if some other thread did not beat us
                 if (page.size > 0) {
-                    logger.debug { "flushing ${page.size} items" }
-                    page.forEach { bulkRequest.add(it) }
+                    page.forEach { pageClone.add(it) }
                     page.clear()
                 }
             }
-            client.bulk(bulkRequest)
+            val bulkRequest = BulkRequest()
+            bulkRequest.refreshPolicy=refreshPolicy
+            pageClone.forEach{bulkRequest.add(it.operation)}
+            logger.debug { "flushing ${page.size} items" }
+            val bulkResponse = client.bulk(bulkRequest)
+            if(bulkResponse != null) {
+                bulkResponse.items.forEach {
+                    val bulkOperation = pageClone[it.itemId]
+                    bulkOperation.itemCallback.invoke(bulkOperation,it)
+                }
+            }
         }
     }
 
     override fun close() {
+        closed.set(true) // stop accepting operations
         flush()
     }
 }

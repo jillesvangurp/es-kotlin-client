@@ -65,7 +65,7 @@ class ElasticSearchCrudServiceTests {
         dao.index(id, Foo("hi"))
         // do some concurrent updates; without retries this will fail
         0.rangeTo(30).toList().parallelStream().forEach { n ->
-            dao.update(id, { Foo("nr_$n") })
+            dao.update(id,10) { Foo("nr_$n") }
         }
     }
 
@@ -96,10 +96,23 @@ class ElasticSearchCrudServiceTests {
         val id = randomId()
         dao.index(id, Foo("hi"))
         dao.bulk() {
-            getAndUpdate(id, {Foo("${it.message} world!")})
+            getAndUpdate(id) {Foo("${it.message} world!")}
         }
         dao.refresh()
         assert(dao.get(id)!!.message).isEqualTo("hi world!")
+    }
+
+    @Test
+    fun `should retry bulk updates`() {
+        val id = randomId()
+        dao.index(id, Foo("hi"))
+        dao.update(id) {foo -> Foo("hi wrld")}
+        val (doc,version) =  dao.getWithVersion(id)!!
+        dao.bulk(retryConflictingUpdates = 2) {
+            // version here is wrong but we have retries set to 2 so it will recover
+            update(id,version-1,doc) {foo -> Foo("omg")}
+        }
+        assert(dao.get(id)!!.message).isEqualTo("omg")
     }
 
     @Test

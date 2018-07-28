@@ -7,6 +7,7 @@ import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
 import kotlin.reflect.KClass
@@ -18,7 +19,6 @@ class ElasticSearchCrudDAO<T : Any>(
     val clazz: KClass<T>,
     val client: RestHighLevelClient,
     val objectMapper: ObjectMapper,
-    val maxUpdateTries: Int = 10,
     val refreshAllowed: Boolean = false,
     val type: String = index // default to using index as the type but allow user to override
 ) {
@@ -38,11 +38,11 @@ class ElasticSearchCrudDAO<T : Any>(
         )
     }
 
-    fun update(id: String, transformFunction: (T) -> T) {
-        update(0, id, transformFunction)
+    fun update(id: String, maxUpdateTries: Int = 2, transformFunction: (T) -> T) {
+        update(0, id, transformFunction, maxUpdateTries)
     }
 
-    private fun update(tries: Int, id: String, transformFunction: (T) -> T) {
+    private fun update(tries: Int, id: String, transformFunction: (T) -> T, maxUpdateTries: Int) {
         try {
             val response = client.get(GetRequest().index(index).type(index).id(id))
             val currentVersion = response.version
@@ -65,7 +65,7 @@ class ElasticSearchCrudDAO<T : Any>(
                 if ( tries < maxUpdateTries) {
                     // we got a version conflict, retry after sleeping a bit (without this failures are more likely
                     Thread.sleep(RandomUtils.nextLong(50, 500))
-                    update(tries + 1, id, transformFunction)
+                    update(tries + 1, id, transformFunction, maxUpdateTries)
                 } else {
                     throw IllegalStateException("update of $id failed after $tries attempts")
                 }
@@ -94,15 +94,15 @@ class ElasticSearchCrudDAO<T : Any>(
     }
 
 
-    fun bulk(bulkSize: Int = 100, operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
-        val indexer = bulkIndexer(bulkSize = bulkSize)
+    fun bulk(bulkSize: Int = 100, retryConflictingUpdates: Int=0,refreshPolicy: WriteRequest.RefreshPolicy= WriteRequest.RefreshPolicy.WAIT_UNTIL,operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
+        val indexer = bulkIndexer(bulkSize = bulkSize,retryConflictingUpdates = retryConflictingUpdates, refreshPolicy = refreshPolicy)
         // autocloseable so we flush all the items ...
         indexer.use {
             operationsBlock.invoke(indexer, indexer)
         }
     }
 
-    fun bulkIndexer(bulkSize: Int = 100) = BulkIndexer(client, this, objectMapper, bulkSize)
+    fun bulkIndexer(bulkSize: Int = 100, retryConflictingUpdates: Int=0, refreshPolicy: WriteRequest.RefreshPolicy= WriteRequest.RefreshPolicy.WAIT_UNTIL) = BulkIndexer(client, this, objectMapper, bulkSize,retryConflictingUpdates = retryConflictingUpdates,refreshPolicy = refreshPolicy)
 
     fun refresh() {
         if (refreshAllowed) {

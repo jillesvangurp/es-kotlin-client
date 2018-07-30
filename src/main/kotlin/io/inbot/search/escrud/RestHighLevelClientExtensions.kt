@@ -13,19 +13,19 @@ fun <T : Any> RestHighLevelClient.crudDao(index: String, modelReaderAndWriter: M
 }
 
 inline fun <reified T : Any> RestHighLevelClient.crudDao(index: String, objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules(), refreshAllowed: Boolean = false): ElasticSearchCrudDAO<T> {
-    return ElasticSearchCrudDAO(index, this, JacksonModelReaderAndWriter(T::class,objectMapper), refreshAllowed = refreshAllowed)
+    return ElasticSearchCrudDAO(index, this, JacksonModelReaderAndWriter(T::class, objectMapper), refreshAllowed = refreshAllowed)
 }
 
 fun RestHighLevelClient.doSearch(headers: List<Header> = listOf(), block: SearchRequest.() -> Unit): SearchResponse {
     val searchRequest = SearchRequest()
     block.invoke(searchRequest)
-    return this.search(searchRequest,*headers.toTypedArray())
+    return this.search(searchRequest, *headers.toTypedArray())
 }
 
-fun <T: Any> SearchHits.mapHits(fn: (SearchHit) -> T): List<T> {
+fun <T : Any> SearchHits.mapHits(fn: (SearchHit) -> T): List<T> {
     return this.hits.map(fn)
 }
 
-fun <T: Any> SearchHits.mapHits(modelReaderAndWriter: ModelReaderAndWriter<T>): Sequence<T> {
-    return this.hits.asSequence().map({it -> modelReaderAndWriter.deserialize(it)?: throw IllegalStateException("hit has no source")})
+fun <T : Any> SearchHits.mapHits(modelReaderAndWriter: ModelReaderAndWriter<T>): Sequence<T> {
+    return this.hits.asSequence().map({ it -> modelReaderAndWriter.deserialize(it) ?: throw IllegalStateException("hit has no source") })
 }

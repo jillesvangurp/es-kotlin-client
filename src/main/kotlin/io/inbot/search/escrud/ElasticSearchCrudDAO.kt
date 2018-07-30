@@ -42,7 +42,6 @@ class ElasticSearchCrudDAO<T : Any>(
         update(0, id, transformFunction, maxUpdateTries)
     }
 
-
     private fun update(tries: Int, id: String, transformFunction: (T) -> T, maxUpdateTries: Int) {
         try {
             val response = client.get(GetRequest().index(index).type(index).id(id))
@@ -117,10 +116,10 @@ class ElasticSearchCrudDAO<T : Any>(
     }
 
     fun search(headers: List<Header> = listOf(), block: SearchRequest.() -> Unit): SearchResults<T> {
-        val wrappedBlock: SearchRequest.()->Unit = {
+        val wrappedBlock: SearchRequest.() -> Unit = {
             this.indices(index)
             block.invoke(this)
         }
-        return SearchResults(client.doSearch(headers,wrappedBlock), modelReaderAndWriter)
+        return SearchResults(client.doSearch(headers, wrappedBlock), modelReaderAndWriter)
     }
 }

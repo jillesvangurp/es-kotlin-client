@@ -6,8 +6,6 @@ import assertk.assertions.isNull
 import org.elasticsearch.ElasticsearchStatusException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
-
 
 class ElasticSearchCrudServiceTests : AbstractElasticSearchTest() {
     @Test

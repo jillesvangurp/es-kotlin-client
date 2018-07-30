@@ -20,6 +20,6 @@ interface ModelReaderAndWriter<T : Any> {
         // will throw npe if there is no source; source can be null on the java side
         val bytes = searchHit.sourceRef?.toBytesRef()?.bytes
 
-        return if(bytes != null) deserializer().invoke(bytes) else null
+        return if (bytes != null) deserializer().invoke(bytes) else null
     }
 }

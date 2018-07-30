@@ -1,5 +1,6 @@
 package io.inbot.search.escrud
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.http.HttpHost
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
@@ -14,7 +15,6 @@ open class AbstractElasticSearchTest {
         val restClientBuilder = RestClient.builder(HttpHost("localhost", 9999, "http"))
         esClient = RestHighLevelClient(restClientBuilder)
         // each test gets a fresh index
-        dao = esClient.crudDao<TestModel>("test-" + randomId(), refreshAllowed = true)
+        dao = esClient.crudDao("test-" + randomId(), refreshAllowed = true,modelReaderAndWriter = JacksonModelReaderAndWriter(TestModel::class, ObjectMapper().findAndRegisterModules()))
     }
-
 }

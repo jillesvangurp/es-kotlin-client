@@ -85,7 +85,8 @@ test {
 dockerCompose.isRequiredBy(test)
 
 dockerCompose {
-
+    buildAdditionalArgs = ['--force-rm']
+    forceRecreate = true
 }
 
 group = 'io.inbot.search'

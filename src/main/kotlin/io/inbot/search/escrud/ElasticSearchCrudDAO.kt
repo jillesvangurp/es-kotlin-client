@@ -84,28 +84,27 @@ class ElasticSearchCrudDAO<T : Any>(
         return getWithVersion(id)?.first
     }
 
-    fun getWithVersion(id: String): Pair<T,Long>? {
+    fun getWithVersion(id: String): Pair<T, Long>? {
         val response = client.get(GetRequest().index(index).type(type).id(id))
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
             val deserialized = objectMapper.readValue(sourceAsBytes, clazz.java)
 
-            return Pair(deserialized!!,response.version)
+            return Pair(deserialized!!, response.version)
         }
         return null
     }
 
-
-    fun bulk(bulkSize: Int = 100, retryConflictingUpdates: Int=0,refreshPolicy: WriteRequest.RefreshPolicy= WriteRequest.RefreshPolicy.WAIT_UNTIL,operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
-        val indexer = bulkIndexer(bulkSize = bulkSize,retryConflictingUpdates = retryConflictingUpdates, refreshPolicy = refreshPolicy)
+    fun bulk(bulkSize: Int = 100, retryConflictingUpdates: Int = 0, refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL, operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
+        val indexer = bulkIndexer(bulkSize = bulkSize, retryConflictingUpdates = retryConflictingUpdates, refreshPolicy = refreshPolicy)
         // autocloseable so we flush all the items ...
         indexer.use {
             operationsBlock.invoke(indexer, indexer)
         }
     }
 
-    fun bulkIndexer(bulkSize: Int = 100, retryConflictingUpdates: Int=0, refreshPolicy: WriteRequest.RefreshPolicy= WriteRequest.RefreshPolicy.WAIT_UNTIL) = BulkIndexer(client, this, objectMapper, bulkSize,retryConflictingUpdates = retryConflictingUpdates,refreshPolicy = refreshPolicy)
+    fun bulkIndexer(bulkSize: Int = 100, retryConflictingUpdates: Int = 0, refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) = BulkIndexer(client, this, objectMapper, bulkSize, retryConflictingUpdates = retryConflictingUpdates, refreshPolicy = refreshPolicy)
 
     fun refresh() {
         if (refreshAllowed) {

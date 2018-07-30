@@ -11,116 +11,73 @@ I'm using jitpack for releases currently. They have nice instructions:
 
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
+This may change when this stuff becomes more stable.
+
 # Motivation
 
-I've been implementing my own http rest clients for various versions of Elasticsearch and have grown quite opinionated on the topic. Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies.
+I've been implementing my own http rest clients for various versions of Elasticsearch and have grown quite opinionated on the topic. Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies. The internal java API is very complex and feature rich but a bit overkill for the simple use cases.
 
 Instead of writing yet another client, I decided to try to use it and instead wrap it with a convenient Kotlin API. Of course given that I use Kotlin, I can fix things myself by using kotlin to wrap the various things their client provides and doing some sensible things with it extension functions, the kotlin primitives for building DSLs, etc.
 
+The advantage of this approach is that you gain easy to use API and can fall back to the official API when you need to. Also, this makes it easy to use new features as Elasticsearch adds them.
+
 Key things I'm after in this project:
 
-- provide opinionated way of dealing with anything elasticsearch. This runs as part of our production code and needs to be robust, easy to use, and not result in a lot of copy paste style 'reuse' to deal with all the boiler plate for error handling, setting things up, etc.
-- Reuse as much of the DSL work in the elasticsearch client but make that a bit easier to use perhaps.
-- add a DAO abstraction that does the right things with version checks/optimistic locking, updates, creates, bulk behavior, etc. with the minimum amount of boilerplate
-- port over alias and schema management that I've used in Inbot for some years and support migrations in a sane way
-- be jackson object mapper friendly; users should NEVER have to deal with XContent or any other low level stuff that the 'high' level client exposes and insists on.
-- be kotlin friendly and centric. I write all new Java stuff in Kotlin these days. I'll try to keep this usable from Java though but it is not a goal or something I test.
+- Opinionated way of using Elasticsearch. I've used Elasticsearch for a while and I like to use it in a certain way. Mainly this involves using aliases, index management, having a dao abstraction, low amount of boilerplate for things that you necessarily do a lot like bulk indexing, searching for stuff, etc.
+- Provide jackson support where relevant. XContent is not a thing in Spring Boot and most places that deal with JSon. Users should not have to deal with that.
+- DRY & KISS. Get rid of boilerplate. Make the elasticsearch client easier to use for standard usecases.
+- Use Kotlin language features to accomplish the above.
+
+This library probably overlaps with several other efforts on Github. I'm aware of at least one attempt to do a Kotlin DSL for querying.
 
 # Development status
 
 **This is a work in progress**. I will update this readme when this changes. 
 
-I'm planning to get a lot of code (re)written for inbot in the next weeks/months on top of this and will likely be adding new features and be refactoring quite heavily. API compatibility is not going to be a goal short term. Also, there will be bugs and other sillyness.
+I'm planning to get a lot of code (re)written for Inbot in the next weeks/months on top of this and will likely be adding new features and be refactoring quite heavily as I start doing that. API compatibility is not going to be a goal short term. As my own code base grows, this library will change less frequently and less drastically. At some point I will slap a `1.0` on it when I feel that things are stable enough. There will be bugs and other sillyness. Finally, I've only been using Kotlin for a few months and am constantly discovering useful ways to abuse various language features. E.g. reified generics, extension functions, lazy properties, etc.
 
-It probably overlaps with several other efforts on Github. 
-
-But your feedback, PRs, etc. are appreciated; I just want to avoid people depending on this while I'm still figuring out what to do with it.
+Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't make you unhappy by refactoring stuff you use.
 
 # Features (done)
 
-`ElasticSearchCrudDAO`:
+- CRUD: index, update, get and delete of any jackson serializable object
+- Reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
+- Bulk indexer with support for index, update, and delete. Supports callbacks for items and takes care of sending and creating bulk requests. The default callback can take care of retrying updates if they fail with a conflict if you set retryConflictingUpdates to a non zero value.
+- Easy search with jackson based result mapping
 
-- index, get and delete of any jackson serializable object
-- reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
-- bulk indexer with support for index, update, and delete. Supports callbacks for items and takes care of sending and creating bulk requests. The default callback can take care of retrying updates if they fail with a conflict if you set retryConflictingUpdates to a non zero value.
+# TODO
+
+- Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
+- Make creating and using aggregations less painful. 
+- Turn scrolling searches in a kotlin Sequence that deals with paging so you can do something like this: `dao1.bulk { dao2.searchAll().forEach { index(transform(it))} }` to pump data from one index to another while transforming the data. Doing this with the current client requires a lot of boiler plate. 
 
 
 # Example 
 
 Code below liberally copy pasted from the tests, refer to the tests for working code.
 
-## Creating an ElasticSearchCrudDAO
+## Initialization
 
 ```kotlin
-// lets use a simple entity class
-data class Foo(var message: String)
+// the tests below use a simple entity class
+data class TestModel(var message: String)
 
-// first, create the official client
-val esClient = RestHighLevelClient(RestClient.builder(HttpHost("localhost", 9200, "http")))
+// this is how you initialize 
+val restClientBuilder = RestClient.builder(HttpHost("localhost", 9200, "http"))
+val esClient = RestHighLevelClient(restClientBuilder)
 
-// get a jackson object mapper so we can map Foo to json
-val objectMapper = ObjectMapper().findAndRegisterModules()
-
-// create a DAO for the test index that will store our Foo objects
-// types are deprecated in ES so we default to simply using the index as the type
-val dao = ElasticSearchCrudDAO<Foo>("testindex", Foo::class, esClient, objectMapper)
-// but you can add a type of course, if you want
-val dao = ElasticSearchCrudDAO<Foo>("testindex", Foo::class, esClient, objectMapper, type="icanhastypes")
-
-// OR
-val dao = esClient.crudDao<Foo>("testindex")
-
-// OR override some defaults
-val dao = esClient.crudDao<Foo>("testindex",objectMapper=objectMapper, refreshAllowed=true)
+// there's a few extension methods that add new features to the client and elsewhere
+val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
 ```
 
-This stuff probably goes in your spring configuration or whatever DI framework you use.
+## Examples
 
-## Simple Crud
+To see how it works, simply look at the tests. I may at some point write more comprehensive documentation.   
 
-```kotlin
-val id = randomId()
+- [Crud](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/ElasticSearchCrudServiceTests.kt)
+- [Bulk Indexing](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/BulkIndexerTest.kt)
+- [Searching for stuff](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/SearchTest.kt) 
 
-// create a new object, will fail if it already exists
-dao.index(id, Foo("hi"))
-// fails because we have create=true by default
-dao.index(id, Foo("hi again"))  
-// now it succeeds
-dao.index(id, Foo("hi again"),create=false)  
-// returns a Foo
-val aFoo = dao.get(id) 
-// useful if you are doing bulk updates
-val (aFoo,version) = dao.getWithVersion(id)
-dao.delete(id)
-// returns null
-dao.get(id) 
-
-// updates apply a lambda function to the original in the index
-// update also deals with version conflicts and retries a configurable number of times (default 2) with a sleep to reduce chance of more conflicts
-dao.update(id, maxUpdateRetries=5) { it.message="bye" }
-dao.get(id)!!.message shouldBe "bye"
-```
-
-## Bulk DSL
-
-```kotlin
-dao.bulk(retryConflictingUpdates=2) {
-  index("1", Foo("hello"))
-  index("2", Foo("world"))
-  index("3", Foo("wrld"))
-  // fails becaue create=true by default
-  index("3", Foo("world")) 
-  // succeeds because it overwrites the original
-  index("3", Foo("world"), create=false) 
-
-  // updates the original that we get from the index using the update lambda
-  getAndUpdate("1",{originalFoo -> Foo("hi")}
-  // you can also look up the current version yourself; note you have to provide a version
-  // this succeeds because we can retry even though the version is wrong here. 
-  // retry simply falls back to a non bulk update and re-applies the lambda to the latest version in the index
-  update("2",666,Foo("hi"), {foo -> Foo("hi wrld")}
-}
-```
 
 # Building
 
@@ -132,8 +89,8 @@ Simply use the gradle wrapper:
 ./gradlew build
 ```
 
-It will spin up elasticsearch using docker compose and run the tests.
+It will spin up elasticsearch using docker compose and run the tests. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster.
 
 # License
 
-This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. Please exercise your rights under this license in any way you feel is right. I do appreciate attribution ...
+This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. Please exercise your rights under this license in any way you feel is right. Forking is allowed and encouraged. I do appreciate attribution and pull requests...

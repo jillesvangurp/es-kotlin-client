@@ -1,10 +1,8 @@
-package io.inbot.search.searchapi
+package io.inbot.search.escrud
 
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.inbot.search.escrud.ElasticSearchCrudDAO
-import io.inbot.search.escrud.crudDao
 import org.apache.http.HttpHost
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient

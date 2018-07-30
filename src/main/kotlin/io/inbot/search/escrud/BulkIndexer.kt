@@ -1,6 +1,5 @@
 package io.inbot.search.escrud
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
@@ -22,7 +21,7 @@ private val logger = KotlinLogging.logger {}
 class BulkIndexer<T : Any>(
     val client: RestHighLevelClient,
     val dao: ElasticSearchCrudDAO<T>,
-    val objectMapper: ObjectMapper,
+    val modelReaderAndWriter: ModelReaderAndWriter<T>,
     val bulkSize: Int = 100,
     val retryConflictingUpdates: Int = 0,
     val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
@@ -61,7 +60,7 @@ class BulkIndexer<T : Any>(
             .type(dao.type)
             .id(id)
             .create(create)
-            .source(objectMapper.writeValueAsBytes(obj), XContentType.JSON)
+            .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
         rwLock.read { page.add(BulkOperation(indexRequest, id, itemCallback = itemCallback)) }
         flushIfNeeded()
     }
@@ -83,7 +82,7 @@ class BulkIndexer<T : Any>(
             .id(id)
             .detectNoop(true)
             .version(version)
-            .doc(objectMapper.writeValueAsBytes(updateFunction.invoke(original)), XContentType.JSON)
+            .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
         rwLock.read { page.add(BulkOperation(updateRequest, id, updateFunction = updateFunction, itemCallback = itemCallback)) }
         flushIfNeeded()
     }

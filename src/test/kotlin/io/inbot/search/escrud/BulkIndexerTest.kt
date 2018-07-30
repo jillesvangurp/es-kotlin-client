@@ -2,24 +2,9 @@ package io.inbot.search.escrud
 
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.http.HttpHost
-import org.elasticsearch.client.RestClient
-import org.elasticsearch.client.RestHighLevelClient
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class BulkIndexerTest {
-    lateinit var dao: ElasticSearchCrudDAO<Foo>
-
-    @BeforeEach
-    fun before() {
-        val restClientBuilder = RestClient.builder(HttpHost("localhost", 9999, "http"))
-        val esClient = RestHighLevelClient(restClientBuilder)
-        val objectMapper = ObjectMapper().findAndRegisterModules()
-        // each test gets a fresh index
-        dao = esClient.crudDao<Foo>("test-" + randomId(), refreshAllowed = true)
-    }
+class BulkIndexerTest : AbstractElasticSearchTest() {
 
     @Test
     fun `should bulk index`() {
@@ -29,13 +14,13 @@ class BulkIndexerTest {
         }
 
         dao.bulk(bulkSize = 2) {
-            index(ids[0], Foo("hi"))
-            index(ids[1], Foo("world"))
-            index(ids[2], Foo("."))
-            index(ids[3], Foo("!"), create = false)
-            index(ids[3], Foo("!!"))
-            index(ids[3], Foo("?"), create = true)
-            index(ids[4], Foo("and good bye"))
+            index(ids[0], TestModel("hi"))
+            index(ids[1], TestModel("world"))
+            index(ids[2], TestModel("."))
+            index(ids[3], TestModel("!"), create = false)
+            index(ids[3], TestModel("!!"))
+            index(ids[3], TestModel("?"), create = true)
+            index(ids[4], TestModel("and good bye"))
         }
         dao.refresh()
         assertk.assert(dao.get(ids[1])!!.message).isEqualTo("world")
@@ -46,9 +31,9 @@ class BulkIndexerTest {
     @Test
     fun `should do bulk update`() {
         val id = randomId()
-        dao.index(id, Foo("hi"))
+        dao.index(id, TestModel("hi"))
         dao.bulk() {
-            getAndUpdate(id) { Foo("${it.message} world!") }
+            getAndUpdate(id) { TestModel("${it.message} world!") }
         }
         dao.refresh()
         assertk.assert(dao.get(id)!!.message).isEqualTo("hi world!")
@@ -57,12 +42,12 @@ class BulkIndexerTest {
     @Test
     fun `should retry bulk updates`() {
         val id = randomId()
-        dao.index(id, Foo("hi"))
-        dao.update(id) { foo -> Foo("hi wrld") }
+        dao.index(id, TestModel("hi"))
+        dao.update(id) { foo -> TestModel("hi wrld") }
         val (doc, version) = dao.getWithVersion(id)!!
         dao.bulk(retryConflictingUpdates = 2) {
             // version here is wrong but we have retries set to 2 so it will recover
-            update(id, version - 1, doc) { foo -> Foo("omg") }
+            update(id, version - 1, doc) { foo -> TestModel("omg") }
         }
         assertk.assert(dao.get(id)!!.message).isEqualTo("omg")
     }
@@ -74,7 +59,7 @@ class BulkIndexerTest {
             for (i in 0..4) {
                 val id = randomId()
                 ids.add(id)
-                index(id, Foo(id))
+                index(id, TestModel(id))
             }
             ids.forEach { delete(it) }
         }

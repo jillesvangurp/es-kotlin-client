@@ -1,26 +1,27 @@
 package io.inbot.search.escrud
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
+import org.apache.http.Header
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
-import kotlin.reflect.KClass
 
 private val logger = KotlinLogging.logger {}
 
 class ElasticSearchCrudDAO<T : Any>(
     val index: String,
-    val clazz: KClass<T>,
     val client: RestHighLevelClient,
-    val objectMapper: ObjectMapper,
+    val modelReaderAndWriter: ModelReaderAndWriter<T>,
     val refreshAllowed: Boolean = false,
     val type: String = index // default to using index as the type but allow user to override
+
 ) {
 
     fun index(id: String, obj: T, create: Boolean = true, version: Long? = null) {
@@ -29,7 +30,7 @@ class ElasticSearchCrudDAO<T : Any>(
             .type(type)
             .id(id)
             .create(create)
-            .source(objectMapper.writeValueAsString(obj), XContentType.JSON)
+            .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
         if (version != null) {
             indexRequest.version(version)
         }
@@ -42,6 +43,7 @@ class ElasticSearchCrudDAO<T : Any>(
         update(0, id, transformFunction, maxUpdateTries)
     }
 
+
     private fun update(tries: Int, id: String, transformFunction: (T) -> T, maxUpdateTries: Int) {
         try {
             val response = client.get(GetRequest().index(index).type(index).id(id))
@@ -49,7 +51,7 @@ class ElasticSearchCrudDAO<T : Any>(
 
             val sourceAsBytes = response.sourceAsBytes
             if (sourceAsBytes != null) {
-                val currentValue = objectMapper.readValue(sourceAsBytes, clazz.java)!!
+                val currentValue = modelReaderAndWriter.deserialize(sourceAsBytes)
                 val transformed = transformFunction.invoke(currentValue)
                 index(id, transformed, create = false, version = currentVersion)
                 if (tries > 0) {
@@ -89,9 +91,9 @@ class ElasticSearchCrudDAO<T : Any>(
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
-            val deserialized = objectMapper.readValue(sourceAsBytes, clazz.java)
+            val deserialized = modelReaderAndWriter.deserialize(sourceAsBytes)
 
-            return Pair(deserialized!!, response.version)
+            return Pair(deserialized, response.version)
         }
         return null
     }
@@ -104,7 +106,7 @@ class ElasticSearchCrudDAO<T : Any>(
         }
     }
 
-    fun bulkIndexer(bulkSize: Int = 100, retryConflictingUpdates: Int = 0, refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) = BulkIndexer(client, this, objectMapper, bulkSize, retryConflictingUpdates = retryConflictingUpdates, refreshPolicy = refreshPolicy)
+    fun bulkIndexer(bulkSize: Int = 100, retryConflictingUpdates: Int = 0, refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) = BulkIndexer(client, this, modelReaderAndWriter, bulkSize, retryConflictingUpdates = retryConflictingUpdates, refreshPolicy = refreshPolicy)
 
     fun refresh() {
         if (refreshAllowed) {
@@ -113,5 +115,9 @@ class ElasticSearchCrudDAO<T : Any>(
         } else {
             throw UnsupportedOperationException("refresh is not allowed; you need to opt in by setting refreshAllowed to true")
         }
+    }
+
+    fun search(headers: List<Header> = listOf(), block: SearchRequest.() -> Unit): SearchResponse {
+        return client.doSearch(headers,block)
     }
 }

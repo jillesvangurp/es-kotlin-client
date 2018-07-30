@@ -1,8 +1,7 @@
 version: '2.2'
 services:
-  testcontainer:
+  test_elasticsearch_9999:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
-    container_name: elasticsearch
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true

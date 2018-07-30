@@ -12,6 +12,7 @@ class SearchTest : AbstractElasticSearchTest() {
 
     @Test
     fun shouldFindStuff() {
+        // lets put some documents in an index
         dao.bulk {
             index(randomId(), TestModel("the quick brown emu"))
             index(randomId(), TestModel("the quick brown fox"))
@@ -20,16 +21,21 @@ class SearchTest : AbstractElasticSearchTest() {
         }
         dao.refresh()
 
-        val builder = SearchSourceBuilder.searchSource()
-        builder.size(20)
-        builder.query(BoolQueryBuilder().must(MatchQueryBuilder("message", "quick")))
+        // create a query (TODO make this nicer)
+        val query = SearchSourceBuilder.searchSource()
+            .size(20)
+            .query(BoolQueryBuilder().must(MatchQueryBuilder("message", "quick")))
 
+        // get SearchResults with our DSL
         val results = dao.search {
-            source(builder)
+            // this is now the searchRequest, the index is already set correctly
+            source(query)
         }
 
-        assert(results.totalHits).isEqualTo(3L)
+        // we put totalHits at the top level for convenience
+        assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits)
         results.hits.forEach {
+            // and we use jackson to deserialize the results
             assert(it.message).contains("quick")
         }
         // iterating twice is no problem

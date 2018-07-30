@@ -7,7 +7,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.junit.jupiter.api.BeforeEach
 
 open class AbstractElasticSearchTest {
-    lateinit var dao: ElasticSearchCrudDAO<TestModel>
+    lateinit var dao: IndexDAO<TestModel>
     lateinit var esClient: RestHighLevelClient
 
     @BeforeEach
@@ -15,6 +15,6 @@ open class AbstractElasticSearchTest {
         val restClientBuilder = RestClient.builder(HttpHost("localhost", 9999, "http"))
         esClient = RestHighLevelClient(restClientBuilder)
         // each test gets a fresh index
-        dao = esClient.crudDao("test-" + randomId(), refreshAllowed = true,modelReaderAndWriter = JacksonModelReaderAndWriter(TestModel::class, ObjectMapper().findAndRegisterModules()))
+        dao = esClient.crudDao("test-" + randomId(), refreshAllowed = true, modelReaderAndWriter = JacksonModelReaderAndWriter(TestModel::class, ObjectMapper().findAndRegisterModules()))
     }
 }

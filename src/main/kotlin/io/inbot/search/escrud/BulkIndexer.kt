@@ -20,11 +20,12 @@ private val logger = KotlinLogging.logger {}
 
 class BulkIndexer<T : Any>(
     val client: RestHighLevelClient,
-    val dao: ElasticSearchCrudDAO<T>,
+    val dao: IndexDAO<T>,
     val modelReaderAndWriter: ModelReaderAndWriter<T>,
     val bulkSize: Int = 100,
     val retryConflictingUpdates: Int = 0,
-    val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
+    val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+    val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null
 ) : AutoCloseable { // autocloseable so we flush all the items ...
 
     data class BulkOperation<T : Any>(
@@ -40,14 +41,18 @@ class BulkIndexer<T : Any>(
     // we use rw lock to protect the current page. read here means using the list (to add stuff), write means  building the bulk request and clearing the list.
     private val rwLock = ReentrantReadWriteLock()
 
-    fun defaultItemResponseCallback(o: BulkIndexer.BulkOperation<T>, itemResponse: BulkItemResponse) {
-        if (itemResponse.isFailed) {
-            if (retryConflictingUpdates>0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                dao.update(o.id, retryConflictingUpdates, o.updateFunction!!)
-                logger.debug { "retried updating ${o.id} after version conflict" }
-            } else {
-                logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
+    internal fun defaultItemResponseCallback(operation: BulkIndexer.BulkOperation<T>, itemResponse: BulkItemResponse) {
+        if (itemCallback == null) {
+            if (itemResponse.isFailed) {
+                if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
+                    dao.update(operation.id, retryConflictingUpdates, operation.updateFunction!!)
+                    logger.debug { "retried updating ${operation.id} after version conflict" }
+                } else {
+                    logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
+                }
             }
+        } else {
+            itemCallback.invoke(operation, itemResponse)
         }
     }
 

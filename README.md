@@ -70,7 +70,7 @@ val esClient = RestHighLevelClient(restClientBuilder)
 val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
 ```
 
-## Examples
+## Tests
 
 To see how it works, simply look at the tests. I may at some point write more comprehensive documentation.   
 

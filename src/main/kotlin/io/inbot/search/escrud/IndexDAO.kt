@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.apache.http.Header
 import org.elasticsearch.ElasticsearchStatusException
+import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
@@ -14,7 +15,7 @@ import org.elasticsearch.common.xcontent.XContentType
 
 private val logger = KotlinLogging.logger {}
 
-class ElasticSearchCrudDAO<T : Any>(
+class IndexDAO<T : Any>(
     val index: String,
     val client: RestHighLevelClient,
     val modelReaderAndWriter: ModelReaderAndWriter<T>,
@@ -62,7 +63,7 @@ class ElasticSearchCrudDAO<T : Any>(
         } catch (e: ElasticsearchStatusException) {
 
             if (e.status().status == 409) {
-                if ( tries < maxUpdateTries) {
+                if (tries < maxUpdateTries) {
                     // we got a version conflict, retry after sleeping a bit (without this failures are more likely
                     Thread.sleep(RandomUtils.nextLong(50, 500))
                     update(tries + 1, id, transformFunction, maxUpdateTries)
@@ -96,15 +97,39 @@ class ElasticSearchCrudDAO<T : Any>(
         return null
     }
 
-    fun bulk(bulkSize: Int = 100, retryConflictingUpdates: Int = 0, refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL, operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit) {
-        val indexer = bulkIndexer(bulkSize = bulkSize, retryConflictingUpdates = retryConflictingUpdates, refreshPolicy = refreshPolicy)
+    fun bulk(
+        bulkSize: Int = 100,
+        retryConflictingUpdates: Int = 0,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+        itemCallback: ((BulkIndexer.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit
+    ) {
+        val indexer = bulkIndexer(
+            bulkSize = bulkSize,
+            retryConflictingUpdates = retryConflictingUpdates,
+            refreshPolicy = refreshPolicy,
+            itemCallback = itemCallback
+        )
         // autocloseable so we flush all the items ...
         indexer.use {
             operationsBlock.invoke(indexer, indexer)
         }
     }
 
-    fun bulkIndexer(bulkSize: Int = 100, retryConflictingUpdates: Int = 0, refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) = BulkIndexer(client, this, modelReaderAndWriter, bulkSize, retryConflictingUpdates = retryConflictingUpdates, refreshPolicy = refreshPolicy)
+    fun bulkIndexer(
+        bulkSize: Int = 100,
+        retryConflictingUpdates: Int = 0,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+        itemCallback: ((BulkIndexer.BulkOperation<T>, BulkItemResponse) -> Unit)? = null
+    ) = BulkIndexer(
+        client,
+        this,
+        modelReaderAndWriter,
+        bulkSize,
+        retryConflictingUpdates = retryConflictingUpdates,
+        refreshPolicy = refreshPolicy,
+        itemCallback = itemCallback
+    )
 
     fun refresh() {
         if (refreshAllowed) {

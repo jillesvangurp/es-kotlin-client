@@ -8,7 +8,6 @@ import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
-import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
@@ -117,7 +116,11 @@ class ElasticSearchCrudDAO<T : Any>(
         }
     }
 
-    fun search(headers: List<Header> = listOf(), block: SearchRequest.() -> Unit): SearchResponse {
-        return client.doSearch(headers,block)
+    fun search(headers: List<Header> = listOf(), block: SearchRequest.() -> Unit): SearchResults<T> {
+        val wrappedBlock: SearchRequest.()->Unit = {
+            this.indices(index)
+            block.invoke(this)
+        }
+        return SearchResults(client.doSearch(headers,wrappedBlock), modelReaderAndWriter)
     }
 }

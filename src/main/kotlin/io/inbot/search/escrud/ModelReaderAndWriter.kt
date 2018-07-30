@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 
 interface ModelReaderAndWriter<T : Any> {
     val clazz: KClass<T>
-    fun deserializer(): (ByteArray) -> T
+    fun deserializer(): (ByteArray?) -> T
     fun serializer(): (T) -> ByteArray
 
     fun serialize(obj: T): ByteArray {

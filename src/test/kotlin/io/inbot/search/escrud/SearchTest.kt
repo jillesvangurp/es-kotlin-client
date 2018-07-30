@@ -1,11 +1,12 @@
 package io.inbot.search.escrud
 
+import assertk.assert
+import assertk.assertions.contains
+import assertk.assertions.isEqualTo
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MatchQueryBuilder
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.junit.jupiter.api.Test
-
-
 
 class SearchTest : AbstractElasticSearchTest() {
 
@@ -23,14 +24,17 @@ class SearchTest : AbstractElasticSearchTest() {
         builder.size(20)
         builder.query(BoolQueryBuilder().must(MatchQueryBuilder("message", "quick")))
 
-        val searchResponse = dao.search {
+        val results = dao.search {
             source(builder)
         }
 
-        println(searchResponse.hits.totalHits)
-        searchResponse.hits.hits.map(dao.modelReaderAndWriter::deserialize).forEach {
-            println(it?.message)
+        assert(results.totalHits).isEqualTo(3L)
+        results.hits.forEach {
+            assert(it.message).contains("quick")
+        }
+        // iterating twice is no problem
+        results.hits.forEach {
+            assert(it.message).contains("quick")
         }
     }
-
 }

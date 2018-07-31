@@ -105,6 +105,17 @@ compileKotlin {
         jvmTarget = "1.8"
     }
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        // for whatever reason defaults to 1.6. But since we don't care about android ...
+        jvmTarget = "1.8"
+        // zero tolerance on warnings
+        allWarningsAsErrors = true
+        freeCompilerArgs = ["-Xjsr305=strict"]
+    }
+}
+
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]

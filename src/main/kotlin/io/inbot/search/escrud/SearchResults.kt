@@ -24,7 +24,7 @@ class PagedSearchResults<T : Any>(
         get() {
             return searchResponse.hits?.hits?.asSequence() ?: emptySequence()
         }
-            override val hits: Sequence<T>
+    override val hits: Sequence<T>
         get() {
             return searchResponse.hits?.mapHits(modelReaderAndWriter) ?: emptySequence()
         }
@@ -35,7 +35,7 @@ class PagedSearchResults<T : Any>(
         }
 }
 
-class ScrollingSearchResults<T : Any> (
+class ScrollingSearchResults<T : Any>(
     override val searchResponse: SearchResponse,
     override val modelReaderAndWriter: ModelReaderAndWriter<T>,
     val restHighLevelClient: RestHighLevelClient,
@@ -51,10 +51,7 @@ class ScrollingSearchResults<T : Any> (
 
     override val hits: Sequence<T>
         get() {
-            return responses().flatMap { response ->
-                val searchHits = response.hits.hits
-                response.hits?.mapHits(modelReaderAndWriter) ?: emptySequence()
-            }
+            return searchHits.map { modelReaderAndWriter.deserialize(it)!! }
         }
 
     override val totalHits: Long
@@ -68,7 +65,13 @@ class ScrollingSearchResults<T : Any> (
             nextFunction = {
                 val currentScrollId = it.scrollId
                 if (currentScrollId != null && it.hits.hits != null && it.hits.hits.size > 0) {
-                    restHighLevelClient.searchScroll(SearchScrollRequest(currentScrollId).scroll(TimeValue.timeValueMinutes(scrollTtlInMinutes)))
+                    restHighLevelClient.searchScroll(
+                        SearchScrollRequest(currentScrollId).scroll(
+                            TimeValue.timeValueMinutes(
+                                scrollTtlInMinutes
+                            )
+                        )
+                    )
                 } else {
                     val clearScrollRequest = ClearScrollRequest()
                     clearScrollRequest.addScrollId(currentScrollId)

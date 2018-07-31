@@ -58,10 +58,11 @@ Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early
 // the tests below use a simple entity class
 data class TestModel(var message: String)
 
-// this is how you initialize 
+// next we need the official client
 val restClientBuilder = RestClient.builder(HttpHost("localhost", 9200, "http"))
 val esClient = RestHighLevelClient(restClientBuilder)
 
+// and next we create an indexDao for our model class.
 // there's a few extension methods that add new features to the client and elsewhere
 val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
 ```
@@ -93,12 +94,16 @@ See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/
 
 ```kotlin
 dao.bulk {
-  // creates BulkRequests on the fly
-  for (i in 0..100000) {
+  // lets fill our index
+  for (i in 0..1000000) {
+    // inside the block, this refers to the BulkIndexer instance that bulk manages for you
+    // The BulkIndexer creates BulkRequests on the fly and sends them off 100 operations at the time 
+    // index, update, updateAndGet, and delete are functions that the BulkIndexer exposes.
+    // this indexes a document
     index("doc_$i", TestModel("Hi again for the $i'th time"))
   }
 }
-// when the bulk block is processed, the last bulkRequest is send
+// when the bulk block exits, the last bulkRequest is send. BulkIndexer is AutoClosable.
 ```
 See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/BulkIndexerTest.kt) for more
 
@@ -145,6 +150,8 @@ Simply use the gradle wrapper:
 ```
 ./gradlew build
 ```
+
+Look inside the build file for comments and documentation.
 
 It will spin up elasticsearch using docker compose and run the tests. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster.
 

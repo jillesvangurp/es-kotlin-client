@@ -97,6 +97,7 @@ dao.bulk {
     index(randomId(), TestModel("the quick brown fox"))
     index(randomId(), TestModel("the quick brown horse"))
     index(randomId(), TestModel("lorem ipsum"))
+    // throw in some more documents
     for(i in 0..100) {
         index(randomId(), TestModel("another document $i"))
     }
@@ -125,6 +126,26 @@ results.hits.forEach {
 
 ```
 
+The same search also works with multiline json strings in Kotlin so you don't have to jump through hoops to use raw json:
+
+```kotlin
+val results = dao.search {
+    source("""
+    {
+      "size": 20,
+      "query": {
+        "match": {
+          "message": "$keyWord"
+        }
+      }
+    }
+    """)
+}
+```
+
+See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/SearchTest.kt) for more.
+
+
 ## Scrolling searches
 
 Scrolling is kind of tedious in Elastisearch. We use Kotlin sequences to solve this.
@@ -141,9 +162,10 @@ val results = dao.search(scrolling=true) {
   source(query)
 }
 
-// prints 100, hits is a Sequence<TestModel>
-// Note: calling count consumes the sequence. If you want to use the sequence again, you have to do another search
-assert(results.hits.count()).isEqualTo(100l)
+// Note: this consumes the sequence. If you want to use the sequence again, you have to do another search
+results.hits.forEach {
+    println(it.message)
+}
 ```
 
 The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel

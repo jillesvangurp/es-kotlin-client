@@ -1,4 +1,4 @@
-package io.inbot.search.escrud
+package io.inbot.eskotlinwrapper
 
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
@@ -102,8 +102,8 @@ class IndexDAO<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkIndexer.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-        operationsBlock: BulkIndexer<T>.(bulkAPIFacade: BulkIndexer<T>) -> Unit
+        itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        operationsBlock: BulkIndexingSession<T>.(bulkAPIFacade: BulkIndexingSession<T>) -> Unit
     ) {
         val indexer = bulkIndexer(
             bulkSize = bulkSize,
@@ -121,8 +121,8 @@ class IndexDAO<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkIndexer.BulkOperation<T>, BulkItemResponse) -> Unit)? = null
-    ) = BulkIndexer(
+        itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null
+    ) = BulkIndexingSession(
         client,
         this,
         modelReaderAndWriter,
@@ -159,7 +159,12 @@ class IndexDAO<T : Any>(
         return if (searchResponse.scrollId == null) {
             PagedSearchResults(searchResponse, modelReaderAndWriter)
         } else {
-            ScrollingSearchResults(searchResponse, modelReaderAndWriter, client, scrollTtlInMinutes)
+            ScrollingSearchResults(
+                searchResponse,
+                modelReaderAndWriter,
+                client,
+                scrollTtlInMinutes
+            )
         }
     }
 }

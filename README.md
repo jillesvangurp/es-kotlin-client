@@ -31,30 +31,6 @@ Key things I'm after in this project:
 
 This library probably overlaps with several other efforts on Github. I'm aware of at least one attempt to do a Kotlin DSL for querying.
 
-# Development status
-
-**This is a work in progress**. This is an alpha version. I'm still adding features, refactoring, doing API and package renames, etc. When this hits 1.0 things will get more stable.
-
-That being said, the core feature set is there, works, and is probably highly useful if you need to talk to Elasticsearch from Kotlin or Java (you may run into some Kotlin weirdness). 
-
-Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't accidentally make you unhappy by refactoring stuff you use.
-
-# Features (done)
-
-- CRUD: index, update, get and delete of any jackson serializable object
-- Reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
-- Bulk indexer with support for index, update, and delete. Supports callbacks for items and takes care of sending and creating bulk requests. The default callback can take care of retrying updates if they fail with a conflict if you set retryConflictingUpdates to a non zero value.
-- Easy search with jackson based result mapping
-- Easy scrolling search, also with jackson based result mapping. You can do this with the same method that does the normal paged search simply by setting `scrolling = true` (defaults to false)
-
-# TODO
-
-- Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
-- Make creating and using aggregations less painful. 
-- Index and alias management
-- Schema migration support
-
-
 # Example 
 
 ## Initialization
@@ -101,16 +77,16 @@ See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/
 dao.bulk {
   // lets fill our index
   for (i in 0..1000000) {
-    // inside the block, this refers to the BulkIndexer instance that bulk manages for you
-    // The BulkIndexer creates BulkRequests on the fly and sends them off 100 operations at the time 
-    // index, update, updateAndGet, and delete are functions that the BulkIndexer exposes.
+    // inside the block, this refers to the BulkIndexingSession instance that bulk manages for you
+    // The BulkIndexingSession creates BulkRequests on the fly and sends them off 100 operations at the time 
+    // index, update, updateAndGet, and delete are functions that the BulkIndexingSession exposes.
     // this indexes a document
     index("doc_$i", TestModel("Hi again for the $i'th time"))
   }
 }
-// when the bulk block exits, the last bulkRequest is send. BulkIndexer is AutoClosable.
+// when the bulk block exits, the last bulkRequest is send. BulkIndexingSession is AutoClosable.
 ```
-See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/BulkIndexerTest.kt) for more
+See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/BulkIndexingSessionTest.kt) for more
 
 ## Search
 
@@ -187,6 +163,34 @@ Simply use the gradle wrapper:
 Look inside the build file for comments and documentation.
 
 It will spin up elasticsearch using docker compose and run the tests. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster.
+
+# Changelog
+
+- 0.0.1 - 0.9.0 Search/Scrolling search, bulk indexing, crud.
+
+# Development status
+
+**This is a work in progress**. This is an alpha version. I'm still adding features, refactoring, doing API and package renames, etc. When this hits 1.0 things will get more stable.
+
+That being said, the core feature set is there, works, and is probably highly useful if you need to talk to Elasticsearch from Kotlin or Java (you may run into some Kotlin weirdness). 
+
+Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't accidentally make you unhappy by refactoring stuff you use.
+
+## Features (done)
+
+- CRUD: index, update, get and delete of any jackson serializable object
+- Reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
+- Bulk indexing with support for index, update, and delete. Supports callbacks for items and takes care of sending and creating bulk requests. The default callback can take care of retrying updates if they fail with a conflict if you set retryConflictingUpdates to a non zero value.
+- Easy search with jackson based result mapping
+- Easy scrolling search, also with jackson based result mapping. You can do this with the same method that does the normal paged search simply by setting `scrolling = true` (defaults to false)
+
+## TODO
+
+- Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
+- Make creating and using aggregations less painful. 
+- Index and alias management
+- Schema migration support
+- API documentation, mostly straightforward
 
 # License
 

@@ -1,4 +1,4 @@
-package io.inbot.search.escrud
+package io.inbot.eskotlinwrapper
 
 import org.elasticsearch.search.SearchHit
 import kotlin.reflect.KClass

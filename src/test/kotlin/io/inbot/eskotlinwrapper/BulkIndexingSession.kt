@@ -1,4 +1,4 @@
-package io.inbot.search.escrud
+package io.inbot.eskotlinwrapper
 
 import assertk.assert
 import assertk.assertions.hasSize
@@ -7,7 +7,7 @@ import assertk.assertions.isNotNull
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.Test
 
-class BulkIndexerTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
+class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
 
     @Test
     fun `This is how you bulk index some documents`() {
@@ -19,7 +19,7 @@ class BulkIndexerTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
         // we have paging, the bulkIndexer will send a BulkRequest every 2 operations. You don't have to worry about that.
         // we have a sane default for the refreshPolicy. If you don't do this, you risk filling up the server side queues.
         dao.bulk(bulkSize = 2, refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) {
-            // this is the BulkIndexer inside the block
+            // this is the BulkIndexingSession inside the block
             index(ids[0], TestModel("hi"))
             index(ids[1], TestModel("world"))
             index(ids[2], TestModel("."))
@@ -97,7 +97,9 @@ class BulkIndexerTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
         val successes = mutableListOf<Any>()
         dao.bulk {
             // retries and logging are done via callbacks; if you want, you can override these and do something custom
-            this.index(randomId(), TestModel("another object"), itemCallback = { operation, response ->
+            this.index(
+                randomId(),
+                TestModel("another object"), itemCallback = { operation, response ->
                 if (response.isFailed) {
                     // do something custom
                 } else {

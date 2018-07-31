@@ -1,4 +1,4 @@
-package io.inbot.search.escrud
+package io.inbot.eskotlinwrapper
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlin.reflect.KClass

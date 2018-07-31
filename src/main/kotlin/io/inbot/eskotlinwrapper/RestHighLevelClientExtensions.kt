@@ -1,4 +1,4 @@
-package io.inbot.search.escrud
+package io.inbot.eskotlinwrapper
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.http.Header
@@ -13,7 +13,12 @@ fun <T : Any> RestHighLevelClient.crudDao(index: String, modelReaderAndWriter: M
 }
 
 inline fun <reified T : Any> RestHighLevelClient.crudDao(index: String, objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules(), refreshAllowed: Boolean = false): IndexDAO<T> {
-    return IndexDAO(index, this, JacksonModelReaderAndWriter(T::class, objectMapper), refreshAllowed = refreshAllowed)
+    return IndexDAO(
+        index,
+        this,
+        JacksonModelReaderAndWriter(T::class, objectMapper),
+        refreshAllowed = refreshAllowed
+    )
 }
 
 fun RestHighLevelClient.doSearch(headers: List<Header> = listOf(), block: SearchRequest.() -> Unit): SearchResponse {

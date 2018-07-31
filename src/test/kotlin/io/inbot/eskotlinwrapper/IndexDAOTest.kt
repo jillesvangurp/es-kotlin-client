@@ -1,4 +1,4 @@
-package io.inbot.search.escrud
+package io.inbot.eskotlinwrapper
 
 import assertk.assert
 import assertk.assertions.isEqualTo

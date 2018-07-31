@@ -1,4 +1,4 @@
-package io.inbot.search.escrud
+package io.inbot.eskotlinwrapper
 
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
@@ -18,7 +18,7 @@ import kotlin.concurrent.write
 
 private val logger = KotlinLogging.logger {}
 
-class BulkIndexer<T : Any>(
+class BulkIndexingSession<T : Any>(
     val client: RestHighLevelClient,
     val dao: IndexDAO<T>,
     val modelReaderAndWriter: ModelReaderAndWriter<T>,
@@ -41,7 +41,7 @@ class BulkIndexer<T : Any>(
     // we use rw lock to protect the current page. read here means using the list (to add stuff), write means  building the bulk request and clearing the list.
     private val rwLock = ReentrantReadWriteLock()
 
-    internal fun defaultItemResponseCallback(operation: BulkIndexer.BulkOperation<T>, itemResponse: BulkItemResponse) {
+    internal fun defaultItemResponseCallback(operation: BulkOperation<T>, itemResponse: BulkItemResponse) {
         if (itemCallback == null) {
             if (itemResponse.isFailed) {
                 if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
@@ -58,7 +58,7 @@ class BulkIndexer<T : Any>(
 
     fun index(id: String, obj: T, create: Boolean = true, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         if (closed.get()) {
-            throw IllegalStateException("cannot add bulk operations after the BulkIndexer is closed")
+            throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
         }
         val indexRequest = IndexRequest()
             .index(dao.index)
@@ -66,7 +66,13 @@ class BulkIndexer<T : Any>(
             .id(id)
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
-        rwLock.read { page.add(BulkOperation(indexRequest, id, itemCallback = itemCallback)) }
+        rwLock.read { page.add(
+            BulkOperation(
+                indexRequest,
+                id,
+                itemCallback = itemCallback
+            )
+        ) }
         flushIfNeeded()
     }
 
@@ -79,7 +85,7 @@ class BulkIndexer<T : Any>(
 
     fun update(id: String, version: Long, original: T, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
         if (closed.get()) {
-            throw IllegalStateException("cannot add bulk operations after the BulkIndexer is closed")
+            throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
         }
         val updateRequest = UpdateRequest()
             .index(dao.index)
@@ -88,13 +94,20 @@ class BulkIndexer<T : Any>(
             .detectNoop(true)
             .version(version)
             .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
-        rwLock.read { page.add(BulkOperation(updateRequest, id, updateFunction = updateFunction, itemCallback = itemCallback)) }
+        rwLock.read { page.add(
+            BulkOperation(
+                updateRequest,
+                id,
+                updateFunction = updateFunction,
+                itemCallback = itemCallback
+            )
+        ) }
         flushIfNeeded()
     }
 
     fun delete(id: String, version: Long? = null, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         if (closed.get()) {
-            throw IllegalStateException("cannot add bulk operations after the BulkIndexer is closed")
+            throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
         }
         val deleteRequest = DeleteRequest()
             .index(dao.index)
@@ -103,7 +116,13 @@ class BulkIndexer<T : Any>(
         if (version != null) {
             deleteRequest.version(version)
         }
-        rwLock.read { page.add(BulkOperation(deleteRequest, id, itemCallback = itemCallback)) }
+        rwLock.read { page.add(
+            BulkOperation(
+                deleteRequest,
+                id,
+                itemCallback = itemCallback
+            )
+        ) }
         flushIfNeeded()
     }
 

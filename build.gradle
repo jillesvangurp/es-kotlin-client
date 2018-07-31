@@ -62,8 +62,8 @@ kotlin {
 }
 
 dokka {
-    outputFormat = 'markdown'
-    outputDirectory = "documentation"
+    outputFormat = 'html'
+    jdkVersion = 8
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {

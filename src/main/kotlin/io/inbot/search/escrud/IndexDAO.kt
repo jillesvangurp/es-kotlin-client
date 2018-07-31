@@ -12,6 +12,7 @@ import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 
 private val logger = KotlinLogging.logger {}
@@ -140,11 +141,25 @@ class IndexDAO<T : Any>(
         }
     }
 
-    fun search(headers: List<Header> = listOf(), block: SearchRequest.() -> Unit): SearchResults<T> {
+    fun search(
+        headers: List<Header> = listOf(),
+        scrolling: Boolean = false,
+        scrollTtlInMinutes: Long = 1,
+        block: SearchRequest.() -> Unit
+    ): SearchResults<T> {
         val wrappedBlock: SearchRequest.() -> Unit = {
             this.indices(index)
+            if (scrolling) {
+                scroll(TimeValue.timeValueMinutes(scrollTtlInMinutes))
+            }
             block.invoke(this)
         }
-        return SearchResults(client.doSearch(headers, wrappedBlock), modelReaderAndWriter)
+
+        val searchResponse = client.doSearch(headers, wrappedBlock)
+        return if (searchResponse.scrollId == null) {
+            PagedSearchResults(searchResponse, modelReaderAndWriter)
+        } else {
+            ScrollingSearchResults(searchResponse, modelReaderAndWriter, client, scrollTtlInMinutes)
+        }
     }
 }

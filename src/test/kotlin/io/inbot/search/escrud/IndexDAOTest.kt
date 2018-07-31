@@ -7,7 +7,7 @@ import org.elasticsearch.ElasticsearchStatusException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class IndexDAOTest : AbstractElasticSearchTest() {
+class IndexDAOTest : AbstractElasticSearchTest(indexPrefix = "crud") {
     @Test
     fun `index and delete a document`() {
         val id = randomId()

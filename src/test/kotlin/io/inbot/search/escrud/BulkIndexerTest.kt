@@ -7,7 +7,7 @@ import assertk.assertions.isNotNull
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.Test
 
-class BulkIndexerTest : AbstractElasticSearchTest() {
+class BulkIndexerTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
 
     @Test
     fun `This is how you bulk index some documents`() {

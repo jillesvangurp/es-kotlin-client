@@ -116,11 +116,14 @@ dao.bulk {
     index(randomId(), TestModel("the quick brown fox"))
     index(randomId(), TestModel("the quick brown horse"))
     index(randomId(), TestModel("lorem ipsum"))
+    for(i in 0..100) {
+        index(randomId(), TestModel("another document $i"))
+    }
 }
 dao.refresh()
 
 
-// get SearchResults with our DSL
+// initiate a search against the dao's index for TestModels that match the criteria
 val results = dao.search {
   // this is now the searchRequest, the index is already set correctly
   val query = SearchSourceBuilder.searchSource()
@@ -132,12 +135,37 @@ val results = dao.search {
 
 // SeachResults wrap the original SearchResponse
 // we put totalHits at the top level for convenience
-assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits).isEqualTo(3L)
+assert(results.totalHits).isEqualTo(3L)
+
 results.hits.forEach {
     // and we deserialized the results
     assert(it.message).contains("quick")
 }
+
 ```
+
+## Scrolling searches
+
+Scrolling is kind of tedious in Elastisearch. We use Kotlin sequences to solve this.
+
+```kotlin
+// We can also scroll through everything, all you need to do is set scrolling to true
+// you can optionally override scrollTtlInMinutes, default is 1 minute
+val results = dao.search(scrolling=true) {
+  // this is now the searchRequest, the index is already set correctly
+  val query = SearchSourceBuilder.searchSource()
+      .size(7) // lets use weird page size
+      .query(matchAllQuery())
+  // set the query as the source on the search request
+  source(query)
+}
+
+// prints 100, hits is a Sequence<TestModel>
+// not calling count, consumes the sequence. If you want to use the sequence again, you have to do another search.
+assert(results.hits.count()).isEqualTo(100l)
+```
+
+The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel
 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/SearchTest.kt) for more.
 

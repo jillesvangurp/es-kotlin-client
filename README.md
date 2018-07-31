@@ -15,9 +15,9 @@ This may change when this stuff becomes more stable.
 
 # Motivation
 
-I've been implementing my own http rest clients for various versions of Elasticsearch (e.g. [this one](https://github.com/Inbot/inbot-es-http-client), that I unfortunately never had the chance to continue working on) and have grown quite opinionated on the topic. Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies. The internal java API is very complex and feature rich but a bit overkill for the simple use cases.
+I've been implementing my own http rest clients for various versions of Elasticsearch (e.g. [this one](https://github.com/Inbot/inbot-es-http-client), that I unfortunately never had the chance to continue working on) and have grown quite opinionated on the topic. Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies. The internal java API is very complex and feature rich but a bit overkill for simple use cases.
 
-Instead of writing yet another client, I decided to try to use it as is instead wrap it with a convenient Kotlin API to add things that are needed. Kotlin makes this easy with language features such as, extension functions, builtin DSL support, reified generics, sequences, etc.
+Instead of writing yet another client, I decided to try to use it as is and instead wrap it with a convenient Kotlin API to add things that are needed. Kotlin makes this easy with language features such as, extension functions, builtin DSL support, reified generics, sequences, etc.
 
 Key things I'm after in this project:
 
@@ -29,7 +29,7 @@ Key things I'm after in this project:
 - Use Kotlin language features to accomplish the above.
 
 
-This library probably overlaps with several other efforts on Github. I'm aware of at least one attempt to do a Kotlin DSL for querying.
+This library probably overlaps with several other efforts on Github. I'm aware of at least one attempt to do a Kotlin DSL for querying. I may end up pulling in these things or copying what they do.
 
 # Example 
 
@@ -142,7 +142,7 @@ val results = dao.search(scrolling=true) {
 }
 
 // prints 100, hits is a Sequence<TestModel>
-// not calling count, consumes the sequence. If you want to use the sequence again, you have to do another search.
+// Note: calling count consumes the sequence. If you want to use the sequence again, you have to do another search
 assert(results.hits.count()).isEqualTo(100l)
 ```
 
@@ -152,9 +152,9 @@ See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blo
 
 # Building
 
-You need java >= 8  and docker + docker compose.
+You need java >= 8 and docker + docker compose.
 
-Simply use the gradle wrapper:
+Simply use the gradle wrapper to build things:
 
 ```
 ./gradlew build
@@ -166,7 +166,7 @@ It will spin up elasticsearch using docker compose and run the tests. If you wan
 
 # Changelog
 
-- 0.0.1 - 0.9.0 Search/Scrolling search, bulk indexing, crud.
+- 0.0.1 - 0.9.0 Search/Scrolling search, bulk indexing, crud. Not feature complete but things are usable and useful.
 
 # Development status
 

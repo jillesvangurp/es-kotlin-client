@@ -22,19 +22,22 @@ Instead of writing yet another client, I decided to try to use it as is instead 
 Key things I'm after in this project:
 
 - Opinionated way of using Elasticsearch. I've used Elasticsearch for years, mainly using in house developed HTTP clients, and I like to use it in a certain way.
+- Cover all the typical use cases around search that you need to worry about: managing indices, ingesting data, doing searches, scrolling through results, migrating indices, etc.
+- Don't replace but enhance the official client; you can always resort to using that.
 - Provide jackson support where relevant. XContent is not a thing in Spring Boot and most places that deal with Json in the Kotlin/Java world. Users should not have to deal with that.
-- DRY & KISS. Get rid of boilerplate. Make the elasticsearch client easier to use for standard usecases. 
+- DRY & KISS. Get rid of boilerplate. Make the elasticsearch client easier to use for the standard usecases. 
 - Use Kotlin language features to accomplish the above.
+
 
 This library probably overlaps with several other efforts on Github. I'm aware of at least one attempt to do a Kotlin DSL for querying.
 
 # Development status
 
-**This is a work in progress**. I will update this readme when this changes. 
+**This is a work in progress**. This is an alpha version. I'm still adding features, refactoring, doing API and package renames, etc. When this hits 1.0 things will get more stable.
 
-I'm planning to get a lot of code (re)written for Inbot in the next weeks/months on top of this and will likely be adding new features and be refactoring quite heavily as I start doing that. API compatibility is not going to be a goal short term. As my own code base grows, this library will change less frequently and less drastically. At some point I will slap a `1.0` on it when I feel that things are stable enough. There will be bugs and other sillyness. Finally, I've only been using Kotlin for a few months and am constantly discovering useful ways to abuse various language features. E.g. reified generics, extension functions, lazy properties, etc.
+That being said, the core feature set is there, works, and is probably highly useful if you need to talk to Elasticsearch from Kotlin or Java (you may run into some Kotlin weirdness). 
 
-Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't make you unhappy by refactoring stuff you use.
+Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't accidentally make you unhappy by refactoring stuff you use.
 
 # Features (done)
 
@@ -42,12 +45,14 @@ Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early
 - Reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
 - Bulk indexer with support for index, update, and delete. Supports callbacks for items and takes care of sending and creating bulk requests. The default callback can take care of retrying updates if they fail with a conflict if you set retryConflictingUpdates to a non zero value.
 - Easy search with jackson based result mapping
+- Easy scrolling search, also with jackson based result mapping. You can do this with the same method that does the normal paged search simply by setting `scrolling = true` (defaults to false)
 
 # TODO
 
 - Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
 - Make creating and using aggregations less painful. 
-- Turn scrolling searches in a kotlin Sequence that deals with paging so you can do something like this: `dao1.bulk { dao2.searchAll().forEach { index(transform(it))} }` to pump data from one index to another while transforming the data. Doing this with the current client requires a lot of boiler plate. 
+- Index and alias management
+- Schema migration support
 
 
 # Example 

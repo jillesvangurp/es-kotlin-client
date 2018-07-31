@@ -44,7 +44,6 @@ class ScrollingSearchResults<T : Any>(
     override val searchHits: Sequence<SearchHit>
         get() {
             return responses().flatMap { response ->
-                val searchHits = response.hits.hits
                 response.hits?.asSequence() ?: emptySequence()
             }
         }

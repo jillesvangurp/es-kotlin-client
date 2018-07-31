@@ -32,7 +32,7 @@ class BulkIndexingSession<T : Any>(
         val operation: DocWriteRequest<*>,
         val id: String,
         val updateFunction: ((T) -> T)? = null,
-        val itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = { o, i -> }
+        val itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
     )
     // adding things to a request should be thread safe
     private val page = mutableListOf<BulkOperation<T>>()

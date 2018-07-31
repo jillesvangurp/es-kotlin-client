@@ -129,13 +129,14 @@ results.hits.forEach {
 The same search also works with multiline json strings in Kotlin so you don't have to jump through hoops to use raw json:
 
 ```kotlin
+val keyword="quick"
 val results = dao.search {
     source("""
     {
       "size": 20,
       "query": {
         "match": {
-          "message": "$keyWord"
+          "message": "$keyword"
         }
       }
     }

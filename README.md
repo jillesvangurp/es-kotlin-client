@@ -3,7 +3,7 @@
 
 # Introduction
 
-ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client that wraps Elasticsearch with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward.
+ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client that wraps the official Highlevel Elasticsearch HTTP client (introduced with 6.x) with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward.
 
 # Get it
 
@@ -15,17 +15,15 @@ This may change when this stuff becomes more stable.
 
 # Motivation
 
-I've been implementing my own http rest clients for various versions of Elasticsearch and have grown quite opinionated on the topic. Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies. The internal java API is very complex and feature rich but a bit overkill for the simple use cases.
+I've been implementing my own http rest clients for various versions of Elasticsearch (e.g. [this one](https://github.com/Inbot/inbot-es-http-client), that I unfortunately never had the chance to continue working on) and have grown quite opinionated on the topic. Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies. The internal java API is very complex and feature rich but a bit overkill for the simple use cases.
 
-Instead of writing yet another client, I decided to try to use it and instead wrap it with a convenient Kotlin API. Of course given that I use Kotlin, I can fix things myself by using kotlin to wrap the various things their client provides and doing some sensible things with it extension functions, the kotlin primitives for building DSLs, etc.
-
-The advantage of this approach is that you gain easy to use API and can fall back to the official API when you need to. Also, this makes it easy to use new features as Elasticsearch adds them.
+Instead of writing yet another client, I decided to try to use it as is instead wrap it with a convenient Kotlin API to add things that are needed. Kotlin makes this easy with language features such as, extension functions, builtin DSL support, reified generics, sequences, etc.
 
 Key things I'm after in this project:
 
-- Opinionated way of using Elasticsearch. I've used Elasticsearch for a while and I like to use it in a certain way. Mainly this involves using aliases, index management, having a dao abstraction, low amount of boilerplate for things that you necessarily do a lot like bulk indexing, searching for stuff, etc.
-- Provide jackson support where relevant. XContent is not a thing in Spring Boot and most places that deal with JSon. Users should not have to deal with that.
-- DRY & KISS. Get rid of boilerplate. Make the elasticsearch client easier to use for standard usecases.
+- Opinionated way of using Elasticsearch. I've used Elasticsearch for years, mainly using in house developed HTTP clients, and I like to use it in a certain way.
+- Provide jackson support where relevant. XContent is not a thing in Spring Boot and most places that deal with Json in the Kotlin/Java world. Users should not have to deal with that.
+- DRY & KISS. Get rid of boilerplate. Make the elasticsearch client easier to use for standard usecases. 
 - Use Kotlin language features to accomplish the above.
 
 This library probably overlaps with several other efforts on Github. I'm aware of at least one attempt to do a Kotlin DSL for querying.
@@ -54,8 +52,6 @@ Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early
 
 # Example 
 
-Code below liberally copy pasted from the tests, refer to the tests for working code.
-
 ## Initialization
 
 ```kotlin
@@ -70,14 +66,75 @@ val esClient = RestHighLevelClient(restClientBuilder)
 val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
 ```
 
-## Tests
+## Crud
 
-To see how it works, simply look at the tests. I may at some point write more comprehensive documentation.   
+```kotlin
+dao.index("xxx", TestModel("Hello World"))
 
-- [Crud](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/ElasticSearchCrudServiceTests.kt)
-- [Bulk Indexing](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/BulkIndexerTest.kt)
-- [Searching for stuff](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/SearchTest.kt) 
+val testModel = dao.get("xxx")
 
+// updates with conflict handling and optimistic locking
+// you apply a lambda against an original that is fetched from the index using get()
+dao.update("xxx") { original -> 
+  original.message = "Bye World"
+}
+// in case of a version conflict, it retries. The default is 2 times but you can override this.
+// version conflicts happen when you have concurrent updates to the same document
+dao.update("xxx", maxUpdateTries=10) { original -> 
+  original.message = "Bye World"
+}
+
+// deletes
+dao.delete("xxx")
+```
+See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/ElasticSearchCrudServiceTests.kt) for more.
+
+## Bulk Indexing
+
+```kotlin
+dao.bulk {
+  // creates BulkRequests on the fly
+  for (i in 0..100000) {
+    index("doc_$i", TestModel("Hi again for the $i'th time"))
+  }
+}
+// when the bulk block is processed, the last bulkRequest is send
+```
+See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/BulkIndexerTest.kt) for more
+
+## Search
+
+```kotlin
+// lets put some documents in an index
+dao.bulk {
+    index(randomId(), TestModel("the quick brown emu"))
+    index(randomId(), TestModel("the quick brown fox"))
+    index(randomId(), TestModel("the quick brown horse"))
+    index(randomId(), TestModel("lorem ipsum"))
+}
+dao.refresh()
+
+
+// get SearchResults with our DSL
+val results = dao.search {
+  // this is now the searchRequest, the index is already set correctly
+  val query = SearchSourceBuilder.searchSource()
+      .size(20)
+      .query(BoolQueryBuilder().must(MatchQueryBuilder("message", "quick")))
+  // set the query as the source on the search request
+  source(query)
+}
+
+// SeachResults wrap the original SearchResponse
+// we put totalHits at the top level for convenience
+assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits).isEqualTo(3L)
+results.hits.forEach {
+    // and we deserialized the results
+    assert(it.message).contains("quick")
+}
+```
+
+See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/SearchTest.kt) for more.
 
 # Building
 

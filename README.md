@@ -191,6 +191,7 @@ Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early
 - Index and alias management
 - Schema migration support
 - API documentation, mostly straightforward
+- Set up CI, travis? Docker might be tricky.
 
 # License
 

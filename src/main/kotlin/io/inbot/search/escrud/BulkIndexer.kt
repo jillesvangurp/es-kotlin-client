@@ -71,9 +71,9 @@ class BulkIndexer<T : Any>(
     }
 
     fun getAndUpdate(id: String, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
-        val pair = dao.getWithVersion(id)
+        val pair = dao.getWithGetResponse(id)
         if (pair != null) {
-            update(id, pair.second, pair.first, itemCallback, updateFunction)
+            update(id, pair.second.version, pair.first, itemCallback, updateFunction)
         }
     }
 

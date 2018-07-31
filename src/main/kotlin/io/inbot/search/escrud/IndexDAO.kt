@@ -7,6 +7,7 @@ import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
+import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.WriteRequest
@@ -23,7 +24,6 @@ class IndexDAO<T : Any>(
     val type: String = index // default to using index as the type but allow user to override
 
 ) {
-
     fun index(id: String, obj: T, create: Boolean = true, version: Long? = null) {
         val indexRequest = IndexRequest()
             .index(index)
@@ -82,17 +82,17 @@ class IndexDAO<T : Any>(
     }
 
     fun get(id: String): T? {
-        return getWithVersion(id)?.first
+        return getWithGetResponse(id)?.first
     }
 
-    fun getWithVersion(id: String): Pair<T, Long>? {
+    fun getWithGetResponse(id: String): Pair<T, GetResponse>? {
         val response = client.get(GetRequest().index(index).type(type).id(id))
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
             val deserialized = modelReaderAndWriter.deserialize(sourceAsBytes)
 
-            return Pair(deserialized, response.version)
+            return Pair(deserialized, response)
         }
         return null
     }

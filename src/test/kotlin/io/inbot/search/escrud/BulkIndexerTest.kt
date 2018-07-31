@@ -68,11 +68,11 @@ class BulkIndexerTest : AbstractElasticSearchTest() {
         val id = randomId()
         dao.index(id, TestModel("hi"))
         dao.update(id) { _ -> TestModel("hi wrld") }
-        val (doc, version) = dao.getWithVersion(id)!!
+        val (doc, getResponse) = dao.getWithGetResponse(id)!!
         // note this is actually the default but setting it explicitly for clarity
         dao.bulk(retryConflictingUpdates = 2) {
             // version here is wrong but we have retries set to 2 so it will recover
-            update(id, version - 1, doc) { _ -> TestModel("omg") }
+            update(id, getResponse.version - 1, doc) { _ -> TestModel("omg") }
         }
         assertk.assert(dao.get(id)!!.message).isEqualTo("omg")
     }

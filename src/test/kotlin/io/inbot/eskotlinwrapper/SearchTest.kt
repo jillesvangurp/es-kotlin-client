@@ -47,7 +47,39 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
     }
 
     @Test
-    fun shouldScrollSearches() {
+    fun `you can search by pasting json as a String from the Kibana dev console as well`() {
+        dao.bulk {
+            index(randomId(), TestModel("the quick brown emu"))
+            index(randomId(), TestModel("the quick brown fox"))
+            index(randomId(), TestModel("the quick brown horse"))
+            index(randomId(), TestModel("lorem ipsum"))
+        }
+        dao.refresh()
+        val keyWord = "quick"
+        val results = dao.search {
+            // sometimes it is nice to just paste a query you prototyped in the developer console
+            // also, Kotlin has multi line strings so this stuff is actually readable
+            // and you can use variables in them!
+            source("""
+{
+  "size": 20,
+  "query": {
+    "match": {
+      "message": "$keyWord"
+    }
+  }
+}
+            """)
+        }
+        assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits)
+        results.hits.forEach {
+            // and we use jackson to deserialize the results
+            assert(it.message).contains("$keyWord")
+        }
+    }
+
+    @Test
+    fun `scrolling searches are easy`() {
         // lets put some documents in an index
         dao.bulk {
             for (i in 1..103) {

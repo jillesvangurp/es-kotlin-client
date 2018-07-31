@@ -152,6 +152,7 @@ class IndexDAO<T : Any>(
             if (scrolling) {
                 scroll(TimeValue.timeValueMinutes(scrollTtlInMinutes))
             }
+
             block.invoke(this)
         }
 

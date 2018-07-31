@@ -69,7 +69,7 @@ dao.update("xxx", maxUpdateTries=10) { original ->
 // deletes
 dao.delete("xxx")
 ```
-See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/ElasticSearchCrudServiceTests.kt) for more.
+See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/ElasticSearchCrudServiceTests.kt) for more.
 
 ## Bulk Indexing
 
@@ -86,7 +86,7 @@ dao.bulk {
 }
 // when the bulk block exits, the last bulkRequest is send. BulkIndexingSession is AutoClosable.
 ```
-See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/BulkIndexingSessionTest.kt) for more
+See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt) for more
 
 ## Search
 
@@ -144,7 +144,7 @@ val results = dao.search {
 }
 ```
 
-See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/SearchTest.kt) for more.
+See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 
 
 ## Scrolling searches
@@ -171,7 +171,7 @@ results.hits.forEach {
 
 The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel
 
-See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/search/escrud/SearchTest.kt) for more.
+See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 
 # Building
 

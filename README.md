@@ -69,7 +69,7 @@ dao.update("xxx", maxUpdateTries=10) { original ->
 // deletes
 dao.delete("xxx")
 ```
-See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/ElasticSearchCrudServiceTests.kt) for more.
+See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/IndexDAOTest.kt) for more.
 
 ## Bulk Indexing
 

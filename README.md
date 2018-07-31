@@ -3,7 +3,7 @@
 
 # Introduction
 
-ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client for Elasticsearch.
+ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client that wraps Elasticsearch with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward.
 
 # Get it
 

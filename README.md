@@ -7,11 +7,11 @@ ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opini
 
 # Get it
 
-I'm using jitpack for releases currently. They have nice instructions:
+I'm using jitpack for releases currently; the nice thing is all I need to do is tag the release in Git and they do the rest. They have nice instructions for setting up your gradle or pom file:
 
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
-This may change when this stuff becomes more stable.
+This may change when this stuff becomes more stable. I'm planning to push this to maven central via Sonatype's OSS repository eventually. Such a PITA to set up and manage that I don't want to bother with that just yet. Ping me if this matters to you though.
 
 # Motivation
 

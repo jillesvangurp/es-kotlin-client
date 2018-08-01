@@ -189,6 +189,7 @@ It will spin up elasticsearch using docker compose and run the tests. If you wan
 
 # Changelog
 
+- 0.9.1 Add raw json support for constructing queries.
 - 0.0.1 - 0.9.0 Search/Scrolling search, bulk indexing, crud. Not feature complete but things are usable and useful.
 
 # Development status

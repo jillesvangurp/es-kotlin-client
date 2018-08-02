@@ -16,6 +16,8 @@ import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
+import java.io.InputStream
+import java.io.Reader
 import java.util.Collections
 
 private val logger: KLogger = KotlinLogging.logger { }
@@ -68,11 +70,35 @@ private val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : Deprecati
 
 private val searchModule = SearchModule(Settings.EMPTY, false, Collections.emptyList())
 
-fun SearchRequest.source(json: String) {
+fun SearchRequest.source(json: String, deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER) {
     XContentFactory.xContent(XContentType.JSON).createParser(
         NamedXContentRegistry(searchModule.namedXContents),
-        LOGGING_DEPRECATION_HANDLER,
+        deprecationHandler,
         json
+    ).use {
+        source(SearchSourceBuilder.fromXContent(it))
+    }
+}
+
+fun SearchRequest.source(reader: Reader, deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER) {
+
+    XContentFactory.xContent(XContentType.JSON).createParser(
+        NamedXContentRegistry(searchModule.namedXContents),
+        deprecationHandler,
+        reader
+    ).use {
+        source(SearchSourceBuilder.fromXContent(it))
+    }
+}
+
+fun SearchRequest.source(
+    inputStream: InputStream,
+    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER
+) {
+    XContentFactory.xContent(XContentType.JSON).createParser(
+        NamedXContentRegistry(searchModule.namedXContents),
+        deprecationHandler,
+        inputStream
     ).use {
         source(SearchSourceBuilder.fromXContent(it))
     }

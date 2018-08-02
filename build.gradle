@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.2.51'
+        kotlinVersion = '1.2.60'
         elasticsearchVersion = '6.3.2'
         junitVersion = '5.2.0'
         jacksonVersion = '2.9.6'
@@ -11,7 +11,7 @@ buildscript {
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
-        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.8.2"
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.8.3"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0' // gradle dependencyUpdates -Drevision=release
         classpath "de.thetaphi:forbiddenapis:2.5"
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.14.0'
@@ -131,7 +131,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-    compile "io.github.microutils:kotlin-logging:1.5.4"
+    compile "io.github.microutils:kotlin-logging:1.5.8"
 
     compile "org.apache.commons:commons-lang3:3.7"
 
@@ -147,7 +147,7 @@ dependencies {
     testCompile "org.slf4j:jcl-over-slf4j:1.7.25"
     testCompile "org.slf4j:log4j-over-slf4j:1.7.25"
     testCompile "org.slf4j:jul-to-slf4j:1.7.25"
-    testCompile "org.apache.logging.log4j:log4j-to-slf4j:2.11.0" // es seems to insist on log4j2
+    testCompile "org.apache.logging.log4j:log4j-to-slf4j:2.11.1" // es seems to insist on log4j2
     testCompile "ch.qos.logback:logback-classic:1.2.3"
 
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"

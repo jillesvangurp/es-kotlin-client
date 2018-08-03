@@ -31,7 +31,9 @@ Key things I'm after in this project:
 
 This library probably overlaps with several other efforts on Github. I'm aware of at least one attempt to do a Kotlin DSL for querying. I may end up pulling in these things or copying what they do.
 
-# Example 
+# Examples
+
+The examples below are not the whole story. Please look at the tests for more details on how to use this.
 
 ## Initialization
 
@@ -193,10 +195,15 @@ Simply use the gradle wrapper to build things:
 
 Look inside the build file for comments and documentation.
 
-It will spin up elasticsearch using docker compose and run the tests. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster.
+Gradle will spin up elasticsearch using docker compose and then run the tests. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making a mess there (I learned that lesson a long time ago).
 
 # Changelog
 
+- 0.9.2
+ - tweak search results api to facilitate bulk updates
+ - misc version updates for dependencies
+ - make it possible to override the deprecation handler used for parsing queries
+ - allow using Reader and InputStream on source(..) as well
 - 0.9.1 Add raw json support for constructing queries.
 - 0.0.1 - 0.9.0 Search/Scrolling search, bulk indexing, crud. Not feature complete but things are usable and useful.
 

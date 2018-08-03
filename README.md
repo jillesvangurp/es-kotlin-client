@@ -200,10 +200,10 @@ Gradle will spin up elasticsearch using docker compose and then run the tests. I
 # Changelog
 
 - 0.9.2
- - tweak search results api to facilitate bulk updates
- - misc version updates for dependencies
- - make it possible to override the deprecation handler used for parsing queries
- - allow using Reader and InputStream on source(..) as well
+  - tweak search results api to facilitate bulk updates
+  - misc version updates for dependencies
+  - make it possible to override the deprecation handler used for parsing queries
+  - allow using Reader and InputStream on source(..) as well
 - 0.9.1 Add raw json support for constructing queries.
 - 0.0.1 - 0.9.0 Search/Scrolling search, bulk indexing, crud. Not feature complete but things are usable and useful.
 

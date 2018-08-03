@@ -2,6 +2,7 @@ package io.inbot.eskotlinwrapper
 
 import assertk.assert
 import assertk.assertions.contains
+import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.BoolQueryBuilder
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test
 class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
 
     @Test
-    fun shouldFindStuff() {
+    fun `lets find some things`() {
         // lets put some documents in an index
         dao.bulk {
             index(randomId(), TestModel("the quick brown emu"))
@@ -36,12 +37,12 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
 
         // we put totalHits at the top level for convenience
         assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits)
-        results.hits.forEach {
+        results.mappedHits.forEach {
             // and we use jackson to deserialize the results
             assert(it.message).contains("quick")
         }
         // iterating twice is no problem
-        results.hits.forEach {
+        results.mappedHits.forEach {
             assert(it.message).contains("quick")
         }
     }
@@ -60,7 +61,8 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
             // sometimes it is nice to just paste a query you prototyped in the developer console
             // also, Kotlin has multi line strings so this stuff is actually readable
             // and you can use variables in them!
-            source("""
+            source(
+                """
 {
   "size": 20,
   "query": {
@@ -69,10 +71,11 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
     }
   }
 }
-            """)
+            """
+            )
         }
         assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits)
-        results.hits.forEach {
+        results.mappedHits.forEach {
             // and we use jackson to deserialize the results
             assert(it.message).contains("$keyWord")
         }
@@ -90,14 +93,55 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
 
         val results = dao.search {
             scroll(TimeValue.timeValueMinutes(1L))
-            val searchSourceBuilder = SearchSourceBuilder()
-            searchSourceBuilder.query(matchAllQuery())
-            searchSourceBuilder.size(5)
-            source(searchSourceBuilder)
+            source(
+                SearchSourceBuilder()
+                    .query(matchAllQuery())
+                    .size(5)
+            )
         }
 
-        val fetchedResultsSize = results.hits.count().toLong()
+        val fetchedResultsSize = results.mappedHits.count().toLong()
         assert(fetchedResultsSize).isEqualTo(results.totalHits)
         assert(fetchedResultsSize).isEqualTo(103L)
+    }
+
+    @Test
+    fun `scroll and bulk update works too`() {
+        dao.bulk {
+            for (i in 1..19) {
+                index(randomId(), TestModel("doc $i"))
+            }
+        }
+        dao.refresh()
+
+        val queryForAll = SearchSourceBuilder()
+            .query(matchAllQuery())
+            // we need the version so that we can do bulk updates
+            .version(true)
+            .size(5)
+        val results = dao.search {
+            scroll(TimeValue.timeValueMinutes(1L))
+            source(queryForAll)
+        }
+
+        dao.bulk {
+            results.hits.forEach { (searcHit, mapped) ->
+                update(searcHit.id, searcHit.version, mapped!!) {
+                    it.message = "${it.message} updated"
+                    it
+                }
+            }
+        }
+
+        dao.refresh()
+
+        val updatedResults = dao.search {
+            scroll(TimeValue.timeValueMinutes(1L))
+            source(queryForAll)
+        }
+        assert(updatedResults.totalHits).isEqualTo(19L)
+        updatedResults.mappedHits.forEach {
+            assert(it.message).endsWith("updated")
+        }
     }
 }

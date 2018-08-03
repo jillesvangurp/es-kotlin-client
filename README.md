@@ -3,7 +3,7 @@
 
 # Introduction
 
-ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client that wraps the official Highlevel Elasticsearch HTTP client (introduced with 6.x) with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward.
+ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client that wraps the official Highlevel Elasticsearch HTTP client for Java (introduced with 6.x) with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward. Some of these changes should also be usable by Java developers. Android is out unfortunately as the minimum requirements for the highlevel client are Java 8.
 
 # Get it
 
@@ -11,7 +11,7 @@ I'm using jitpack for releases currently; the nice thing is all I need to do is 
 
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
-This may change when this stuff becomes more stable. I'm planning to push this to maven central via Sonatype's OSS repository eventually. Such a PITA to set up and manage that I don't want to bother with that just yet. Ping me if this matters to you though.
+This may change when this stuff becomes more stable. I'm planning to push this to maven central via Sonatype's OSS repository eventually.
 
 # Motivation
 
@@ -50,6 +50,8 @@ val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
 
 ## Crud
 
+Managing documents in Elasticsearch is a lot easier if you can simply map your entities via Jacskon. The `IndexDAO` allows you to do that.
+
 ```kotlin
 dao.index("xxx", TestModel("Hello World"))
 
@@ -66,12 +68,16 @@ dao.update("xxx", maxUpdateTries=10) { original ->
   original.message = "Bye World"
 }
 
+// if you want to do an upsert, you can do that with a index and setting create=false
+dao.index("xxx", TestModel("Hello World"), create=false)
 // deletes
 dao.delete("xxx")
 ```
 See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/IndexDAOTest.kt) for more.
 
 ## Bulk Indexing
+
+The Bulk indexing API in Elasticsearch is complicated and it requires a bit of boiler plate to use and more boiler plate to use responsibly. 
 
 ```kotlin
 dao.bulk {
@@ -86,7 +92,7 @@ dao.bulk {
 }
 // when the bulk block exits, the last bulkRequest is send. BulkIndexingSession is AutoClosable.
 ```
-See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt) for more
+See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt) for more. There are many features covered there including per item callbacks, optimistic locking, setting the bulk request page size, etc.
 
 ## Search
 
@@ -143,6 +149,8 @@ val results = dao.search {
     """)
 }
 ```
+
+In the same way you can also use `InputStream` and `Reader`.
 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 

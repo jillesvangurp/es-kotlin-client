@@ -127,9 +127,19 @@ val results = dao.search {
 // we put totalHits at the top level for convenience
 assert(results.totalHits).isEqualTo(3L)
 
-results.hits.forEach {
+// searchHits is a Kotlin Sequence
+// for paged searches you can use the sequence multiple times
+results.searchHits.forEach {
+    // the SearchHits from the client
+}
+// maps the source using jackson, done lazily because we use a sequence
+results.mappedHits.forEach {
     // and we deserialized the results
     assert(it.message).contains("quick")
+}
+// or if you need both
+results.hits.forEach {(searchHit,mapped) ->
+    assert(mapped.message).contains("quick")
 }
 
 ```
@@ -159,27 +169,25 @@ See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blo
 
 ## Scrolling searches
 
-Scrolling is kind of tedious in Elastisearch. We use Kotlin sequences to solve this.
+Scrolling is kind of tedious in Elastisearch. We use Kotlin sequences to solve this. The Kotlin API is exactly the same as a normal paged search. But please note that things like ranking don't work with scrolling searches and there are other subtle differences on the Elasticserarch side. 
 
 ```kotlin
-// We can also scroll through everything, all you need to do is set scrolling to true
+// We can scroll through everything, all you need to do is set scrolling to true
 // you can optionally override scrollTtlInMinutes, default is 1 minute
 val results = dao.search(scrolling=true) {
-  // this is now the searchRequest, the index is already set correctly
   val query = SearchSourceBuilder.searchSource()
       .size(7) // lets use weird page size
       .query(matchAllQuery())
-  // set the query as the source on the search request
   source(query)
 }
 
-// Note: this consumes the sequence. If you want to use the sequence again, you have to do another search
-results.hits.forEach {
+// Note: using the sequence causes the client to request for pages. If you want to use the sequence again, you have to do another search.
+results.mappedHits.forEach {
     println(it.message)
 }
 ```
 
-The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel
+The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel. You can only do this once of course since we don't keep the whole result set in memory and the scrollids are invalidated as you use them.
 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 

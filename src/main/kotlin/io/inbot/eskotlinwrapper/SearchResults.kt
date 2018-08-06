@@ -8,8 +8,17 @@ import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.search.SearchHit
 
 interface SearchResults<T : Any> {
+    val searchHits: Sequence<SearchHit>
     val mappedHits: Sequence<T>
+        get() {
+            return searchHits.map { modelReaderAndWriter.deserialize(it) }
+        }
     val hits: Sequence<Pair<SearchHit, T?>>
+        get() {
+            return searchHits.map {
+                Pair(it, modelReaderAndWriter.deserialize(it))
+            }
+        }
 
     val totalHits: Long
     val searchResponse: SearchResponse
@@ -21,13 +30,9 @@ class PagedSearchResults<T : Any>(
     override val modelReaderAndWriter: ModelReaderAndWriter<T>
 ) : SearchResults<T> {
 
-    override val hits: Sequence<Pair<SearchHit, T?>>
+    override val searchHits: Sequence<SearchHit>
         get() {
-            return searchResponse.hits?.hits?.asSequence()?.map { Pair(it, modelReaderAndWriter.deserialize(it)) } ?: emptySequence()
-        }
-    override val mappedHits: Sequence<T>
-        get() {
-            return searchResponse.hits?.mapHits(modelReaderAndWriter) ?: emptySequence()
+            return searchResponse.hits?.hits?.asSequence() ?: emptySequence()
         }
 
     override val totalHits: Long
@@ -42,16 +47,12 @@ class ScrollingSearchResults<T : Any>(
     val restHighLevelClient: RestHighLevelClient,
     val scrollTtlInMinutes: Long
 ) : SearchResults<T> {
-    override val hits: Sequence<Pair<SearchHit, T?>>
+
+    override val searchHits: Sequence<SearchHit>
         get() {
             return responses().flatMap { response ->
-                response.hits?.asSequence()?.map { Pair(it, modelReaderAndWriter.deserialize(it)) } ?: emptySequence()
+                response.hits?.asSequence() ?: emptySequence()
             }
-        }
-
-    override val mappedHits: Sequence<T>
-        get() {
-            return hits.map { it.second!! }
         }
 
     override val totalHits: Long

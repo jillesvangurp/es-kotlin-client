@@ -55,7 +55,7 @@ fun <T : Any> SearchHits.mapHits(fn: (SearchHit) -> T): List<T> {
 
 fun <T : Any> SearchHits.mapHits(modelReaderAndWriter: ModelReaderAndWriter<T>): Sequence<T> {
     return this.hits.asSequence()
-        .map({ it -> modelReaderAndWriter.deserialize(it) ?: throw IllegalStateException("hit has no source") })
+        .map({ it -> modelReaderAndWriter.deserialize(it) })
 }
 
 private val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : DeprecationHandler {

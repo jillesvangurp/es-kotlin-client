@@ -28,12 +28,19 @@ val esClient = RestHighLevelClient(restClientBuilder)
 
 // and next we create an indexDao for our model class.
 // there's a few extension methods that add new features to the client and elsewhere
+
+// we use the refresh API in tests; you have to opt in to that being allowed explicitly 
+// since you should not use that in production code.
 val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
+
+// OR
+// type is optional (default is the index name) as this is to be deprecated in Elasticsearch and in any case you can have only 1 type per index these days.
+val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true, type: "mytype")
 ```
 
 ## Crud
 
-Managing documents in Elasticsearch is a lot easier if you can simply map your entities via Jacskon. The `IndexDAO` allows you to do that.
+Managing documents in Elasticsearch is a lot easier if you can simply map your entities via Jacskon. The `IndexDAO` allows you to do that. The idea behind this class is that most things you do in Elasticsearch you do against some index or alias. Within that index you store documents conforming to a particular schema. So, the `IndexDAO` knows both the type and the index name and takes care of providing you all the things you might want to do with this in Elasticserarch.
 
 ```kotlin
 dao.index("xxx", TestModel("Hello World"))

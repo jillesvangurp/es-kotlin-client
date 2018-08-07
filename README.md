@@ -2,7 +2,9 @@
 
 # Introduction
 
-ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a library that wraps the official Highlevel Elasticsearch HTTP client for Java (introduced with Elasticsearch 6.x) with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward. Some of these changes should also be usable by Java developers. Android is out unfortunately as the minimum requirements for the highlevel client are Java 8.
+ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a library that wraps the official Highlevel Elasticsearch HTTP client for Java (introduced with Elasticsearch 6.x) with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward. Some of these changes should also be usable by Java developers. Android is out unfortunately as the minimum requirements for the highlevel client are Java 8. 
+
+The Kotlin wrapper is an add on to the official client and you can use everything provided by that as well as benefit from the API sugar the wrapper adds. This also makes it possible to provide forward compatibility. Barring major API changes in Elasticsearch, it should be easy to keep the Kotlin wrapper working with the newer versions as they come out.
 
 # Get it
 

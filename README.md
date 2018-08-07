@@ -12,7 +12,7 @@ I'm using jitpack for releases currently; the nice thing is all I need to do is 
 
 This may change when this stuff becomes more stable. I'm planning to push this to maven central via Sonatype's OSS repository eventually.
 
-# Examples
+# Examples/highlights
 
 The examples below are not the whole story. Please look at the tests for more details on how to use this and for working examples. I try to add tests for all the features along with lots of inline documentation. 
 
@@ -60,14 +60,14 @@ See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/
 
 ## Bulk Indexing
 
-The Bulk indexing API in Elasticsearch is complicated and it requires a bit of boiler plate to use and more boiler plate to use responsibly. 
+The Bulk indexing API in Elasticsearch is complicated and it requires a bit of boiler plate to use and more boiler plate to use responsibly. This is made trivially easy with a `BulkIndexingSession` that abstracts all the hard stuff and a DSL that drives that:
 
 ```kotlin
 dao.bulk {
   // lets fill our index
   for (i in 0..1000000) {
     // inside the block, this refers to the BulkIndexingSession instance that bulk manages for you
-    // The BulkIndexingSession creates BulkRequests on the fly and sends them off 100 operations at the time 
+    // The BulkIndexingSession creates BulkRequests on the fly and sends them off 100 operations (default) at the time 
     // index, update, updateAndGet, and delete are functions that the BulkIndexingSession exposes.
     // this indexes a document
     index("doc_$i", TestModel("Hi again for the $i'th time"))
@@ -75,7 +75,7 @@ dao.bulk {
 }
 // when the bulk block exits, the last bulkRequest is send. BulkIndexingSession is AutoClosable.
 ```
-See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt) for more. There are many features covered there including per item callbacks, optimistic locking, setting the bulk request page size, etc.
+See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt) for more. There are many features covered there including per item callbacks to deal with success/failure, optimistic locking for updates (using a callback), setting the bulk request page size, etc. You can tune this a lot but the defaults should be fine for simple usecases.
 
 ## Search
 
@@ -95,7 +95,7 @@ dao.bulk {
 dao.refresh()
 ```
 
-initiate a search against the dao's index for TestModels that match the criteria
+Now lets do some search. We want to find matching TestModel instances:
 
 ```
 val results = dao.search {
@@ -107,21 +107,21 @@ val results = dao.search {
   source(query)
 }
 
-// SeachResults wrap the original SearchResponse
+// SeachResults wraps the original SearchResponse and adds some features
 // we put totalHits at the top level for convenience
 assert(results.totalHits).isEqualTo(3L)
 
-// searchHits is a Kotlin Sequence
-// for paged searches you can use the sequence multiple times
-results.searchHits.forEach {
-    // the SearchHits from the client
+// results.searchHits is a Kotlin Sequence
+results.searchHits.forEach { searchHit ->
+    // the SearchHits from the elasticsearch client
 }
-// maps the source using jackson, done lazily because we use a sequence
+
+// maps the source using jackson, done lazily because we use a Kotlin sequence
 results.mappedHits.forEach {
     // and we deserialized the results
     assert(it.message).contains("quick")
 }
-// or if you need both
+// or if you need both the original and mapped result
 results.hits.forEach {(searchHit,mapped) ->
     assert(mapped.message).contains("quick")
 }
@@ -130,7 +130,7 @@ results.hits.forEach {(searchHit,mapped) ->
 
 ## Raw Json queries
 
-The same search also works with multiline json strings in Kotlin so you don't have to jump through hoops to use raw json:
+The same search also works with multiline json strings in Kotlin so you don't have to jump through hoops to use raw json. Multiline strings are awesome in Kotlin and you can even inject variables and expressions.
 
 ```kotlin
 val keyword="quick"
@@ -148,14 +148,16 @@ val results = dao.search {
 }
 ```
 
-In the same way you can also use `InputStream` and `Reader`. Together with some templating, this may be easier to deal with than programatically constructing complex queries via  builders.
+In the same way you can also use `InputStream` and `Reader`. Together with some templating, this may be easier to deal with than programatically constructing complex queries via  builders. Up to you. I'm aware of some projects attempting a Kotlin query DSL and may end up adding support for that or something similar as well.
 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 
 
 ## Scrolling searches
 
-Scrolling is kind of tedious in Elastisearch. We use Kotlin sequences to solve this. The Kotlin API is exactly the same as a normal paged search. But please note that things like ranking don't work with scrolling searches and there are other subtle differences on the Elasticserarch side. 
+Scrolling is kind of tedious in Elastisearch. You have to keep track of scroll ids and get pages of results one by one. This requires boilerplate. We use Kotlin sequences to solve this. 
+
+The Kotlin API is exactly the same as a normal paged search (see above). But please note that things like ranking don't work with scrolling searches and there are other subtle differences on the Elasticsearch side. 
 
 ```kotlin
 // We can scroll through everything, all you need to do is set scrolling to true

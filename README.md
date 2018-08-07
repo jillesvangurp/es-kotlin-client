@@ -105,7 +105,7 @@ dao.refresh()
 
 Now lets do some search. We want to find matching TestModel instances:
 
-```
+```kotlin
 val results = dao.search {
   // this is now the searchRequest, the index is already set correctly
   val query = SearchSourceBuilder.searchSource()
@@ -133,7 +133,6 @@ results.mappedHits.forEach {
 results.hits.forEach {(searchHit,mapped) ->
     assert(mapped.message).contains("quick")
 }
-
 ```
 
 ## Raw Json queries

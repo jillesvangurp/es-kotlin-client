@@ -1,9 +1,8 @@
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
-
 # Introduction
 
-ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is an opinionated client that wraps the official Highlevel Elasticsearch HTTP client for Java (introduced with 6.x) with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward. Some of these changes should also be usable by Java developers. Android is out unfortunately as the minimum requirements for the highlevel client are Java 8.
+ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a library that wraps the official Highlevel Elasticsearch HTTP client for Java (introduced with Elasticsearch 6.x) with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward. Some of these changes should also be usable by Java developers. Android is out unfortunately as the minimum requirements for the highlevel client are Java 8.
 
 # Get it
 
@@ -12,24 +11,6 @@ I'm using jitpack for releases currently; the nice thing is all I need to do is 
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
 This may change when this stuff becomes more stable. I'm planning to push this to maven central via Sonatype's OSS repository eventually.
-
-# Motivation
-
-I've been implementing my own http rest clients for various versions of Elasticsearch (e.g. [this one](https://github.com/Inbot/inbot-es-http-client), that I unfortunately never had the chance to continue working on) and have grown quite opinionated on the topic. I also did a few variations of that for projects that I never put up on Github.
-Recently with v6, Elasticsearch released their own high level rest client. Unfortunately, it is still somewhat low level and actually merely exposes the Elasticsearch internal java api over http, which is why it pulls in most of the elasticsearch java depedendencies. The internal java API is very complex and feature rich but a bit overkill for simple use cases.
-
-Instead of writing yet another client, I decided to try to use it as is and instead wrap it with a convenient Kotlin API to add things that are needed. Kotlin makes this easy with language features such as, extension functions, builtin DSL support, reified generics, sequences, etc.
-
-Key things I'm after in this project:
-
-- Opinionated way of using Elasticsearch. I've used Elasticsearch for years, mainly using in house developed HTTP clients, and I like to use it in a certain way.
-- Cover all the typical use cases around search that you need to worry about: managing indices, ingesting data, doing searches, scrolling through results, migrating indices, etc.
-- Don't replace but enhance the official client; you can always resort to using that.
-- Provide jackson support where relevant. XContent is not a thing in Spring Boot and most places that deal with Json in the Kotlin/Java world. Users should not have to deal with that.
-- DRY & KISS. Zero tolerance for boilerplate. Make the elasticsearch client easier to use for the standard usecases.  Don't make users copy paste multiple lines of code every time they want to do something standard. Like searching for stuff or putting stuff in an index.
-- Use Kotlin language features to accomplish the above. I love Kotlin. Most of this stuff should still be usable from Java though. I'm not actively testing this but let me know if something does not work from Java and I will see if I can fix it.
-
-This library probably overlaps with several other efforts on Github. I'm aware of at least one attempt to do a Kotlin DSL for querying. I may end up pulling in these things or copying what they do.
 
 # Examples
 
@@ -193,7 +174,7 @@ See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blo
 
 # Building
 
-You need java >= 8 and docker + docker compose.
+You need java >= 8 and docker + docker compose (to run elasticsearch).
 
 Simply use the gradle wrapper to build things:
 
@@ -217,9 +198,7 @@ Gradle will spin up elasticsearch using docker compose and then run the tests. I
 
 # Development status
 
-**This is a work in progress**. This is an alpha version. I'm still adding features, refactoring, doing API and package renames, etc. When this hits 1.0 things will get more stable.
-
-That being said, the core feature set is there, works, and is probably highly useful if you need to talk to Elasticsearch from Kotlin or Java (you may run into some Kotlin weirdness). 
+**This is a work in progress**. This is an alpha version. I'm still adding features, refactoring, doing API and package renames, etc. When this hits 1.0 things will get more stable. That being said, the core feature set is there, works, and is probably highly useful if you need to talk to Elasticsearch from Kotlin or Java (you may run into some Kotlin weirdness). 
 
 Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't accidentally make you unhappy by refactoring stuff you use.
 
@@ -234,9 +213,9 @@ Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early
 ## TODO
 
 - Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
-- Make creating and using aggregations less painful. 
-- Index and alias management
-- Schema migration support
+- Make creating and using aggregations less painful and port over some work I've done for that in the past. 
+- Index and alias management with read and write alias support built in.
+- Schema versioning and migration support that uses aliases and the reindexing API.
 - API documentation, mostly straightforward
 - Set up CI, travis? Docker might be tricky.
 

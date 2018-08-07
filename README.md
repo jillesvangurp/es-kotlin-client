@@ -34,7 +34,8 @@ val esClient = RestHighLevelClient(restClientBuilder)
 val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
 
 // OR
-// type is optional (default is the index name) as this is to be deprecated in Elasticsearch and in any case you can have only 1 type per index these days.
+// type is optional (default is the index name) as this is to be deprecated 
+// in Elasticsearch and in any case you can have only 1 type per index these days.
 val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true, type: "mytype")
 ```
 
@@ -74,9 +75,9 @@ dao.bulk {
   // lets fill our index
   for (i in 0..1000000) {
     // inside the block, this refers to the BulkIndexingSession instance that bulk manages for you
-    // The BulkIndexingSession creates BulkRequests on the fly and sends them off 100 operations (default) at the time 
-    // index, update, updateAndGet, and delete are functions that the BulkIndexingSession exposes.
-    // this indexes a document
+    // The BulkIndexingSession creates BulkRequests on the fly and sends them off 100 
+    // operations (default) at the time.
+    // this indexes a document. You can also update, updateAndGet, and delete
     index("doc_$i", TestModel("Hi again for the $i'th time"))
   }
 }
@@ -176,7 +177,8 @@ val results = dao.search(scrolling=true) {
   source(query)
 }
 
-// Note: using the sequence causes the client to request for pages. If you want to use the sequence again, you have to do another search.
+// Note: using the sequence causes the client to request for pages. 
+// If you want to use the sequence again, you have to do another search.
 results.mappedHits.forEach {
     println(it.message)
 }

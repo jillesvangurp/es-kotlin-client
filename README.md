@@ -14,7 +14,7 @@ This may change when this stuff becomes more stable. I'm planning to push this t
 
 # Examples
 
-The examples below are not the whole story. Please look at the tests for more details on how to use this.
+The examples below are not the whole story. Please look at the tests for more details on how to use this and for working examples. I try to add tests for all the features along with lots of inline documentation. 
 
 ## Initialization
 
@@ -79,8 +79,9 @@ See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-cli
 
 ## Search
 
+Given an index with some documents:
+
 ```kotlin
-// lets put some documents in an index
 dao.bulk {
     index(randomId(), TestModel("the quick brown emu"))
     index(randomId(), TestModel("the quick brown fox"))
@@ -92,9 +93,11 @@ dao.bulk {
     }
 }
 dao.refresh()
+```
 
+initiate a search against the dao's index for TestModels that match the criteria
 
-// initiate a search against the dao's index for TestModels that match the criteria
+```
 val results = dao.search {
   // this is now the searchRequest, the index is already set correctly
   val query = SearchSourceBuilder.searchSource()
@@ -125,6 +128,8 @@ results.hits.forEach {(searchHit,mapped) ->
 
 ```
 
+## Raw Json queries
+
 The same search also works with multiline json strings in Kotlin so you don't have to jump through hoops to use raw json:
 
 ```kotlin
@@ -143,7 +148,7 @@ val results = dao.search {
 }
 ```
 
-In the same way you can also use `InputStream` and `Reader`.
+In the same way you can also use `InputStream` and `Reader`. Together with some templating, this may be easier to deal with than programatically constructing complex queries via  builders.
 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 

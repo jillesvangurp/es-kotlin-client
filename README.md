@@ -215,7 +215,7 @@ Gradle will spin up elasticsearch using docker compose and then run the tests. I
 
 # Development status
 
-**This is a work in progress**. This is an alpha version. I'm still adding features, refactoring, doing API and package renames, etc. When this hits 1.0 things will get more stable. That being said, the core feature set is there, works, and is probably highly useful if you need to talk to Elasticsearch from Kotlin or Java (you may run into some Kotlin weirdness). 
+**This is a work in progress**. This is an alpha version. I'm still adding features, refactoring, doing API and package renames, etc. When this hits 1.0 things will get more stable. That being said, the core feature set is there, works, and is probably highly useful if you need to talk to Elasticsearch from Kotlin.  You can also use it from Java (with some limitations) but you may run into some Kotlin weirdness. Checkout some of the Java specific tests for examples for this. 
 
 Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't accidentally make you unhappy by refactoring stuff you use.
 

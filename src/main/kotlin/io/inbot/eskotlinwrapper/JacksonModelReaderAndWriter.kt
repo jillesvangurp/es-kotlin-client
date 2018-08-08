@@ -7,6 +7,9 @@ class JacksonModelReaderAndWriter<T : Any>(
     override val clazz: KClass<T>,
     val objectMapper: ObjectMapper
 ) : ModelReaderAndWriter<T> {
+
+    constructor(javaClazz: Class<T>, objectMapper: ObjectMapper) : this(javaClazz.kotlin, objectMapper)
+
     override fun deserializer(): (ByteArray?) -> T = { bytes -> objectMapper.readValue(bytes, clazz.java)!! }
     override fun serializer(): (T) -> ByteArray = { value -> objectMapper.writeValueAsBytes(value) }
 }

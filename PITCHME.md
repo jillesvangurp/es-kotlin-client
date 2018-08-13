@@ -22,5 +22,11 @@
 @[18-19](create the Java client)
 @[22-27](now create a DAO)
 
+---?code=src/test/kotlin/io/inbot/eskotlinwrapper/TestModel.kt&lang=kotlin&title=A simple Entity
+
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/IndexDAOTest.kt&lang=kotlin&title=Using the DAO
----?code=src/test/kotlin/io/inbot/eskotlinwrapper/IndexDAOTest.kt&lang=kotlin&title=Using the DAO
+@[13-17](Create a document in the index)
+@[25](Updates)
+@[35-39](Updates with retry and optimistic locking)
+
+---?code=src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt&lang=kotlin&title=Bulk

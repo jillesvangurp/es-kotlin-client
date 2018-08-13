@@ -19,10 +19,11 @@ open class AbstractElasticSearchTest(val indexPrefix: String = "test", val delet
         esClient = RestHighLevelClient(restClientBuilder)
         // each test gets a fresh index
         indexName = "$indexPrefix-" + randomId()
-        dao = esClient.crudDao(indexName, refreshAllowed = true, modelReaderAndWriter = JacksonModelReaderAndWriter(
-            TestModel::class,
-            ObjectMapper().findAndRegisterModules()
-        )
+        dao = esClient.crudDao(
+            indexName, refreshAllowed = true, modelReaderAndWriter = JacksonModelReaderAndWriter(
+                TestModel::class,
+                ObjectMapper().findAndRegisterModules()
+            )
         )
     }
 

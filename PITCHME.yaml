@@ -1,0 +1,16 @@
+#
+# GitPitch Slideshow Custom Settings
+#
+# For details, visit Wiki:
+# https://github.com/gitpitch/gitpitch/wiki/Slideshow-Settings
+#
+theme : moon
+theme-override : assets/css/PITCHME.css
+# theme-override : assets/css/PITCHME.codemax.css
+highlight : ir-black
+logo : assets/image/logo.png
+background : assets/image/binary-strings-black.jpg
+background-opacity : 15
+transition : none
+published : true
+footnote : "GitPitch [ Black Binary ] Presentation Template"

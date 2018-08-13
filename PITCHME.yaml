@@ -10,7 +10,7 @@ theme-override : assets/css/PITCHME.css
 highlight : ir-black
 logo : assets/image/logo.png
 background : assets/image/binary-strings-black.jpg
-background-opacity : 15
+background-opacity : 80
 transition : none
 published : true
 footnote : "GitPitch [ Black Binary ] Presentation Template"

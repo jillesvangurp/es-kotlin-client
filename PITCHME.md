@@ -26,7 +26,8 @@
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/IndexDAOTest.kt&lang=kotlin&title=Using the DAO
 @[13-17](Create a document in the index)
-@[25](Updates)
+@[26](Updates)
+@[35-39](Updates with retry and optimistic locking)
 @[35-39](Updates with retry and optimistic locking)
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt&lang=kotlin&title=Bulk

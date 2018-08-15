@@ -81,6 +81,10 @@
 @[66-73](but we handle conflicts by retrying)
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt&lang=kotlin&title=Bulk
-@[21-39](bulk indexing made easy)
+@[21-31](bulk indexing made easy)
 @[49-60](updates)
 @[73-76](conflict handling)
+
+---?code=src/main/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSession.kt&lang=kotlin&title=Bulk Implementation
+
+@[21-29](lots of stuff to configure, yay defaults)

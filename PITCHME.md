@@ -105,3 +105,7 @@
 @[28,35](Paged search results are easy)
 @[44](For scrolling we need some bookkeeping)
 @[65-66,69,79](Paged search results are easy)
+
+---
+# Thanks
+### jillesvangurp @ twitter | github | linkedin | dev.to | ...

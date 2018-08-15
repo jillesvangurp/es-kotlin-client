@@ -5,27 +5,55 @@
 ---
 # Overview
 
-- brief history of me & ES
+- Elasticsearch (ES)
+- Elasticsearch clients
+- Making this stuff Kotlin friendly
 
 ---
 # Elasticsearch
 
 - You know, for search.
+  - https://www.elastic.co/
 - JSON Document store
 - Search, aggregations, did you mean, etc.
 - REST based API
 - Lots of API clients for different languages
+- Lots of sites with a searchbox use ES
 
 ---
-#
-- Es < 5.x
-  - No http client for java
-  - Talk to ES by firing up a cluster node inside your application
-  - Use internal Java APIs that use the binary cluster protocol
-- Es 5.x low level http client
-  - Internal java api deprecated for client usage
-- Es 6.x
-  - High level client
+# Elasticsearch HTTP API
+
+- CRUD for JSON documents
+- Search + JSON query DSL
+- Bulkindexing, index and alias management, aggregations
+- lots more
+
+---
+# I have a history with ES Clients
+- Built my first ES client 5 years ago. For ES 1.7
+  - Used HTTP API instead of internal cluster protocol
+  - Because ES did not have a HTTP API client for Java
+- My second attempt 2016. Es 2.x
+  - Still no HTTP based API client for Java
+  - OSS abandonware on github: https://github.com/Inbot/inbot-es-http-client
+- Es Kotlin Wrapper!
+  - ES 6.x finally added a Java HTTP client. Binary protocol is deprecated
+  - Kind of complicated to use; lots of boilerplate needed.
+  - Lacks all the features I built earlier
+  - https://github.com/jillesvangurp/es-kotlin-wrapper-client
+
+---
+# What does it do?
+
+- Uses a simple DAO abstraction for indices
+  - CRUD simple documents in an index
+  - Sane way to do bulk indexing
+  - Easy way to do searches
+  - Easy way to do scrolling searches
+
+---
+# Enough bullets
+- Code & Demos
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/AbstractElasticSearchTest.kt&lang=kotlin&title=Create the client
 @[18-19](create the Java client)

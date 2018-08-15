@@ -24,15 +24,15 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
         }
         dao.refresh()
 
-        // create a query (TODO make this nicer)
-        val query = SearchSourceBuilder.searchSource()
-            .size(20)
-            .query(BoolQueryBuilder().must(MatchQueryBuilder("message", "quick")))
-
         // get SearchResults with our DSL
         val results = dao.search {
             // this is now the searchRequest, the index is already set correctly
-            source(query)
+            source(
+                SearchSourceBuilder.searchSource()
+                    .size(20)
+                    .query(BoolQueryBuilder()
+                        .must(MatchQueryBuilder("message", "quick")))
+            )
         }
 
         // we put totalHits at the top level for convenience

@@ -90,3 +90,17 @@
 
 @[21-29](lots of stuff to configure, yay defaults)
 @[45-57](per item callback)
+
+---?code=src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt&lang=kotlin&title=Search
+
+@[28-36](Do a search)
+@[42](results are mapped for you)
+@[60-76](You can use multi line strings)
+@[122-134](scrolling search and bulk update)
+
+---?code=src/main/kotlin/io/inbot/eskotlinwrapper/SearchResults.kt&lang=kotlin&title=Search Results
+
+@[11](use kotlin sequence)
+@[16-21](lazy mapping in a sequence)
+@[28](Paged search results are easy)
+@[63-83](Paged search results are easy)

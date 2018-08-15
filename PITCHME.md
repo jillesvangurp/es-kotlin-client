@@ -95,12 +95,13 @@
 
 @[28-36](Do a search)
 @[40,42](results are mapped for you)
-@[60-76](You can use multi line strings)
-@[122-134](scrolling search and bulk update)
+@[65-74](You can use multi line strings)
+@[123](scrolling search is the same)
 
 ---?code=src/main/kotlin/io/inbot/eskotlinwrapper/SearchResults.kt&lang=kotlin&title=Search Results
 
 @[11](use kotlin sequence)
 @[16-21](lazy mapping in a sequence)
-@[28](Paged search results are easy)
-@[63-83](Paged search results are easy)
+@[28,35](Paged search results are easy)
+@[28](For scrolling we need some bookkeeping)
+@[65-66,69,79](Paged search results are easy)

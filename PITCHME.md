@@ -6,7 +6,7 @@
 # Elasticsearch
 
 - You know, for search.
-  - https://www.elastic.co/
+  - [Elastcicsearch](https://www.elastic.co/)
 - JSON Document store
 - Search, aggregations, did you mean, etc.
 - REST based API
@@ -28,12 +28,12 @@
   - Because ES did not have a HTTP API client for Java
 - My second attempt 2016. Es 2.x
   - Still no HTTP based API client for Java
-  - OSS abandonware on github: https://github.com/Inbot/inbot-es-http-client
+  - OSS abandonware on github: [Inbot/inbot-es-http-client](https://github.com/Inbot/inbot-es-http-client)
 - Es Kotlin Wrapper!
   - ES 6.x finally added a Java HTTP client. Binary protocol is deprecated
   - Kind of complicated to use; lots of boilerplate needed.
   - Lacks all the features I built earlier
-  - https://github.com/jillesvangurp/es-kotlin-wrapper-client
+  - [jillesvangurp/es-kotlin-wrapper-client](https://github.com/jillesvangurp/es-kotlin-wrapper-client)
 
 ---
 # What does it do?
@@ -56,6 +56,11 @@
 
 ---?code=src/main/kotlin/io/inbot/eskotlinwrapper/JacksonModelReaderAndWriter.kt&lang=kotlin&title=Default implementation for jackson
 
+---?code=src/main/kotlin/io/inbot/eskotlinwrapper/RestHighLevelClientExtensions.kt&lang=kotlin&title=Add Dao creation to the client
+
+@[25-31](bring your own serialization)
+@[33-44](or use the default)
+
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/TestModel.kt&lang=kotlin&title=A simple Entity
 @[4](Doesn't get any simpler)
 
@@ -75,8 +80,7 @@
 @[56](update is just another index)
 @[66-73](but we handle conflicts by retrying)
 
----?code=src/main/kotlin/io/inbot/eskotlinwrapper/RestHighLevelClientExtensions.kt&lang=kotlin&title=Add Dao creation to the client
-
-@[25-31](but we handle conflicts by retrying)
-
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt&lang=kotlin&title=Bulk
+@[21-39](bulk indexing made easy)
+@[49-60](updates)
+@[73-76](conflict handling)

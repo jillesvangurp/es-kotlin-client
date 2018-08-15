@@ -1,13 +1,6 @@
 # Kotlin Wrapper
-## for the Elasticsearch Highlevel REST Client for Java
+#### for the Elasticsearch Highlevel REST Client for Java
 ### Jilles van Gurp
-
----
-# Overview
-
-- Elasticsearch (ES)
-- Elasticsearch clients
-- Making this stuff Kotlin friendly
 
 ---
 # Elasticsearch
@@ -21,7 +14,7 @@
 - Lots of sites with a searchbox use ES
 
 ---
-# Elasticsearch HTTP API
+# ES HTTP API
 
 - CRUD for JSON documents
 - Search + JSON query DSL
@@ -29,7 +22,7 @@
 - lots more
 
 ---
-# I have a history with ES Clients
+# My ES Clients
 - Built my first ES client 5 years ago. For ES 1.7
   - Used HTTP API instead of internal cluster protocol
   - Because ES did not have a HTTP API client for Java

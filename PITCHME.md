@@ -84,7 +84,9 @@
 @[21-31](bulk indexing made easy)
 @[49-60](updates)
 @[73-76](conflict handling)
+@[88](I can has deletes)
 
 ---?code=src/main/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSession.kt&lang=kotlin&title=Bulk Implementation
 
 @[21-29](lots of stuff to configure, yay defaults)
+@[45-57](per item callback)

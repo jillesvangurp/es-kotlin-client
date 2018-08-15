@@ -4,7 +4,6 @@ import assertk.assert
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.Test
 
 class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
@@ -18,8 +17,8 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
 
         // we have paging, the bulkIndexer will send a BulkRequest every 2 operations. You don't have to worry about that.
         // we have a sane default for the refreshPolicy. If you don't do this, you risk filling up the server side queues.
-        dao.bulk(bulkSize = 2, refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) {
-            // this is the BulkIndexingSession inside the block
+        dao.bulk(bulkSize = 2) {
+            // 'this' is a BulkIndexingSession in the block
             index(ids[0], TestModel("hi"))
             index(ids[1], TestModel("world"))
             index(ids[2], TestModel("."))

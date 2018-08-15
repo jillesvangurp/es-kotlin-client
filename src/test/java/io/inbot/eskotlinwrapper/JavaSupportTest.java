@@ -35,7 +35,8 @@ public class JavaSupportTest {
                 TestBean.class,
                 objectMapper
         );
-        dao = new IndexDAO<TestBean>("test-"+ randomId(), restHighLevelClient, jacksonModelReaderAndWriter, true, "mytype");
+        // no extension functions but they can still be used
+        dao = RestHighLevelClientExtensionsKt.crudDao(restHighLevelClient,"test-"+ randomId(),jacksonModelReaderAndWriter,true);
     }
 
     @Test
@@ -50,6 +51,7 @@ public class JavaSupportTest {
     @Test
     public void shouldDoBulk() {
         Function2<BulkIndexingSession.BulkOperation<TestBean>, BulkItemResponse, Unit> callback = (o, r) -> Unit.INSTANCE;
+
         try(BulkIndexingSession<TestBean> bulkIndexer = dao.bulkIndexer(10, 2, WriteRequest.RefreshPolicy.WAIT_UNTIL, callback)) {
             for(int i=0;i<42;i++)
             bulkIndexer.index(randomId(),getBean("hello "+i),true,callback);

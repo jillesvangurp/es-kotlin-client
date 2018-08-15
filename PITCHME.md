@@ -77,11 +77,11 @@
 @[34](here's our serializer)
 @[43](update hands of to a private method that can retry)
 @[49](fetch current version)
-@[56](update is just another index)
+@[54-56](update is just another index)
 @[66-73](but we handle conflicts by retrying)
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt&lang=kotlin&title=Bulk
-@[21-31](bulk indexing made easy)
+@[21-29](bulk indexing made easy)
 @[49-60](updates)
 @[73-76](conflict handling)
 @[88](I can has deletes)
@@ -108,4 +108,4 @@
 
 ---
 # Thanks
-### jillesvangurp @ twitter | github | linkedin | dev.to | ...
+### jillesvangurp @ twitter | github | dev.to | etc.

@@ -11,6 +11,7 @@ import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
+import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -35,7 +36,7 @@ class BulkIndexingSession<T : Any>(
         val itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
     )
     // adding things to a request should be thread safe
-    private val page = mutableListOf<BulkOperation<T>>()
+    private val page = ConcurrentLinkedDeque<BulkOperation<T>>()
     private val closed = AtomicBoolean(false)
 
     // we use rw lock to protect the current page. read here means using the list (to add stuff), write means  building the bulk request and clearing the list.

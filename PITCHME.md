@@ -64,6 +64,16 @@
 @[26](Updates)
 @[35-39](Updates with retry and optimistic locking)
 @[48-51](It can fail if you are out of date)
-@[55](And if you specify the correct version it works)
+@[53](And if you specify the correct version it works)
+
+---?code=src/main/kotlin/io/inbot/eskotlinwrapper/IndexDAO.kt&lang=kotlin&title=Using the DAO
+
+@[28](use kotlin default arguments for sane defaults)
+@[34](here's our serializer)
+@[43](update hands of to a private method that can retry)
+@[49](fetch current version)
+@[56](update is just another index)
+@[66-74](but we handle conflicts by retrying)
+
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt&lang=kotlin&title=Bulk

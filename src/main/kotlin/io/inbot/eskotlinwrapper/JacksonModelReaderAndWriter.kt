@@ -8,6 +8,7 @@ class JacksonModelReaderAndWriter<T : Any>(
     val objectMapper: ObjectMapper
 ) : ModelReaderAndWriter<T> {
 
+    // so we can instantiate from Java as well
     constructor(javaClazz: Class<T>, objectMapper: ObjectMapper) : this(javaClazz.kotlin, objectMapper)
 
     override fun deserializer(): (ByteArray?) -> T = { bytes -> objectMapper.readValue(bytes, clazz.java)!! }

@@ -94,7 +94,7 @@
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt&lang=kotlin&title=Search
 
 @[28-36](Do a search)
-@[42](results are mapped for you)
+@[40,42](results are mapped for you)
 @[60-76](You can use multi line strings)
 @[122-134](scrolling search and bulk update)
 

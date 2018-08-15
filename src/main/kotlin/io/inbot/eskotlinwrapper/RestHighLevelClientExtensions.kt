@@ -10,14 +10,17 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.xcontent.DeprecationHandler
 import org.elasticsearch.common.xcontent.NamedXContentRegistry
+import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentFactory
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.Reader
+import java.nio.charset.StandardCharsets
 import java.util.Collections
 
 private val logger: KLogger = KotlinLogging.logger { }
@@ -102,4 +105,17 @@ fun SearchRequest.source(
     ).use {
         source(SearchSourceBuilder.fromXContent(it))
     }
+}
+
+fun ToXContent.stringify(pretty: Boolean = false): String {
+    val bos = ByteArrayOutputStream()
+    val builder = XContentFactory.jsonBuilder(bos)
+    if (pretty) {
+        builder.prettyPrint()
+    }
+    toXContent(builder, ToXContent.EMPTY_PARAMS)
+    builder.close()
+    bos.flush()
+    bos.close()
+    return bos.toByteArray().toString(StandardCharsets.UTF_8)
 }

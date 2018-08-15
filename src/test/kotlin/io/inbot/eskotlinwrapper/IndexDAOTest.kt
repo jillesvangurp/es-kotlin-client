@@ -51,5 +51,6 @@ class IndexDAOTest : AbstractElasticSearchTest(indexPrefix = "crud") {
         }
         // you can do manual optimistic locking
         dao.index(id, TestModel("bar"), create = false, version = 1)
+        assert(dao.get(id)!!.message).isEqualTo("bar")
     }
 }

@@ -52,12 +52,18 @@
 @[18-19](create the Java client)
 @[22-27](now create a DAO)
 
+---?code=src/main/kotlin/io/inbot/eskotlinwrapper/ModelReaderAndWriter.kt&lang=kotlin&title=Serialization
+
+---?code=src/main/kotlin/io/inbot/eskotlinwrapper/JacksonModelReaderAndWriter.kt&lang=kotlin&title=Default implementation for jackson
+
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/TestModel.kt&lang=kotlin&title=A simple Entity
+@[4](Doesn't get any simpler)
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/IndexDAOTest.kt&lang=kotlin&title=Using the DAO
 @[13-17](Create a document in the index)
 @[26](Updates)
 @[35-39](Updates with retry and optimistic locking)
-@[35-39](Updates with retry and optimistic locking)
+@[48-51](It can fail if you are out of date)
+@[55](And if you specify the correct version it works)
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt&lang=kotlin&title=Bulk

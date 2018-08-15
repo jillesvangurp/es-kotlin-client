@@ -28,7 +28,8 @@ apply plugin: 'com.github.ben-manes.versions'
 
 forbiddenApis {
     // https://github.com/policeman-tools/forbidden-apis/wiki/GradleUsage
-    bundledSignatures = ["jdk-unsafe-9", "jdk-deprecated-9", "jdk-non-portable", "jdk-internal-9", "jdk-system-out"]
+    bundledSignatures = ["jdk-unsafe-9", "jdk-deprecated-9", "jdk-non-portable", "jdk-internal-9"]
+    // take out "jdk-system-out"
     signaturesFiles = files("forbidden_signatures.txt")
     ignoreFailures = false
 }

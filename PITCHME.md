@@ -1,14 +1,23 @@
-# ES Kotlin Wrapper
+# Kotlin Wrapper
 ## for the Elasticsearch Highlevel REST Client for Java
+### Jilles van Gurp
 
 ---
+# Overview
 
 - brief history of me & ES
-- why
-- how
-- demo
 
 ---
+# Elasticsearch
+
+- You know, for search.
+- JSON Document store
+- Search, aggregations, did you mean, etc.
+- REST based API
+- Lots of API clients for different languages
+
+---
+#
 - Es < 5.x
   - No http client for java
   - Talk to ES by firing up a cluster node inside your application

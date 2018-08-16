@@ -29,11 +29,13 @@
 - My second attempt 2016. Es 2.x
   - Still no HTTP based API client for Java
   - OSS abandonware on github: [Inbot/inbot-es-http-client](https://github.com/Inbot/inbot-es-http-client)
-- Es Kotlin Wrapper!
+---
+# Es Kotlin Wrapper
   - ES 6.x finally added a Java HTTP client. Binary protocol is deprecated
   - Kind of complicated to use; lots of boilerplate needed.
   - Lacks all the features I built earlier
-  - [jillesvangurp/es-kotlin-wrapper-client](https://github.com/jillesvangurp/es-kotlin-wrapper-client)
+  - So I fixed it
+    - [jillesvangurp/es-kotlin-wrapper-client](https://github.com/jillesvangurp/es-kotlin-wrapper-client)
 
 ---
 # What does it do?
@@ -43,6 +45,8 @@
   - Sane way to do bulk indexing
   - Easy way to do searches
   - Easy way to do scrolling searches
+- More coming soon
+  - PRs welcome
 
 ---
 # Enough bullets

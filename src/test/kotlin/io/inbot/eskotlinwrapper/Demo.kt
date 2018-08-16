@@ -20,36 +20,7 @@ data class SourceFile(
     val line: String
 )
 
-fun main(args: Array<String>) {
-    val restClientBuilder = RestClient.builder(HttpHost("localhost", 9200, "http"))
-    val esClient = RestHighLevelClient(restClientBuilder)
-    val dao = esClient.crudDao<SourceFile>("demo")
-
-//    reindex(esClient, dao)
-
-//    listFiles(dao)
-
-    breakItDown(dao, "name")
-//    breakItDown(dao, "extension")
-//    breakItDown(dao, "directory")
-
-//    searchLines(dao, "kotlin")
-
-    esClient.close()
-}
-
-fun reindex(
-    esClient: RestHighLevelClient,
-    dao: IndexDAO<SourceFile>
-) {
-    try {
-        esClient.indices().delete(DeleteIndexRequest("demo"))
-    } catch (e: Exception) {
-        println("so it did not exist ...")
-    }
-    esClient.indices().create(
-        CreateIndexRequest("demo").mapping(
-            "demo", """
+val demoMapping = """
 {
     "demo": {
         "properties": {
@@ -66,7 +37,41 @@ fun reindex(
     }
 }
 
-""".trimIndent(), XContentType.JSON
+""".trimIndent()
+
+fun main(args: Array<String>) {
+    val restClientBuilder = RestClient.builder(HttpHost("localhost", 9200, "http"))
+    val esClient = RestHighLevelClient(restClientBuilder)
+    val dao = esClient.crudDao<SourceFile>("demo")
+
+//    reindex(esClient, dao)
+
+//    listFiles(dao)
+
+    breakItDown(dao, "name")
+//    breakItDown(dao, "extension")
+//    breakItDown(dao, "directory")
+
+//    searchLines(dao, "kotlin")
+//    searchLines(dao, "wtf")
+//    searchLines(dao, "shit")
+
+    esClient.close()
+}
+
+fun reindex(
+    esClient: RestHighLevelClient,
+    dao: IndexDAO<SourceFile>
+) {
+    try {
+        esClient.indices().delete(DeleteIndexRequest("demo"))
+    } catch (e: Exception) {
+        println("index did not exist, moving on ...")
+    }
+
+    esClient.indices().create(
+        CreateIndexRequest("demo").mapping(
+            "demo", demoMapping, XContentType.JSON
         )
     )
 
@@ -97,7 +102,7 @@ fun reindex(
             }
         }
     }
-    println("done!\n\n")
+    println("done!")
 }
 
 fun searchLines(dao: IndexDAO<SourceFile>, term: String) {

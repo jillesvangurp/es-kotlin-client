@@ -39,7 +39,7 @@ html:-moz-full-screen-ancestor {
   padding: 1px 15px;
   border-radius: 15px;
   opacity: 0.75 !important;
-  font-size: 2em !important;
+  font-size: 1em !important;
 }
 
 .reveal p span.slide-title {

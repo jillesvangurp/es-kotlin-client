@@ -26,9 +26,10 @@ html:-moz-full-screen-ancestor {
 }
 
 .reveal pre code {
-  font-size: 1.2em;
-  line-height: 1.2;
+  font-size: 1em;
+  line-height: 1;
   max-height: 50vh !important;
+  opacity: 0.95;
   border-radius: 10px;
 }
 
@@ -38,16 +39,15 @@ html:-moz-full-screen-ancestor {
   padding: 1px 15px;
   border-radius: 15px;
   opacity: 0.75 !important;
-  font-size: 50% !important;
+  font-size: 1em !important;
 }
 
 .reveal p span.slide-title {
-  color: white;
+  color: #eee8d5;
   padding: 4px 15px;
   opacity: 0.75 !important;
   border-radius: 15px;
 }
-
 .reveal div.left {
     float: left;
     z-index: -10;
@@ -64,10 +64,6 @@ html:-moz-full-screen-ancestor {
     font-size: 0.5em;
 }
 
-.hljs {
-  background : none;
-}
-
 #gp-logo img {
   max-height: 2em;
   max-width: none;
@@ -78,4 +74,3 @@ html:-moz-full-screen-ancestor {
 .gp-contact { font-size : 1.4em; }
 
 .gp-download { margin-left: 10px; }
-

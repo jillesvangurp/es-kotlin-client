@@ -3,6 +3,7 @@ package io.inbot.eskotlinwrapper
 import org.apache.http.HttpHost
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
@@ -20,7 +21,7 @@ data class SourceFile(
 )
 
 fun main(args: Array<String>) {
-    val restClientBuilder = RestClient.builder(HttpHost("localhost", 9999, "http"))
+    val restClientBuilder = RestClient.builder(HttpHost("localhost", 9200, "http"))
     val esClient = RestHighLevelClient(restClientBuilder)
     val dao = esClient.crudDao<SourceFile>("demo")
 
@@ -31,7 +32,9 @@ fun main(args: Array<String>) {
 //    breakItDown(dao, "directory")
 //    breakItDown(dao, "extension")
 //
-//    findFiles(dao, "bulk")
+    findFiles(dao, "bulk")
+
+    esClient.close()
 }
 
 fun findFiles(dao: IndexDAO<SourceFile>, term: String) {
@@ -103,7 +106,7 @@ fun reindex(
 
     val allowedExtensions = setOf("java", "kt", "py", "sh")
 
-    dao.bulk {
+    dao.bulk(refreshPolicy = WriteRequest.RefreshPolicy.NONE, bulkSize = 300) {
         File("/Users/jillesvangurp/git").walk().forEach {
             if (it.isFile && allowedExtensions.contains(it.extension)) {
                 println("indexing ${it.name}")

@@ -10,7 +10,6 @@ theme-override : assets/css/PITCHME.css
 highlight : ir-black
 code-line-numbers : true
 logo : assets/image/logo.png
-# background : assets/image/binary-strings-black.jpg
 # background-opacity : 80
 transition : none
 published : false

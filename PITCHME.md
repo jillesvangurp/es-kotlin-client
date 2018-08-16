@@ -61,8 +61,8 @@
 
 ---?code=src/main/kotlin/io/inbot/eskotlinwrapper/RestHighLevelClientExtensions.kt&lang=kotlin&title=Add Dao creation to the client
 
-@[28-31](extension function, bring your own serialization)
-@[33-44](or use the default, #ifoundauseforreifiedgenerics)
+@[28-34](extension function, bring your own serialization)
+@[36-44](or use the default, #ifoundauseforreifiedgenerics)
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/TestModel.kt&lang=kotlin&title=A simple Entity
 @[4](Doesn't get any simpler)

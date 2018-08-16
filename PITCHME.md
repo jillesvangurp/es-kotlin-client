@@ -32,19 +32,18 @@
 ---
 # Es Kotlin Wrapper
   - ES 6.x finally added a Java HTTP client. Binary protocol is deprecated
-  - Kind of complicated to use; lots of boilerplate needed.
-  - Lacks all the features I built earlier
+    - Kind of complicated to use; lots of boilerplate needed.
+    - Lacks all the features I built earlier
   - So I fixed it
     - [jillesvangurp/es-kotlin-wrapper-client](https://github.com/jillesvangurp/es-kotlin-wrapper-client)
 
 ---
 # What does it do?
 
+- Wraps and enriches Java client
 - Uses a simple DAO abstraction for indices
   - CRUD simple documents in an index
-  - Sane way to do bulk indexing
-  - Easy way to do searches
-  - Easy way to do scrolling searches
+  - Easy ways to do bulk indexing, searches, scrolling searches
 - More coming soon
   - PRs welcome
 
@@ -112,4 +111,15 @@
 
 ---
 # Thanks
+
+```gradle
+repositories {
+  maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+  implementation 'com.github.jillesvangurp:es-kotlin-wrapper-client:v0.9.3'
+}
+```
+
 ### jillesvangurp @ twitter | github | dev.to | etc.

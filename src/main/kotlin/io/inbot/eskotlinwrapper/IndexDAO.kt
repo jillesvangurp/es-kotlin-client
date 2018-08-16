@@ -103,7 +103,7 @@ class IndexDAO<T : Any>(
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
         itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-        operationsBlock: BulkIndexingSession<T>.(bulkAPIFacade: BulkIndexingSession<T>) -> Unit
+        operationsBlock: BulkIndexingSession<T>.(session: BulkIndexingSession<T>) -> Unit
     ) {
         val indexer = bulkIndexer(
             bulkSize = bulkSize,

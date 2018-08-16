@@ -17,7 +17,7 @@ data class SourceFile(
     val extension: String,
     val directory: String,
     val size: Long,
-    val content: String
+    val line: String
 )
 
 fun main(args: Array<String>) {
@@ -25,51 +25,17 @@ fun main(args: Array<String>) {
     val esClient = RestHighLevelClient(restClientBuilder)
     val dao = esClient.crudDao<SourceFile>("demo")
 
-    reindex(esClient, dao)
+//    reindex(esClient, dao)
 
 //    listFiles(dao)
 
-//    breakItDown(dao, "directory")
+    breakItDown(dao, "name")
 //    breakItDown(dao, "extension")
-//
-    findFiles(dao, "bulk")
+//    breakItDown(dao, "directory")
+
+//    searchLines(dao, "kotlin")
 
     esClient.close()
-}
-
-fun findFiles(dao: IndexDAO<SourceFile>, term: String) {
-    println("All files containing the word bulk")
-    println(dao.search {
-        source(SearchSourceBuilder.searchSource().query(MatchQueryBuilder("content", term)))
-    }.searchResponse.stringify(true))
-}
-
-fun breakItDown(dao: IndexDAO<SourceFile>, field: String) {
-    val results = dao.search {
-        source(
-"""
-{
-    "size": 0,
-    "aggs": {
-        "by_directory": {
-            "terms": {
-                "field":"$field"
-            }
-        }
-    }
-}
-""".trimIndent()
-        )
-    }
-
-    println(
-"""
-Top $field's:
-
-${results.searchResponse.stringify(true)}
-
-""".trimIndent()
-    )
 }
 
 fun reindex(
@@ -104,27 +70,69 @@ fun reindex(
         )
     )
 
-    val allowedExtensions = setOf("java", "kt", "py", "sh")
+    val allowedExtensions = setOf("java", "kt", "sh")
 
-    dao.bulk(refreshPolicy = WriteRequest.RefreshPolicy.NONE, bulkSize = 300) {
-        File("/Users/jillesvangurp/git").walk().forEach {
-            if (it.isFile && allowedExtensions.contains(it.extension)) {
-                println("indexing ${it.name}")
-                index(
-                    it.name,
-                    SourceFile(
-                        it.name,
-                        it.extension,
-                        it.parentFile.canonicalPath,
-                        it.length(),
-                        it.readText(StandardCharsets.UTF_8)
-                    ),
-                    create = false
-                )
+    dao.bulk(refreshPolicy = WriteRequest.RefreshPolicy.NONE, bulkSize = 1000) {
+        File("/Users/jillesvangurp/git").walk().forEach { file ->
+            if (file.isFile && allowedExtensions.contains(file.extension)) {
+                println("indexing ${file.name}")
+
+                var lineCounter = 0
+                file.readLines(StandardCharsets.UTF_8).forEach { line ->
+                    val id = file.name + "#" + lineCounter++
+                    if (line.trim().length>2) {
+                        index(
+                            id,
+                            SourceFile(
+                                file.name,
+                                file.extension,
+                                file.parentFile.canonicalPath,
+                                file.length(),
+                                line
+                            ),
+                            create = false
+                        )
+                    }
+                }
             }
         }
     }
     println("done!\n\n")
+}
+
+fun searchLines(dao: IndexDAO<SourceFile>, term: String) {
+    println("All files containing the word bulk")
+    println(dao.search {
+        source(SearchSourceBuilder.searchSource().query(MatchQueryBuilder("line", term)))
+    }.searchResponse.stringify(true))
+}
+
+fun breakItDown(dao: IndexDAO<SourceFile>, field: String) {
+    val results = dao.search {
+        source(
+"""
+{
+    "size": 0,
+    "aggs": {
+        "by_directory": {
+            "terms": {
+                "field":"$field"
+            }
+        }
+    }
+}
+""".trimIndent()
+        )
+    }
+
+    println(
+"""
+Top $field's:
+
+${results.searchResponse.stringify(true)}
+
+""".trimIndent()
+    )
 }
 
 fun listFiles(dao: IndexDAO<SourceFile>) {

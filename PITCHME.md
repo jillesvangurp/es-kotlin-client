@@ -107,7 +107,7 @@
 @[16-21](lazy mapping in a sequence)
 @[28,35](Paged search results are easy)
 @[44](For scrolling we need some bookkeeping)
-@[65-66,69,79](Paged search results are easy)
+@[64-66,69,82](Paged search results are easy)
 
 ---
 # Thanks

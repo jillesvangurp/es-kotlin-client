@@ -86,8 +86,8 @@
 
 ---?code=src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt&lang=kotlin&title=Bulk
 @[21-29](bulk indexing made easy)
-@[49-60](updates)
-@[73-76](conflict handling)
+@[48-59](updates)
+@[72-75](conflict handling)
 @[88](I can has deletes)
 
 ---?code=src/main/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSession.kt&lang=kotlin&title=Bulk Implementation

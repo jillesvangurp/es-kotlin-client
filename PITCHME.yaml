@@ -14,3 +14,5 @@ logo : assets/image/logo.png
 transition : none
 published : false
 footnote : "Kotlin Wrapper client for Elasticsearch"
+
+theme-override : assets/css/PITCHME.css

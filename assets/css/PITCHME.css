@@ -28,7 +28,7 @@ html:-moz-full-screen-ancestor {
 .reveal pre code {
   font-size: 0.9em;
   line-height: 0.9;
-  letter-spacing: -1px;
+  letter-spacing: -2px;
   max-height: 50vh !important;
   opacity: 0.95;
   border-radius: 10px;

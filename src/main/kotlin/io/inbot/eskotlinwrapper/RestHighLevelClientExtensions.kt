@@ -6,6 +6,7 @@ import mu.KotlinLogging
 import org.apache.http.Header
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.xcontent.DeprecationHandler
@@ -49,7 +50,9 @@ inline fun <reified T : Any> RestHighLevelClient.crudDao(
 fun RestHighLevelClient.doSearch(headers: List<Header> = listOf(), block: SearchRequest.() -> Unit): SearchResponse {
     val searchRequest = SearchRequest()
     block.invoke(searchRequest)
-    return this.search(searchRequest, *headers.toTypedArray())
+    val requestOptions = RequestOptions.DEFAULT.toBuilder()
+    headers.forEach { requestOptions.addHeader(it.name, it.value) }
+    return this.search(searchRequest, requestOptions.build())
 }
 
 fun <T : Any> SearchHits.mapHits(fn: (SearchHit) -> T): List<T> {

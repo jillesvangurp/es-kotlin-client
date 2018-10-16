@@ -4,6 +4,7 @@ import org.apache.http.HttpHost
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.support.WriteRequest
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
@@ -64,7 +65,7 @@ fun reindex(
     dao: IndexDAO<SourceFile>
 ) {
     try {
-        esClient.indices().delete(DeleteIndexRequest("demo"))
+        esClient.indices().delete(DeleteIndexRequest("demo"), RequestOptions.DEFAULT)
     } catch (e: Exception) {
         println("index did not exist, moving on ...")
     }
@@ -72,7 +73,7 @@ fun reindex(
     esClient.indices().create(
         CreateIndexRequest("demo").mapping(
             "demo", demoMapping, XContentType.JSON
-        )
+        ), RequestOptions.DEFAULT
     )
 
     val allowedExtensions = setOf("java", "kt", "sh")

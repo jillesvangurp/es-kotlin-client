@@ -8,6 +8,7 @@ import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.action.update.UpdateRequest
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
@@ -20,13 +21,13 @@ import kotlin.concurrent.write
 private val logger = KotlinLogging.logger {}
 
 class BulkIndexingSession<T : Any>(
-    val client: RestHighLevelClient,
-    val dao: IndexDAO<T>,
-    val modelReaderAndWriter: ModelReaderAndWriter<T>,
-    val bulkSize: Int = 100,
-    val retryConflictingUpdates: Int = 0,
-    val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-    val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null
+    private val client: RestHighLevelClient,
+    private val dao: IndexDAO<T>,
+    private val modelReaderAndWriter: ModelReaderAndWriter<T>,
+    private val bulkSize: Int = 100,
+    private val retryConflictingUpdates: Int = 0,
+    private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+    private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null
 ) : AutoCloseable { // autocloseable so we flush all the items ...
 
     data class BulkOperation<T : Any>(
@@ -148,7 +149,7 @@ class BulkIndexingSession<T : Any>(
             bulkRequest.refreshPolicy = refreshPolicy
             pageClone.forEach { bulkRequest.add(it.operation) }
             logger.debug { "flushing ${page.size} items" }
-            val bulkResponse = client.bulk(bulkRequest)
+            val bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT)
             if (bulkResponse != null) {
                 bulkResponse.items.forEach {
                     val bulkOperation = pageClone[it.itemId]

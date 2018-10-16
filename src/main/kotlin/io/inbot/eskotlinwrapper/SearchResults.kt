@@ -3,6 +3,7 @@ package io.inbot.eskotlinwrapper
 import org.elasticsearch.action.search.ClearScrollRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchScrollRequest
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.search.SearchHit
@@ -66,17 +67,17 @@ class ScrollingSearchResults<T : Any>(
             nextFunction = {
                 val currentScrollId = it.scrollId
                 if (currentScrollId != null && it.hits.hits != null && it.hits.hits.size > 0) {
-                    restHighLevelClient.searchScroll(
+                    restHighLevelClient.scroll(
                         SearchScrollRequest(currentScrollId).scroll(
                             TimeValue.timeValueMinutes(
                                 scrollTtlInMinutes
                             )
-                        )
+                        ), RequestOptions.DEFAULT
                     )
                 } else {
                     val clearScrollRequest = ClearScrollRequest()
                     clearScrollRequest.addScrollId(currentScrollId)
-                    restHighLevelClient.clearScroll(clearScrollRequest)
+                    restHighLevelClient.clearScroll(clearScrollRequest, RequestOptions.DEFAULT)
                     null
                 }
             })

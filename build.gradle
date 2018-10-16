@@ -1,9 +1,9 @@
 buildscript {
     ext {
-        kotlinVersion = '1.2.60'
-        elasticsearchVersion = '6.3.2'
-        junitVersion = '5.2.0'
-        jacksonVersion = '2.9.6'
+        kotlinVersion = '1.2.71'
+        elasticsearchVersion = '6.4.2'
+        junitVersion = '5.3.1'
+        jacksonVersion = '2.9.7'
     }
     repositories {
         jcenter()
@@ -11,10 +11,10 @@ buildscript {
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
-        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.8.3"
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.8.8"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0' // gradle dependencyUpdates -Drevision=release
-        classpath "de.thetaphi:forbiddenapis:2.5"
-        classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.14.0'
+        classpath "de.thetaphi:forbiddenapis:2.6"
+        classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.15.0'
     }
 }
 
@@ -132,9 +132,9 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-    compile "io.github.microutils:kotlin-logging:1.5.8"
+    compile "io.github.microutils:kotlin-logging:1.6.10"
 
-    compile "org.apache.commons:commons-lang3:3.7"
+    compile "org.apache.commons:commons-lang3:3.8.1"
 
     compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
@@ -154,7 +154,7 @@ dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testCompile "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 
-    testCompile "io.mockk:mockk:1.8.5"
+    testCompile "io.mockk:mockk:1.8.9"
     testCompile 'com.willowtreeapps.assertk:assertk:0.10'
 
 }

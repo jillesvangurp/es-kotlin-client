@@ -11,6 +11,8 @@ import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.WriteRequest
+import org.elasticsearch.client.Request
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
@@ -36,7 +38,7 @@ class IndexDAO<T : Any>(
             indexRequest.version(version)
         }
         client.index(
-            indexRequest
+            indexRequest, RequestOptions.DEFAULT
         )
     }
 
@@ -46,7 +48,7 @@ class IndexDAO<T : Any>(
 
     private fun update(tries: Int, id: String, transformFunction: (T) -> T, maxUpdateTries: Int) {
         try {
-            val response = client.get(GetRequest().index(index).type(index).id(id))
+            val response = client.get(GetRequest().index(index).type(index).id(id), RequestOptions.DEFAULT)
             val currentVersion = response.version
 
             val sourceAsBytes = response.sourceAsBytes
@@ -79,7 +81,7 @@ class IndexDAO<T : Any>(
     }
 
     fun delete(id: String) {
-        client.delete(DeleteRequest().index(index).type(type).id(id))
+        client.delete(DeleteRequest().index(index).type(type).id(id), RequestOptions.DEFAULT)
     }
 
     fun get(id: String): T? {
@@ -87,7 +89,7 @@ class IndexDAO<T : Any>(
     }
 
     fun getWithGetResponse(id: String): Pair<T, GetResponse>? {
-        val response = client.get(GetRequest().index(index).type(type).id(id))
+        val response = client.get(GetRequest().index(index).type(type).id(id), RequestOptions.DEFAULT)
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
@@ -135,7 +137,7 @@ class IndexDAO<T : Any>(
     fun refresh() {
         if (refreshAllowed) {
             // calling this is not safe in production settings but highly useful in tests
-            client.lowLevelClient.performRequest("POST", "/$index/_refresh")
+            client.lowLevelClient.performRequest(Request("POST", "/$index/_refresh"))
         } else {
             throw UnsupportedOperationException("refresh is not allowed; you need to opt in by setting refreshAllowed to true")
         }

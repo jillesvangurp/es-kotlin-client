@@ -2,9 +2,9 @@
 
 # Introduction
 
-ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a library that wraps the official Highlevel Elasticsearch HTTP client for Java (introduced with Elasticsearch 6.x) with some Kotlin specific goodness. This adds convenience, cuts down on boilerplate, and makes using Elasticsearch safely easy and straightforward. Some of these changes should also be usable by Java developers. Android is out unfortunately as the minimum requirements for the highlevel client are Java 8. 
+ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that adapts the official Highlevel Elasticsearch HTTP client for Java (introduced with Elasticsearch 6.x) with some Kotlin specific goodness.
 
-The Kotlin wrapper is an add on to the official client and you can use everything provided by that as well as benefit from the API sugar the wrapper adds. This also makes it possible to provide forward compatibility. Barring major API changes in Elasticsearch, it should be easy to keep the Kotlin wrapper working with the newer versions as they come out.
+It adds convenience methods, cuts down on boilerplate through use of several kotlin featurs, and makes using Elasticsearch easy and straightforward. Some of these changes are also be usable by Java developers (with some restrictions). Android is not supported as the minimum requirements for the highlevel client are Java 8. 
 
 # Get it
 
@@ -43,7 +43,7 @@ val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
 val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true, type: "mytype")
 ```
 
-## Crud
+## Crud with Entities and Jackson
 
 Managing documents in Elasticsearch is a lot easier if you can simply map your entities via Jacskon. The `IndexDAO` allows you to do that. The idea behind this class is that most things you do in Elasticsearch you do against some index or alias. Within that index you store documents conforming to a particular schema. So, the `IndexDAO` knows both the type and the index name and takes care of providing you all the things you might want to do with this in Elasticserarch.
 
@@ -70,7 +70,9 @@ dao.delete("xxx")
 ```
 See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/IndexDAOTest.kt) for more.
 
-## Bulk Indexing
+If you want you should also be able to support alternative ways of mapping entities using e.g. gson or similar frameworks.
+
+## Bulk Indexing using a BulkIndexingSession
 
 The Bulk indexing API in Elasticsearch is complicated and it requires a bit of boiler plate to use and more boiler plate to use responsibly. This is made trivially easy with a `BulkIndexingSession` that abstracts all the hard stuff and a DSL that drives that:
 
@@ -87,7 +89,9 @@ dao.bulk {
 }
 // when the bulk block exits, the last bulkRequest is send. BulkIndexingSession is AutoClosable.
 ```
-See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt) for more. There are many features covered there including per item callbacks to deal with success/failure, optimistic locking for updates (using a callback), setting the bulk request page size, etc. You can tune this a lot but the defaults should be fine for simple usecases.
+See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt) for more. 
+
+There are many features covered there including per item callbacks to deal with success/failure per bulk item (rather than per page), optimistic locking for updates (using a callback), setting the bulk request page size, etc. You can tune this a lot but the defaults should be fine for simple usecases.
 
 ## Search
 
@@ -107,11 +111,12 @@ dao.bulk {
 dao.refresh()
 ```
 
-Now lets do some search. We want to find matching TestModel instances:
+... lets do some searches. We want to find matching TestModel instances:
 
 ```kotlin
 val results = dao.search {
   // this is now the searchRequest, the index is already set correctly
+  // you can use it as you would normally. Here we simply use the query DSL in the high level client.
   val query = SearchSourceBuilder.searchSource()
       .size(20)
       .query(BoolQueryBuilder().must(MatchQueryBuilder("message", "quick")))
@@ -128,7 +133,7 @@ results.searchHits.forEach { searchHit ->
     // the SearchHits from the elasticsearch client
 }
 
-// maps the source using jackson, done lazily because we use a Kotlin sequence
+// mappedHits maps the source using jackson, done lazily because we use a Kotlin sequence
 results.mappedHits.forEach {
     // and we deserialized the results
     assert(it.message).contains("quick")
@@ -139,7 +144,7 @@ results.hits.forEach {(searchHit,mapped) ->
 }
 ```
 
-## Raw Json queries
+## Raw Json queries and multi line strings
 
 The same search also works with multiline json strings in Kotlin so you don't have to jump through hoops to use raw json. Multiline strings are awesome in Kotlin and you can even inject variables and expressions.
 
@@ -164,7 +169,7 @@ In the same way you can also use `InputStream` and `Reader`. Together with some 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 
 
-## Scrolling searches
+## Scrolling searches made easy
 
 Scrolling is kind of tedious in Elastisearch. You have to keep track of scroll ids and get pages of results one by one. This requires boilerplate. We use Kotlin sequences to solve this. 
 
@@ -193,7 +198,7 @@ See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blo
 
 # Building
 
-You need java >= 8 and docker + docker compose (to run elasticsearch).
+You need java >= 8 and docker + docker compose (to run elasticsearch and the tests).
 
 Simply use the gradle wrapper to build things:
 
@@ -203,11 +208,15 @@ Simply use the gradle wrapper to build things:
 
 Look inside the build file for comments and documentation.
 
-Gradle will spin up elasticsearch using docker compose and then run the tests. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making a mess there (I learned that lesson a long time ago).
+Gradle will spin up elasticsearch using docker compose and then run the tests against that. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making a mess there (I learned that lesson a long time ago).
 
 # Development status
 
-**This is a work in progress**. This is an alpha version. I'm still adding features, refactoring, doing API and package renames, etc. When this hits 1.0 things will get more stable. That being said, the core feature set is there, works, and is probably highly useful if you need to talk to Elasticsearch from Kotlin.  You can also use it from Java (with some limitations) but you may run into some Kotlin weirdness. Checkout some of the Java specific tests for examples for this. 
+**This is a work in progress**. I'm still adding features and there may be some refactoring and changes. When this hits 1.0 things will get more stable.
+
+That being said, the core feature set is there, works and it is there to stay more or less in the current form.
+
+If you are using Kotlin I encourage you to give it a try. You can actually also use this from Java (with some limitations) but you may run into some Kotlin weirdness. Checkout some of the Java specific tests for examples for this. 
 
 Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't accidentally make you unhappy by refactoring stuff you use.
 
@@ -225,7 +234,7 @@ Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early
 - Make creating and using aggregations less painful and port over some work I've done for that in the past. 
 - Index and alias management with read and write alias support built in.
 - Schema versioning and migration support that uses aliases and the reindexing API.
-- API documentation, mostly straightforward
+- API documentation.
 - Set up CI, travis? Docker might be tricky.
 
 # License

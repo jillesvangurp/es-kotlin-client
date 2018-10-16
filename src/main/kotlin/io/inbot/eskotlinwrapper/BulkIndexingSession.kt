@@ -27,7 +27,9 @@ class BulkIndexingSession<T : Any>(
     private val bulkSize: Int = 100,
     private val retryConflictingUpdates: Int = 0,
     private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-    private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null
+    private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+    private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+
 ) : AutoCloseable { // autocloseable so we flush all the items ...
 
     data class BulkOperation<T : Any>(
@@ -149,7 +151,7 @@ class BulkIndexingSession<T : Any>(
             bulkRequest.refreshPolicy = refreshPolicy
             pageClone.forEach { bulkRequest.add(it.operation) }
             logger.debug { "flushing ${page.size} items" }
-            val bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT)
+            val bulkResponse = client.bulk(bulkRequest, defaultRequestOptions)
             if (bulkResponse != null) {
                 bulkResponse.items.forEach {
                     val bulkOperation = pageClone[it.itemId]

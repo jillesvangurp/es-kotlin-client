@@ -2,7 +2,6 @@ package io.inbot.eskotlinwrapper
 
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
-import org.apache.http.Header
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.delete.DeleteRequest
@@ -21,10 +20,11 @@ private val logger = KotlinLogging.logger {}
 
 class IndexDAO<T : Any>(
     val index: String,
-    val client: RestHighLevelClient,
-    val modelReaderAndWriter: ModelReaderAndWriter<T>,
-    val refreshAllowed: Boolean = false,
-    val type: String = index // default to using index as the type but allow user to override
+    private val client: RestHighLevelClient,
+    private val modelReaderAndWriter: ModelReaderAndWriter<T>,
+    private val refreshAllowed: Boolean = false,
+    val type: String = index, // default to using index as the type but allow user to override
+    private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 
 ) {
     fun index(id: String, obj: T, create: Boolean = true, version: Long? = null) {
@@ -38,7 +38,7 @@ class IndexDAO<T : Any>(
             indexRequest.version(version)
         }
         client.index(
-            indexRequest, RequestOptions.DEFAULT
+            indexRequest, defaultRequestOptions
         )
     }
 
@@ -48,7 +48,7 @@ class IndexDAO<T : Any>(
 
     private fun update(tries: Int, id: String, transformFunction: (T) -> T, maxUpdateTries: Int) {
         try {
-            val response = client.get(GetRequest().index(index).type(index).id(id), RequestOptions.DEFAULT)
+            val response = client.get(GetRequest().index(index).type(index).id(id), defaultRequestOptions)
             val currentVersion = response.version
 
             val sourceAsBytes = response.sourceAsBytes
@@ -81,7 +81,7 @@ class IndexDAO<T : Any>(
     }
 
     fun delete(id: String) {
-        client.delete(DeleteRequest().index(index).type(type).id(id), RequestOptions.DEFAULT)
+        client.delete(DeleteRequest().index(index).type(type).id(id), defaultRequestOptions)
     }
 
     fun get(id: String): T? {
@@ -89,7 +89,7 @@ class IndexDAO<T : Any>(
     }
 
     fun getWithGetResponse(id: String): Pair<T, GetResponse>? {
-        val response = client.get(GetRequest().index(index).type(type).id(id), RequestOptions.DEFAULT)
+        val response = client.get(GetRequest().index(index).type(type).id(id), defaultRequestOptions)
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
@@ -144,7 +144,6 @@ class IndexDAO<T : Any>(
     }
 
     fun search(
-        headers: List<Header> = listOf(),
         scrolling: Boolean = false,
         scrollTtlInMinutes: Long = 1,
         block: SearchRequest.() -> Unit
@@ -158,7 +157,7 @@ class IndexDAO<T : Any>(
             block.invoke(this)
         }
 
-        val searchResponse = client.doSearch(headers, wrappedBlock)
+        val searchResponse = client.doSearch(defaultRequestOptions, wrappedBlock)
         return if (searchResponse.scrollId == null) {
             PagedSearchResults(searchResponse, modelReaderAndWriter)
         } else {

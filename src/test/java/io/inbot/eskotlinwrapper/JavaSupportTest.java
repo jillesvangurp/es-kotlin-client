@@ -3,7 +3,6 @@ package io.inbot.eskotlinwrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
-import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.support.WriteRequest;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class JavaSupportTest {
@@ -58,7 +56,7 @@ public class JavaSupportTest {
         }
         dao.refresh();
 
-        SearchResults<TestBean> results = dao.search(new ArrayList<Header>(), true, 1l, searchRequest -> {
+        SearchResults<TestBean> results = dao.search(true, 1l, searchRequest -> {
             searchRequest.source(SearchSourceBuilder.searchSource().query(new MatchAllQueryBuilder()));
             return Unit.INSTANCE;
         });

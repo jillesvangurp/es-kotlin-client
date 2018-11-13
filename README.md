@@ -171,7 +171,7 @@ See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blo
 
 ## Scrolling searches made easy
 
-Scrolling is kind of tedious in Elastisearch. You have to keep track of scroll ids and get pages of results one by one. This requires boilerplate. We use Kotlin sequences to solve this. 
+Scrolling is kind of tedious in Elastisearch. You have to keep track of scroll ids and get pages of results one by one. This requires boilerplate. We use Kotlin sequences to solve this. Sequences are lazy, so this won't run out of memory and you can safely stream process huge indiceses. Very nice in combination with bulk indexing.  
 
 The Kotlin API is exactly the same as a normal paged search (see above). But please note that things like ranking don't work with scrolling searches and there are other subtle differences on the Elasticsearch side. 
 
@@ -212,11 +212,11 @@ Gradle will spin up elasticsearch using docker compose and then run the tests ag
 
 # Development status
 
-**This is a work in progress**. I'm still adding features and there may be some refactoring and changes. When this hits 1.0 things will get more stable.
+**This is a Beta version**. I'm still adding features and there may be some minor refactoring and changes. When this hits release quality, the API will be kept stable (barring changes in ES). We are starting to use this internally at Inbot and will be adding features as we need them.
 
-That being said, the core feature set is there, works and it is there to stay more or less in the current form.
+The general goal is to keep this client compatible with the current stable version of Elasticsearch. 
 
-If you are using Kotlin I encourage you to give it a try. You can actually also use this from Java (with some limitations) but you may run into some Kotlin weirdness. Checkout some of the Java specific tests for examples for this. 
+While using Kotlin is required, you can also use this from Java. Checkout some of the Java specific tests for examples for this. 
 
 Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't accidentally make you unhappy by refactoring stuff you use.
 
@@ -228,7 +228,7 @@ Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early
 - Easy search with jackson based result mapping
 - Easy scrolling search, also with jackson based result mapping. You can do this with the same method that does the normal paged search simply by setting `scrolling = true` (defaults to false)
 
-## TODO
+## Future feature ideas
 
 - Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
 - Make creating and using aggregations less painful and port over some work I've done for that in the past. 

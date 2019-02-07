@@ -3,9 +3,14 @@ package io.inbot.eskotlinwrapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogger
 import mu.KotlinLogging
+import org.apache.http.HttpHost
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.xcontent.DeprecationHandler
@@ -24,6 +29,30 @@ import java.nio.charset.StandardCharsets
 import java.util.Collections
 
 private val logger: KLogger = KotlinLogging.logger { }
+
+/**
+ * Fake constructor like factory that gives you sane defaults that will allow you to quickly connect to elastic cloud.
+ */
+fun RestHighLevelClient(
+    host: String = "localhost",
+    port: Int = 9200,
+    https: Boolean = false,
+    user: String? = null,
+    password: String? = null
+): RestHighLevelClient {
+    var restClientBuilder = RestClient.builder(HttpHost(host, port, if (https) "https" else "http"))
+    if (!user.isNullOrBlank()) {
+        restClientBuilder = restClientBuilder.setHttpClientConfigCallback {
+            val basicCredentialsProvider = BasicCredentialsProvider()
+            basicCredentialsProvider.setCredentials(
+                AuthScope.ANY,
+                UsernamePasswordCredentials(user, password)
+            )
+            it.setDefaultCredentialsProvider(basicCredentialsProvider)
+        }
+    }
+    return RestHighLevelClient(restClientBuilder)
+}
 
 fun <T : Any> RestHighLevelClient.crudDao(
     index: String,
@@ -46,7 +75,10 @@ inline fun <reified T : Any> RestHighLevelClient.crudDao(
     )
 }
 
-fun RestHighLevelClient.doSearch(requestOptions: RequestOptions = RequestOptions.DEFAULT, block: SearchRequest.() -> Unit): SearchResponse {
+fun RestHighLevelClient.doSearch(
+    requestOptions: RequestOptions = RequestOptions.DEFAULT,
+    block: SearchRequest.() -> Unit
+): SearchResponse {
     val searchRequest = SearchRequest()
     block.invoke(searchRequest)
     return this.search(searchRequest, requestOptions)
@@ -63,7 +95,7 @@ fun <T : Any> SearchHits.mapHits(modelReaderAndWriter: ModelReaderAndWriter<T>):
 
 private val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : DeprecationHandler {
     override fun deprecated(message: String?, vararg params: Any?) {
-        logger.warn("You are a deprecated feature: $message.", *params )
+        logger.warn("You are a deprecated feature: $message.", *params)
     }
 
     override fun usedDeprecatedField(usedName: String, replacedWith: String) {

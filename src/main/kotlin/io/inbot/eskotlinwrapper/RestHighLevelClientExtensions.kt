@@ -62,6 +62,10 @@ fun <T : Any> SearchHits.mapHits(modelReaderAndWriter: ModelReaderAndWriter<T>):
 }
 
 private val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : DeprecationHandler {
+    override fun deprecated(message: String?, vararg params: Any?) {
+        logger.warn("You are a deprecated feature: $message.", *params )
+    }
+
     override fun usedDeprecatedField(usedName: String, replacedWith: String) {
         logger.warn { "You are using a deprecated field $usedName. You should use $replacedWith" }
     }

@@ -2,11 +2,11 @@
 
 # Introduction
 
-ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that adapts the official Highlevel Elasticsearch HTTP client for Java (introduced with Elasticsearch 6.x) with some Kotlin specific goodness.
+ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that adapts the official Highlevel Elasticsearch HTTP client for Java (introduced with Elasticsearch 6.x) with some Kotlin specific goodness. 
 
 The highlevel elasticsearch client is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. The kotlin wrapper takes away none of that and adds some power and convenience to it.
 
-It adds extension methods, cuts down on boilerplate through use of several kotlin features for creating DSLs, default arguments, sequences. etc. Some of this is also be usable by Java developers (with some restrictions). Android is not supported as the minimum requirements for the highlevel client are Java 8. 
+It adds extension methods, cuts down on boilerplate through use of several kotlin features for creating DSLs, default arguments, sequences. etc. Some of this is also  usable by Java developers (with some restrictions). Android is not supported as the minimum requirements for the highlevel client are Java 8. 
 
 # Get it
 
@@ -25,12 +25,77 @@ The examples below are not the whole story. Please look at the tests for more de
 ## Initialization
 
 ```kotlin
-// next we need the official client
-val restClientBuilder = RestClient.builder(HttpHost("localhost", 9200, "http"))
-val esClient = RestHighLevelClient(restClientBuilder)
+// we need the official client but we can create it with a new extension function
+val esClient = RestHighLevelClient()
+
 ```
 
-Typically you want to create a DAO per index:
+Or specify some optional parameters
+
+```
+# great if you need to interact with ES Cloud ...
+val esClient = RestHighLevelClient(host="domain.com",port=9999,https=true,user="thedude",password="lebowski")
+```
+
+Or pass in the builder and rest client as you would normally.
+
+Now you can do a simple search. Everything you do normally with the Java client works exactly as it does normally. But, we've added lots of extra methods to make things easier. For example searching is supported with a Kotlin DSL that adapts the existing `SearchRequest` and adds an alternative `source` method that takes a String, which in Kotlin you can template as well:
+
+
+```
+# simple example that we use as part of 
+#a health check against elastic cloud
+val baseUrl="https://api.inbot.io"
+val minutes=60
+val results = esClient.doSearch {
+            indices("inbot-api*")
+
+            source(
+                """
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now-${minutes}m"
+            }
+          }
+        },
+        {
+          "term":{
+            "inbot_base_url":"$baseUrl"
+          }
+        },
+        {
+          "term":{
+            "level":"ERROR"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "loggers": {
+      "terms": {
+        "field": "logger_name",
+        "size": 1000
+      }
+    }
+  }
+}""".trimIndent()
+            )
+        }
+
+```
+
+## DAOs
+
+A key feature in this library is using Data Access Objects or DAOs to abstract the business of using indices (and the soon to be deprecated types). Indices store JSON that conforms to your mapping. Presumably, you want to serialize that and deserialize that JSON. DAOs do this for you.
+
+Typically you create a DAO per index:
 
 ```
 // the tests below use a simple entity class
@@ -56,17 +121,22 @@ dao.index("xxx", TestModel("Hello World"))
 val testModel = dao.get("xxx")
 
 // updates with conflict handling and optimistic locking
-// you apply a lambda against an original that is fetched from the index using get()
+// you apply a lambda against an original 
+// that is fetched from the index using get()
 dao.update("xxx") { original -> 
   original.message = "Bye World"
 }
-// in case of a version conflict, update retries. The default is 2 times but you can override this.
-// version conflicts happen when you have concurrent updates to the same document
+// in case of a version conflict, update 
+// retries. The default is 2 times 
+// but you can override this.
+// version conflicts happen when you
+// have concurrent updates to the same document
 dao.update("xxx", maxUpdateTries=10) { original -> 
   original.message = "Bye World"
 }
 
-// if you want to do an upsert, you can do that with a index and setting create=false
+// if you want to do an upsert, you can 
+// do that with a index and setting create=false
 dao.index("xxx", TestModel("Hello World"), create=false)
 
 // delete by id
@@ -85,14 +155,22 @@ The Bulk indexing API in Elasticsearch is complicated and it requires a bit of b
 dao.bulk {
   // lets fill our index
   for (i in 0..1000000) {
-    // inside the block, this refers to the BulkIndexingSession instance that bulk manages for you
-    // The BulkIndexingSession creates BulkRequests on the fly and sends them off 100 
-    // operations (default) at the time.
-    // this indexes a document. You can also update, updateAndGet, and delete
+    // inside the block, this refers to 
+    // the BulkIndexingSession instance
+    // that bulk manages for you
+    // The BulkIndexingSession creates 
+    // BulkRequests on the fly and sends 
+    // them off 100 operations (default) 
+    // at the time.
+    // this example indexes a document. 
+    // But you can also update, updateAndGet, 
+    // and delete
     index("doc_$i", TestModel("Hi again for the $i'th time"))
   }
 }
-// when the block exits, the last bulkRequest is send. The BulkIndexingSession is AutoClosable.
+// when the block exits, the last 
+// bulkRequest is send. 
+// The BulkIndexingSession is AutoClosable.
 ```
 See [Bulk Indexing Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSessionTest.kt) for more. 
 
@@ -217,17 +295,19 @@ Simply use the gradle wrapper to build things:
 
 Look inside the build file for comments and documentation.
 
-Gradle will spin up elasticsearch using docker compose and then run the tests against that. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making a mess there (I learned that lesson a long time ago).
+Gradle will spin up Elasticsearch using docker compose and then run the tests against that. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making a mess there (I learned that lesson a long time ago).
 
 # Development status
 
-**This is a Beta version**. I'm still adding features and there may be some minor refactoring and changes. When this hits release quality, the API will be kept stable (barring changes in ES). We are starting to use this internally at Inbot and will be adding features as we need them.
+**This is a pre-1.0 version**. The main reason is that I'm still adding features and there may be some minor refactoring and changes. However, we are using this in our own product and it should be perfectly fine for general use at this point. Also note, that you can always access the underlying Java client, which is stable. 
+
+While using Kotlin is required, you can technically also use this from Java. Checkout some of the Java specific tests for examples for this. 
+
+## Compatibility
 
 The general goal is to keep this client compatible with the current stable version of Elasticsearch. 
 
-While using Kotlin is required, you can also use this from Java. Checkout some of the Java specific tests for examples for this. 
-
-Your feedback, issues, PRs, etc. are appreciated. If you do use it in this early stage, let me know so I don't accidentally make you unhappy by refactoring stuff you use.
+Currently we update this libary for the current stable version of Elasticsearch. With the upcoming 7.x versions, we may start having to do release branches. There have been minor Java API changes in the 6.x series in the client. Currently, we rely on the most recent 6.x version. Presumably, this works fine against any 6.x node; and possibly some older versions. If you experience issues, please file a ticket or pull request.
 
 ## Features (done)
 

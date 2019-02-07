@@ -32,19 +32,20 @@ val esClient = RestHighLevelClient()
 
 Or specify some optional parameters
 
-```
+```kotlin
 # great if you need to interact with ES Cloud ...
 val esClient = RestHighLevelClient(host="domain.com",port=9999,https=true,user="thedude",password="lebowski")
 ```
 
 Or pass in the builder and rest client as you would normally.
 
-Now you can do a simple search. Everything you do normally with the Java client works exactly as it does normally. But, we've added lots of extra methods to make things easier. For example searching is supported with a Kotlin DSL that adapts the existing `SearchRequest` and adds an alternative `source` method that takes a String, which in Kotlin you can template as well:
+**Everything** you do normally with the Java client works exactly as it does normally. But, we've added lots of extra methods to make things easier. For example searching is supported with a Kotlin DSL that adapts the existing `SearchRequest` and adds an alternative `source` method that takes a String, which in Kotlin you can template as well:
 
 
-```
+```kotlin
 # simple example that we use as part of 
-#a health check against elastic cloud
+# a health check against elastic cloud
+# we are alive if we are not logging errors ...
 val baseUrl="https://api.inbot.io"
 val minutes=60
 val results = esClient.doSearch {
@@ -93,12 +94,12 @@ val results = esClient.doSearch {
 
 ## DAOs
 
-A key feature in this library is using Data Access Objects or DAOs to abstract the business of using indices (and the soon to be deprecated types). Indices store JSON that conforms to your mapping. Presumably, you want to serialize that and deserialize that JSON. DAOs do this for you.
+A key feature in this library is using Data Access Objects or DAOs to abstract the business of using indices (and the soon to be removed types). Indices store JSON that conforms to your mapping. Presumably, you want to serialize and deserialize that JSON. DAOs take care of this and more for you.
 
-Typically you create a DAO per index:
+You create a DAO per index:
 
-```
-// the tests below use a simple entity class
+```kotlin
+// Lets use a simple Model class as an example
 data class TestModel(var message: String)
 
 // we use the refresh API in tests; you have to opt in to that being allowed explicitly 
@@ -113,11 +114,16 @@ val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true, type: "m
 
 ## CRUD with Entities and Jackson
 
-Managing documents in Elasticsearch is a lot easier if you can simply map your entities via Jacskon. The `IndexDAO` allows you to do that. The idea behind this class is that most things you do in Elasticsearch you do against some index or alias. Within that index you store documents conforming to a particular schema. So, the `IndexDAO` knows both the type and the index name and takes care of providing you all the things you might want to do with this in Elasticserarch.
+Managing documents in Elasticsearch basically means doing CRUD operations. The DAO supports this and makes it painless to manipulate documents.
 
 ```kotlin
+# creates a document or fails if it already exists
+# note you should probably apply a mapping to your index before you index something ...
 dao.index("xxx", TestModel("Hello World"))
 
+// if you want to do an upsert, you can 
+// do that with a index and setting create=false
+dao.index("xxx", TestModel("Hello World"), create=false)
 val testModel = dao.get("xxx")
 
 // updates with conflict handling and optimistic locking
@@ -134,10 +140,6 @@ dao.update("xxx") { original ->
 dao.update("xxx", maxUpdateTries=10) { original -> 
   original.message = "Bye World"
 }
-
-// if you want to do an upsert, you can 
-// do that with a index and setting create=false
-dao.index("xxx", TestModel("Hello World"), create=false)
 
 // delete by id
 dao.delete("xxx")

@@ -92,7 +92,7 @@ val results = esClient.doSearch {
 
 ```
 
-## DAOs
+## DAOs and serialization/deserialization
 
 A key feature in this library is using Data Access Objects or DAOs to abstract the business of using indices (and the soon to be removed types). Indices store JSON that conforms to your mapping. Presumably, you want to serialize and deserialize that JSON. DAOs take care of this and more for you.
 
@@ -104,15 +104,27 @@ data class TestModel(var message: String)
 
 // we use the refresh API in tests; you have to opt in to that being allowed explicitly 
 // since you should not use that in production code.
-val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true)
+val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true,
+modelReaderAndWriter = JacksonModelReaderAndWriter(
+                TestModel::class,
+                ObjectMapper().findAndRegisterModules()
+))
 
 // OR
 // type is optional (default is the index name) as this is to be deprecated 
 // in Elasticsearch and in any case you can have only 1 type per index these days.
-val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true, type: "mytype")
+val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true, type: "mytype",
+modelReaderAndWriter = JacksonModelReaderAndWriter(
+                TestModel::class,
+                ObjectMapper().findAndRegisterModules()
+))
 ```
 
-## CRUD with Entities and Jackson
+The modelReaderAndWriter parameter takes care of serializing/deserializing. In this case we are using an implementation that uses Jackson and we are using the kotlin extension for that, which registers itself via `findAndRegisterModules`. 
+
+Typically, most applications that use jackson, would want to inject their own custom object mappers. It's of course straightforward to use alternatives like GSon or whatever else you prefer. In the code below, we assume Jackson is used.
+
+## CRUD with Entities
 
 Managing documents in Elasticsearch basically means doing CRUD operations. The DAO supports this and makes it painless to manipulate documents.
 
@@ -145,8 +157,6 @@ dao.update("xxx", maxUpdateTries=10) { original ->
 dao.delete("xxx")
 ```
 See [Crud Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/IndexDAOTest.kt) for more.
-
-If you want you should also be able to support alternative ways of mapping entities using e.g. gson or similar frameworks.
 
 ## Bulk Indexing using the Bulk DSL
 

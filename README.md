@@ -313,13 +313,13 @@ Gradle will spin up Elasticsearch using docker compose and then run the tests ag
 
 **This is a pre-1.0 version**. The main reason is that I'm still adding features and there may be some minor refactoring and changes. However, we are using this in our own product and it should be perfectly fine for general use at this point. Also note, that you can always access the underlying Java client, which is stable. 
 
-While using Kotlin is required, you can technically also use this from Java. Checkout some of the Java specific tests for examples for this. 
+While using Kotlin is recommended, you can technically also use this from Java. Checkout some of the Java specific tests for examples for this. 
 
 ## Compatibility
 
 The general goal is to keep this client compatible with the current stable version of Elasticsearch. 
 
-Currently we update this libary for the current stable version of Elasticsearch. With the upcoming 7.x versions, we may start having to do release branches. There have been minor Java API changes in the 6.x series in the client. Currently, we rely on the most recent 6.x version. Presumably, this works fine against any 6.x node; and possibly some older versions. If you experience issues, please file a ticket or pull request.
+Currently we update this libary regularly for the current stable version of Elasticsearch. With the upcoming 7.x versions, we may start having to do release branches. There have been minor Java API changes in the 6.x series in the client. Currently, we rely on the most recent 6.x version. Presumably, this works fine against any 6.x node (the REST protocol should be more stable); and possibly some older versions. If you experience issues, please file a ticket or pull request.
 
 ## Features (done)
 

@@ -33,7 +33,7 @@ val esClient = RestHighLevelClient()
 Or specify some optional parameters
 
 ```kotlin
-# great if you need to interact with ES Cloud ...
+// great if you need to interact with ES Cloud ...
 val esClient = RestHighLevelClient(host="domain.com",port=9999,https=true,user="thedude",password="lebowski")
 ```
 

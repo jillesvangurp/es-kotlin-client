@@ -43,9 +43,9 @@ Or pass in the builder and rest client as you would normally.
 
 
 ```kotlin
-# simple example that we use as part of 
-# a health check against elastic cloud
-# we are alive if we are not logging errors ...
+// simple example that we use as part of 
+// a health check against elastic cloud
+// we are alive if we are not logging errors ...
 val baseUrl="https://api.inbot.io"
 val minutes=60
 val results = esClient.doSearch {
@@ -129,8 +129,9 @@ Typically, most applications that use jackson, would want to inject their own cu
 Managing documents in Elasticsearch basically means doing CRUD operations. The DAO supports this and makes it painless to manipulate documents.
 
 ```kotlin
-# creates a document or fails if it already exists
-# note you should probably apply a mapping to your index before you index something ...
+// creates a document or fails if it already exists
+// note you should probably apply a mapping to your 
+// index before you index something ...
 dao.index("xxx", TestModel("Hello World"))
 
 // if you want to do an upsert, you can 
@@ -307,7 +308,7 @@ Simply use the gradle wrapper to build things:
 
 Look inside the build file for comments and documentation.
 
-Gradle will spin up Elasticsearch using docker compose and then run the tests against that. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making a mess there (I learned that lesson a long time ago).
+Gradle will spin up Elasticsearch using the docker compose plugin for gradle and then run the tests against that. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making a mess there (I learned that lesson a long time ago).
 
 # Development status
 

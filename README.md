@@ -199,6 +199,7 @@ Given an index with some documents:
 dao.bulk {
     index(randomId(), TestModel("the quick brown emu"))
     index(randomId(), TestModel("the quick brown fox"))
+    index(randomId(), TestModel("the quick brown giraffe"))
     index(randomId(), TestModel("the quick brown horse"))
     index(randomId(), TestModel("lorem ipsum"))
     // throw in some more documents

@@ -13,7 +13,7 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
     @Test
     fun `should list aliases`() {
         dao.createIndex {
-            source(this::class.java.getResource("/testmodel-settings.json"), XContentType.JSON)
+            source(this::class.java.getResource("/testmodel-settings.json").readText(), XContentType.JSON)
         }
 
         val writeAlias = "${dao.indexName}_write"

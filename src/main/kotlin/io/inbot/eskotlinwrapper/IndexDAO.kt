@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.delete.DeleteRequest
@@ -34,11 +35,12 @@ class IndexDAO<T : Any>(
 ) {
     fun createIndex(
         defaultRequestOptions: RequestOptions = this._defaultRequestOptions,
-        block: IndexRequest.() -> Unit
+        block: CreateIndexRequest.() -> Unit
     ) {
-        val indexRequest = IndexRequest(indexName, type)
+        val indexRequest = CreateIndexRequest().index(indexName)
         block.invoke(indexRequest)
-        client.index(indexRequest, defaultRequestOptions)
+
+        client.indices().create(indexRequest, defaultRequestOptions)
     }
 
     fun deleteIndex(defaultRequestOptions: RequestOptions = this._defaultRequestOptions) {
@@ -89,7 +91,7 @@ class IndexDAO<T : Any>(
     ) {
         try {
             val response =
-                client.get(GetRequest().index(indexWriteAlias).type(indexWriteAlias).id(id), defaultRequestOptions)
+                client.get(GetRequest().index(indexWriteAlias).type(type).id(id), defaultRequestOptions)
             val currentVersion = response.version
 
             val sourceAsBytes = response.sourceAsBytes

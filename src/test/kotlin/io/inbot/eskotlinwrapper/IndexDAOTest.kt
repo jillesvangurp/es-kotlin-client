@@ -31,6 +31,7 @@ class IndexDAOTest : AbstractElasticSearchTest(indexPrefix = "crud") {
     fun `Concurrent updates succeed and resolve conflicts without interference`() {
         val id = randomId()
         dao.index(id, TestModel("hi"))
+
         // do some concurrent updates; without retries this will fail
         0.rangeTo(30).toList().parallelStream().forEach { n ->
             // the maxUpdateTries parameter is optional and has a default value of 2

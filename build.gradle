@@ -125,6 +125,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.1.1'
     compile "io.github.microutils:kotlin-logging:1.6.25"
 
     compile "org.apache.commons:commons-lang3:3.8.1"

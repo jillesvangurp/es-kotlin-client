@@ -6,6 +6,7 @@ import kotlin.jvm.functions.Function2;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -34,14 +35,15 @@ public class JavaSupportTest {
                 objectMapper
         );
         // no extension functions but they can still be used
-        dao = RestHighLevelClientExtensionsKt.crudDao(restHighLevelClient,"test-"+ randomId(),jacksonModelReaderAndWriter,true);
+        String index = "test-" + randomId();
+        dao = RestHighLevelClientExtensionsKt.crudDao(restHighLevelClient, index,jacksonModelReaderAndWriter,index,index,true, RequestOptions.DEFAULT);
     }
 
     @Test
     public void shouldDoCrud() {
         String id = randomId();
         TestBean testBean = getBean("foo");
-        dao.index(id,testBean,true,null);
+        dao.index(id,testBean,true,null, RequestOptions.DEFAULT);
         TestBean fromIndex = dao.get(id);
         Assertions.assertEquals(fromIndex.getMessage(),"foo");
     }
@@ -50,13 +52,13 @@ public class JavaSupportTest {
     public void shouldDoBulk() {
         Function2<BulkIndexingSession.BulkOperation<TestBean>, BulkItemResponse, Unit> callback = (o, r) -> Unit.INSTANCE;
 
-        try(BulkIndexingSession<TestBean> bulkIndexer = dao.bulkIndexer(10, 2, WriteRequest.RefreshPolicy.WAIT_UNTIL, callback)) {
+        try(BulkIndexingSession<TestBean> bulkIndexer = dao.bulkIndexer(10, 2, WriteRequest.RefreshPolicy.WAIT_UNTIL, callback,RequestOptions.DEFAULT)) {
             for(int i=0;i<42;i++)
             bulkIndexer.index(randomId(),getBean("hello "+i),true,callback);
         }
         dao.refresh();
 
-        SearchResults<TestBean> results = dao.search(true, 1l, searchRequest -> {
+        SearchResults<TestBean> results = dao.search(true, 1l, RequestOptions.DEFAULT,searchRequest -> {
             searchRequest.source(SearchSourceBuilder.searchSource().query(new MatchAllQueryBuilder()));
             return Unit.INSTANCE;
         });

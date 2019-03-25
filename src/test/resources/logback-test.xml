@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<configuration debug="true">
+<configuration debug="false">
 
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>
@@ -14,7 +14,7 @@
         <appender-ref ref="STDOUT"/>
     </appender>
 
-    <logger name="org.elasticsearch" level="WARN"/>
+    <logger name="org.elasticsearch" level="DEBUG"/>
     <logger name="org.apache" level="ERROR"/>
 
     <root level="INFO">

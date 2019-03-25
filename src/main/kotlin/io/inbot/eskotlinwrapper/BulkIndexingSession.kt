@@ -49,7 +49,7 @@ class BulkIndexingSession<T : Any>(
         if (itemCallback == null) {
             if (itemResponse.isFailed) {
                 if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                    dao.update(operation.id, retryConflictingUpdates, operation.updateFunction!!)
+                    dao.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction!!)
                     logger.debug { "retried updating ${operation.id} after version conflict" }
                 } else {
                     logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
@@ -65,7 +65,7 @@ class BulkIndexingSession<T : Any>(
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
         }
         val indexRequest = IndexRequest()
-            .index(dao.index)
+            .index(dao.indexWriteAlias)
             .type(dao.type)
             .id(id)
             .create(create)
@@ -92,7 +92,7 @@ class BulkIndexingSession<T : Any>(
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
         }
         val updateRequest = UpdateRequest()
-            .index(dao.index)
+            .index(dao.indexWriteAlias)
             .type(dao.type)
             .id(id)
             .detectNoop(true)
@@ -114,7 +114,7 @@ class BulkIndexingSession<T : Any>(
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
         }
         val deleteRequest = DeleteRequest()
-            .index(dao.index)
+            .index(dao.indexWriteAlias)
             .type(dao.type)
             .id(id)
         if (version != null) {

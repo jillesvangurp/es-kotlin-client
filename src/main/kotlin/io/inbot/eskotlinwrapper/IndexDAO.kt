@@ -3,6 +3,8 @@ package io.inbot.eskotlinwrapper
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
+import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
@@ -13,24 +15,49 @@ import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.Request
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 
 private val logger = KotlinLogging.logger {}
 
 class IndexDAO<T : Any>(
-    val index: String,
+    val indexName: String,
     private val client: RestHighLevelClient,
     private val modelReaderAndWriter: ModelReaderAndWriter<T>,
     private val refreshAllowed: Boolean = false,
-    val type: String = index, // default to using index as the type but allow user to override
-    private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+    val type: String = "_doc", // default to using "_doc", note types will soon be removed but seem required for now
+    val indexWriteAlias: String = indexName,
+    val indexReadAlias: String = indexWriteAlias,
+    private val _defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 
 ) {
+    fun createIndex(
+        defaultRequestOptions: RequestOptions = this._defaultRequestOptions,
+        block: IndexRequest.() -> Unit
+    ) {
+        val indexRequest = IndexRequest(indexName, type)
+        block.invoke(indexRequest)
+        client.index(indexRequest, defaultRequestOptions)
+    }
 
-    fun index(id: String, obj: T, create: Boolean = true, version: Long? = null) {
+    fun deleteIndex(defaultRequestOptions: RequestOptions = this._defaultRequestOptions) {
+        client.indices().delete(DeleteIndexRequest(indexName), defaultRequestOptions)
+    }
+
+    fun currentAliases(): Set<AliasMetaData> {
+        return client.indices().getAlias(GetAliasesRequest().indices(indexName), _defaultRequestOptions).aliases[this.indexName] ?: throw IllegalStateException("Inde $indexName does not exist")
+    }
+
+    fun index(
+        id: String,
+        obj: T,
+        create: Boolean = true,
+        version: Long? = null,
+        defaultRequestOptions: RequestOptions = this._defaultRequestOptions
+    ) {
         val indexRequest = IndexRequest()
-            .index(index)
+            .index(indexWriteAlias)
             .type(type)
             .id(id)
             .create(create)
@@ -43,13 +70,26 @@ class IndexDAO<T : Any>(
         )
     }
 
-    fun update(id: String, maxUpdateTries: Int = 2, transformFunction: (T) -> T) {
-        update(0, id, transformFunction, maxUpdateTries)
+    fun update(
+        id: String,
+        maxUpdateTries: Int = 2,
+        defaultRequestOptions: RequestOptions = this._defaultRequestOptions,
+        transformFunction: (T) -> T
+    ) {
+        update(0, id, transformFunction, maxUpdateTries, defaultRequestOptions)
     }
 
-    private fun update(tries: Int, id: String, transformFunction: (T) -> T, maxUpdateTries: Int) {
+    private fun update(
+        tries: Int,
+        id: String,
+        transformFunction: (T) -> T,
+        maxUpdateTries: Int,
+        defaultRequestOptions: RequestOptions
+
+    ) {
         try {
-            val response = client.get(GetRequest().index(index).type(index).id(id), defaultRequestOptions)
+            val response =
+                client.get(GetRequest().index(indexWriteAlias).type(indexWriteAlias).id(id), defaultRequestOptions)
             val currentVersion = response.version
 
             val sourceAsBytes = response.sourceAsBytes
@@ -70,7 +110,7 @@ class IndexDAO<T : Any>(
                 if (tries < maxUpdateTries) {
                     // we got a version conflict, retry after sleeping a bit (without this failures are more likely
                     Thread.sleep(RandomUtils.nextLong(50, 500))
-                    update(tries + 1, id, transformFunction, maxUpdateTries)
+                    update(tries + 1, id, transformFunction, maxUpdateTries, defaultRequestOptions)
                 } else {
                     throw IllegalStateException("update of $id failed after $tries attempts")
                 }
@@ -81,16 +121,19 @@ class IndexDAO<T : Any>(
         }
     }
 
-    fun delete(id: String) {
-        client.delete(DeleteRequest().index(index).type(type).id(id), defaultRequestOptions)
+    fun delete(id: String, defaultRequestOptions: RequestOptions = this._defaultRequestOptions) {
+        client.delete(DeleteRequest().index(indexWriteAlias).type(type).id(id), defaultRequestOptions)
     }
 
     fun get(id: String): T? {
         return getWithGetResponse(id)?.first
     }
 
-    fun getWithGetResponse(id: String): Pair<T, GetResponse>? {
-        val response = client.get(GetRequest().index(index).type(type).id(id), defaultRequestOptions)
+    fun getWithGetResponse(
+        id: String,
+        defaultRequestOptions: RequestOptions = this._defaultRequestOptions
+    ): Pair<T, GetResponse>? {
+        val response = client.get(GetRequest().index(indexReadAlias).type(type).id(id), defaultRequestOptions)
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
@@ -124,7 +167,8 @@ class IndexDAO<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null
+        itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        defaultRequestOptions: RequestOptions = this._defaultRequestOptions
     ) = BulkIndexingSession(
         client,
         this,
@@ -132,13 +176,14 @@ class IndexDAO<T : Any>(
         bulkSize,
         retryConflictingUpdates = retryConflictingUpdates,
         refreshPolicy = refreshPolicy,
-        itemCallback = itemCallback
+        itemCallback = itemCallback,
+        defaultRequestOptions = defaultRequestOptions
     )
 
     fun refresh() {
         if (refreshAllowed) {
             // calling this is not safe in production settings but highly useful in tests
-            client.lowLevelClient.performRequest(Request("POST", "/$index/_refresh"))
+            client.lowLevelClient.performRequest(Request("POST", "/$indexWriteAlias/_refresh"))
         } else {
             throw UnsupportedOperationException("refresh is not allowed; you need to opt in by setting refreshAllowed to true")
         }
@@ -147,10 +192,11 @@ class IndexDAO<T : Any>(
     fun search(
         scrolling: Boolean = false,
         scrollTtlInMinutes: Long = 1,
+        defaultRequestOptions: RequestOptions = this._defaultRequestOptions,
         block: SearchRequest.() -> Unit
     ): SearchResults<T> {
         val wrappedBlock: SearchRequest.() -> Unit = {
-            this.indices(index)
+            this.indices(indexReadAlias)
             if (scrolling) {
                 scroll(TimeValue.timeValueMinutes(scrollTtlInMinutes))
             }

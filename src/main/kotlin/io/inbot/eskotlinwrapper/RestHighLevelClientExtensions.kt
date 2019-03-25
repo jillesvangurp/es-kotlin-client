@@ -58,9 +58,21 @@ fun RestHighLevelClient(
 fun <T : Any> RestHighLevelClient.crudDao(
     index: String,
     modelReaderAndWriter: ModelReaderAndWriter<T>,
-    refreshAllowed: Boolean = false
+    readAlias: String = index,
+    writeAlias: String = index,
+    refreshAllowed: Boolean = false,
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ): IndexDAO<T> {
-    return IndexDAO(index, this, modelReaderAndWriter, refreshAllowed = refreshAllowed)
+    return IndexDAO(
+        indexName = index,
+        client = this,
+        modelReaderAndWriter = modelReaderAndWriter,
+        refreshAllowed = refreshAllowed,
+        indexReadAlias = readAlias,
+        indexWriteAlias = writeAlias,
+        _defaultRequestOptions = defaultRequestOptions
+
+    )
 }
 
 inline fun <reified T : Any> RestHighLevelClient.crudDao(

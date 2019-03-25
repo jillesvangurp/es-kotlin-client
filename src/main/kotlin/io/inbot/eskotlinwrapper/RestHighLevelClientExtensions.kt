@@ -33,6 +33,7 @@ private val logger: KLogger = KotlinLogging.logger { }
 /**
  * Fake constructor like factory that gives you sane defaults that will allow you to quickly connect to elastic cloud.
  */
+@Suppress("FunctionName")
 fun RestHighLevelClient(
     host: String = "localhost",
     port: Int = 9200,

@@ -27,6 +27,7 @@ class IndexDAO<T : Any>(
     private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 
 ) {
+
     fun index(id: String, obj: T, create: Boolean = true, version: Long? = null) {
         val indexRequest = IndexRequest()
             .index(index)

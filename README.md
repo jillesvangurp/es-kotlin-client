@@ -8,6 +8,8 @@ The highlevel elasticsearch client is written in Java and provides access to ess
 
 It adds extension methods, cuts down on boilerplate through use of several kotlin features for creating DSLs, default arguments, sequences. etc. Some of this is also  usable by Java developers (with some restrictions). Android is not supported as the minimum requirements for the highlevel client are Java 8. 
 
+Kotlin also has support for co-routines and the intention is to gradually support asynchronous operations through that as well. Basics for this are in place but work is ongoing.
+
 # Get it
 
 I'm using jitpack for releases currently; the nice thing is all I need to do is tag the release in Git and they do the rest. They have nice instructions for setting up your gradle or pom file:
@@ -331,14 +333,15 @@ Currently we update this libary regularly for the current stable version of Elas
 - Easy search with jackson based result mapping
 - Easy scrolling search, also with jackson based result mapping. You can do this with the same method that does the normal paged search simply by setting `scrolling = true` (defaults to false)
 
-## Future feature ideas/TODO
+## Future feature ideas/TODO/Doing
 
-- ES 7.x branch - should be straightforward. Will probably do this when the betas come out.
+- Async / co-routines: this is in progress but not completed yet. There is a `SuspendingActionListener` that you can use with all the high level async requests. Currently, the only stuff using that is search (non scrolling only). 
+- Index and alias management with read and write alias support built in. In progress.
+- Schema versioning and migration support that uses aliases and the reindexing API. This also in progress.
+- ES 7.x branch - should be straightforward. Will probably start work on this close to the release.
 - Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
 - Make creating and using aggregations less painful and port over some work I've done for that in the past. 
-- Index and alias management with read and write alias support built in.
-- Schema versioning and migration support that uses aliases and the reindexing API.
-- API documentation.
+- More API documentation using dokka
 - Set up CI, travis? Docker might be tricky.
 
 # License

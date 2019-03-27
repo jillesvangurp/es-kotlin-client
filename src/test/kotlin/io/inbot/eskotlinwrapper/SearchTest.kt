@@ -4,6 +4,8 @@ import assertk.assert
 import assertk.assertions.contains
 import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
+import assertk.assertions.isGreaterThan
+import kotlinx.coroutines.runBlocking
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MatchQueryBuilder
@@ -142,6 +144,20 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
         assert(updatedResults.totalHits).isEqualTo(19L)
         updatedResults.mappedHits.forEach {
             assert(it.message).endsWith("updated")
+        }
+    }
+
+    @Test
+    fun `async search using coroutines`() {
+        dao.bulk {
+            index(randomId(), TestModel("the quick brown emu"))
+            index(randomId(), TestModel("the quick brown fox"))
+            index(randomId(), TestModel("the quick brown horse"))
+            index(randomId(), TestModel("lorem ipsum"))
+        }
+        dao.refresh()
+        runBlocking {
+            assert(dao.searchAsync { }.totalHits).isGreaterThan(0)
         }
     }
 }

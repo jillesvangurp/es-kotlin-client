@@ -7,6 +7,7 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.action.ActionListener
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.RequestOptions
@@ -22,11 +23,15 @@ import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
+
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.Reader
+import java.lang.Exception
 import java.nio.charset.StandardCharsets
 import java.util.Collections
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.suspendCoroutine
 
 private val logger: KLogger = KotlinLogging.logger { }
 
@@ -97,6 +102,27 @@ fun RestHighLevelClient.doSearch(
     val searchRequest = SearchRequest()
     block.invoke(searchRequest)
     return this.search(searchRequest, requestOptions)
+}
+
+suspend fun RestHighLevelClient.doSearchAsync(
+    requestOptions: RequestOptions = RequestOptions.DEFAULT,
+    block: SearchRequest.() -> Unit
+): SearchResponse {
+    val searchRequest = SearchRequest()
+    block.invoke(searchRequest)
+    return suspendCoroutine { continuation ->
+        this.searchAsync(searchRequest, requestOptions, SuspendingActionListener(continuation))
+    }
+}
+
+class SuspendingActionListener<T>(private val continuation: Continuation<T>) : ActionListener<T> {
+    override fun onFailure(e: Exception) {
+        continuation.resumeWith(Result.failure(e))
+    }
+
+    override fun onResponse(response: T) {
+        continuation.resumeWith(Result.success(response))
+    }
 }
 
 fun <T : Any> SearchHits.mapHits(fn: (SearchHit) -> T): List<T> {

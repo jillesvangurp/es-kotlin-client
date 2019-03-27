@@ -37,6 +37,7 @@ class IndexDAO<T : Any>(
         defaultRequestOptions: RequestOptions = this._defaultRequestOptions,
         block: CreateIndexRequest.() -> Unit
     ) {
+
         val indexRequest = CreateIndexRequest().index(indexName)
         block.invoke(indexRequest)
 
@@ -217,5 +218,20 @@ class IndexDAO<T : Any>(
                 scrollTtlInMinutes
             )
         }
+    }
+
+    suspend fun searchAsync(
+        defaultRequestOptions: RequestOptions = this._defaultRequestOptions,
+        block: SearchRequest.() -> Unit
+    ): SearchResults<T> {
+        // FIXME figure out how to return a scrolling of this with scrolling search and a suspending sequence
+        val wrappedBlock: SearchRequest.() -> Unit = {
+            this.indices(indexReadAlias)
+
+            block.invoke(this)
+        }
+
+        val searchResponse = client.doSearchAsync (defaultRequestOptions, wrappedBlock)
+        return PagedSearchResults(searchResponse, modelReaderAndWriter)
     }
 }

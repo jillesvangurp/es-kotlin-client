@@ -10,6 +10,11 @@ It adds extension methods, cuts down on boilerplate through use of several kotli
 
 Kotlin also has support for co-routines and the intention is to gradually support asynchronous operations through that as well. Basics for this are in place but work is ongoing.
 
+# Documentation
+... is a work in progress
+
+[dokka api docs](docs/es-kotlin-wrapper-client/io.inbot.eskotlinwrapper/index.md)
+
 # Get it
 
 I'm using jitpack for releases currently; the nice thing is all I need to do is tag the release in Git and they do the rest. They have nice instructions for setting up your gradle or pom file:

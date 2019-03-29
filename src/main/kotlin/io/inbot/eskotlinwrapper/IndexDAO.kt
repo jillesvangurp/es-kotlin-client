@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.delete.DeleteRequest
@@ -16,6 +15,7 @@ import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.Request
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
@@ -38,7 +38,7 @@ class IndexDAO<T : Any>(
         block: CreateIndexRequest.() -> Unit
     ) {
 
-        val indexRequest = CreateIndexRequest().index(indexName)
+        val indexRequest = CreateIndexRequest(indexName)
         block.invoke(indexRequest)
 
         client.indices().create(indexRequest, defaultRequestOptions)

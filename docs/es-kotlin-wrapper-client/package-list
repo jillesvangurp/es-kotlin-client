@@ -1,4 +1,4 @@
-$dokka.format:markdown
+$dokka.format:gfm
 $dokka.linkExtension:md
 $dokka.location:io.inbot.eskotlinwrapper$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, com.fasterxml.jackson.databind.ObjectMapper, kotlin.Boolean)io.inbot.eskotlinwrapper/org.elasticsearch.client.-rest-high-level-client/crud-dao.md
 $dokka.location:io.inbot.eskotlinwrapper$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)io.inbot.eskotlinwrapper/org.elasticsearch.client.-rest-high-level-client/crud-dao.md

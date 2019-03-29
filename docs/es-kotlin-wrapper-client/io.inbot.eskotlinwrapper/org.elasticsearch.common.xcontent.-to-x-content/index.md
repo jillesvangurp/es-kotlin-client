@@ -2,5 +2,6 @@
 
 ### Extensions for org.elasticsearch.common.xcontent.ToXContent
 
+| Name | Summary |
+|---|---|
 | [stringify](stringify.md) | `fun ToXContent.stringify(pretty: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = false): `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html) |
-

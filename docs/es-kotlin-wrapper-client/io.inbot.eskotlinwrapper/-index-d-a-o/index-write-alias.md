@@ -3,3 +3,6 @@
 # indexWriteAlias
 
 `val indexWriteAlias: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)
+
+Alias used for write operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.
+

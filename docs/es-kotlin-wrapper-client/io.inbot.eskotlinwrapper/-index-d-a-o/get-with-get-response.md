@@ -2,4 +2,4 @@
 
 # getWithGetResponse
 
-`fun getWithGetResponse(id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, defaultRequestOptions: RequestOptions = this._defaultRequestOptions): `[`Pair`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html)`<`[`T`](index.md#T)`, GetResponse>?`
+`fun getWithGetResponse(id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, requestOptions: RequestOptions = this.defaultRequestOptions): `[`Pair`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html)`<`[`T`](index.md#T)`, GetResponse>?`

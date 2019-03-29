@@ -2,4 +2,4 @@
 
 # currentAliases
 
-`fun currentAliases(): `[`Set`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html)`<AliasMetaData>`
+`fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): `[`Set`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html)`<AliasMetaData>`

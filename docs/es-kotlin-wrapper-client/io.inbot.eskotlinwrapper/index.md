@@ -7,7 +7,7 @@
 | Name | Summary |
 |---|---|
 | [BulkIndexingSession](-bulk-indexing-session/index.md) | `class BulkIndexingSession<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`AutoCloseable`](https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html) |
-| [IndexDAO](-index-d-a-o/index.md) | `class IndexDAO<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`>` |
+| [IndexDAO](-index-d-a-o/index.md) | `class IndexDAO<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`>`<br>DAO (Data Access Object) abstraction that allows you to work with indices. |
 | [JacksonModelReaderAndWriter](-jackson-model-reader-and-writer/index.md) | `class JacksonModelReaderAndWriter<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`ModelReaderAndWriter`](-model-reader-and-writer/index.md)`<`[`T`](-jackson-model-reader-and-writer/index.md#T)`>` |
 | [ModelReaderAndWriter](-model-reader-and-writer/index.md) | `interface ModelReaderAndWriter<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`>` |
 | [PagedSearchResults](-paged-search-results/index.md) | `class PagedSearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`SearchResults`](-search-results/index.md)`<`[`T`](-paged-search-results/index.md#T)`>` |

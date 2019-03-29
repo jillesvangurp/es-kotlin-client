@@ -3,3 +3,6 @@
 # indexReadAlias
 
 `val indexReadAlias: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)
+
+Alias used for read operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.
+

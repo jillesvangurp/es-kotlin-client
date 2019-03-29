@@ -2,4 +2,4 @@
 
 # deleteIndex
 
-`fun deleteIndex(defaultRequestOptions: RequestOptions = this._defaultRequestOptions): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)
+`fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions): `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)

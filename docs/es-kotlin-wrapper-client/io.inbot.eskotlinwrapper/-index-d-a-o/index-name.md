@@ -3,3 +3,6 @@
 # indexName
 
 `val indexName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)
+
+name of the index
+

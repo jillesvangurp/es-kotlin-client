@@ -8,6 +8,11 @@ The highlevel elasticsearch client is written in Java and provides access to ess
 
 It adds extension methods, cuts down on boilerplate through use of several kotlin features for creating DSLs, default arguments, sequences. etc. Some of this is also  usable by Java developers (with some restrictions). Android is not supported as the minimum requirements for the highlevel client are Java 8. 
 
+# Documentation
+... is a work in progress
+
+[dokka api docs](docs/es-kotlin-wrapper-client/io.inbot.eskotlinwrapper/index.md)
+
 # Get it
 
 I'm using jitpack for releases currently; the nice thing is all I need to do is tag the release in Git and they do the rest. They have nice instructions for setting up your gradle or pom file:

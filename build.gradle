@@ -58,6 +58,7 @@ afterEvaluate {
 dokka {
     outputFormat = 'markdown'
     jdkVersion = 8
+    outputDirectory = 'docs'
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {

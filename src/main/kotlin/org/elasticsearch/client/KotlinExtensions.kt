@@ -11,6 +11,8 @@ import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.ActionListener
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.indices.CreateIndexResponse
 import java.lang.Exception
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
@@ -75,7 +77,7 @@ inline fun <reified T : Any> RestHighLevelClient.crudDao(
     )
 }
 
-fun RestHighLevelClient.doSearch(
+fun RestHighLevelClient.search(
     requestOptions: RequestOptions = RequestOptions.DEFAULT,
     block: SearchRequest.() -> Unit
 ): SearchResponse {
@@ -84,7 +86,7 @@ fun RestHighLevelClient.doSearch(
     return this.search(searchRequest, requestOptions)
 }
 
-suspend fun RestHighLevelClient.doSearchAsync(
+suspend fun RestHighLevelClient.searchAsync(
     requestOptions: RequestOptions = RequestOptions.DEFAULT,
     block: SearchRequest.() -> Unit
 ): SearchResponse {
@@ -92,6 +94,14 @@ suspend fun RestHighLevelClient.doSearchAsync(
     block.invoke(searchRequest)
     return suspendCoroutine { continuation ->
         this.searchAsync(searchRequest, requestOptions, SuspendingActionListener(continuation))
+    }
+}
+
+suspend fun IndicesClient.createIndexAsync(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: CreateIndexRequest.() -> Unit): CreateIndexResponse {
+    val request = CreateIndexRequest(index)
+    block.invoke(request)
+    return suspendCoroutine<CreateIndexResponse> { continuation ->
+        this.createAsync(request, requestOptions, SuspendingActionListener<CreateIndexResponse>(continuation))
     }
 }
 

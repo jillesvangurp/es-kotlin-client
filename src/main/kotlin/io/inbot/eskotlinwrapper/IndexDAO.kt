@@ -11,13 +11,14 @@ import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.support.ActiveShardCount
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.Request
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.client.doSearch
-import org.elasticsearch.client.doSearchAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.search
+import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
@@ -54,21 +55,37 @@ class IndexDAO<T : Any>(
 ) {
     fun createIndex(
         requestOptions: RequestOptions = this.defaultRequestOptions,
+        waitForActiveShards: ActiveShardCount? = null,
         block: CreateIndexRequest.() -> Unit
     ) {
 
         val indexRequest = CreateIndexRequest(indexName)
+        if (waitForActiveShards != null) {
+            indexRequest.waitForActiveShards(waitForActiveShards)
+        }
         block.invoke(indexRequest)
 
         client.indices().create(indexRequest, requestOptions)
     }
 
-    fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions) {
-        client.indices().delete(DeleteIndexRequest(indexName), requestOptions)
+    fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions): Boolean {
+        try {
+            client.indices().delete(DeleteIndexRequest(indexName), requestOptions)
+            return true
+        } catch (e: ElasticsearchStatusException) {
+            if (e.status().status == 404) {
+                // 404 means there was nothing to delete
+                return false
+            } else {
+                // this would be unexpected
+                throw e
+            }
+        }
     }
 
     fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetaData> {
-        return client.indices().getAlias(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName] ?: throw IllegalStateException("Inde $indexName does not exist")
+        return client.indices().getAlias(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName]
+            ?: throw IllegalStateException("Inde $indexName does not exist")
     }
 
     fun index(
@@ -226,7 +243,7 @@ class IndexDAO<T : Any>(
             block.invoke(this)
         }
 
-        val searchResponse = client.doSearch(requestOptions, wrappedBlock)
+        val searchResponse = client.search(requestOptions, wrappedBlock)
         return if (searchResponse.scrollId == null) {
             PagedSearchResults(searchResponse, modelReaderAndWriter)
         } else {
@@ -244,13 +261,12 @@ class IndexDAO<T : Any>(
         block: SearchRequest.() -> Unit
     ): SearchResults<T> {
         // FIXME figure out how to return a scrolling of this with scrolling search and a suspending sequence
-        val wrappedBlock: SearchRequest.() -> Unit = {
-            this.indices(indexReadAlias)
+
+        val searchResponse = client.searchAsync(requestOptions) {
+            indices(indexReadAlias)
 
             block.invoke(this)
         }
-
-        val searchResponse = client.doSearchAsync (requestOptions, wrappedBlock)
         return PagedSearchResults(searchResponse, modelReaderAndWriter)
     }
 }

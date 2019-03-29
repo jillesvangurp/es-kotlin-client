@@ -55,7 +55,7 @@ Or pass in the builder and rest client as you would normally.
 // we are alive if we are not logging errors ...
 val baseUrl="https://api.inbot.io"
 val minutes=60
-val results = esClient.doSearch {
+val results = esClient.search {
             indices("inbot-api*")
 
             source(

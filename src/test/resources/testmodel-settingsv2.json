@@ -9,7 +9,7 @@
     }
   },
   "mapping": {
-    "_doc": {
+    "doc": {
       "properties": {
         "message": {
            "type": "text"

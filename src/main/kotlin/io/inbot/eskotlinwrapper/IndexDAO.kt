@@ -22,12 +22,20 @@ import org.elasticsearch.common.xcontent.XContentType
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * DAO (Data Access Object) abstraction that allows you to work with indices.
+ *
+ * You should create a DAO for each index you work with. You need to specify a [ModelReaderAndWriter] for serialization and deserialization.
+ *
+ * @param T the type of the object that is stored in the index.
+ * @param type
+ */
 class IndexDAO<T : Any>(
     val indexName: String,
     private val client: RestHighLevelClient,
     private val modelReaderAndWriter: ModelReaderAndWriter<T>,
     private val refreshAllowed: Boolean = false,
-    val type: String = "_doc", // default to using "_doc", note types will soon be removed but seem required for now
+    val type: String = "doc", // default to using "doc", note types will soon be removed but seem required for now
     val indexWriteAlias: String = indexName,
     val indexReadAlias: String = indexWriteAlias,
     private val _defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT

@@ -6,6 +6,7 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions.Type
 import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.client.crudDao
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 

@@ -15,6 +15,8 @@ import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.Request
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.doSearch
+import org.elasticsearch.client.doSearchAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue

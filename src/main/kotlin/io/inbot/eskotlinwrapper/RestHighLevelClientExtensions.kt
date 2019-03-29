@@ -77,7 +77,7 @@ fun <T : Any> RestHighLevelClient.crudDao(
         type = type,
         indexReadAlias = readAlias,
         indexWriteAlias = writeAlias,
-        _defaultRequestOptions = defaultRequestOptions
+        defaultRequestOptions = defaultRequestOptions
 
     )
 }

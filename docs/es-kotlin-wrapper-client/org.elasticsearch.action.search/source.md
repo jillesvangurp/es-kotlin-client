@@ -1,4 +1,4 @@
-[es-kotlin-wrapper-client](../../index.md) / [io.inbot.eskotlinwrapper](../index.md) / [org.elasticsearch.action.search.SearchRequest](index.md) / [source](./source.md)
+[es-kotlin-wrapper-client](../index.md) / [org.elasticsearch.action.search](index.md) / [source](./source.md)
 
 # source
 

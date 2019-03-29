@@ -1,13 +1,8 @@
 $dokka.format:gfm
 $dokka.linkExtension:md
-$dokka.location:io.inbot.eskotlinwrapper$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, com.fasterxml.jackson.databind.ObjectMapper, kotlin.Boolean)io.inbot.eskotlinwrapper/org.elasticsearch.client.-rest-high-level-client/crud-dao.md
-$dokka.location:io.inbot.eskotlinwrapper$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)io.inbot.eskotlinwrapper/org.elasticsearch.client.-rest-high-level-client/crud-dao.md
-$dokka.location:io.inbot.eskotlinwrapper$doSearch(org.elasticsearch.client.RestHighLevelClient, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.action.search.SearchRequest, kotlin.Unit)))io.inbot.eskotlinwrapper/org.elasticsearch.client.-rest-high-level-client/do-search.md
-$dokka.location:io.inbot.eskotlinwrapper$doSearchAsync(org.elasticsearch.client.RestHighLevelClient, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.action.search.SearchRequest, kotlin.Unit)))io.inbot.eskotlinwrapper/org.elasticsearch.client.-rest-high-level-client/do-search-async.md
-$dokka.location:io.inbot.eskotlinwrapper$mapHits(org.elasticsearch.search.SearchHits, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.mapHits.T)))io.inbot.eskotlinwrapper/org.elasticsearch.search.-search-hits/map-hits.md
-$dokka.location:io.inbot.eskotlinwrapper$mapHits(org.elasticsearch.search.SearchHits, kotlin.Function1((org.elasticsearch.search.SearchHit, io.inbot.eskotlinwrapper.mapHits.T)))io.inbot.eskotlinwrapper/org.elasticsearch.search.-search-hits/map-hits.md
-$dokka.location:io.inbot.eskotlinwrapper$source(org.elasticsearch.action.search.SearchRequest, java.io.InputStream, org.elasticsearch.common.xcontent.DeprecationHandler)io.inbot.eskotlinwrapper/org.elasticsearch.action.search.-search-request/source.md
-$dokka.location:io.inbot.eskotlinwrapper$source(org.elasticsearch.action.search.SearchRequest, java.io.Reader, org.elasticsearch.common.xcontent.DeprecationHandler)io.inbot.eskotlinwrapper/org.elasticsearch.action.search.-search-request/source.md
-$dokka.location:io.inbot.eskotlinwrapper$source(org.elasticsearch.action.search.SearchRequest, kotlin.String, org.elasticsearch.common.xcontent.DeprecationHandler)io.inbot.eskotlinwrapper/org.elasticsearch.action.search.-search-request/source.md
-$dokka.location:io.inbot.eskotlinwrapper$stringify(org.elasticsearch.common.xcontent.ToXContent, kotlin.Boolean)io.inbot.eskotlinwrapper/org.elasticsearch.common.xcontent.-to-x-content/stringify.md
+
 io.inbot.eskotlinwrapper
+org.elasticsearch.action.search
+org.elasticsearch.client
+org.elasticsearch.common.xcontent
+org.elasticsearch.search

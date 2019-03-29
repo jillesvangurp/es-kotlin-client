@@ -1,6 +1,8 @@
-[es-kotlin-wrapper-client](../../index.md) / [io.inbot.eskotlinwrapper](../index.md) / [org.elasticsearch.common.xcontent.ToXContent](./index.md)
+[es-kotlin-wrapper-client](../index.md) / [org.elasticsearch.common.xcontent](./index.md)
 
-### Extensions for org.elasticsearch.common.xcontent.ToXContent
+## Package org.elasticsearch.common.xcontent
+
+### Functions
 
 | Name | Summary |
 |---|---|

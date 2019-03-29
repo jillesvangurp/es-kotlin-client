@@ -1,4 +1,4 @@
-[es-kotlin-wrapper-client](../../index.md) / [io.inbot.eskotlinwrapper](../index.md) / [org.elasticsearch.common.xcontent.ToXContent](index.md) / [stringify](./stringify.md)
+[es-kotlin-wrapper-client](../index.md) / [org.elasticsearch.common.xcontent](index.md) / [stringify](./stringify.md)
 
 # stringify
 

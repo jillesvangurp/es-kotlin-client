@@ -1,4 +1,4 @@
-[es-kotlin-wrapper-client](../../index.md) / [io.inbot.eskotlinwrapper](../index.md) / [org.elasticsearch.client.RestHighLevelClient](index.md) / [doSearch](./do-search.md)
+[es-kotlin-wrapper-client](../index.md) / [org.elasticsearch.client](index.md) / [doSearch](./do-search.md)
 
 # doSearch
 

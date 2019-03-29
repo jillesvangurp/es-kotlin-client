@@ -1,4 +1,4 @@
-[es-kotlin-wrapper-client](../index.md) / [io.inbot.eskotlinwrapper](index.md) / [RestHighLevelClient](./-rest-high-level-client.md)
+[es-kotlin-wrapper-client](../index.md) / [org.elasticsearch.client](index.md) / [RestHighLevelClient](./-rest-high-level-client.md)
 
 # RestHighLevelClient
 

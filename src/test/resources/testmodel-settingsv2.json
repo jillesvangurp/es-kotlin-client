@@ -9,11 +9,9 @@
     }
   },
   "mapping": {
-    "doc": {
-      "properties": {
-        "message": {
-           "type": "text"
-        }
+    "properties": {
+      "message": {
+         "type": "text"
       }
     }
   }

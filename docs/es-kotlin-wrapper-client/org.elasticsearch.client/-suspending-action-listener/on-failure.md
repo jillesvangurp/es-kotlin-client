@@ -1,4 +1,4 @@
-[es-kotlin-wrapper-client](../../index.md) / [io.inbot.eskotlinwrapper](../index.md) / [SuspendingActionListener](index.md) / [onFailure](./on-failure.md)
+[es-kotlin-wrapper-client](../../index.md) / [org.elasticsearch.client](../index.md) / [SuspendingActionListener](index.md) / [onFailure](./on-failure.md)
 
 # onFailure
 

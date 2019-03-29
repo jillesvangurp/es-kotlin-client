@@ -6,6 +6,7 @@ import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import kotlinx.coroutines.runBlocking
+import org.elasticsearch.action.search.source
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MatchQueryBuilder

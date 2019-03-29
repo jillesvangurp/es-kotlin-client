@@ -15,6 +15,8 @@ import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.Request
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.doSearch
+import org.elasticsearch.client.doSearchAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
@@ -33,7 +35,7 @@ private val logger = KotlinLogging.logger {}
  * @param indexName name of the index
  * @param indexReadAlias Alias used for read operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.
  * @param indexWriteAlias Alias used for write operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.
- * @param type the type of the documents in the index; defaults to "doc". Since ES 6, there can only be one type. Types will be deprecated in ES 7 and removed in ES 8.
+ * @param type the type of the documents in the index; defaults to "_doc". Since ES 6, there can only be one type. Types will be deprecated in ES 7 and removed in ES 8.
  * @param modelReaderAndWriter serialization of your model class.
  * @param refreshAllowed if false, the [refresh] will throw an exception. Defaults to false.
  * @param defaultRequestOptions passed on all API calls. Defaults to [RequestOptions.DEFAULT]. Use this to set custom headers or override on each call on the dao.
@@ -44,7 +46,7 @@ class IndexDAO<T : Any>(
     private val client: RestHighLevelClient,
     private val modelReaderAndWriter: ModelReaderAndWriter<T>,
     private val refreshAllowed: Boolean = false,
-    val type: String = "doc", // default to using "doc", note types will soon be removed but seem required for now
+    val type: String = "_doc", // default to using "_doc", note types will soon be removed but seem required for now
     val indexWriteAlias: String = indexName,
     val indexReadAlias: String = indexWriteAlias,
     private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT

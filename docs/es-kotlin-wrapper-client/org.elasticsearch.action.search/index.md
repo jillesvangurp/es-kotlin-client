@@ -1,6 +1,8 @@
-[es-kotlin-wrapper-client](../../index.md) / [io.inbot.eskotlinwrapper](../index.md) / [org.elasticsearch.action.search.SearchRequest](./index.md)
+[es-kotlin-wrapper-client](../index.md) / [org.elasticsearch.action.search](./index.md)
 
-### Extensions for org.elasticsearch.action.search.SearchRequest
+## Package org.elasticsearch.action.search
+
+### Functions
 
 | Name | Summary |
 |---|---|

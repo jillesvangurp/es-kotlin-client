@@ -6,6 +6,7 @@ import kotlin.jvm.functions.Function2;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.client.KotlinExtensionsKt;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -36,7 +37,7 @@ public class JavaSupportTest {
         );
         // no extension functions but they can still be used
         String index = "test-" + randomId();
-        dao = RestHighLevelClientExtensionsKt.crudDao(restHighLevelClient, index,jacksonModelReaderAndWriter,"doc",index,index,true, RequestOptions.DEFAULT);
+        dao = KotlinExtensionsKt.crudDao(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, RequestOptions.DEFAULT);
     }
 
     @Test

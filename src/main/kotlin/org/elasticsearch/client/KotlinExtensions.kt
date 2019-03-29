@@ -43,7 +43,7 @@ fun RestHighLevelClient(
 fun <T : Any> RestHighLevelClient.crudDao(
     index: String,
     modelReaderAndWriter: ModelReaderAndWriter<T>,
-    type: String = "doc",
+    type: String = "_doc",
     readAlias: String = index,
     writeAlias: String = index,
     refreshAllowed: Boolean = false,

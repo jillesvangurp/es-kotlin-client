@@ -13,7 +13,7 @@ Kotlin also has support for co-routines and the intention is to gradually suppor
 # Documentation
 ... is a work in progress
 
-[dokka api docs](docs/es-kotlin-wrapper-client/io.inbot.eskotlinwrapper/index.md)
+[dokka api docs](docs/es-kotlin-wrapper-client/index.md)
 
 # Get it
 

@@ -46,12 +46,12 @@ private val logger = KotlinLogging.logger {}
 class IndexDAO<T : Any>(
     val indexName: String,
     private val client: RestHighLevelClient,
-    private val modelReaderAndWriter: ModelReaderAndWriter<T>,
+    internal val modelReaderAndWriter: ModelReaderAndWriter<T>,
     private val refreshAllowed: Boolean = false,
     val type: String = "_doc", // default to using "_doc", note types will soon be removed but seem required for now
     val indexWriteAlias: String = indexName,
     val indexReadAlias: String = indexWriteAlias,
-    private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+    internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 
 ) {
     fun createIndex(

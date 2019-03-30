@@ -4,7 +4,7 @@
 
 | Name | Summary |
 |---|---|
-| [io.inbot.eskotlinwrapper.BulkIndexingSession](../io.inbot.eskotlinwrapper/-bulk-indexing-session/index.md) |  |
+| [io.inbot.eskotlinwrapper.BulkIndexingSession](../io.inbot.eskotlinwrapper/-bulk-indexing-session/index.md) | Makes using bulk request easier. You can use this directly but you probably want to use it via [IndexDAO](../io.inbot.eskotlinwrapper/-index-d-a-o/index.md). |
 | [io.inbot.eskotlinwrapper.IndexDAO](../io.inbot.eskotlinwrapper/-index-d-a-o/index.md) | DAO (Data Access Object) abstraction that allows you to work with indices. |
 | [io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter](../io.inbot.eskotlinwrapper/-jackson-model-reader-and-writer/index.md) |  |
 | [io.inbot.eskotlinwrapper.ModelReaderAndWriter](../io.inbot.eskotlinwrapper/-model-reader-and-writer/index.md) |  |

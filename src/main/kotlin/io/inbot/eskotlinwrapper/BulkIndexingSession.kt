@@ -20,15 +20,31 @@ import kotlin.concurrent.write
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Makes using bulk request easier. You can use this directly but you probably want to use it via [IndexDAO].
+ *
+ * ```
+ * dao.bulk() {
+ *   index("xxx",myObject)
+ * }
+ * ```
+ *
+ */
 class BulkIndexingSession<T : Any>(
     private val client: RestHighLevelClient,
     private val dao: IndexDAO<T>,
-    private val modelReaderAndWriter: ModelReaderAndWriter<T>,
+    /** Defaults to the one configured on the dao. */
+    private val modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
+    /** override this to change the bulk page size (the number of items sent to ES with one request).*/
     private val bulkSize: Int = 100,
+    /** the default [itemCallback] is capable of retrying updates. When retrying it will get the document and try again. The default for this is 0. */
     private val retryConflictingUpdates: Int = 0,
+    /** refresh policy on bulk requests. The default is to wait for changes to become available. This is the safest option because it avoids the risk of filling queues on the cluster. Set it to IMMEDIATE to make things faster. */
     private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+    /** The bulk API returns a response that contains a per item response. This callback facilitates dealing with e.g. failures. The default implementation does logging and update retries. */
     private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-    private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+    /** Override request options if you need to. Defaults to those configured on the dao. */
+    private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
 
 ) : AutoCloseable { // autocloseable so we flush all the items ...
 

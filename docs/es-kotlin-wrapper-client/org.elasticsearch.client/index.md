@@ -2,12 +2,6 @@
 
 ## Package org.elasticsearch.client
 
-### Types
-
-| Name | Summary |
-|---|---|
-| [SuspendingActionListener](-suspending-action-listener/index.md) | `class SuspendingActionListener<T> : ActionListener<`[`T`](-suspending-action-listener/index.md#T)`>` |
-
 ### Functions
 
 | Name | Summary |

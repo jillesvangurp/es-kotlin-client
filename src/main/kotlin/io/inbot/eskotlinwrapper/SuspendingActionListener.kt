@@ -24,7 +24,7 @@ class SuspendingActionListener<T>(private val continuation: Continuation<T>) :
          *
          * ```kotlin
          * suspending {
-         *   this.searchAsync(searchRequest, requestOptions, it)
+         *   client.searchAsync(searchRequest, requestOptions, it)
          * }
          * ```
          */

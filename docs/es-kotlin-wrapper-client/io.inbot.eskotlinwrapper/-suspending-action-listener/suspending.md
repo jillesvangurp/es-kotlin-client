@@ -8,7 +8,7 @@ Use this to call java async methods in a co-routine.
 
 ``` kotlin
 suspending {
-  this.searchAsync(searchRequest, requestOptions, it)
+  client.searchAsync(searchRequest, requestOptions, it)
 }
 ```
 

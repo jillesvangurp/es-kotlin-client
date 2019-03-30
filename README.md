@@ -20,13 +20,13 @@ Kotlin also has support for co-routines and the intention is to gradually suppor
 
 # Get it
 
-I'm using jitpack for releases currently; the nice thing is all I need to do is tag the release in Git and they do the rest. They have nice instructions for setting up your gradle or pom file:
+We are using jitpack for releases currently; the nice thing is all I need to do is tag the release in Git and they do the rest. They have nice instructions for setting up your gradle or pom file:
 
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
-This may change when this stuff becomes more stable. I'm planning to push this to maven central via Sonatype's OSS repository eventually.
-
 See [release notes](https://github.com/jillesvangurp/es-kotlin-wrapper-client/releases) with each github release tag for an overview what changed.
+
+Note. this client assumes you are using this with Elasticsearch 6.x. The versions listed in our build.gradle and docker-compose file are what we test with. Usually we update to the latest version within days after Elasticsearch releases.
 
 # Examples/highlights
 
@@ -323,15 +323,19 @@ Gradle will spin up Elasticsearch using the docker compose plugin for gradle and
 
 # Development status
 
-**This is a pre-1.0 version**. The main reason is that I'm still adding features and there may be some minor refactoring and changes. However, we are using this in our own product and it should be perfectly fine for general use at this point. Also note, that you can always access the underlying Java client, which is stable. 
+**This is a pre-1.0 version**. The main reason is that I'm still adding features and there may be some minor refactoring and changes. We are using this in our own product and it should be perfectly fine for general use at this point. Also note, that you can always access the underlying Java client, which is stable. 
 
-While using Kotlin is recommended, you can technically also use this from Java. Checkout some of the Java specific tests for examples for this. 
+While using Kotlin is recommended, you can technically also use this from Java. Checkout some of the Java specific tests for examples for this. Support for this is experimental.
+
+Kotlin recently added co-routines and using that is an obvious use case for Elasticsearch. Basic support for this has been added. However, several things in this client have yet to be updated to make full use of this. We expect the main use case for most users will be asynchronous searches, which is one of the things that are already fully supported.
 
 ## Compatibility
 
-The general goal is to keep this client compatible with the current stable version of Elasticsearch. 
+The general goal is to keep this client compatible with the current stable version of Elasticsearch. We rely on the most recent 6.x version. Presumably, this works fine against any 6.x node (the REST protocol should be more stable); and possibly some older versions. If you experience issues, please file a ticket or pull request.
 
-Currently we update this libary regularly for the current stable version of Elasticsearch. With the upcoming 7.x versions, we may start having to do release branches. There have been minor Java API changes in the 6.x series in the client. Currently, we rely on the most recent 6.x version. Presumably, this works fine against any 6.x node (the REST protocol should be more stable); and possibly some older versions. If you experience issues, please file a ticket or pull request.
+Currently we update this libary regularly for the current stable version of Elasticsearch. With the upcoming 7.x versions, we may start having to do release branches for older versions. There have been minor Java API changes in the 6.x series in the client. As of v6.7.0, several things have been deprecated in the Java client and the current version of this client has  already addressed all relevant deprecations. A big upcoming change with v7 will be the deprecation and eventual removal of document types in Elasticsearch. So further API changes are likely though we expect this to be limited in scope.
+
+As this is a development release, we still do fairly large changes and refactorings. Keep an eye on the release notes for this.
 
 ## Features (done)
 

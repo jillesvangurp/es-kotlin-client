@@ -45,7 +45,7 @@ class BulkIndexingSession<T : Any>(
     // we use rw lock to protect the current page. read here means using the list (to add stuff), write means  building the bulk request and clearing the list.
     private val rwLock = ReentrantReadWriteLock()
 
-    internal fun defaultItemResponseCallback(operation: BulkOperation<T>, itemResponse: BulkItemResponse) {
+    private fun defaultItemResponseCallback(operation: BulkOperation<T>, itemResponse: BulkItemResponse) {
         if (itemCallback == null) {
             if (itemResponse.isFailed) {
                 if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
@@ -83,11 +83,12 @@ class BulkIndexingSession<T : Any>(
     fun getAndUpdate(id: String, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
         val pair = dao.getWithGetResponse(id)
         if (pair != null) {
-            update(id, pair.second.version, pair.first, itemCallback, updateFunction)
+            val (retrieved, resp) = pair
+            update(id, resp.seqNo, resp.primaryTerm, retrieved, itemCallback, updateFunction)
         }
     }
 
-    fun update(id: String, version: Long, original: T, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
+    fun update(id: String, seqNo: Long, primaryTerms: Long, original: T, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
         if (closed.get()) {
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
         }
@@ -96,7 +97,8 @@ class BulkIndexingSession<T : Any>(
             .type(dao.type)
             .id(id)
             .detectNoop(true)
-            .version(version)
+            .setIfSeqNo(seqNo)
+            .setIfPrimaryTerm(primaryTerms)
             .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
         rwLock.read { page.add(
             BulkOperation(

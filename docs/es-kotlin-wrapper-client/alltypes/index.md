@@ -11,4 +11,4 @@
 | [io.inbot.eskotlinwrapper.PagedSearchResults](../io.inbot.eskotlinwrapper/-paged-search-results/index.md) |  |
 | [io.inbot.eskotlinwrapper.ScrollingSearchResults](../io.inbot.eskotlinwrapper/-scrolling-search-results/index.md) |  |
 | [io.inbot.eskotlinwrapper.SearchResults](../io.inbot.eskotlinwrapper/-search-results/index.md) |  |
-| [org.elasticsearch.client.SuspendingActionListener](../org.elasticsearch.client/-suspending-action-listener/index.md) |  |
+| [io.inbot.eskotlinwrapper.SuspendingActionListener](../io.inbot.eskotlinwrapper/-suspending-action-listener/index.md) | Action listener that can be used with to adapt the async methods across the java client to co-routines. |

@@ -13,3 +13,4 @@
 | [PagedSearchResults](-paged-search-results/index.md) | `class PagedSearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`SearchResults`](-search-results/index.md)`<`[`T`](-paged-search-results/index.md#T)`>` |
 | [ScrollingSearchResults](-scrolling-search-results/index.md) | `class ScrollingSearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`SearchResults`](-search-results/index.md)`<`[`T`](-scrolling-search-results/index.md#T)`>` |
 | [SearchResults](-search-results/index.md) | `interface SearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`>` |
+| [SuspendingActionListener](-suspending-action-listener/index.md) | `class SuspendingActionListener<T> : ActionListener<`[`T`](-suspending-action-listener/index.md#T)`>`<br>Action listener that can be used with to adapt the async methods across the java client to co-routines. |

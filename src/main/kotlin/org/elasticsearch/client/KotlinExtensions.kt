@@ -4,18 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.inbot.eskotlinwrapper.IndexDAO
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
+import io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
-import org.elasticsearch.action.ActionListener
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.CreateIndexResponse
-import java.lang.Exception
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * Fake constructor like factory that gives you sane defaults that will allow you to quickly connect to elastic cloud.
@@ -92,25 +89,15 @@ suspend fun RestHighLevelClient.searchAsync(
 ): SearchResponse {
     val searchRequest = SearchRequest()
     block.invoke(searchRequest)
-    return suspendCoroutine { continuation ->
-        this.searchAsync(searchRequest, requestOptions, SuspendingActionListener(continuation))
+    return suspending {
+        this.searchAsync(searchRequest, requestOptions, it)
     }
 }
 
 suspend fun IndicesClient.createIndexAsync(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: CreateIndexRequest.() -> Unit): CreateIndexResponse {
     val request = CreateIndexRequest(index)
     block.invoke(request)
-    return suspendCoroutine<CreateIndexResponse> { continuation ->
-        this.createAsync(request, requestOptions, SuspendingActionListener<CreateIndexResponse>(continuation))
-    }
-}
-
-class SuspendingActionListener<T>(private val continuation: Continuation<T>) : ActionListener<T> {
-    override fun onFailure(e: Exception) {
-        continuation.resumeWith(Result.failure(e))
-    }
-
-    override fun onResponse(response: T) {
-        continuation.resumeWith(Result.success(response))
+    return suspending {
+        this.createAsync(request, requestOptions, it)
     }
 }

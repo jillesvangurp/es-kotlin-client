@@ -3,3 +3,6 @@
 # totalHits
 
 `abstract val totalHits: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)
+
+The total number of hits for the query.
+

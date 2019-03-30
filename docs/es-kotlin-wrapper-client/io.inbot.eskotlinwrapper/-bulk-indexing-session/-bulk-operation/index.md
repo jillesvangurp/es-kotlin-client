@@ -4,11 +4,17 @@
 
 `data class BulkOperation<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`>`
 
+Bulk operation model used for e.g. `itemCallback`.
+
+### Parameters
+
+`T` - the type of the objects in the dao.
+
 ### Constructors
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `BulkOperation(operation: DocWriteRequest<*>, id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, updateFunction: ((`[`T`](index.md#T)`) -> `[`T`](index.md#T)`)? = null, itemCallback: (`[`BulkIndexingSession.BulkOperation`](./index.md)`<`[`T`](index.md#T)`>, BulkItemResponse) -> `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)` = { _, _ -> })` |
+| [&lt;init&gt;](-init-.md) | `BulkOperation(operation: DocWriteRequest<*>, id: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, updateFunction: ((`[`T`](index.md#T)`) -> `[`T`](index.md#T)`)? = null, itemCallback: (`[`BulkIndexingSession.BulkOperation`](./index.md)`<`[`T`](index.md#T)`>, BulkItemResponse) -> `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)` = { _, _ -> })`<br>Bulk operation model used for e.g. `itemCallback`. |
 
 ### Properties
 

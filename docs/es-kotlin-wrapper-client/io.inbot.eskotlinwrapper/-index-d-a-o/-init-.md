@@ -22,11 +22,6 @@ You should create a DAO for each index you work with. You need to specify a [Mod
 
 `modelReaderAndWriter` - serialization of your model class.
 
-`refreshAllowed` - if false, the [refresh](refresh.md) will throw an exception. Defaults to false.
+`refreshAllowed` - if false, the refresh will throw an exception. Defaults to false.
 
-`defaultRequestOptions` - passed on all API calls. Defaults to [RequestOptions.DEFAULT](#). Use this to set custom headers or override on each call on the dao.
-
-**See Also**
-
-[RestHighLevelClient.crudDao](#)
-
+`defaultRequestOptions` - passed on all API calls. Defaults to `RequestOptions.DEFAULT`. Use this to set custom headers or override on each call on the dao.

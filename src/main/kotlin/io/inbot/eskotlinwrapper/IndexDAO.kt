@@ -31,7 +31,7 @@ private val logger = KotlinLogging.logger {}
  *
  * You should create a DAO for each index you work with. You need to specify a [ModelReaderAndWriter] for serialization and deserialization.
  *
- * @see [RestHighLevelClient.crudDao] for a convenient way to create a dao.
+ * @see `RestHighLevelClient.crudDao` for a convenient way to create a dao.
  *
  * @param T the type of the object that is stored in the index.
  * @param indexName name of the index
@@ -39,8 +39,8 @@ private val logger = KotlinLogging.logger {}
  * @param indexWriteAlias Alias used for write operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.
  * @param type the type of the documents in the index; defaults to "_doc". Since ES 6, there can only be one type. Types will be deprecated in ES 7 and removed in ES 8.
  * @param modelReaderAndWriter serialization of your model class.
- * @param refreshAllowed if false, the [refresh] will throw an exception. Defaults to false.
- * @param defaultRequestOptions passed on all API calls. Defaults to [RequestOptions.DEFAULT]. Use this to set custom headers or override on each call on the dao.
+ * @param refreshAllowed if false, the refresh will throw an exception. Defaults to false.
+ * @param defaultRequestOptions passed on all API calls. Defaults to `RequestOptions.DEFAULT`. Use this to set custom headers or override on each call on the dao.
  *
  */
 class IndexDAO<T : Any>(
@@ -54,6 +54,17 @@ class IndexDAO<T : Any>(
     internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 
 ) {
+    /**
+     * create the index.
+     *
+     * @param block customize the `CreateIndexRequest`
+     *
+     * ```
+     * {
+     *   source(settings, XContentType.JSON)
+     * }
+     * ```
+     */
     fun createIndex(
         requestOptions: RequestOptions = this.defaultRequestOptions,
         waitForActiveShards: ActiveShardCount? = null,
@@ -69,6 +80,11 @@ class IndexDAO<T : Any>(
         client.indices().create(indexRequest, requestOptions)
     }
 
+    /**
+     * Delete the index associated with the dao.
+     *
+     * @return true if successful or false if the index did not exist
+     */
     fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions): Boolean {
         try {
             client.indices().delete(DeleteIndexRequest(indexName), requestOptions)
@@ -84,11 +100,19 @@ class IndexDAO<T : Any>(
         }
     }
 
+    /**
+     * @return a set of the current `AliasMetaData` associated with the `indexName`.
+     */
     fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetaData> {
         return client.indices().getAlias(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName]
             ?: throw IllegalStateException("Inde $indexName does not exist")
     }
 
+    /**
+     * Index a document.
+     *
+     * @param create set to false for upserts. Otherwise it fails on indexing documents that already exist.
+     */
     fun index(
         id: String,
         obj: T,
@@ -112,6 +136,11 @@ class IndexDAO<T : Any>(
         )
     }
 
+    /**
+     * Update document by fetching the current version with `get` and then applying the `transformFunction` to produce the updated version.
+     *
+     * @param maxUpdateTries if > 0, it will deal with version conflicts (e.g. due to concurrent updates) by retrying with the latest version.
+     */
     fun update(
         id: String,
         maxUpdateTries: Int = 2,
@@ -162,14 +191,24 @@ class IndexDAO<T : Any>(
         }
     }
 
+    /**
+     * Delete an object.
+     */
     fun delete(id: String, requestOptions: RequestOptions = this.defaultRequestOptions) {
         client.delete(DeleteRequest().index(indexWriteAlias).type(type).id(id), requestOptions)
     }
+
+    /**
+     * @return deserialized object.
+     */
 
     fun get(id: String): T? {
         return getWithGetResponse(id)?.first
     }
 
+    /**
+     * @return a `Pair` of the deserialized object and the `GetResponse` with all the relevant metadata.
+     */
     fun getWithGetResponse(
         id: String,
         requestOptions: RequestOptions = this.defaultRequestOptions
@@ -185,6 +224,11 @@ class IndexDAO<T : Any>(
         return null
     }
 
+    /**
+     * Create a `BulkIndexingSession` and use it with the `operationsBlock`.
+     *
+     * @see [BulkIndexingSession]
+     */
     fun bulk(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
@@ -204,6 +248,11 @@ class IndexDAO<T : Any>(
         }
     }
 
+    /**
+     * Create a `BulkIndexingSession`.
+     *
+     * @see [BulkIndexingSession]
+     */
     fun bulkIndexer(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
@@ -221,6 +270,11 @@ class IndexDAO<T : Any>(
         defaultRequestOptions = requestOptions
     )
 
+    /**
+     * Call the refresh API on elasticsearch. You should not use this other than in tests. E.g. when testing search queries, you often want to refresh after indexing before calling search
+     *
+     * @throws UnsupportedOperationException if you do not explicitly opt in to this by setting the `refreshAllowed parameter on the dao`.
+     */
     fun refresh() {
         if (refreshAllowed) {
             // calling this is not safe in production settings but highly useful in tests
@@ -230,6 +284,11 @@ class IndexDAO<T : Any>(
         }
     }
 
+    /**
+     * Perform a search against your index.
+     *
+     * @param block customise your search request in the block
+     */
     fun search(
         scrolling: Boolean = false,
         scrollTtlInMinutes: Long = 1,
@@ -258,6 +317,11 @@ class IndexDAO<T : Any>(
         }
     }
 
+    /**
+     * Perform an asynchronous search against your index.
+     *
+     * @param block customise your search request in the block
+     */
     suspend fun searchAsync(
         requestOptions: RequestOptions = this.defaultRequestOptions,
         block: SearchRequest.() -> Unit

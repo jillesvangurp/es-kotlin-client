@@ -6,3 +6,5 @@
 
 Overrides [SearchResults.totalHits](../-search-results/total-hits.md)
 
+The total number of hits for the query.
+

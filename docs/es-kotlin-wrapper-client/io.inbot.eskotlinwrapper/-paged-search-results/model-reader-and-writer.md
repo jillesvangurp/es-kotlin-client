@@ -6,3 +6,5 @@
 
 Overrides [SearchResults.modelReaderAndWriter](../-search-results/model-reader-and-writer.md)
 
+the model reader and writer used for deserialization.
+

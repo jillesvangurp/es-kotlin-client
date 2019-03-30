@@ -3,3 +3,9 @@
 # deleteIndex
 
 `fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions): `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)
+
+Delete the index associated with the dao.
+
+**Return**
+true if successful or false if the index did not exist
+

@@ -6,3 +6,5 @@
 
 Overrides [SearchResults.searchResponse](../-search-results/search-response.md)
 
+the original search response.
+

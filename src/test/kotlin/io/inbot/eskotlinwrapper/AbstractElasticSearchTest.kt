@@ -30,7 +30,7 @@ open class AbstractElasticSearchTest(val indexPrefix: String = "test", val creat
 
         if (createIndex) {
             val settings = this.javaClass.getResource("/testmodel-settings.json").readText()
-            dao.createIndex() {
+            dao.createIndex {
                 source(settings, XContentType.JSON)
             }
         }

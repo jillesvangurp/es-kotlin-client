@@ -21,33 +21,43 @@ import kotlin.concurrent.write
 private val logger = KotlinLogging.logger {}
 
 /**
- * Makes using bulk request easier. You can use this directly but you probably want to use it via [IndexDAO].
+ * Makes using bulk request easier. You can use this directly but you probably want to use it via [IndexDAO]. Implements `AutoCloseable` to ensure all operations are processed.
  *
  * ```
  * dao.bulk() {
  *   index("xxx",myObject)
+ *   index("yyy",anotherObject)
+ *   delete("zzz")*
  * }
  * ```
+ *
+ * @param client
+ * @param dao
+ * @param modelReaderAndWriter Defaults to the one configured on the dao.
+ * @param bulkSize override this to change the bulk page size (the number of items sent to ES with one request).
+ * @param retryConflictingUpdates the default `itemCallback` is capable of retrying updates. When retrying it will get the document and try again. The default for this is 0.
+ * @param refreshPolicy The bulk API returns a response that contains a per item response. This callback facilitates dealing with e.g. failures. The default implementation does logging and update retries.
+ * @param itemCallback Override request options if you need to. Defaults to those configured on the dao.
+ * @param defaultRequestOptions Defaults to what you configured on the `dao`
  *
  */
 class BulkIndexingSession<T : Any>(
     private val client: RestHighLevelClient,
     private val dao: IndexDAO<T>,
-    /** Defaults to the one configured on the dao. */
     private val modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
-    /** override this to change the bulk page size (the number of items sent to ES with one request).*/
     private val bulkSize: Int = 100,
-    /** the default [itemCallback] is capable of retrying updates. When retrying it will get the document and try again. The default for this is 0. */
     private val retryConflictingUpdates: Int = 0,
-    /** refresh policy on bulk requests. The default is to wait for changes to become available. This is the safest option because it avoids the risk of filling queues on the cluster. Set it to IMMEDIATE to make things faster. */
     private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-    /** The bulk API returns a response that contains a per item response. This callback facilitates dealing with e.g. failures. The default implementation does logging and update retries. */
     private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-    /** Override request options if you need to. Defaults to those configured on the dao. */
     private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
 
-) : AutoCloseable { // autocloseable so we flush all the items ...
+) : AutoCloseable {
 
+    /**
+     * Bulk operation model used for e.g. `itemCallback`.
+     *
+     * @param T the type of the objects in the dao.
+     */
     data class BulkOperation<T : Any>(
         val operation: DocWriteRequest<*>,
         val id: String,
@@ -76,6 +86,11 @@ class BulkIndexingSession<T : Any>(
         }
     }
 
+    /**
+     * Index an object.
+     *
+     * @param create set to true for upsert
+     */
     fun index(id: String, obj: T, create: Boolean = true, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         if (closed.get()) {
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
@@ -96,6 +111,9 @@ class BulkIndexingSession<T : Any>(
         flushIfNeeded()
     }
 
+    /**
+     * Safe way to bulk update objects. Gets the object from the index first before applying the lambda to it to modify the existing object. If you set `retryConflictingUpdates` > 0, it will attempt to retry to get the latest document and apply the `updateFunction` if there is a version conflict.
+     */
     fun getAndUpdate(id: String, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
         val pair = dao.getWithGetResponse(id)
         if (pair != null) {
@@ -104,6 +122,9 @@ class BulkIndexingSession<T : Any>(
         }
     }
 
+    /**
+     * Bulk update objects. If you have the object (e.g. because you are processing the sequence of a scrolling search), you can update what you have in a safe way.  If you set `retryConflictingUpdates` > 0, it will retry by getting the latest version and re-applying the `updateFunction` in case of a version conflict.
+     */
     fun update(id: String, seqNo: Long, primaryTerms: Long, original: T, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
         if (closed.get()) {
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
@@ -127,6 +148,9 @@ class BulkIndexingSession<T : Any>(
         flushIfNeeded()
     }
 
+    /**
+     * Delete an object from the index.
+     */
     fun delete(id: String, version: Long? = null, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         if (closed.get()) {
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")

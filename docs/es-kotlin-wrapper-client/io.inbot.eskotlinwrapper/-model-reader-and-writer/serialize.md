@@ -3,3 +3,7 @@
 # serialize
 
 `open fun serialize(obj: `[`T`](index.md#T)`): `[`ByteArray`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html)
+
+**Return**
+a byte array with the json bytes for `obj`
+

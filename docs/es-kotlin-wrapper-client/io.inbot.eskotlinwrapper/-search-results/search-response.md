@@ -3,3 +3,6 @@
 # searchResponse
 
 `abstract val searchResponse: SearchResponse`
+
+the original search response.
+

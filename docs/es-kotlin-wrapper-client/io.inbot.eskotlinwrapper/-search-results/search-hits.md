@@ -3,3 +3,6 @@
 # searchHits
 
 `abstract val searchHits: `[`Sequence`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html)`<SearchHit>`
+
+search hits as a sequence or an empty sequence.
+

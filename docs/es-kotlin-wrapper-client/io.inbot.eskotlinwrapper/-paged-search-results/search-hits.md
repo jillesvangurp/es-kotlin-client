@@ -6,3 +6,5 @@
 
 Overrides [SearchResults.searchHits](../-search-results/search-hits.md)
 
+search hits as a sequence or an empty sequence.
+

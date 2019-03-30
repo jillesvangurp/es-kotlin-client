@@ -8,12 +8,26 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.search.SearchHit
 
+/**
+ * Abstraction for search results that applies to both scrolling and non scrolling searches.
+ */
 interface SearchResults<T : Any> {
+    /**
+     * search hits as a sequence or an empty sequence.
+     */
     val searchHits: Sequence<SearchHit>
+
+    /**
+     * deserialized objects inside the `searchHits`. Deserialization happens lazily.
+     */
     val mappedHits: Sequence<T>
         get() {
             return searchHits.map { modelReaderAndWriter.deserialize(it) }
         }
+
+    /**
+     * a sequence of pairs of search hits and their deserialized objects.
+     */
     val hits: Sequence<Pair<SearchHit, T?>>
         get() {
             return searchHits.map {
@@ -21,8 +35,19 @@ interface SearchResults<T : Any> {
             }
         }
 
+    /**
+     * The total number of hits for the query.
+     */
     val totalHits: Long
+
+    /**
+     * the original search response.
+     */
     val searchResponse: SearchResponse
+
+    /**
+     * the model reader and writer used for deserialization.
+     */
     val modelReaderAndWriter: ModelReaderAndWriter<T>
 }
 

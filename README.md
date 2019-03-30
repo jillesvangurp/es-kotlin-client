@@ -2,7 +2,7 @@
 
 # Introduction
 
-ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) (introduced with Elasticsearch 6.x) with some Kotlin specific goodness. 
+ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) (introduced with Elasticsearch 6.x) with some Kotlin specific goodness. 
 
 The highlevel elasticsearch client is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. The kotlin wrapper takes away none of that and adds some power and convenience to it.
 
@@ -14,7 +14,7 @@ Kotlin also has support for co-routines and the intention is to gradually suppor
 ... is a work in progress
 
 - [dokka api docs](docs/es-kotlin-wrapper-client/index.md) - API documentation. 
-- [java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) - All of the functionality provided by the java client is supported. All this project does is add stuff.
+- [java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this project does is add stuff.
 - [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Demo project used for a presentation. Note. this may fall behind.
 - The tests test most of the important features and should be fairly readable.
 

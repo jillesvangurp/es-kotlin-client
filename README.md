@@ -13,7 +13,9 @@ Kotlin also has support for co-routines and the intention is to gradually suppor
 # Documentation
 ... is a work in progress
 
-[dokka api docs](docs/es-kotlin-wrapper-client/index.md)
+- [dokka api docs](docs/es-kotlin-wrapper-client/index.md) - API documentation. 
+- [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Demo project used for a presentation. Note. this may fall behind.
+- The tests test most of the important features and should be fairly readable.
 
 # Get it
 

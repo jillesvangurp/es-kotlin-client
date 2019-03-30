@@ -41,17 +41,17 @@ class IndexDAOTest : AbstractElasticSearchTest(indexPrefix = "crud") {
     }
 
     @Test
-    fun `produce version conflict if you provide the wrong version`() {
+    fun `produce conflict if you provide the wrong seqNo or primaryTerm`() {
         val id = randomId()
         // lets index a document
         dao.index(id, TestModel("hi"))
 
         assertThrows<ElasticsearchStatusException> {
             // that version is wrong ...
-            dao.index(id, TestModel("bar"), create = false, version = 666)
+            dao.index(id, TestModel("bar"), create = false, seqNo = 666, primaryTerm = 666)
         }
         // you can do manual optimistic locking
-        dao.index(id, TestModel("bar"), create = false, version = 1)
+        dao.index(id, TestModel("bar"), create = false, seqNo = 0, primaryTerm = 1)
         assert(dao.get(id)!!.message).isEqualTo("bar")
     }
 }

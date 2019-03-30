@@ -22,6 +22,7 @@ import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
+import java.lang.IllegalArgumentException
 
 private val logger = KotlinLogging.logger {}
 
@@ -92,7 +93,8 @@ class IndexDAO<T : Any>(
         id: String,
         obj: T,
         create: Boolean = true,
-        version: Long? = null,
+        seqNo: Long? = null,
+        primaryTerm: Long? = null,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ) {
         val indexRequest = IndexRequest()
@@ -101,8 +103,9 @@ class IndexDAO<T : Any>(
             .id(id)
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
-        if (version != null) {
-            indexRequest.version(version)
+        if (seqNo != null) {
+            indexRequest.setIfSeqNo(seqNo)
+            indexRequest.setIfPrimaryTerm(primaryTerm ?: throw IllegalArgumentException("you must also set primaryTerm when setting a seqNo"))
         }
         client.index(
             indexRequest, requestOptions
@@ -129,13 +132,12 @@ class IndexDAO<T : Any>(
         try {
             val response =
                 client.get(GetRequest().index(indexWriteAlias).type(type).id(id), requestOptions)
-            val currentVersion = response.version
 
             val sourceAsBytes = response.sourceAsBytes
             if (sourceAsBytes != null) {
                 val currentValue = modelReaderAndWriter.deserialize(sourceAsBytes)
                 val transformed = transformFunction.invoke(currentValue)
-                index(id, transformed, create = false, version = currentVersion)
+                index(id, transformed, create = false, seqNo = response.seqNo, primaryTerm = response.primaryTerm)
                 if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
                     logger.warn { "retry update $id succeeded after tries=$tries" }

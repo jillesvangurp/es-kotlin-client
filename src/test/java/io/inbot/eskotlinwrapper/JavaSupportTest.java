@@ -44,7 +44,7 @@ public class JavaSupportTest {
     public void shouldDoCrud() {
         String id = randomId();
         TestBean testBean = getBean("foo");
-        dao.index(id,testBean,true,null, RequestOptions.DEFAULT);
+        dao.index(id,testBean,true,null,null, RequestOptions.DEFAULT);
         TestBean fromIndex = dao.get(id);
         Assertions.assertEquals(fromIndex.getMessage(),"foo");
     }

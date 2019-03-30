@@ -120,7 +120,7 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
         val queryForAll = SearchSourceBuilder()
             .query(matchAllQuery())
             // we need the version so that we can do bulk updates
-            .version(true)
+            .seqNoAndPrimaryTerm(true)
             .size(5)
         val results = dao.search {
             scroll(TimeValue.timeValueMinutes(1L))
@@ -129,7 +129,7 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
 
         dao.bulk {
             results.hits.forEach { (searcHit, mapped) ->
-                update(searcHit.id, searcHit.version, mapped!!) {
+                update(searcHit.id, searcHit.seqNo, searcHit.primaryTerm, mapped!!) {
                     it.message = "${it.message} updated"
                     it
                 }

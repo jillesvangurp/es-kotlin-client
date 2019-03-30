@@ -48,10 +48,10 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
         dao.bulk() {
             // gets and updates the document
             getAndUpdate(id) { TestModel("${it.message} world!") }
-            // or you can fetch the original yourself and specify the version
+            // or you can fetch the original yourself and specify the seq_no and primary terms manually
             // normally you'd be using a scrolling search to fetch and bulk update
             // see bulk indexer for that
-            update(id2, 1, original2) { d2 ->
+            update(id2, 0, 1, original2) { d2 ->
                 d2.message = d2.message + " world!"
                 d2
             }
@@ -67,11 +67,11 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
         val id = randomId()
         dao.index(id, TestModel("hi"))
         dao.update(id) { _ -> TestModel("hi wrld") }
-        val (doc, getResponse) = dao.getWithGetResponse(id)!!
+        val (doc, _) = dao.getWithGetResponse(id)!!
         // note this is actually the default but setting it explicitly for clarity
         dao.bulk(retryConflictingUpdates = 2) {
-            // version here is wrong but we have retries set to 2 so it will recover
-            update(id, getResponse.version - 1, doc) { _ -> TestModel("omg") }
+            // seq no and primary term are wrong, so it should recover
+            update(id, 666, 666, doc) { _ -> TestModel("omg") }
         }
         assertk.assert(dao.get(id)!!.message).isEqualTo("omg")
     }

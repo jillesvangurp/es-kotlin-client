@@ -303,9 +303,16 @@ results.mappedHits.forEach {
 }
 ```
 
+
+The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel. You can only do this once of course since we don't keep the whole result set in memory and the scrollids are invalidated as you use them.
+
 ## Async with co-routines
+
+The high level client supports asynchronous IO with a lot of async methods that take an `ActionListener`. We provide a `SuspendingActionListener` that you can use with these. Probably the most common use case is searching and for that we provide a convenient short hand:
+
 ```kotlin
 val keyword="quick"
+// you may want some more appropriate scope than global scope ...
 runBlocking {
   val results = dao.searchAsync {
     source("""
@@ -321,8 +328,6 @@ runBlocking {
   }
 }
 ```
-
-The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel. You can only do this once of course since we don't keep the whole result set in memory and the scrollids are invalidated as you use them.
 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 

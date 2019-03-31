@@ -2,10 +2,9 @@ package io.inbot.eskotlinwrapper
 
 import org.elasticsearch.action.search.ClearScrollRequest
 import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.common.unit.TimeValue
+import org.elasticsearch.client.scroll
 import org.elasticsearch.search.SearchHit
 
 /**
@@ -71,7 +70,8 @@ class ScrollingSearchResults<T : Any>(
     override val searchResponse: SearchResponse,
     override val modelReaderAndWriter: ModelReaderAndWriter<T>,
     val restHighLevelClient: RestHighLevelClient,
-    val scrollTtlInMinutes: Long
+    val scrollTtlInMinutes: Long,
+    val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ) : SearchResults<T> {
 
     override val searchHits: Sequence<SearchHit>
@@ -88,21 +88,16 @@ class ScrollingSearchResults<T : Any>(
 
     private fun responses(): Sequence<SearchResponse> {
         return generateSequence(
+            // FIXME it currently seems impossible to do a suspending version of this
             seed = searchResponse,
             nextFunction = {
                 val currentScrollId = it.scrollId
                 if (currentScrollId != null && it.hits.hits != null && it.hits.hits.size > 0) {
-                    restHighLevelClient.scroll(
-                        SearchScrollRequest(currentScrollId).scroll(
-                            TimeValue.timeValueMinutes(
-                                scrollTtlInMinutes
-                            )
-                        ), RequestOptions.DEFAULT
-                    )
+                    restHighLevelClient.scroll(currentScrollId, scrollTtlInMinutes, defaultRequestOptions)
                 } else {
                     val clearScrollRequest = ClearScrollRequest()
                     clearScrollRequest.addScrollId(currentScrollId)
-                    restHighLevelClient.clearScroll(clearScrollRequest, RequestOptions.DEFAULT)
+                    restHighLevelClient.clearScroll(clearScrollRequest, defaultRequestOptions)
                     null
                 }
             })

@@ -312,7 +312,8 @@ class IndexDAO<T : Any>(
                 searchResponse,
                 modelReaderAndWriter,
                 client,
-                scrollTtlInMinutes
+                scrollTtlInMinutes,
+                requestOptions
             )
         }
     }

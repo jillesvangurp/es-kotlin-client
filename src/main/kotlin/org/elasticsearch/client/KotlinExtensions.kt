@@ -9,10 +9,14 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.action.search.ClearScrollRequest
+import org.elasticsearch.action.search.ClearScrollResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.CreateIndexResponse
+import org.elasticsearch.common.unit.TimeValue
 
 /**
  * Fake constructor like factory that gives you sane defaults that will allow you to quickly connect to elastic cloud.
@@ -94,7 +98,62 @@ suspend fun RestHighLevelClient.searchAsync(
     }
 }
 
-suspend fun IndicesClient.createIndexAsync(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: CreateIndexRequest.() -> Unit): CreateIndexResponse {
+fun RestHighLevelClient.scroll(
+    scrollId: String,
+    ttl: Long,
+    requestOptions: RequestOptions = RequestOptions.DEFAULT
+): SearchResponse {
+    return this.scroll(
+        SearchScrollRequest(scrollId).scroll(
+            TimeValue.timeValueMinutes(
+                ttl
+            )
+        ), requestOptions
+    )
+}
+
+suspend fun RestHighLevelClient.scrollAsync(
+    scrollId: String,
+    ttl: Long,
+    requestOptions: RequestOptions = RequestOptions.DEFAULT
+): SearchResponse {
+    return suspending {
+        this.scrollAsync(
+            SearchScrollRequest(scrollId).scroll(
+                TimeValue.timeValueMinutes(
+                    ttl
+                )
+            ), requestOptions, it
+        )
+    }
+}
+
+fun RestHighLevelClient.clearScroll(
+    vararg scrollIds: String,
+    requestOptions: RequestOptions = RequestOptions.DEFAULT
+): ClearScrollResponse {
+    val clearScrollRequest = ClearScrollRequest()
+    scrollIds.forEach { clearScrollRequest.addScrollId(it) }
+    return this.clearScroll(clearScrollRequest, requestOptions)
+}
+
+suspend fun RestHighLevelClient.clearScrollAsync(
+    vararg scrollIds: String,
+    requestOptions: RequestOptions = RequestOptions.DEFAULT
+): ClearScrollResponse {
+    // FIXME figure out a way to use this to create some kind of suspending Sequence<SearchResponse>, this seems to be hard currently
+    return suspending {
+        val clearScrollRequest = ClearScrollRequest()
+        scrollIds.forEach { clearScrollRequest.addScrollId(it) }
+        this.clearScrollAsync(clearScrollRequest, requestOptions, it)
+    }
+}
+
+suspend fun IndicesClient.createIndexAsync(
+    index: String,
+    requestOptions: RequestOptions = RequestOptions.DEFAULT,
+    block: CreateIndexRequest.() -> Unit
+): CreateIndexResponse {
     val request = CreateIndexRequest(index)
     block.invoke(request)
     return suspending {

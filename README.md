@@ -303,6 +303,25 @@ results.mappedHits.forEach {
 }
 ```
 
+## Async with co-routines
+```kotlin
+val keyword="quick"
+runBlocking {
+  val results = dao.searchAsync {
+    source("""
+      {
+        "size": 20,
+        "query": {
+          "match": {
+            "message": "$keyword"
+          }
+        }
+      }
+    """)
+  }
+}
+```
+
 The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel. You can only do this once of course since we don't keep the whole result set in memory and the scrollids are invalidated as you use them.
 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
@@ -352,8 +371,7 @@ As this is a development release, we still do fairly large changes and refactori
 - Schema versioning and migration support that uses aliases and the reindexing API. This also in progress.
 - ES 7.x branch - should be straightforward. Will probably start work on this close to the release.
 - Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
-- Make creating and using aggregations less painful and port over some work I've done for that in the past. 
-- More API documentation using dokka
+- Make creating and using aggregations less painful and port over some work I've done for that in the past. Maybe adapt this project: https://github.com/mbuhot/eskotlin
 - Set up CI, travis? Docker might be tricky.
 
 # License

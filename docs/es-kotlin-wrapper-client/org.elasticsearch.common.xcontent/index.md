@@ -2,6 +2,8 @@
 
 ## Package org.elasticsearch.common.xcontent
 
+Extension functions to support strings more easily.
+
 ### Functions
 
 | Name | Summary |

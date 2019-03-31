@@ -2,6 +2,8 @@
 
 ## Package io.inbot.eskotlinwrapper
 
+Misc. classes that support the various extension functions on the client.
+
 ### Types
 
 | Name | Summary |

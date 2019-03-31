@@ -2,6 +2,10 @@
 
 ## Package org.elasticsearch.action.search
 
+Extension functions to add a few alternate source methods on queries.
+
+	
+
 ### Functions
 
 | Name | Summary |

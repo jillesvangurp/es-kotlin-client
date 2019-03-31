@@ -2,6 +2,8 @@
 
 ## Package org.elasticsearch.search
 
+Extension functions to adapt search responses.
+
 ### Functions
 
 | Name | Summary |

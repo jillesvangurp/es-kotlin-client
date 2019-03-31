@@ -59,6 +59,7 @@ dokka {
     outputFormat = 'gfm'
     jdkVersion = 8
     outputDirectory = 'docs'
+    includes = ['src/main/kotlin/io/inbot/eskotlinwrapper/module.md']
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {

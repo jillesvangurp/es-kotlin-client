@@ -8,12 +8,13 @@
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `ScrollingSearchResults(searchResponse: SearchResponse, modelReaderAndWriter: `[`ModelReaderAndWriter`](../-model-reader-and-writer/index.md)`<`[`T`](index.md#T)`>, restHighLevelClient: RestHighLevelClient, scrollTtlInMinutes: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`)` |
+| [&lt;init&gt;](-init-.md) | `ScrollingSearchResults(searchResponse: SearchResponse, modelReaderAndWriter: `[`ModelReaderAndWriter`](../-model-reader-and-writer/index.md)`<`[`T`](index.md#T)`>, restHighLevelClient: RestHighLevelClient, scrollTtlInMinutes: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`, defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT)` |
 
 ### Properties
 
 | Name | Summary |
 |---|---|
+| [defaultRequestOptions](default-request-options.md) | `val defaultRequestOptions: RequestOptions` |
 | [modelReaderAndWriter](model-reader-and-writer.md) | `val modelReaderAndWriter: `[`ModelReaderAndWriter`](../-model-reader-and-writer/index.md)`<`[`T`](index.md#T)`>`<br>the model reader and writer used for deserialization. |
 | [restHighLevelClient](rest-high-level-client.md) | `val restHighLevelClient: RestHighLevelClient` |
 | [scrollTtlInMinutes](scroll-ttl-in-minutes.md) | `val scrollTtlInMinutes: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html) |

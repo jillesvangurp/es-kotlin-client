@@ -11,6 +11,7 @@ It adds extension methods, cuts down on boilerplate through use of several kotli
 Kotlin also has support for co-routines and the intention is to gradually support asynchronous operations through that as well. Basics for this are in place but work is ongoing.
 
 # Documentation
+
 ... is a work in progress
 
 - [dokka api docs](docs/es-kotlin-wrapper-client/index.md) - API documentation. 
@@ -51,57 +52,6 @@ Or pass in the builder and rest client as you would normally.
 
 **Everything** you do normally with the Java client works exactly as it does normally. But, we've added lots of extra methods to make things easier. For example searching is supported with a Kotlin DSL that adapts the existing `SearchRequest` and adds an alternative `source` method that takes a String, which in Kotlin you can template as well:
 
-
-```kotlin
-// simple example that we use as part of 
-// a health check against elastic cloud
-// we are alive if we are not logging errors ...
-val baseUrl="https://api.inbot.io"
-val minutes=60
-val results = esClient.search {
-            indices("inbot-api*")
-
-            source(
-                """
-{
-  "size": 0,
-  "query": {
-    "bool": {
-      "filter": [
-        {
-          "range": {
-            "@timestamp": {
-              "gte": "now-${minutes}m"
-            }
-          }
-        },
-        {
-          "term":{
-            "inbot_base_url":"$baseUrl"
-          }
-        },
-        {
-          "term":{
-            "level":"ERROR"
-          }
-        }
-      ]
-    }
-  },
-  "aggs": {
-    "loggers": {
-      "terms": {
-        "field": "logger_name",
-        "size": 1000
-      }
-    }
-  }
-}""".trimIndent()
-            )
-        }
-
-```
-
 ## DAOs and serialization/deserialization
 
 A key feature in this library is using Data Access Objects or DAOs to abstract the business of using indices (and the soon to be removed types). Indices store JSON that conforms to your mapping. Presumably, you want to serialize and deserialize that JSON. DAOs take care of this and more for you.
@@ -119,18 +69,9 @@ modelReaderAndWriter = JacksonModelReaderAndWriter(
                 TestModel::class,
                 ObjectMapper().findAndRegisterModules()
 ))
-
-// OR
-// type is optional (default is the index name) as this is to be deprecated 
-// in Elasticsearch and in any case you can have only 1 type per index these days.
-val dao = esClient.crudDao<TestModel>("myindex", refreshAllowed = true, type: "mytype",
-modelReaderAndWriter = JacksonModelReaderAndWriter(
-                TestModel::class,
-                ObjectMapper().findAndRegisterModules()
-))
 ```
 
-The modelReaderAndWriter parameter takes care of serializing/deserializing. In this case we are using an implementation that uses Jackson and we are using the kotlin extension for that, which registers itself via `findAndRegisterModules`. 
+The `modelReaderAndWriter` parameter takes care of serializing/deserializing. In this case we are using an implementation that uses Jackson and we are using the kotlin extension for that, which registers itself via `findAndRegisterModules`. 
 
 Typically, most applications that use jackson, would want to inject their own custom object mappers. It's of course straightforward to use alternatives like GSon or whatever else you prefer. In the code below, we assume Jackson is used.
 
@@ -178,16 +119,6 @@ The Bulk indexing API in Elasticsearch is complicated and it requires a bit of b
 dao.bulk {
   // lets fill our index
   for (i in 0..1000000) {
-    // inside the block, this refers to 
-    // the BulkIndexingSession instance
-    // that bulk manages for you
-    // The BulkIndexingSession creates 
-    // BulkRequests on the fly and sends 
-    // them off 100 operations (default) 
-    // at the time.
-    // this example indexes a document. 
-    // But you can also update, updateAndGet, 
-    // and delete
     index("doc_$i", TestModel("Hi again for the $i'th time"))
   }
 }
@@ -306,6 +237,8 @@ results.mappedHits.forEach {
 
 The `ScrollingSearchResults` implementation that is returned takes care of fetching all the pages, clearing the scrollId at the end, and of course mapping the hits to TestModel. You can only do this once of course since we don't keep the whole result set in memory and the scrollids are invalidated as you use them.
 
+See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
+
 ## Async with co-routines
 
 The high level client supports asynchronous IO with a lot of async methods that take an `ActionListener`. We provide a `SuspendingActionListener` that you can use with these. Probably the most common use case is searching and for that we provide a convenient short hand:
@@ -329,7 +262,7 @@ runBlocking {
 }
 ```
 
-See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
+Note, co-routines are a work in progress. 
 
 # Building
 
@@ -340,18 +273,19 @@ Simply use the gradle wrapper to build things:
 ```
 ./gradlew build
 ```
-
 Look inside the build file for comments and documentation.
+
+If you create a pull request, please also regenerate the documentation with gradle dokka. We host the [API documentation](docs) inside the repo as github flavored markdown.
 
 Gradle will spin up Elasticsearch using the docker compose plugin for gradle and then run the tests against that. If you want to run the tests from your IDE, just use `docker-compose up -d` to start ES. The tests expect to find that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making a mess there (I learned that lesson a long time ago).
 
 # Development status
 
-**This is a pre-1.0 version**. The main reason is that I'm still adding features and there may be some minor refactoring and changes. We are using this in our own product and it should be perfectly fine for general use at this point. Also note, that you can always access the underlying Java client, which is stable. 
-
-While using Kotlin is recommended, you can technically also use this from Java. Checkout some of the Java specific tests for examples for this. Support for this is experimental.
+While **this is a pre-1.0 version**, it should be perfectly fine for general use at this point. Also note, that you can always access the underlying Java client, which is stable. However, major refactorings do still happen ocassionally and there is still a lot to learn.
 
 Kotlin recently added co-routines and using that is an obvious use case for Elasticsearch. Basic support for this has been added. However, several things in this client have yet to be updated to make full use of this. We expect the main use case for most users will be asynchronous searches, which is one of the things that are already fully supported.
+
+If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand before committing a lot of your time.
 
 ## Compatibility
 
@@ -371,12 +305,14 @@ As this is a development release, we still do fairly large changes and refactori
 
 ## Future feature ideas/TODO/Doing
 
-- Async / co-routines: this is in progress but not completed yet. There is a `SuspendingActionListener` that you can use with all the high level async requests. Currently, the only stuff using that is search (non scrolling only). 
-- Index and alias management with read and write alias support built in. In progress.
-- Schema versioning and migration support that uses aliases and the reindexing API. This also in progress.
+Mostly I develop on a need to have basis. The Elasticsearch API is enormous and there are many features I have never used. If it matters to you, feelf free to jump in and help.
+
+Things currently on my horizon:
+
+- Async / co-routines: this is in progress but not completed yet. There is a `SuspendingActionListener` that you can use with all the high level async requests. Currently, the only stuff using that is search (non scrolling only) and a handful of other requests. 
+- Index and alias management with read and write alias support built in. In progress. The daos do support read and write aliases.
 - ES 7.x branch - should be straightforward. Will probably start work on this close to the release.
-- Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults.
-- Make creating and using aggregations less painful and port over some work I've done for that in the past. Maybe adapt this project: https://github.com/mbuhot/eskotlin
+- Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults. Maybe adapt this project: https://github.com/mbuhot/eskotlin
 - Set up CI, travis? Docker might be tricky.
 
 # License

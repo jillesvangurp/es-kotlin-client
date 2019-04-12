@@ -1,7 +1,7 @@
 buildscript {
     ext {
         kotlinVersion = '1.3.21'
-        elasticsearchVersion = '6.7.0'
+        elasticsearchVersion = '7.0.0'
         junitVersion = '5.4.1'
         jacksonVersion = '2.9.8'
     }

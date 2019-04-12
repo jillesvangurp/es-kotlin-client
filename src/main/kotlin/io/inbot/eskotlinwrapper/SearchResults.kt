@@ -62,7 +62,7 @@ class PagedSearchResults<T : Any>(
 
     override val totalHits: Long
         get() {
-            return searchResponse.hits?.totalHits ?: 0
+            return searchResponse.hits?.totalHits?.value ?: 0
         }
 }
 
@@ -83,7 +83,7 @@ class ScrollingSearchResults<T : Any>(
 
     override val totalHits: Long
         get() {
-            return searchResponse.hits?.totalHits ?: 0
+            return searchResponse.hits?.totalHits?.value ?: 0
         }
 
     private fun responses(): Sequence<SearchResponse> {

@@ -97,10 +97,13 @@ class BulkIndexingSession<T : Any>(
         }
         val indexRequest = IndexRequest()
             .index(dao.indexWriteAlias)
-            .type(dao.type)
             .id(id)
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+        if (!dao.type.isNullOrBlank()) {
+            @Suppress("DEPRECATION")
+            indexRequest.type(dao.type)
+        }
         rwLock.read { page.add(
             BulkOperation(
                 indexRequest,
@@ -131,12 +134,15 @@ class BulkIndexingSession<T : Any>(
         }
         val updateRequest = UpdateRequest()
             .index(dao.indexWriteAlias)
-            .type(dao.type)
             .id(id)
             .detectNoop(true)
             .setIfSeqNo(seqNo)
             .setIfPrimaryTerm(primaryTerms)
             .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
+        if (!dao.type.isNullOrBlank()) {
+            @Suppress("DEPRECATION")
+            updateRequest.type(dao.type)
+        }
         rwLock.read { page.add(
             BulkOperation(
                 updateRequest,
@@ -151,16 +157,23 @@ class BulkIndexingSession<T : Any>(
     /**
      * Delete an object from the index.
      */
-    fun delete(id: String, version: Long? = null, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
+    fun delete(id: String, seqNo: Long? = null, term: Long? = null, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         if (closed.get()) {
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
         }
         val deleteRequest = DeleteRequest()
             .index(dao.indexWriteAlias)
-            .type(dao.type)
             .id(id)
-        if (version != null) {
-            deleteRequest.version(version)
+        if (!dao.type.isNullOrBlank()) {
+            @Suppress("DEPRECATION")
+            deleteRequest.type(dao.type)
+        }
+
+        if (seqNo != null) {
+            deleteRequest.setIfSeqNo(seqNo)
+            if (term != null) {
+                deleteRequest.setIfPrimaryTerm(term)
+            }
         }
         rwLock.read { page.add(
             BulkOperation(

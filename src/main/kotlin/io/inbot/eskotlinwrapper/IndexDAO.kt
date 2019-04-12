@@ -37,7 +37,7 @@ private val logger = KotlinLogging.logger {}
  * @param indexName name of the index
  * @param indexReadAlias Alias used for read operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.
  * @param indexWriteAlias Alias used for write operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.
- * @param type the type of the documents in the index; defaults to "_doc". Since ES 6, there can only be one type. Types will be deprecated in ES 7 and removed in ES 8.
+ * @param type the type of the documents in the index; defaults to null. Since ES 6, there can only be one type. Types are deprecated in ES 7 and removed in ES 8.
  * @param modelReaderAndWriter serialization of your model class.
  * @param refreshAllowed if false, the refresh will throw an exception. Defaults to false.
  * @param defaultRequestOptions passed on all API calls. Defaults to `RequestOptions.DEFAULT`. Use this to set custom headers or override on each call on the dao.
@@ -48,7 +48,7 @@ class IndexDAO<T : Any>(
     private val client: RestHighLevelClient,
     internal val modelReaderAndWriter: ModelReaderAndWriter<T>,
     private val refreshAllowed: Boolean = false,
-    val type: String = "_doc", // default to using "_doc", note types will soon be removed but seem required for now
+    @Deprecated("Types are deprecated in ES 7.x and will be removed in v8") val type: String? = null,
     val indexWriteAlias: String = indexName,
     val indexReadAlias: String = indexWriteAlias,
     internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
@@ -123,10 +123,13 @@ class IndexDAO<T : Any>(
     ) {
         val indexRequest = IndexRequest()
             .index(indexWriteAlias)
-            .type(type)
             .id(id)
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+        if (!type.isNullOrBlank()) {
+            @Suppress("DEPRECATION")
+            indexRequest.type(type)
+        }
         if (seqNo != null) {
             indexRequest.setIfSeqNo(seqNo)
             indexRequest.setIfPrimaryTerm(primaryTerm ?: throw IllegalArgumentException("you must also set primaryTerm when setting a seqNo"))
@@ -159,8 +162,14 @@ class IndexDAO<T : Any>(
 
     ) {
         try {
+            val getRequest = GetRequest().index(indexWriteAlias).id(id)
+            if (!type.isNullOrBlank()) {
+                @Suppress("DEPRECATION")
+                getRequest.type(type)
+            }
+
             val response =
-                client.get(GetRequest().index(indexWriteAlias).type(type).id(id), requestOptions)
+                client.get(getRequest, requestOptions)
 
             val sourceAsBytes = response.sourceAsBytes
             if (sourceAsBytes != null) {
@@ -195,7 +204,13 @@ class IndexDAO<T : Any>(
      * Delete an object.
      */
     fun delete(id: String, requestOptions: RequestOptions = this.defaultRequestOptions) {
-        client.delete(DeleteRequest().index(indexWriteAlias).type(type).id(id), requestOptions)
+        val deleteRequest = DeleteRequest().index(indexWriteAlias).id(id)
+        if (!type.isNullOrBlank()) {
+            @Suppress("DEPRECATION")
+            deleteRequest.type(type)
+        }
+
+        client.delete(deleteRequest, requestOptions)
     }
 
     /**
@@ -213,7 +228,13 @@ class IndexDAO<T : Any>(
         id: String,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ): Pair<T, GetResponse>? {
-        val response = client.get(GetRequest().index(indexReadAlias).type(type).id(id), requestOptions)
+        val getRequest = GetRequest().index(indexReadAlias).id(id)
+        if (!type.isNullOrBlank()) {
+            @Suppress("DEPRECATION")
+            getRequest.type(type)
+        }
+
+        val response = client.get(getRequest, requestOptions)
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {

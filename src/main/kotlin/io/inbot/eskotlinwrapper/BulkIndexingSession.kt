@@ -91,6 +91,7 @@ class BulkIndexingSession<T : Any>(
      *
      * @param create set to true for upsert
      */
+    @Suppress("DEPRECATION")
     fun index(id: String, obj: T, create: Boolean = true, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         if (closed.get()) {
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
@@ -101,7 +102,6 @@ class BulkIndexingSession<T : Any>(
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
         if (!dao.type.isNullOrBlank()) {
-            @Suppress("DEPRECATION")
             indexRequest.type(dao.type)
         }
         rwLock.read { page.add(
@@ -128,6 +128,7 @@ class BulkIndexingSession<T : Any>(
     /**
      * Bulk update objects. If you have the object (e.g. because you are processing the sequence of a scrolling search), you can update what you have in a safe way.  If you set `retryConflictingUpdates` > 0, it will retry by getting the latest version and re-applying the `updateFunction` in case of a version conflict.
      */
+    @Suppress("DEPRECATION")
     fun update(id: String, seqNo: Long, primaryTerms: Long, original: T, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
         if (closed.get()) {
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
@@ -140,7 +141,6 @@ class BulkIndexingSession<T : Any>(
             .setIfPrimaryTerm(primaryTerms)
             .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
         if (!dao.type.isNullOrBlank()) {
-            @Suppress("DEPRECATION")
             updateRequest.type(dao.type)
         }
         rwLock.read { page.add(
@@ -157,6 +157,7 @@ class BulkIndexingSession<T : Any>(
     /**
      * Delete an object from the index.
      */
+    @Suppress("DEPRECATION")
     fun delete(id: String, seqNo: Long? = null, term: Long? = null, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         if (closed.get()) {
             throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
@@ -164,8 +165,8 @@ class BulkIndexingSession<T : Any>(
         val deleteRequest = DeleteRequest()
             .index(dao.indexWriteAlias)
             .id(id)
+
         if (!dao.type.isNullOrBlank()) {
-            @Suppress("DEPRECATION")
             deleteRequest.type(dao.type)
         }
 

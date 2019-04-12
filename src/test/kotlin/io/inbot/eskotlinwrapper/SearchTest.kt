@@ -39,7 +39,7 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
         }
 
         // we put totalHits at the top level for convenience
-        assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits)
+        assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits.value)
         results.mappedHits.forEach {
             // and we use jackson to deserialize the results
             assert(it.message).contains("quick")
@@ -77,7 +77,7 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
             """
             )
         }
-        assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits)
+        assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits.value)
         results.mappedHits.forEach {
             // and we use jackson to deserialize the results
             assert(it.message).contains("$keyWord")

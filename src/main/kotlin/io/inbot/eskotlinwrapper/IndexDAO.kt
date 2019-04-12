@@ -113,6 +113,7 @@ class IndexDAO<T : Any>(
      *
      * @param create set to false for upserts. Otherwise it fails on indexing documents that already exist.
      */
+    @Suppress("DEPRECATION")
     fun index(
         id: String,
         obj: T,
@@ -127,7 +128,6 @@ class IndexDAO<T : Any>(
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
         if (!type.isNullOrBlank()) {
-            @Suppress("DEPRECATION")
             indexRequest.type(type)
         }
         if (seqNo != null) {
@@ -153,6 +153,7 @@ class IndexDAO<T : Any>(
         update(0, id, transformFunction, maxUpdateTries, requestOptions)
     }
 
+    @Suppress("DEPRECATION")
     private fun update(
         tries: Int,
         id: String,
@@ -164,7 +165,6 @@ class IndexDAO<T : Any>(
         try {
             val getRequest = GetRequest().index(indexWriteAlias).id(id)
             if (!type.isNullOrBlank()) {
-                @Suppress("DEPRECATION")
                 getRequest.type(type)
             }
 
@@ -203,10 +203,10 @@ class IndexDAO<T : Any>(
     /**
      * Delete an object.
      */
+    @Suppress("DEPRECATION")
     fun delete(id: String, requestOptions: RequestOptions = this.defaultRequestOptions) {
         val deleteRequest = DeleteRequest().index(indexWriteAlias).id(id)
         if (!type.isNullOrBlank()) {
-            @Suppress("DEPRECATION")
             deleteRequest.type(type)
         }
 
@@ -224,13 +224,13 @@ class IndexDAO<T : Any>(
     /**
      * @return a `Pair` of the deserialized object and the `GetResponse` with all the relevant metadata.
      */
+    @Suppress("DEPRECATION")
     fun getWithGetResponse(
         id: String,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ): Pair<T, GetResponse>? {
         val getRequest = GetRequest().index(indexReadAlias).id(id)
         if (!type.isNullOrBlank()) {
-            @Suppress("DEPRECATION")
             getRequest.type(type)
         }
 

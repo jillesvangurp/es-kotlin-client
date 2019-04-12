@@ -27,7 +27,9 @@ We are using jitpack for releases currently; the nice thing is all I need to do 
 
 See [release notes](https://github.com/jillesvangurp/es-kotlin-wrapper-client/releases) with each github release tag for an overview what changed.
 
-Note. this client assumes you are using this with Elasticsearch 6.x. The versions listed in our build.gradle and docker-compose file are what we test with. Usually we update to the latest version within days after Elasticsearch releases.
+Note. this client assumes you are using this with Elasticsearch 7.x. The versions listed in our build.gradle and docker-compose file are what we test with. Usually we update to the latest version within days after Elasticsearch releases.
+
+For version 6.x, check the es-6.7.x branch.
 
 # Examples/highlights
 
@@ -289,11 +291,11 @@ If you want to contribute, please file tickets, create PRs, etc. For bigger work
 
 ## Compatibility
 
-The general goal is to keep this client compatible with the current stable version of Elasticsearch. We rely on the most recent 6.x version. Presumably, this works fine against any 6.x node (the REST protocol should be more stable); and possibly some older versions. If you experience issues, please file a ticket or pull request.
+The general goal is to keep this client compatible with the current stable version of Elasticsearch. We rely on the most recent 6.x version. Presumably, this works fine against any 7.x node (the REST protocol should be more stable); and possibly some older versions. If you experience issues, please file a ticket or pull request. 
 
-Currently we update this libary regularly for the current stable version of Elasticsearch. With the upcoming 7.x versions, we may start having to do release branches for older versions. There have been minor Java API changes in the 6.x series in the client. As of v6.7.0, several things have been deprecated in the Java client and the current version of this client has  already addressed all relevant deprecations. A big upcoming change with v7 will be the deprecation and eventual removal of document types in Elasticsearch. So further API changes are likely though we expect this to be limited in scope.
+For version 6.x, you can use the es-6.7.x branch or use one of the older releases (<= 0.9.11).
 
-As this is a development release, we still do fairly large changes and refactorings. Keep an eye on the release notes for this.
+Currently we update this libary regularly for the current stable version of Elasticsearch. As of v7.0.0, several things have been deprecated in the Java client and the current version of this client has  already addressed all relevant deprecations. A big upcoming change with v8 will be the removal of document types in Elasticsearch. If you need types, you can still configure them with the current version of the client but they default to null.
 
 ## Features (done)
 
@@ -311,7 +313,6 @@ Things currently on my horizon:
 
 - Async / co-routines: this is in progress but not completed yet. There is a `SuspendingActionListener` that you can use with all the high level async requests. Currently, the only stuff using that is search (non scrolling only) and a handful of other requests. 
 - Index and alias management with read and write alias support built in. In progress. The daos do support read and write aliases.
-- ES 7.x branch - should be straightforward. Will probably start work on this close to the release.
 - Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults. Maybe adapt this project: https://github.com/mbuhot/eskotlin
 - Set up CI, travis? Docker might be tricky.
 

@@ -2,7 +2,8 @@
 
 # type
 
-`val type: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)
+`val ~~type~~: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?`
+**Deprecated:** Types are deprecated in ES 7.x and will be removed in v8
 
-the type of the documents in the index; defaults to "_doc". Since ES 6, there can only be one type. Types will be deprecated in ES 7 and removed in ES 8.
+the type of the documents in the index; defaults to null. Since ES 6, there can only be one type. Types are deprecated in ES 7 and removed in ES 8.
 

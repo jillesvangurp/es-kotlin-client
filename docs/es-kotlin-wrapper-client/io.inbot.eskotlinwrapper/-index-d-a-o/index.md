@@ -18,7 +18,7 @@ You should create a DAO for each index you work with. You need to specify a [Mod
 
 `indexWriteAlias` - Alias used for write operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.
 
-`type` - the type of the documents in the index; defaults to "_doc". Since ES 6, there can only be one type. Types will be deprecated in ES 7 and removed in ES 8.
+`type` - the type of the documents in the index; defaults to null. Since ES 6, there can only be one type. Types are deprecated in ES 7 and removed in ES 8.
 
 `modelReaderAndWriter` - serialization of your model class.
 
@@ -30,7 +30,7 @@ You should create a DAO for each index you work with. You need to specify a [Mod
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `IndexDAO(indexName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, client: RestHighLevelClient, modelReaderAndWriter: `[`ModelReaderAndWriter`](../-model-reader-and-writer/index.md)`<`[`T`](index.md#T)`>, refreshAllowed: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = false, type: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)` = "_doc", indexWriteAlias: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)` = indexName, indexReadAlias: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)` = indexWriteAlias, defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT)`<br>DAO (Data Access Object) abstraction that allows you to work with indices. |
+| [&lt;init&gt;](-init-.md) | `IndexDAO(indexName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, client: RestHighLevelClient, modelReaderAndWriter: `[`ModelReaderAndWriter`](../-model-reader-and-writer/index.md)`<`[`T`](index.md#T)`>, refreshAllowed: `[`Boolean`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)` = false, type: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`? = null, indexWriteAlias: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)` = indexName, indexReadAlias: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)` = indexWriteAlias, defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT)`<br>DAO (Data Access Object) abstraction that allows you to work with indices. |
 
 ### Properties
 
@@ -39,7 +39,7 @@ You should create a DAO for each index you work with. You need to specify a [Mod
 | [indexName](index-name.md) | `val indexName: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>name of the index |
 | [indexReadAlias](index-read-alias.md) | `val indexReadAlias: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>Alias used for read operations. If you are using aliases, you can separate reads and writes. Defaults to indexName. |
 | [indexWriteAlias](index-write-alias.md) | `val indexWriteAlias: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>Alias used for write operations. If you are using aliases, you can separate reads and writes. Defaults to indexName. |
-| [type](type.md) | `val type: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)<br>the type of the documents in the index; defaults to "_doc". Since ES 6, there can only be one type. Types will be deprecated in ES 7 and removed in ES 8. |
+| [type](type.md) | `val ~~type~~: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`?`<br>the type of the documents in the index; defaults to null. Since ES 6, there can only be one type. Types are deprecated in ES 7 and removed in ES 8. |
 
 ### Functions
 

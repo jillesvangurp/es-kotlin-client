@@ -1,8 +1,6 @@
 package org.elasticsearch.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.inbot.eskotlinwrapper.IndexDAO
-import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending
 import org.apache.http.HttpHost
@@ -43,6 +41,12 @@ fun RestHighLevelClient(
     return RestHighLevelClient(restClientBuilder)
 }
 
+/**
+ * Create a new Data Access Object (DAO), aka. repository class. If you've used J2EE style frameworks, you should be familiar with this pattern.
+ *
+ * This abstracts the business of telling the client which index to run against and serializing/deserializing documents in it.
+ *
+ */
 fun <T : Any> RestHighLevelClient.crudDao(
     index: String,
     modelReaderAndWriter: ModelReaderAndWriter<T>,
@@ -65,19 +69,10 @@ fun <T : Any> RestHighLevelClient.crudDao(
     )
 }
 
-inline fun <reified T : Any> RestHighLevelClient.crudDao(
-    index: String,
-    objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules(),
-    refreshAllowed: Boolean = false
-): IndexDAO<T> {
-    return IndexDAO(
-        index,
-        this,
-        JacksonModelReaderAndWriter(T::class, objectMapper),
-        refreshAllowed = refreshAllowed
-    )
-}
-
+/**
+ * Search documents in the index. Expects a search block that takes a `SearchRequest` where you specify the query.
+ * The search request already has your index. Also see extension functions added in `org.elasticsearch.action.search.SearchRequest`
+ */
 fun RestHighLevelClient.search(
     requestOptions: RequestOptions = RequestOptions.DEFAULT,
     block: SearchRequest.() -> Unit
@@ -87,6 +82,9 @@ fun RestHighLevelClient.search(
     return this.search(searchRequest, requestOptions)
 }
 
+/**
+ * Suspend version of search that you can use in a co-routine context. Works the same otherwise.
+ */
 suspend fun RestHighLevelClient.searchAsync(
     requestOptions: RequestOptions = RequestOptions.DEFAULT,
     block: SearchRequest.() -> Unit
@@ -98,6 +96,9 @@ suspend fun RestHighLevelClient.searchAsync(
     }
 }
 
+/**
+ * Get the next page of a scrolling search. Note, use the DAO to do scrolling searches and avoid manually doing these requests.
+ */
 fun RestHighLevelClient.scroll(
     scrollId: String,
     ttl: Long,
@@ -112,6 +113,11 @@ fun RestHighLevelClient.scroll(
     )
 }
 
+/**
+ * Get the next page of a scrolling search. Note, use the DAO to do scrolling searches and avoid manually doing these requests.
+ *
+ * Note, there currently is no async version of this in the DAO.
+ */
 suspend fun RestHighLevelClient.scrollAsync(
     scrollId: String,
     ttl: Long,
@@ -128,6 +134,9 @@ suspend fun RestHighLevelClient.scrollAsync(
     }
 }
 
+/**
+ * Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.
+ */
 fun RestHighLevelClient.clearScroll(
     vararg scrollIds: String,
     requestOptions: RequestOptions = RequestOptions.DEFAULT
@@ -137,6 +146,9 @@ fun RestHighLevelClient.clearScroll(
     return this.clearScroll(clearScrollRequest, requestOptions)
 }
 
+/**
+ * Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.
+ */
 suspend fun RestHighLevelClient.clearScrollAsync(
     vararg scrollIds: String,
     requestOptions: RequestOptions = RequestOptions.DEFAULT
@@ -149,6 +161,9 @@ suspend fun RestHighLevelClient.clearScrollAsync(
     }
 }
 
+/**
+ * Create index asynchronously.
+ */
 suspend fun IndicesClient.createIndexAsync(
     index: String,
     requestOptions: RequestOptions = RequestOptions.DEFAULT,

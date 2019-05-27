@@ -28,6 +28,10 @@ private val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : Deprecati
 
 private val searchModule = SearchModule(Settings.EMPTY, false, Collections.emptyList())
 
+/**
+ * Adds the missing piece to the SearchRequest API that allows you to paste raw json.
+ * This makes sense in Kotlin because it has multiline strings and support for template variables.
+ */
 fun SearchRequest.source(json: String, deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER) {
     XContentFactory.xContent(XContentType.JSON).createParser(
         NamedXContentRegistry(searchModule.namedXContents),
@@ -38,6 +42,9 @@ fun SearchRequest.source(json: String, deprecationHandler: DeprecationHandler = 
     }
 }
 
+/**
+ * Adds the missing piece to the SearchRequest API that allows you to paste raw using a Reader. Useful if you store your queries in files.
+ */
 fun SearchRequest.source(reader: Reader, deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER) {
 
     XContentFactory.xContent(XContentType.JSON).createParser(
@@ -49,6 +56,9 @@ fun SearchRequest.source(reader: Reader, deprecationHandler: DeprecationHandler 
     }
 }
 
+/**
+ * Supports taking the query straight from an InputStream. You probably should use the reader version.
+ */
 fun SearchRequest.source(
     inputStream: InputStream,
     deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER

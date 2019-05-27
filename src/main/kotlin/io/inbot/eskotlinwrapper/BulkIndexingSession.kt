@@ -217,6 +217,9 @@ class BulkIndexingSession<T : Any>(
         }
     }
 
+    /**
+     * Prevents further operations from being accepted and calls flush one more time to ensure already accepted items get processed.
+     */
     override fun close() {
         closed.set(true) // stop accepting operations
         flush()

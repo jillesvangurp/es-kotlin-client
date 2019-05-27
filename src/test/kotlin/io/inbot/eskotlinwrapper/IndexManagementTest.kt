@@ -1,5 +1,6 @@
 package io.inbot.eskotlinwrapper
 
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
@@ -36,7 +37,7 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
             )
         )
         val aliases = dao2.currentAliases()
-        assertk.assert(aliases.size).isEqualTo(2)
+        assertThat(aliases.size).isEqualTo(2)
         aliases.forEach {
             println(it.alias)
         }

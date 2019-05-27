@@ -1,6 +1,6 @@
 package io.inbot.eskotlinwrapper
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
@@ -39,14 +39,14 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
         }
 
         // we put totalHits at the top level for convenience
-        assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits.value)
+        assertThat(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits.value)
         results.mappedHits.forEach {
             // and we use jackson to deserialize the results
-            assert(it.message).contains("quick")
+            assertThat(it.message).contains("quick")
         }
         // iterating twice is no problem
         results.mappedHits.forEach {
-            assert(it.message).contains("quick")
+            assertThat(it.message).contains("quick")
         }
     }
 
@@ -77,10 +77,10 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
             """
             )
         }
-        assert(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits.value)
+        assertThat(results.totalHits).isEqualTo(results.searchResponse.hits.totalHits.value)
         results.mappedHits.forEach {
             // and we use jackson to deserialize the results
-            assert(it.message).contains("$keyWord")
+            assertThat(it.message).contains("$keyWord")
         }
     }
 
@@ -104,8 +104,8 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
         }
 
         val fetchedResultsSize = results.mappedHits.count().toLong()
-        assert(fetchedResultsSize).isEqualTo(results.totalHits)
-        assert(fetchedResultsSize).isEqualTo(103L)
+        assertThat(fetchedResultsSize).isEqualTo(results.totalHits)
+        assertThat(fetchedResultsSize).isEqualTo(103L)
     }
 
     @Test
@@ -142,9 +142,9 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
             scroll(TimeValue.timeValueMinutes(1L))
             source(queryForAll)
         }
-        assert(updatedResults.totalHits).isEqualTo(19L)
+        assertThat(updatedResults.totalHits).isEqualTo(19L)
         updatedResults.mappedHits.forEach {
-            assert(it.message).endsWith("updated")
+            assertThat(it.message).endsWith("updated")
         }
     }
 
@@ -158,7 +158,7 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
         }
         dao.refresh()
         runBlocking {
-            assert(dao.searchAsync { }.totalHits).isGreaterThan(0)
+            assertThat(dao.searchAsync { }.totalHits).isGreaterThan(0)
         }
     }
 }

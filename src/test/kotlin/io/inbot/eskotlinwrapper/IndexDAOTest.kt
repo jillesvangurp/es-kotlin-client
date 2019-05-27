@@ -1,6 +1,6 @@
 package io.inbot.eskotlinwrapper
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import org.elasticsearch.ElasticsearchStatusException
@@ -12,9 +12,9 @@ class IndexDAOTest : AbstractElasticSearchTest(indexPrefix = "crud") {
     fun `index and delete a document`() {
         val id = randomId()
         dao.index(id, TestModel("hi"))
-        assert(dao.get(id)).isEqualTo(TestModel("hi"))
+        assertThat(dao.get(id)).isEqualTo(TestModel("hi"))
         dao.delete(id)
-        assert(dao.get(id)).isNull()
+        assertThat(dao.get(id)).isNull()
     }
 
     @Test
@@ -24,7 +24,7 @@ class IndexDAOTest : AbstractElasticSearchTest(indexPrefix = "crud") {
         // we use optimistic locking
         // this fetches the current version of the document and applies the lambda function to it
         dao.update(id) { TestModel("bye") }
-        assert(dao.get(id)!!.message).isEqualTo("bye")
+        assertThat(dao.get(id)!!.message).isEqualTo("bye")
     }
 
     @Test
@@ -52,6 +52,6 @@ class IndexDAOTest : AbstractElasticSearchTest(indexPrefix = "crud") {
         }
         // you can do manual optimistic locking
         dao.index(id, TestModel("bar"), create = false, seqNo = 0, primaryTerm = 1)
-        assert(dao.get(id)!!.message).isEqualTo("bar")
+        assertThat(dao.get(id)!!.message).isEqualTo("bar")
     }
 }

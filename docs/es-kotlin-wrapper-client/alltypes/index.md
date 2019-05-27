@@ -1,6 +1,6 @@
 
 
-A kotlin client that adapts the Java HighLevel REST client from Elasticsearch.
+A kotlin client that adapts the Java HighLevel REST client from Elasticsearch. Note, much of this library consists of extension functions for classes in the `org.elasticsearch` hierarchy.
 
 ### All Types
 

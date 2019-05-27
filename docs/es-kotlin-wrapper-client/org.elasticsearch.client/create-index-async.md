@@ -3,3 +3,6 @@
 # createIndexAsync
 
 `suspend fun IndicesClient.createIndexAsync(index: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: CreateIndexRequest.() -> `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)`): CreateIndexResponse`
+
+Create index asynchronously.
+

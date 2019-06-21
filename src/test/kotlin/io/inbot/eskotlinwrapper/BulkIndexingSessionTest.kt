@@ -99,7 +99,7 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
     }
 
     @Test
-    fun `We have callbacks so you can act if something happens with one of your bulk operations` () {
+    fun `We have callbacks so you can act if something happens with one of your bulk operations`() {
         val successes = mutableListOf<Any>()
         dao.bulk {
             // retries and logging are done via callbacks; if you want, you can override these and do something custom

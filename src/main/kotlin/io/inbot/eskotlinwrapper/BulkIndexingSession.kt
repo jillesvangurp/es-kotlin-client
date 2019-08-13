@@ -52,7 +52,6 @@ class BulkIndexingSession<T : Any>(
     private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
 
 ) : AutoCloseable {
-
     /**
      * Bulk operation model used for e.g. `itemCallback`.
      *
@@ -208,11 +207,9 @@ class BulkIndexingSession<T : Any>(
             pageClone.forEach { bulkRequest.add(it.operation) }
             logger.debug { "flushing ${page.size} items" }
             val bulkResponse = client.bulk(bulkRequest, defaultRequestOptions)
-            if (bulkResponse != null) {
-                bulkResponse.items.forEach {
-                    val bulkOperation = pageClone[it.itemId]
-                    bulkOperation.itemCallback.invoke(bulkOperation, it)
-                }
+            bulkResponse?.items?.forEach {
+                val bulkOperation = pageClone[it.itemId]
+                bulkOperation.itemCallback.invoke(bulkOperation, it)
             }
         }
     }

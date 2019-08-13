@@ -7,6 +7,8 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.action.bulk.BulkRequest
+import org.elasticsearch.action.bulk.BulkResponse
 import org.elasticsearch.action.search.ClearScrollRequest
 import org.elasticsearch.action.search.ClearScrollResponse
 import org.elasticsearch.action.search.SearchRequest
@@ -173,5 +175,11 @@ suspend fun IndicesClient.createIndexAsync(
     block.invoke(request)
     return suspending {
         this.createAsync(request, requestOptions, it)
+    }
+}
+
+suspend fun RestHighLevelClient.bulkAsync(bulkRequest: BulkRequest, options: RequestOptions = RequestOptions.DEFAULT): BulkResponse {
+    return suspending {
+        this.bulkAsync(bulkRequest, options, it)
     }
 }

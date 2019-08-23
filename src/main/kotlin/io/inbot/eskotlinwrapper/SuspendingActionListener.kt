@@ -1,9 +1,9 @@
 package io.inbot.eskotlinwrapper
 
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.elasticsearch.action.ActionListener
 import java.lang.Exception
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * Action listener that can be used with to adapt the async methods across the java client to co-routines.
@@ -29,7 +29,11 @@ class SuspendingActionListener<T>(private val continuation: Continuation<T>) :
          * ```
          */
         suspend fun <T : Any> suspending(block: (SuspendingActionListener<T>) -> Unit): T {
-            return suspendCoroutine {
+            return suspendCancellableCoroutine {
+                it.invokeOnCancellation {
+                    // TODO blocked on https://github.com/elastic/elasticsearch/issues/44802
+                    // given where the ticket is going we probably grab the cancellation token and pass it into suspending so we can call cancel here.
+                }
                 block.invoke(SuspendingActionListener(it))
             }
         }

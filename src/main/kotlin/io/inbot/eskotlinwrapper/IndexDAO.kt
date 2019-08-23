@@ -1,5 +1,10 @@
 package io.inbot.eskotlinwrapper
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
@@ -254,7 +259,7 @@ class IndexDAO<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
         operationsBlock: BulkIndexingSession<T>.(session: BulkIndexingSession<T>) -> Unit
     ) {
         val indexer = bulkIndexer(
@@ -269,6 +274,33 @@ class IndexDAO<T : Any>(
         }
     }
 
+    @UseExperimental(FlowPreview::class)
+    @ObsoleteCoroutinesApi
+    @ExperimentalCoroutinesApi
+    suspend fun bulkAsync(
+        bulkSize: Int = 100,
+        retryConflictingUpdates: Int = 0,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+
+        bulkDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        operationsBlock: AsyncBulkIndexingSession<T>.() -> Unit
+    ) {
+        AsyncBulkIndexingSession.asyncBulk(
+            client = client,
+            dao = this,
+            modelReaderAndWriter = modelReaderAndWriter,
+            bulkSize = bulkSize,
+            retryConflictingUpdates = retryConflictingUpdates,
+            refreshPolicy = refreshPolicy,
+            itemCallback = itemCallback,
+            block = {
+                operationsBlock.invoke(this)
+            },
+            bulkDispatcher = bulkDispatcher
+        )
+    }
+
     /**
      * Create a `BulkIndexingSession`.
      *
@@ -278,7 +310,7 @@ class IndexDAO<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ) = BulkIndexingSession(
         client,

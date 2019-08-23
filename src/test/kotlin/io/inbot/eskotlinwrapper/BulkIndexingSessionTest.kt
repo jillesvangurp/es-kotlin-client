@@ -4,11 +4,16 @@ import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.newFixedThreadPoolContext
+import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
+@ExperimentalCoroutinesApi
 class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
 
     @Test
@@ -106,13 +111,13 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
             this.index(
                 randomId(),
                 TestModel("another object"), itemCallback = { operation, response ->
-                if (response.isFailed) {
-                    // do something custom
-                } else {
-                    // lets just add the operation to a list
-                    successes.add(operation)
-                }
-            })
+                    if (response.isFailed) {
+                        // do something custom
+                    } else {
+                        // lets just add the operation to a list
+                        successes.add(operation)
+                    }
+                })
         }
         assertThat(successes).hasSize(1)
     }
@@ -132,5 +137,35 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
             this.index(randomId(), TestModel("and another object"))
         }
         assertThat(successes).hasSize(2)
+    }
+
+    @ObsoleteCoroutinesApi
+    @Test
+    fun `async bulk test`() {
+        val successes = mutableListOf<Any>()
+        runBlocking {
+            val totalItems = 10000
+            dao.bulkAsync(
+                bulkSize = 200,
+                refreshPolicy = WriteRequest.RefreshPolicy.NONE,
+                itemCallback = { operation, response ->
+                if (response.isFailed) {
+                    println(response.failureMessage)
+                } else {
+                    // this only gets called if ES reports back with a success response
+                    successes.add(operation)
+                }
+            },
+                operationsBlock = {
+                    val session = this
+                    (0 until totalItems).forEach {
+                        session.index(randomId(), TestModel("object $it"))
+                    }
+                },
+                bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher")
+            )
+            // ES has confirmed we have the exact number of items that we bulk indexed
+            assertThat(successes).hasSize(totalItems)
+        }
     }
 }

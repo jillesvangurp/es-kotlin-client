@@ -8,6 +8,7 @@ Extension functions to add functions to the client. Like `RestHighLevelClient(..
 
 | Name | Summary |
 |---|---|
+| [bulkAsync](bulk-async.md) | `suspend fun RestHighLevelClient.bulkAsync(bulkRequest: BulkRequest, options: RequestOptions = RequestOptions.DEFAULT): BulkResponse` |
 | [clearScroll](clear-scroll.md) | `fun RestHighLevelClient.clearScroll(vararg scrollIds: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, requestOptions: RequestOptions = RequestOptions.DEFAULT): ClearScrollResponse`<br>Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you. |
 | [clearScrollAsync](clear-scroll-async.md) | `suspend fun RestHighLevelClient.clearScrollAsync(vararg scrollIds: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, requestOptions: RequestOptions = RequestOptions.DEFAULT): ClearScrollResponse`<br>Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you. |
 | [createIndexAsync](create-index-async.md) | `suspend fun IndicesClient.createIndexAsync(index: `[`String`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)`, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: CreateIndexRequest.() -> `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)`): CreateIndexResponse`<br>Create index asynchronously. |

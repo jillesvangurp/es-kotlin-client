@@ -241,7 +241,7 @@ The `ScrollingSearchResults` implementation that is returned takes care of fetch
 
 See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/test/kotlin/io/inbot/eskotlinwrapper/SearchTest.kt) for more.
 
-## Async with co-routines
+## Async search with co-routines
 
 The high level client supports asynchronous IO with a lot of async methods that take an `ActionListener`. We provide a `SuspendingActionListener` that you can use with these. Probably the most common use case is searching and for that we provide a convenient short hand:
 
@@ -264,7 +264,42 @@ runBlocking {
 }
 ```
 
-Note, co-routines are a work in progress. 
+## Async Bulk with co-routines
+
+We also have an asynchronous bulk indexer that depends on the experimental `Flow` API in Kotlin. This works very similar to the current bulk api. This still API has a few question marks around it still regarding parallelism. Ideally we'd fire bulk requests on different threads in parallel and use back pressure to avoid overloading ES with requests. Instead, the current behavior seems to be strictly sequential. There seems to be a lot of discussion around this topic still in the [Kotlin issue tracker](https://github.com/Kotlin/kotlinx.coroutines/issues/1147).
+
+```
+        val successes = mutableListOf<Any>()
+        runBlocking {
+            val totalItems = 10000
+            dao.bulkAsync(
+                bulkSize = 200,
+                refreshPolicy = WriteRequest.RefreshPolicy.NONE,
+                itemCallback = { operation, response ->
+                if (response.isFailed) {
+                    println(response.failureMessage)
+                } else {
+                    // this only gets called if ES reports back with a success response
+                    successes.add(operation)
+                }
+            },
+                operationsBlock = {
+                    val session = this
+                    (0 until totalItems).forEach {
+                        session.index(randomId(), TestModel("object $it"))
+                    }
+                },
+                bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher")
+            )
+            // ES has confirmed we have the exact number of items that we bulk indexed
+            assertThat(successes).hasSize(totalItems)
+        }
+
+```
+
+## General notes on Co-routines
+
+Note, co-routines are a **work in progress** and things may change. This is relatively new in Kotlin and there is still a lot of stuff happening around `Flow` and `Channel`. Also, I'm currently waiting for this ticket to be resolved: https://github.com/elastic/elasticsearch/issues/44802 in Elasticsearch. This will make all async methods in the `RestHighLevelClient` cancellable, which in turn will allow us to use `suspendCancellableCoroutine` and cancel the request in case of errors. My PR for this should be merged soonish. 
 
 # Building
 

@@ -271,9 +271,13 @@ runBlocking {
 }
 ```
 
+One potential usecase for this could be e.g. doing several queries at once in response to a user request to give the user results for several different indices, each with their own query.
+
 ## Async Bulk with co-routines
 
-We also have an asynchronous bulk indexer that depends on the experimental `Flow` API in Kotlin. This works very similar to the synchronous bulk api above. This still API has a few question marks around it still regarding parallelism. Ideally we'd fire bulk requests on different threads in parallel and use back pressure to avoid overloading ES with requests. Instead, the current behavior seems to be strictly sequential. There seems to be a lot of discussion around this topic still in the [Kotlin issue tracker](https://github.com/Kotlin/kotlinx.coroutines/issues/1147).
+We also have an asynchronous bulk indexer that internally depends on the experimental `Flow` and `Channel` APIs in Kotlin. However for user this works very similar to the synchronous bulk api above. To use this, you will need to add the `kotlin.Experimental` flag to your build and to your runtime.
+
+The `Flow API` still has a few question marks around it regarding e.g. parallelism. However, it is shaping up as a really nice alternative to manually orchestrating producer and consumer type logic. Ideally we'd fire bulk requests on different threads in parallel and use back pressure to avoid overloading ES with requests. However, the current behavior seems to be strictly sequential. There seems to be a lot of discussion around this topic still in the [Kotlin issue tracker](https://github.com/Kotlin/kotlinx.coroutines/issues/1147). I will update the internals accordingly when this changes.
 
 ```kotlin
 val successes = mutableListOf<Any>()
@@ -282,15 +286,15 @@ runBlocking {
     dao.bulkAsync(
         bulkSize = 200,
         refreshPolicy = WriteRequest.RefreshPolicy.NONE,
+        bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher"),
         itemCallback = { operation, response ->
-        if (response.isFailed) {
-            println(response.failureMessage)
-        } else {
-            // this only gets called if ES reports back with a success response
-            successes.add(operation)
+            if (response.isFailed) {
+                println(response.failureMessage)
+            } else {
+                // this only gets called if ES reports back with a success response
+                successes.add(operation)
+            }
         }
-    },
-        bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher")
     ) {
         (0 until totalItems).forEach {
             index(randomId(), TestModel("object $it"))
@@ -299,12 +303,11 @@ runBlocking {
     // ES has confirmed we have the exact number of items that we bulk indexed
     assertThat(successes).hasSize(totalItems)
 }
-
 ```
 
 ## General notes on Co-routines
 
-Note, co-routines are a **work in progress** and things may change. This is relatively new in Kotlin and there is still a lot of stuff happening around `Flow` and `Channel`. Also, I'm currently waiting for this ticket to be resolved: https://github.com/elastic/elasticsearch/issues/44802 in Elasticsearch. This will make all async methods in the `RestHighLevelClient` cancellable, which in turn will allow us to use `suspendCancellableCoroutine` and cancel the request in case of errors. My PR for this should be merged soonish. 
+Note, co-routines are a **work in progress** and things may change as Kotlin evolves and as my understanding evolves. This is all relatively new in Kotlin and there is still a lot of stuff happening around `Flow` and `Channel`. Also, I'm currently waiting for [this ticket to be resolved](https://github.com/elastic/elasticsearch/issues/44802) in Elasticsearch. This will make all async methods in the `RestHighLevelClient` cancellable, which in turn will allow us to use `suspendCancellableCoroutine` and cancel the request in case of errors. My PR for this should be merged soonish. Currently the `cancel` is a noop.
 
 # Building
 
@@ -351,10 +354,12 @@ Mostly I develop on a need to have basis. The Elasticsearch API is enormous and 
 
 Things currently on my horizon:
 
-- Async / co-routines: this is in progress but not completed yet. There is a `SuspendingActionListener` that you can use with all the high level async requests. Currently, the only stuff using that is search (non scrolling only) and a handful of other requests. 
+- Async / co-routines: this is in progress but not completed yet. There is a `SuspendingActionListener` that you can use with all the high level async requests. Currently, the only stuff using that is search (non scrolling only), bulk, and a handful of other requests. 
 - Index and alias management with read and write alias support built in. In progress. The daos do support read and write aliases.
 - Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults. Maybe adapt this project: https://github.com/mbuhot/eskotlin
 - Set up CI, travis? Docker might be tricky.
+
+If you have any ideas on how to improve this further, file a ticket. I'd love to hear your feedback.
 
 # License
 

@@ -6,18 +6,25 @@ ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client
 
 The highlevel elasticsearch client is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. The kotlin wrapper takes away none of that and adds some power and convenience to it.
 
-It adds extension methods, cuts down on boilerplate through use of several kotlin features for creating DSLs, default arguments, sequences. etc. Some of this is also  usable by Java developers (with some restrictions). Android is not supported as the minimum requirements for the highlevel client are Java 8. 
+## Why?
 
-Kotlin also has support for co-routines and the intention is to gradually support asynchronous operations through that as well. Basics for this are in place but work is ongoing.
+The Java client is designed for Java users and comes with a lot of things that feel a bit awkward in Kotlin. This client makes using the client a bit less boiler plate heavy in Kotlin and adds a lot of niceties.
+
+To do this we add extension methods to the existing client and cut down on boilerplate by using kotlin features for creating DSLs, default arguments, sequences. etc. 
+
+Kotlin also has support for co-routines and the intention is to gradually support more asynchronous operations through that as well. Basics for this are in place but work is ongoing. Currently there are asynchronous search and bulk variants that you can use with co-routines.
+
+## Platform support
+
+This requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the functionality is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin. Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch directly from a mobile phone in any case.
 
 # Documentation
 
-... is a work in progress
-
-- [dokka api docs](docs/es-kotlin-wrapper-client/index.md) - API documentation. 
-- [java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this project does is add stuff.
-- [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Demo project used for a presentation. Note. this may fall behind.
-- The tests test most of the important features and should be fairly readable.
+- [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - This demo project was used for a presentation and includes a some nice examples. Note. this may fall behind as I don't always update it to the latest version. If you need a quick overview, start there.
+- Check the code samples on this page. I try to keep these up to date but it's a manual thing currently.
+- The tests test most of the important features and should be fairly readable and provide a good overview of how to use things. I like keeping the tests somewhat readable.
+- [dokka api docs](docs/es-kotlin-wrapper-client/index.md) - API documentation - this gets regenerated for each release. 
+- [java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff.
 
 # Get it
 

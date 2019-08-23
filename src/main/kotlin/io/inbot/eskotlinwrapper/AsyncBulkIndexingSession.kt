@@ -48,7 +48,6 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
     private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
     private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
 ) {
-
     @FlowPreview
     companion object {
 
@@ -108,12 +107,15 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
                 val bulkRequest = BulkRequest()
                 bulkRequest.refreshPolicy = refreshPolicy
                 ops.forEach { bulkRequest.add(it.operation) }
-                logger.info { "async request on ${Thread.currentThread().name}" }
                 client.bulkAsync(bulkRequest, defaultRequestOptions).items?.forEach {
                     val bulkOperation = ops[it.itemId]
                     bulkOperation.itemCallback.invoke(bulkOperation, it)
                 }
-            }.flowOn(bulkDispatcher)
+            }
+                // FIXME: figure out how to actually get this called in parallel. Currently it seems to do this sequentially
+                // loads of confusing suggestions in the issue tracker for this with a lot of intentions and uncertainty around this and without a good way to do this NOW.
+                // https://github.com/Kotlin/kotlinx.coroutines/issues/1147
+                .flowOn(bulkDispatcher)
                 .collect { }
         }
     }

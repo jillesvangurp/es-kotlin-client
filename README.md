@@ -334,11 +334,11 @@ If you want to contribute, please file tickets, create PRs, etc. For bigger work
 
 ## Compatibility
 
-The general goal is to keep this client compatible with the current stable version of Elasticsearch. We rely on the most recent 6.x version. Presumably, this works fine against any 7.x node (the REST protocol should be more stable); and possibly some older versions. If you experience issues, please file a ticket or pull request. 
+The general goal is to keep this client compatible with the current stable version of Elasticsearch. We rely on the most recent 7.x version. Presumably, this works fine against any 6.x node with the exception of some changes in APIs or query DSL; and possibly some older versions. 
 
 For version 6.x, you can use the es-6.7.x branch or use one of the older releases (<= 0.9.11).
 
-Currently we update this libary regularly for the current stable version of Elasticsearch. As of v7.0.0, several things have been deprecated in the Java client and the current version of this client has  already addressed all relevant deprecations. A big upcoming change with v8 will be the removal of document types in Elasticsearch. If you need types, you can still configure them with the current version of the client but they default to null.
+Currently we update this libary regularly for the current stable version of Elasticsearch. As of v7.0.0, several things have been deprecated in the Java client and the current version of this client has  already addressed all relevant deprecations. A big upcoming change with v8 will be the removal of document types in Elasticsearch. If you need types, you can still configure them with the current version of the client but they default to null. With Elasticsearch 8 we will remove all support for those.
 
 ## Features (done)
 
@@ -350,17 +350,17 @@ Currently we update this libary regularly for the current stable version of Elas
 
 ## Future feature ideas/TODO/Doing
 
-Mostly I develop on a need to have basis. The Elasticsearch API is enormous and there are many features I have never used. If it matters to you, feelf free to jump in and help.
+Mostly I develop on a need to have basis. The Elasticsearch API is enormous and there are many features I have never used. If it matters to you, feel free to jump in and help.
 
 Things currently on my horizon:
 
 - Async / co-routines: this is in progress but not completed yet. There is a `SuspendingActionListener` that you can use with all the high level async requests. Currently, the only stuff using that is search (non scrolling only), bulk, and a handful of other requests. 
-- Index and alias management with read and write alias support built in. In progress. The daos do support read and write aliases.
-- Cut down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults. Maybe adapt this project: https://github.com/mbuhot/eskotlin
-- Set up CI, travis? Docker might be tricky.
+- Index and alias management with read and write alias support built in. This is work in progress. The daos do support read and write aliases but most of the management features for this are missing. Of course you do have access to the relevant APIs directly via the Java client.
+- Cutting down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults. Maybe adapt this project: https://github.com/mbuhot/eskotlin
+- Set up CI, travis? Github actiona? Docker might be tricky.
 
 If you have any ideas on how to improve this further, file a ticket. I'd love to hear your feedback.
 
 # License
 
-This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. Please exercise your rights under this license in any way you feel is right. Forking is allowed and encouraged. I do appreciate attribution and pull requests...
+This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. Please exercise your rights under this license in any way you feel is appropriate. Forking is allowed and encouraged. I do appreciate attribution and pull requests ...

@@ -1,14 +1,20 @@
 package io.inbot.eskotlinwrapper
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowViaChannel
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
@@ -31,8 +37,9 @@ private val logger = KotlinLogging.logger {}
  * it fires bulk requests asynchronously on the specified dispatcher. On paper using multiple threads, allows ES to
  * use multiple Threads to consume bulk requests.
  *
- * Note: you need the kotlin.Experimental flag set for this to work.
+ * Note: you need the kotlin.Experimental flag set for this to work. As Flow is a bit in flux, I expect the internals of this may change still before they finalize this. So, beware when using this.
  */
+@Suppress("unused")
 class AsyncBulkIndexingSession<T : Any> private constructor(
     private val dao: IndexDAO<T>,
     private val modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
@@ -42,8 +49,35 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
     private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
 ) {
 
+    @FlowPreview
     companion object {
 
+        @ObsoleteCoroutinesApi // apparently consumeEach is going away soon
+        private fun <T> chunkFLow(
+            chunkSize: Int = 20,
+            block: CoroutineScope.(channel: SendChannel<T>) -> Unit
+        ): Flow<List<T>> =
+            flow {
+                coroutineScope {
+                    val channel = Channel<T>(chunkSize)
+                    launch {
+                        block(channel)
+                    }
+                    var page = mutableListOf<T>()
+                    channel.consumeEach { value ->
+                        page.add(value)
+                        if (page.size > chunkSize) {
+                            emit(page)
+                            page = mutableListOf()
+                        }
+                    }
+                    if (page.isNotEmpty()) {
+                        emit(page)
+                    }
+                }
+            }
+
+        @ObsoleteCoroutinesApi // apparently consumeEach is going away soon
         @UseExperimental(FlowPreview::class)
         @ExperimentalCoroutinesApi
         suspend fun <T : Any> asyncBulk(
@@ -55,13 +89,10 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
             refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
             itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
             defaultRequestOptions: RequestOptions = dao.defaultRequestOptions,
-            bulkDispatcher: CoroutineDispatcher = Dispatchers.IO,
-            block: AsyncBulkIndexingSession<T>.() -> Unit
+            block: AsyncBulkIndexingSession<T>.() -> Unit,
+            bulkDispatcher: CoroutineDispatcher
         ) {
-
-            val bulkList = mutableListOf<BulkOperation<T>>()
-
-            flowViaChannel<BulkOperation<T>>(bufferSize = 500) { channel ->
+            chunkFLow<BulkOperation<T>>(chunkSize = bulkSize) { channel ->
                 val session = AsyncBulkIndexingSession<T>(
                     dao,
                     modelReaderAndWriter,
@@ -73,40 +104,17 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
                 block.invoke(session)
                 // close the channel so the collector doesn't wait forever
                 channel.close()
-            }.collect { op ->
-                bulkList.add(op)
-                if (bulkList.size % bulkSize == 0 && bulkList.isNotEmpty()) {
-                    flush(bulkList, bulkDispatcher, refreshPolicy, client, defaultRequestOptions)
+            }.map { ops ->
+                val bulkRequest = BulkRequest()
+                bulkRequest.refreshPolicy = refreshPolicy
+                ops.forEach { bulkRequest.add(it.operation) }
+                logger.info { "async request on ${Thread.currentThread().name}" }
+                client.bulkAsync(bulkRequest, defaultRequestOptions).items?.forEach {
+                    val bulkOperation = ops[it.itemId]
+                    bulkOperation.itemCallback.invoke(bulkOperation, it)
                 }
-            }
-            // flush any remaining items
-            flush(bulkList, bulkDispatcher, refreshPolicy, client, defaultRequestOptions)
-        }
-
-        private suspend fun <T : Any> flush(
-            bulkList: MutableList<BulkOperation<T>>,
-            bulkDispatcher: CoroutineDispatcher,
-            refreshPolicy: WriteRequest.RefreshPolicy,
-            client: RestHighLevelClient,
-            defaultRequestOptions: RequestOptions
-        ) {
-            coroutineScope {
-                if (bulkList.isNotEmpty()) {
-                    val toFlush = mutableListOf<BulkOperation<T>>()
-                    toFlush.addAll(bulkList)
-                    bulkList.clear()
-                    // asynchronously send off a page of results
-                    launch(bulkDispatcher) {
-                        val bulkRequest = BulkRequest()
-                        bulkRequest.refreshPolicy = refreshPolicy
-                        toFlush.forEach { bulkRequest.add(it.operation) }
-                        client.bulkAsync(bulkRequest, defaultRequestOptions).items?.forEach {
-                            val bulkOperation = toFlush[it.itemId]
-                            bulkOperation.itemCallback.invoke(bulkOperation, it)
-                        }
-                    }
-                }
-            }
+            }.flowOn(bulkDispatcher)
+                .collect { }
         }
     }
 

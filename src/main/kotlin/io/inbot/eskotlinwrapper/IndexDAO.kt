@@ -1,6 +1,10 @@
 package io.inbot.eskotlinwrapper
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
@@ -270,6 +274,8 @@ class IndexDAO<T : Any>(
         }
     }
 
+    @UseExperimental(FlowPreview::class)
+    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     suspend fun bulkAsync(
         bulkSize: Int = 100,
@@ -277,6 +283,7 @@ class IndexDAO<T : Any>(
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
         itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
 
+        bulkDispatcher: CoroutineDispatcher = Dispatchers.IO,
         operationsBlock: AsyncBulkIndexingSession<T>.() -> Unit
     ) {
         AsyncBulkIndexingSession.asyncBulk(
@@ -285,12 +292,13 @@ class IndexDAO<T : Any>(
             modelReaderAndWriter = modelReaderAndWriter,
             bulkSize = bulkSize,
             retryConflictingUpdates = retryConflictingUpdates,
+            refreshPolicy = refreshPolicy,
             itemCallback = itemCallback,
-            refreshPolicy = refreshPolicy
-        ) {
-            logger.info { "doing the thing" }
-            operationsBlock.invoke(this)
-        }
+            block = {
+                operationsBlock.invoke(this)
+            },
+            bulkDispatcher = bulkDispatcher
+        )
     }
 
     /**

@@ -5,6 +5,8 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.RepeatedTest
@@ -137,25 +139,32 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
         assertThat(successes).hasSize(2)
     }
 
+    @ObsoleteCoroutinesApi
     @Test
     fun `async bulk test`() {
         val successes = mutableListOf<Any>()
         runBlocking {
-            val totalItems = 99
+            val totalItems = 10000
             dao.bulkAsync(
-                bulkSize = 22,
+                bulkSize = 200,
+                refreshPolicy = WriteRequest.RefreshPolicy.NONE,
                 itemCallback = { operation, response ->
                 if (response.isFailed) {
                     println(response.failureMessage)
                 } else {
+                    // this only gets called if ES reports back with a success response
                     successes.add(operation)
                 }
-            }) {
-                val session = this
+            },
+                operationsBlock = {
+                    val session = this
                     (0 until totalItems).forEach {
                         session.index(randomId(), TestModel("object $it"))
                     }
-            }
+                },
+                bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher")
+            )
+            // ES has confirmed we have the exact number of items that we bulk indexed
             assertThat(successes).hasSize(totalItems)
         }
     }

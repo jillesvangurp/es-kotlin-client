@@ -52,17 +52,6 @@ class BulkIndexingSession<T : Any>(
     private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
 
 ) : AutoCloseable {
-    /**
-     * Bulk operation model used for e.g. `itemCallback`.
-     *
-     * @param T the type of the objects in the dao.
-     */
-    data class BulkOperation<T : Any>(
-        val operation: DocWriteRequest<*>,
-        val id: String,
-        val updateFunction: ((T) -> T)? = null,
-        val itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
-    )
     // adding things to a request should be thread safe
     private val page = ConcurrentLinkedDeque<BulkOperation<T>>()
     private val closed = AtomicBoolean(false)
@@ -90,11 +79,9 @@ class BulkIndexingSession<T : Any>(
      *
      * @param create set to true for upsert
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION") // we allow using types for now
     fun index(id: String, obj: T, create: Boolean = true, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
-        if (closed.get()) {
-            throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
-        }
+        check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val indexRequest = IndexRequest()
             .index(dao.indexWriteAlias)
             .id(id)
@@ -129,9 +116,7 @@ class BulkIndexingSession<T : Any>(
      */
     @Suppress("DEPRECATION")
     fun update(id: String, seqNo: Long, primaryTerms: Long, original: T, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
-        if (closed.get()) {
-            throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
-        }
+        check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val updateRequest = UpdateRequest()
             .index(dao.indexWriteAlias)
             .id(id)
@@ -158,9 +143,7 @@ class BulkIndexingSession<T : Any>(
      */
     @Suppress("DEPRECATION")
     fun delete(id: String, seqNo: Long? = null, term: Long? = null, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
-        if (closed.get()) {
-            throw IllegalStateException("cannot add bulk operations after the BulkIndexingSession is closed")
-        }
+        check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val deleteRequest = DeleteRequest()
             .index(dao.indexWriteAlias)
             .id(id)

@@ -51,7 +51,7 @@ public class JavaSupportTest {
 
     @Test
     public void shouldDoBulk() {
-        Function2<BulkIndexingSession.BulkOperation<TestBean>, BulkItemResponse, Unit> callback = (o, r) -> Unit.INSTANCE;
+        Function2<BulkOperation<TestBean>, BulkItemResponse, Unit> callback = (o, r) -> Unit.INSTANCE;
 
         try(BulkIndexingSession<TestBean> bulkIndexer = dao.bulkIndexer(10, 2, WriteRequest.RefreshPolicy.WAIT_UNTIL, callback,RequestOptions.DEFAULT)) {
             for(int i=0;i<42;i++)

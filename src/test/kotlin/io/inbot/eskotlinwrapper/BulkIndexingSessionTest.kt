@@ -4,11 +4,14 @@ import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
+@ExperimentalCoroutinesApi
 class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
 
     @Test
@@ -106,13 +109,13 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
             this.index(
                 randomId(),
                 TestModel("another object"), itemCallback = { operation, response ->
-                if (response.isFailed) {
-                    // do something custom
-                } else {
-                    // lets just add the operation to a list
-                    successes.add(operation)
-                }
-            })
+                    if (response.isFailed) {
+                        // do something custom
+                    } else {
+                        // lets just add the operation to a list
+                        successes.add(operation)
+                    }
+                })
         }
         assertThat(successes).hasSize(1)
     }
@@ -132,5 +135,28 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
             this.index(randomId(), TestModel("and another object"))
         }
         assertThat(successes).hasSize(2)
+    }
+
+    @Test
+    fun `async bulk test`() {
+        val successes = mutableListOf<Any>()
+        runBlocking {
+            val totalItems = 99
+            dao.bulkAsync(
+                bulkSize = 22,
+                itemCallback = { operation, response ->
+                if (response.isFailed) {
+                    println(response.failureMessage)
+                } else {
+                    successes.add(operation)
+                }
+            }) {
+                val session = this
+                    (0 until totalItems).forEach {
+                        session.index(randomId(), TestModel("object $it"))
+                    }
+            }
+            assertThat(successes).hasSize(totalItems)
+        }
     }
 }

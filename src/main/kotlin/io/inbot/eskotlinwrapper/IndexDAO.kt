@@ -1,5 +1,6 @@
 package io.inbot.eskotlinwrapper
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
@@ -254,7 +255,7 @@ class IndexDAO<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
         operationsBlock: BulkIndexingSession<T>.(session: BulkIndexingSession<T>) -> Unit
     ) {
         val indexer = bulkIndexer(
@@ -269,6 +270,29 @@ class IndexDAO<T : Any>(
         }
     }
 
+    @ExperimentalCoroutinesApi
+    suspend fun bulkAsync(
+        bulkSize: Int = 100,
+        retryConflictingUpdates: Int = 0,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+
+        operationsBlock: AsyncBulkIndexingSession<T>.() -> Unit
+    ) {
+        AsyncBulkIndexingSession.asyncBulk(
+            client = client,
+            dao = this,
+            modelReaderAndWriter = modelReaderAndWriter,
+            bulkSize = bulkSize,
+            retryConflictingUpdates = retryConflictingUpdates,
+            itemCallback = itemCallback,
+            refreshPolicy = refreshPolicy
+        ) {
+            logger.info { "doing the thing" }
+            operationsBlock.invoke(this)
+        }
+    }
+
     /**
      * Create a `BulkIndexingSession`.
      *
@@ -278,7 +302,7 @@ class IndexDAO<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkIndexingSession.BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ) = BulkIndexingSession(
         client,

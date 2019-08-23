@@ -156,14 +156,12 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
                     successes.add(operation)
                 }
             },
-                operationsBlock = {
-                    val session = this
-                    (0 until totalItems).forEach {
-                        session.index(randomId(), TestModel("object $it"))
-                    }
-                },
                 bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher")
-            )
+            ) {
+                (0 until totalItems).forEach {
+                    index(randomId(), TestModel("object $it"))
+                }
+            }
             // ES has confirmed we have the exact number of items that we bulk indexed
             assertThat(successes).hasSize(totalItems)
         }

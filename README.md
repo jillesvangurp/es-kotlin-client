@@ -275,7 +275,7 @@ runBlocking {
 
 We also have an asynchronous bulk indexer that depends on the experimental `Flow` API in Kotlin. This works very similar to the synchronous bulk api above. This still API has a few question marks around it still regarding parallelism. Ideally we'd fire bulk requests on different threads in parallel and use back pressure to avoid overloading ES with requests. Instead, the current behavior seems to be strictly sequential. There seems to be a lot of discussion around this topic still in the [Kotlin issue tracker](https://github.com/Kotlin/kotlinx.coroutines/issues/1147).
 
-```
+```kotlin
         val successes = mutableListOf<Any>()
         runBlocking {
             val totalItems = 10000

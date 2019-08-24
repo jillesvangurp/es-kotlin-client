@@ -8,15 +8,13 @@ The highlevel elasticsearch client is written in Java and provides access to ess
 
 ## Why?
 
-The Java client is designed for Java users and comes with a lot of things that feel a bit awkward in Kotlin. This client makes using the client a bit less boiler plate heavy in Kotlin and adds a lot of niceties.
+The Java client is designed for Java users and comes with a lot of things that are a bit awkward in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a friendly API over the underlying client functionality. 
 
-To do this we add extension methods to the existing client and cut down on boilerplate by using kotlin features for creating DSLs, default arguments, sequences. etc. 
-
-Kotlin also has support for co-routines and the intention is to gradually support more asynchronous operations through that as well. Basics for this are in place but work is ongoing. Currently there are asynchronous search and bulk variants that you can use with co-routines.
+Kotlin also has support for co-routines and we use this to make using the asynchronous methods in the Java client a lot nicer to use. Basics for this are in place but Kotlin's co-routine support is still evolving and some of the things we use are still labeled experimental. Currently there is support for asynchronous search and bulk indexing that uses co-routines.
 
 ## Platform support
 
-This requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the functionality is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin. Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch directly from a mobile phone in any case.
+This client requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the functionality is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin. Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch directly from a mobile phone in any case.
 
 # Documentation
 
@@ -250,7 +248,7 @@ See [Search Tests](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blo
 
 ## Async search with co-routines
 
-The high level client supports asynchronous IO with a lot of async methods that take an `ActionListener`. We provide a `SuspendingActionListener` that you can use with these. Probably the most common use case is searching and for that we provide a convenient short hand:
+The high level client supports asynchronous IO with a lot of async methods that take an `ActionListener`. Probably the most common use case is searching and for that we provide a convenient short hand:
 
 ```kotlin
 val keyword="quick"
@@ -275,9 +273,7 @@ One potential usecase for this could be e.g. doing several queries at once in re
 
 ## Async Bulk with co-routines
 
-We also have an asynchronous bulk indexer that internally depends on the experimental `Flow` and `Channel` APIs in Kotlin. However for user this works very similar to the synchronous bulk api above. To use this, you will need to add the `kotlin.Experimental` flag to your build and to your runtime.
-
-The `Flow API` still has a few question marks around it regarding e.g. parallelism. However, it is shaping up as a really nice alternative to manually orchestrating producer and consumer type logic. Ideally we'd fire bulk requests on different threads in parallel and use back pressure to avoid overloading ES with requests. However, the current behavior seems to be strictly sequential. There seems to be a lot of discussion around this topic still in the [Kotlin issue tracker](https://github.com/Kotlin/kotlinx.coroutines/issues/1147). I will update the internals accordingly when this changes.
+We also have an asynchronous bulk indexer that internally depends on the experimental `Flow` and `Channel` APIs in Kotlin. However, you don't need to know anything about how that works to use this. For the user it works the same way as the synchronous bulk index api above. To use this, you will need to add the `kotlin.Experimental` flag to your build and to your runtime.
 
 ```kotlin
 val successes = mutableListOf<Any>()
@@ -305,9 +301,31 @@ runBlocking {
 }
 ```
 
-## General notes on Co-routines
+The call to `bulkAsync` creates an asynchronous BulkIndexingSession. That creats a `Channel` based `Flow` that processes the bulk operations in a separate co-routine. Calls to `index`, `update`, and `delete`, push operations in the channel. The Flow groups the operations in chuncks of `bulkSize` and sends them off to elastic search with more co-routines . Just like with the synchrounous bulk index API we use a callback to process responses from elasticsearch and you group the bulk operations in a block.
 
-Note, co-routines are a **work in progress** and things may change as Kotlin evolves and as my understanding evolves. This is all relatively new in Kotlin and there is still a lot of stuff happening around `Flow` and `Channel`. Also, I'm currently waiting for [this ticket to be resolved](https://github.com/elastic/elasticsearch/issues/44802) in Elasticsearch. This will make all async methods in the `RestHighLevelClient` cancellable, which in turn will allow us to use `suspendCancellableCoroutine` and cancel the request in case of errors. My PR for this should be merged soonish. Currently the `cancel` is a noop.
+The `Flow API` still has a few question marks around it regarding e.g. parallelism and we may change how this works internally. However, it is shaping up as a really nice alternative to manually orchestrating producer and consumer type logic.  Ideally we'd fire bulk requests on different threads in parallel and use back pressure to avoid overloading ES with requests. However, the current behavior seems to be strictly sequential. There seems to be a lot of discussion around this topic still in the [Kotlin issue tracker](https://github.com/Kotlin/kotlinx.coroutines/issues/1147). I will update the internals accordingly when this changes.
+
+## A few notes on Co-routines
+
+Note, co-routines are a **work in progress** and things may change as Kotlin evolves and as my understanding evolves. This is all relatively new in Kotlin and there is still a lot of stuff happening around e.g. the `Flow` and `Channel` concepts.
+
+The `RestHighLevelClient` exposes asynchronous variants of all API calls as an alternative to the synchronous ones. The main difference is that these use the asynchronous http client instead of the synchronous one. Additionally they use callbacks to provide a response or an error. We provide a `SuspendingActionListener` that addapts this to Kotlin's co-routines.
+
+For example, here is the async search [extension function](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/main/kotlin/org/elasticsearch/client/KotlinExtensions.kt) we add to the client:
+```
+suspend fun RestHighLevelClient.searchAsync(
+    requestOptions: RequestOptions = RequestOptions.DEFAULT,
+    block: SearchRequest.() -> Unit
+): SearchResponse {
+    val searchRequest = SearchRequest()
+    block.invoke(searchRequest)
+    return suspending {
+        this.searchAsync(searchRequest, requestOptions, it)
+    }
+}
+```
+
+The `suspending` call here creates a [`SuspendingActionListener`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/main/kotlin/io/inbot/eskotlinwrapper/SuspendingActionListener.kt) and passes it as `it` to the lambda. Inside the lambda we simply pass that into the searchAsync call. There are more than a hundred async methods in the RestHighLevel client and we currently don't cover most of them but you can easily adapt them yourself by doing something similar.
 
 # Building
 

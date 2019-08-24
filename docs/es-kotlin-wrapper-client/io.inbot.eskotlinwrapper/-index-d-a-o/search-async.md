@@ -4,8 +4,6 @@
 
 `suspend fun searchAsync(requestOptions: RequestOptions = this.defaultRequestOptions, block: SearchRequest.() -> `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)`): `[`SearchResults`](../-search-results/index.md)`<`[`T`](index.md#T)`>`
 
-Perform an asynchronous search against your index.
+Perform an asynchronous search against your index. Works similar to [search](search.md) but does not support scrolling
+searches currently.
 
-### Parameters
-
-`block` - customise your search request in the block

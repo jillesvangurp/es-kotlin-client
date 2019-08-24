@@ -148,15 +148,15 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
             dao.bulkAsync(
                 bulkSize = 200,
                 refreshPolicy = WriteRequest.RefreshPolicy.NONE,
+                bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher"),
                 itemCallback = { operation, response ->
-                if (response.isFailed) {
-                    println(response.failureMessage)
-                } else {
-                    // this only gets called if ES reports back with a success response
-                    successes.add(operation)
+                    if (response.isFailed) {
+                        println(response.failureMessage)
+                    } else {
+                        // this only gets called if ES reports back with a success response
+                        successes.add(operation)
+                    }
                 }
-            },
-                bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher")
             ) {
                 (0 until totalItems).forEach {
                     index(randomId(), TestModel("object $it"))

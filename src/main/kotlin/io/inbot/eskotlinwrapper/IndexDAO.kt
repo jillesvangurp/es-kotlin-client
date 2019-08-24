@@ -86,9 +86,7 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Delete the index associated with the dao.
-     *
-     * @return true if successful or false if the index did not exist
+     * Delete the index associated with the dao. Returns true if successful or false if the index did not exist
      */
     fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions): Boolean {
         try {
@@ -106,7 +104,7 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * @return a set of the current `AliasMetaData` associated with the `indexName`.
+     * Returns a set of the current `AliasMetaData` associated with the `indexName`.
      */
     fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetaData> {
         return client.indices().getAlias(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName]
@@ -114,9 +112,9 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Index a document.
+     * Index a document with a given [id]. Set [create] to `false` for upserts. Otherwise it fails on creating documents that already exist.
      *
-     * @param create set to false for upserts. Otherwise it fails on indexing documents that already exist.
+     * You can optionally specify [seqNo] and [primaryTerm] to implement optimistic locking. However, you should use [update] does this for you.
      */
     @Suppress("DEPRECATION")
     fun index(
@@ -145,9 +143,9 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Update document by fetching the current version with `get` and then applying the `transformFunction` to produce the updated version.
+     * Updates document identified by [id] by fetching the current version with [get] and then applying the [transformFunction] to produce the updated version.
      *
-     * @param maxUpdateTries if > 0, it will deal with version conflicts (e.g. due to concurrent updates) by retrying with the latest version.
+     * if [maxUpdateTries] > 0, it will deal with version conflicts (e.g. due to concurrent updates) by retrying with the latest version.
      */
     fun update(
         id: String,
@@ -206,7 +204,7 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Delete an object.
+     * Deletes the object object identified by [id].
      */
     @Suppress("DEPRECATION")
     fun delete(id: String, requestOptions: RequestOptions = this.defaultRequestOptions) {
@@ -219,7 +217,7 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * @return deserialized object.
+     * Returns the deserialized [T] for the document identified by [id].
      */
 
     fun get(id: String): T? {
@@ -227,7 +225,7 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * @return a `Pair` of the deserialized object and the `GetResponse` with all the relevant metadata.
+     * Returns a `Pair` of the deserialized [T] and the `GetResponse` with all the relevant metadata.
      */
     @Suppress("DEPRECATION")
     fun getWithGetResponse(
@@ -251,9 +249,15 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Create a `BulkIndexingSession` and use it with the `operationsBlock`.
+     * Create a [BulkIndexingSession] and use it with the [operationsBlock]. Inside the block you can call operations
+     * like [BulkIndexingSession.index] and other functions exposed by [BulkIndexingSession]. The resulting bulk
+     * operations are automatically grouped in bulk requests of size [bulkSize] and sent off to Elasticsearch. For each
+     * operation there will be a call to the [itemCallback]. This allows you to keep track of failures, do logging,
+     * or implement retries. If you leave this `null`, the default callback implementation defined in
+     * [BulkIndexingSession] is used.
      *
-     * @see [BulkIndexingSession]
+     * See [BulkIndexingSession] for the meaning of the other parameters.
+     *
      */
     fun bulk(
         bulkSize: Int = 100,
@@ -274,6 +278,36 @@ class IndexDAO<T : Any>(
         }
     }
 
+    /**
+     * Returns a [BulkIndexingSession] for this dao. See [BulkIndexingSession] for the meaning of the other parameters.
+     */
+    fun bulkIndexer(
+        bulkSize: Int = 100,
+        retryConflictingUpdates: Int = 0,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        requestOptions: RequestOptions = this.defaultRequestOptions
+    ) = BulkIndexingSession(
+        client,
+        this,
+        modelReaderAndWriter,
+        bulkSize,
+        retryConflictingUpdates = retryConflictingUpdates,
+        refreshPolicy = refreshPolicy,
+        itemCallback = itemCallback,
+        defaultRequestOptions = requestOptions
+    )
+
+    /**
+     * Asynchronous version of bulk indexing that uses Co-routines, Flow, and Channel internally. Some of this is
+     * still labeled as experimental in Kotlin and may change. Using this will require setting the `kotlin.Experimental`
+     * flag in your build and also at runtime.
+     *
+     * This works very similar to [bulk] however it uses an [AsyncBulkIndexingSession] instead of the
+     * [BulkIndexingSession]. You can control which bulkDispatcher is used for sending asynchronous bulk requests. The
+     * default for this is `Dispatchers.IO`. Currently, this does not run requests in parallel. However, we are
+     * exploring options for this as this could potentially speed up indexing.
+     */
     @UseExperimental(FlowPreview::class)
     @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
@@ -302,31 +336,11 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Create a `BulkIndexingSession`.
+     * Call the refresh API on elasticsearch. You should not use this other than in tests. E.g. when testing search
+     * queries, you often want to refresh after indexing before calling search
      *
-     * @see [BulkIndexingSession]
-     */
-    fun bulkIndexer(
-        bulkSize: Int = 100,
-        retryConflictingUpdates: Int = 0,
-        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-        requestOptions: RequestOptions = this.defaultRequestOptions
-    ) = BulkIndexingSession(
-        client,
-        this,
-        modelReaderAndWriter,
-        bulkSize,
-        retryConflictingUpdates = retryConflictingUpdates,
-        refreshPolicy = refreshPolicy,
-        itemCallback = itemCallback,
-        defaultRequestOptions = requestOptions
-    )
-
-    /**
-     * Call the refresh API on elasticsearch. You should not use this other than in tests. E.g. when testing search queries, you often want to refresh after indexing before calling search
-     *
-     * @throws UnsupportedOperationException if you do not explicitly opt in to this by setting the `refreshAllowed parameter on the dao`.
+     * Throws UnsupportedOperationException if you do not explicitly opt in to this by setting the `refreshAllowed` to
+     * true when creating the dao.
      */
     fun refresh() {
         if (refreshAllowed) {
@@ -338,9 +352,13 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Perform a search against your index.
+     * Perform a search against your index. This creates a `SearchRequest` that is passed into the [block] so you can
+     * customize it. Inside the [block] you can manipulate the request to set a `source` and other parameters.
      *
-     * @param block customise your search request in the block
+     * Returns a [SearchResults] instance that you can use to get the deserialized results or the raw response.
+     *
+     * If you want to perform a scrolling search, all you have to do is set [scrolling] to true (default is false).
+     * You can also set a [scrollTtlInMinutes] if you want something else than the default of 1 minute.
      */
     fun search(
         scrolling: Boolean = false,
@@ -372,9 +390,8 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Perform an asynchronous search against your index.
-     *
-     * @param block customise your search request in the block
+     * Perform an asynchronous search against your index. Works similar to [search] but does not support scrolling
+     * searches currently.
      */
     suspend fun searchAsync(
         requestOptions: RequestOptions = this.defaultRequestOptions,

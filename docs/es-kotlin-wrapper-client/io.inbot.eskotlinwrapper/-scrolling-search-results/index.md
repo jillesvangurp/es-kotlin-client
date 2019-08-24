@@ -4,11 +4,15 @@
 
 `class ScrollingSearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`SearchResults`](../-search-results/index.md)`<`[`T`](index.md#T)`>`
 
+Represents scrolling search results. Accessing the [searchHits](search-hits.md) causes pages of results to be retrieved lazily.
+
+Note. you can only consume the sequence once.
+
 ### Constructors
 
 | Name | Summary |
 |---|---|
-| [&lt;init&gt;](-init-.md) | `ScrollingSearchResults(searchResponse: SearchResponse, modelReaderAndWriter: `[`ModelReaderAndWriter`](../-model-reader-and-writer/index.md)`<`[`T`](index.md#T)`>, restHighLevelClient: RestHighLevelClient, scrollTtlInMinutes: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`, defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT)` |
+| [&lt;init&gt;](-init-.md) | `ScrollingSearchResults(searchResponse: SearchResponse, modelReaderAndWriter: `[`ModelReaderAndWriter`](../-model-reader-and-writer/index.md)`<`[`T`](index.md#T)`>, restHighLevelClient: RestHighLevelClient, scrollTtlInMinutes: `[`Long`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html)`, defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT)`<br>Represents scrolling search results. Accessing the [searchHits](search-hits.md) causes pages of results to be retrieved lazily. |
 
 ### Properties
 

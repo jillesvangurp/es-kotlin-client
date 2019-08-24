@@ -50,6 +50,9 @@ interface SearchResults<T : Any> {
     val modelReaderAndWriter: ModelReaderAndWriter<T>
 }
 
+/**
+ * Represents a page of search results. Returned for non scrolling searches.
+ */
 class PagedSearchResults<T : Any>(
     override val searchResponse: SearchResponse,
     override val modelReaderAndWriter: ModelReaderAndWriter<T>
@@ -66,6 +69,11 @@ class PagedSearchResults<T : Any>(
         }
 }
 
+/**
+ * Represents scrolling search results. Accessing the [searchHits] causes pages of results to be retrieved lazily.
+ *
+ * Note. you can only consume the sequence once.
+ */
 class ScrollingSearchResults<T : Any>(
     override val searchResponse: SearchResponse,
     override val modelReaderAndWriter: ModelReaderAndWriter<T>,

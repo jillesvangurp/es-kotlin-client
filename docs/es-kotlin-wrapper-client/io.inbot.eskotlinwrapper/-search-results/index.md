@@ -21,5 +21,5 @@ Abstraction for search results that applies to both scrolling and non scrolling 
 
 | Name | Summary |
 |---|---|
-| [PagedSearchResults](../-paged-search-results/index.md) | `class PagedSearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`SearchResults`](./index.md)`<`[`T`](../-paged-search-results/index.md#T)`>` |
-| [ScrollingSearchResults](../-scrolling-search-results/index.md) | `class ScrollingSearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`SearchResults`](./index.md)`<`[`T`](../-scrolling-search-results/index.md#T)`>` |
+| [PagedSearchResults](../-paged-search-results/index.md) | `class PagedSearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`SearchResults`](./index.md)`<`[`T`](../-paged-search-results/index.md#T)`>`<br>Represents a page of search results. Returned for non scrolling searches. |
+| [ScrollingSearchResults](../-scrolling-search-results/index.md) | `class ScrollingSearchResults<T : `[`Any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)`> : `[`SearchResults`](./index.md)`<`[`T`](../-scrolling-search-results/index.md#T)`>`<br>Represents scrolling search results. Accessing the [searchHits](../-scrolling-search-results/search-hits.md) causes pages of results to be retrieved lazily. |

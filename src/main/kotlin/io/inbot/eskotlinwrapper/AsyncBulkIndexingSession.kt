@@ -54,13 +54,13 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
         @ObsoleteCoroutinesApi // apparently consumeEach is going away soon
         private fun <T> chunkFLow(
             chunkSize: Int = 20,
-            block: CoroutineScope.(channel: SendChannel<T>) -> Unit
+            producerBlock: CoroutineScope.(channel: SendChannel<T>) -> Unit
         ): Flow<List<T>> =
             flow {
                 coroutineScope {
                     val channel = Channel<T>(chunkSize)
                     launch {
-                        block(channel)
+                        producerBlock(channel)
                     }
                     var page = mutableListOf<T>()
                     channel.consumeEach { value ->
@@ -163,7 +163,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
     /**
      * Safe way to bulk update objects. Gets the object from the index first before applying the lambda to it to modify the existing object. If you set `retryConflictingUpdates` > 0, it will attempt to retry to get the latest document and apply the `updateFunction` if there is a version conflict.
      */
-    suspend fun getAndUpdate(
+    fun getAndUpdate(
         id: String,
         itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback,
         updateFunction: (T) -> T
@@ -179,7 +179,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
      * Bulk update objects. If you have the object (e.g. because you are processing the sequence of a scrolling search), you can update what you have in a safe way.  If you set `retryConflictingUpdates` > 0, it will retry by getting the latest version and re-applying the `updateFunction` in case of a version conflict.
      */
     @Suppress("DEPRECATION") // we allow using types for now
-    suspend fun update(
+    fun update(
         id: String,
         seqNo: Long,
         primaryTerms: Long,
@@ -197,7 +197,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
         if (!dao.type.isNullOrBlank()) {
             updateRequest.type(dao.type)
         }
-        operationChannel.send(
+        operationChannel.sendBlocking(
             BulkOperation(
                 updateRequest,
                 id,
@@ -211,7 +211,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
      * Delete an object from the index.
      */
     @Suppress("DEPRECATION") // we allow using types for now
-    suspend fun delete(
+    fun delete(
         id: String,
         seqNo: Long? = null,
         term: Long? = null,
@@ -231,7 +231,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
                 deleteRequest.setIfPrimaryTerm(term)
             }
         }
-        operationChannel.send(
+        operationChannel.sendBlocking(
             BulkOperation(
                 deleteRequest,
                 id,

@@ -3,3 +3,6 @@
 # &lt;init&gt;
 
 `PagedSearchResults(searchResponse: SearchResponse, modelReaderAndWriter: `[`ModelReaderAndWriter`](../-model-reader-and-writer/index.md)`<`[`T`](index.md#T)`>)`
+
+Represents a page of search results. Returned for non scrolling searches.
+

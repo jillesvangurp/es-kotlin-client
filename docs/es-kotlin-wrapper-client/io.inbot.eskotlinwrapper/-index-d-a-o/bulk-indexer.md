@@ -4,9 +4,5 @@
 
 `fun bulkIndexer(bulkSize: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)` = 100, retryConflictingUpdates: `[`Int`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)` = 0, refreshPolicy: RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL, itemCallback: ((`[`BulkOperation`](../-bulk-operation/index.md)`<`[`T`](index.md#T)`>, BulkItemResponse) -> `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)`)? = null, requestOptions: RequestOptions = this.defaultRequestOptions): `[`BulkIndexingSession`](../-bulk-indexing-session/index.md)`<`[`T`](index.md#T)`>`
 
-Create a `BulkIndexingSession`.
-
-**See Also**
-
-[BulkIndexingSession](../-bulk-indexing-session/index.md)
+Returns a [BulkIndexingSession](../-bulk-indexing-session/index.md) for this dao. See [BulkIndexingSession](../-bulk-indexing-session/index.md) for the meaning of the other parameters.
 

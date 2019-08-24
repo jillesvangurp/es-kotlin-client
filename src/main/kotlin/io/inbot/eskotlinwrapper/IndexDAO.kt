@@ -250,7 +250,7 @@ class IndexDAO<T : Any>(
 
     /**
      * Create a [BulkIndexingSession] and use it with the [operationsBlock]. Inside the block you can call operations
-     * like [BulkIndexingSession.index] and other functions exposed by [BulkIndexingSession]. The resulting bulk
+     * like `index` and other functions exposed by [BulkIndexingSession]. The resulting bulk
      * operations are automatically grouped in bulk requests of size [bulkSize] and sent off to Elasticsearch. For each
      * operation there will be a call to the [itemCallback]. This allows you to keep track of failures, do logging,
      * or implement retries. If you leave this `null`, the default callback implementation defined in

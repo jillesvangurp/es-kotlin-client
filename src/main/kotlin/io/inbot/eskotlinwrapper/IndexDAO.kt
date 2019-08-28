@@ -3,8 +3,6 @@ package io.inbot.eskotlinwrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
@@ -60,7 +58,7 @@ class IndexDAO<T : Any>(
 
 ) {
     /**
-     * create the index.
+     * Create the index.
      *
      * @param block customize the `CreateIndexRequest`
      *
@@ -112,9 +110,10 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Index a document with a given [id]. Set [create] to `false` for upserts. Otherwise it fails on creating documents that already exist.
+     * Index a document with a given `id`. Set `create` to `false` for upserts. Otherwise it fails on creating documents that already exist.
      *
-     * You can optionally specify [seqNo] and [primaryTerm] to implement optimistic locking. However, you should use [update] does this for you.
+     * You can optionally specify `seqNo` and `primaryTerm` to implement optimistic locking. However, you should use
+     * [update] which does this for you.
      */
     @Suppress("DEPRECATION")
     fun index(
@@ -143,7 +142,7 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Updates document identified by [id] by fetching the current version with [get] and then applying the [transformFunction] to produce the updated version.
+     * Updates document identified by `id` by fetching the current version with [get] and then applying the [transformFunction] to produce the updated version.
      *
      * if [maxUpdateTries] > 0, it will deal with version conflicts (e.g. due to concurrent updates) by retrying with the latest version.
      */
@@ -204,7 +203,7 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Deletes the object object identified by [id].
+     * Deletes the object object identified by `id`.
      */
     @Suppress("DEPRECATION")
     fun delete(id: String, requestOptions: RequestOptions = this.defaultRequestOptions) {
@@ -217,7 +216,7 @@ class IndexDAO<T : Any>(
     }
 
     /**
-     * Returns the deserialized [T] for the document identified by [id].
+     * Returns the deserialized [T] for the document identified by `id`.
      */
 
     fun get(id: String): T? {
@@ -255,7 +254,7 @@ class IndexDAO<T : Any>(
      * operation there will be a call to the [itemCallback]. This allows you to keep track of failures, do logging,
      * or implement retries. If you leave this `null`, the default callback implementation defined in
      * [BulkIndexingSession] is used.
-     *
+     **
      * See [BulkIndexingSession] for the meaning of the other parameters.
      *
      */
@@ -308,8 +307,6 @@ class IndexDAO<T : Any>(
      * default for this is `Dispatchers.IO`. Currently, this does not run requests in parallel. However, we are
      * exploring options for this as this could potentially speed up indexing.
      */
-    @UseExperimental(FlowPreview::class)
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     suspend fun bulkAsync(
         bulkSize: Int = 100,

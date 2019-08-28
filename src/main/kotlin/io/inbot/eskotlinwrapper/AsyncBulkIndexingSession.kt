@@ -3,8 +3,6 @@ package io.inbot.eskotlinwrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -48,10 +46,8 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
     private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
     private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
 ) {
-    @FlowPreview
     companion object {
-
-        @ObsoleteCoroutinesApi // apparently consumeEach is going away soon
+        @ExperimentalCoroutinesApi
         private fun <T> chunkFLow(
             chunkSize: Int = 20,
             producerBlock: CoroutineScope.(channel: SendChannel<T>) -> Unit
@@ -76,8 +72,6 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
                 }
             }
 
-        @ObsoleteCoroutinesApi // apparently consumeEach is going away soon
-        @UseExperimental(FlowPreview::class)
         @ExperimentalCoroutinesApi
         suspend fun <T : Any> asyncBulk(
             client: RestHighLevelClient,

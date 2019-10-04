@@ -21,7 +21,7 @@ This client requires Java 8 or higher (same JVM requirements as Elasticsearch). 
 - [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - This demo project was used for a presentation and includes a some nice examples. Note. this may fall behind as I don't always update it to the latest version. If you need a quick overview, start there.
 - Check the code samples on this page. I try to keep these up to date but it's a manual thing currently.
 - The tests test most of the important features and should be fairly readable and provide a good overview of how to use things. I like keeping the tests somewhat readable.
-- [dokka api docs](docs/es-kotlin-wrapper-client/index.md) - API documentation - this gets regenerated for each release. 
+- [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release. 
 - [java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff.
 
 # Get it

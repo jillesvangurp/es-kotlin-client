@@ -143,6 +143,8 @@ dependencies {
 
     compile "org.elasticsearch:elasticsearch:$elasticsearchVersion"
     compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
+    compile "org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticsearchVersion"
+
 
     // bring your own logging, but we need some in tests
     testCompile "org.slf4j:slf4j-api:${slf4jVersion}"

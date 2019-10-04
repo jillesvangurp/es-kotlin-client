@@ -17,18 +17,32 @@ import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.CreateIndexResponse
 import org.elasticsearch.common.unit.TimeValue
+import org.elasticsearch.client.sniff.Sniffer
+import org.elasticsearch.client.sniff.SniffOnFailureListener
 
 /**
- * Fake constructor like factory that gives you sane defaults that will allow you to quickly connect to elastic cloud.
+ * Factory method that gives you sane defaults that will allow you to quickly connect to your cluster whether it is in
+ * Elastic Cloud that requires authentication or a local cluster.
+ *
+ * If you need basic authentication, simply set [user] and [password] to the appropriate values.
+ *
+ * If you need https, set [https] to true.
+ *
+ * If you are connecting to a local cluster and don't use a loadbalancer, it is advisable to configure the sniffer.
+ * Simply set [useSniffer] to true.
+ *
  */
-@Suppress("FunctionName")
-fun RestHighLevelClient(
+fun create(
     host: String = "localhost",
     port: Int = 9200,
     https: Boolean = false,
     user: String? = null,
-    password: String? = null
+    password: String? = null,
+    useSniffer: Boolean = true,
+    sniffAfterFailureDelayMillis: Int = 30000,
+    sniffIntervalMillis: Int = 10000
 ): RestHighLevelClient {
+    val sniffOnFailureListener = SniffOnFailureListener()
     var restClientBuilder = RestClient.builder(HttpHost(host, port, if (https) "https" else "http"))
     if (!user.isNullOrBlank()) {
         restClientBuilder = restClientBuilder.setHttpClientConfigCallback {
@@ -39,9 +53,30 @@ fun RestHighLevelClient(
             )
             it.setDefaultCredentialsProvider(basicCredentialsProvider)
         }
+        if (useSniffer) {
+            restClientBuilder.setFailureListener(sniffOnFailureListener)
+        }
     }
-    return RestHighLevelClient(restClientBuilder)
+    val restHighLevelClient = RestHighLevelClient(restClientBuilder)
+    if (useSniffer) {
+        val sniffer = Sniffer.builder(restHighLevelClient.lowLevelClient).setSniffAfterFailureDelayMillis(sniffAfterFailureDelayMillis).setSniffIntervalMillis(sniffIntervalMillis).build()
+        sniffOnFailureListener.setSniffer(sniffer)
+    }
+    return restHighLevelClient
 }
+
+@Suppress("FunctionName")
+@Deprecated(message = "Use the create function", replaceWith = ReplaceWith("create(host,port,https,user,password,useSniffer,sniffAfterFailureDelayMillis,sniffIntervalMillis)"))
+fun RestHighLevelClient(
+    host: String = "localhost",
+    port: Int = 9200,
+    https: Boolean = false,
+    user: String? = null,
+    password: String? = null,
+    useSniffer: Boolean = true,
+    sniffAfterFailureDelayMillis: Int = 30000,
+    sniffIntervalMillis: Int = 10000
+): RestHighLevelClient = create(host, port, https, user, password, useSniffer, sniffAfterFailureDelayMillis, sniffIntervalMillis)
 
 /**
  * Create a new Data Access Object (DAO), aka. repository class. If you've used J2EE style frameworks, you should be familiar with this pattern.

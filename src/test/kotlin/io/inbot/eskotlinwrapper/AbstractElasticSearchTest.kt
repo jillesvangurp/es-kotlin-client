@@ -2,6 +2,7 @@ package io.inbot.eskotlinwrapper
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.create
 import org.elasticsearch.client.crudDao
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.AfterEach
@@ -15,7 +16,7 @@ open class AbstractElasticSearchTest(val indexPrefix: String = "test", val creat
     @BeforeEach
     fun before() {
         // sane defaults
-        esClient = RestHighLevelClient(port = 9999)
+        esClient = create(port = 9999)
         // each test gets a fresh index
         indexName = "$indexPrefix-" + randomId()
 

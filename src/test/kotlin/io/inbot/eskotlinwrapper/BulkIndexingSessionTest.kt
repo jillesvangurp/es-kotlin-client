@@ -5,8 +5,6 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.RepeatedTest
@@ -139,7 +137,6 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
         assertThat(successes).hasSize(2)
     }
 
-    @ObsoleteCoroutinesApi
     @Test
     fun `async bulk test`() {
         val successes = mutableListOf<Any>()
@@ -148,7 +145,6 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
             dao.bulkAsync(
                 bulkSize = 200,
                 refreshPolicy = WriteRequest.RefreshPolicy.NONE,
-                bulkDispatcher = newFixedThreadPoolContext(10, "test-dispatcher"),
                 itemCallback = { operation, response ->
                     if (response.isFailed) {
                         println(response.failureMessage)

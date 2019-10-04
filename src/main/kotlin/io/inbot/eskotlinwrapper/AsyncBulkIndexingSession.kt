@@ -83,9 +83,9 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
             itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
             defaultRequestOptions: RequestOptions = dao.defaultRequestOptions,
             block: AsyncBulkIndexingSession<T>.() -> Unit,
-            bulkDispatcher: CoroutineDispatcher
+            bulkDispatcher: CoroutineDispatcher?
         ) {
-            chunkFLow<BulkOperation<T>>(chunkSize = bulkSize) { channel ->
+            val flow = chunkFLow<BulkOperation<T>>(chunkSize = bulkSize) { channel ->
                 val session = AsyncBulkIndexingSession<T>(
                     dao,
                     modelReaderAndWriter,
@@ -106,11 +106,14 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
                     bulkOperation.itemCallback.invoke(bulkOperation, it)
                 }
             }
-                // FIXME: figure out how to actually get this called in parallel. Currently it seems to do this sequentially
-                // loads of confusing suggestions in the issue tracker for this with a lot of intentions and uncertainty around this and without a good way to do this NOW.
-                // https://github.com/Kotlin/kotlinx.coroutines/issues/1147
-                .flowOn(bulkDispatcher)
-                .collect { }
+            // FIXME: figure out how to actually get this called in parallel. Currently it seems to do this sequentially
+            // loads of confusing suggestions in the issue tracker for this with a lot of intentions and uncertainty around this and without a good way to do this NOW.
+            // https://github.com/Kotlin/kotlinx.coroutines/issues/1147
+            if(bulkDispatcher != null) {
+                flow.flowOn(bulkDispatcher).collect {}
+            } else {
+                flow.collect {}
+            }
         }
     }
 

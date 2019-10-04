@@ -1,0 +1,87 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>alltypes - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<p>A kotlin client that adapts the Java HighLevel REST client from Elasticsearch. Note, much of this library consists of extension functions for classes in the <code>org.elasticsearch</code> hierarchy.</p>
+<h3>All Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-async-bulk-indexing-session/index.html">io.inbot.eskotlinwrapper.AsyncBulkIndexingSession</a></td>
+<td>
+<p>Asynchronous bulk indexing that uses the experimental Kotlin flows. Works similar to the synchronous version except
+it fires bulk requests asynchronously on the specified dispatcher. On paper using multiple threads, allows ES to
+use multiple Threads to consume bulk requests.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-bulk-indexing-session/index.html">io.inbot.eskotlinwrapper.BulkIndexingSession</a></td>
+<td>
+<p>Makes using bulk request easier. You can use this directly but you probably want to use it via <a href="../io.inbot.eskotlinwrapper/-index-d-a-o/index.html">IndexDAO</a>. Implements <code>AutoCloseable</code> to ensure all operations are processed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-bulk-operation/index.html">io.inbot.eskotlinwrapper.BulkOperation</a></td>
+<td>
+<p>Bulk operation model used for e.g. <code>itemCallback</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-index-d-a-o/index.html">io.inbot.eskotlinwrapper.IndexDAO</a></td>
+<td>
+<p>DAO (Data Access Object) abstraction that allows you to work with indices.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-jackson-model-reader-and-writer/index.html">io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter</a></td>
+<td>
+<p>Simple implementation of <a href="../io.inbot.eskotlinwrapper/-model-reader-and-writer/index.html">ModelReaderAndWriter</a> that uses a jackson object mapper.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-model-reader-and-writer/index.html">io.inbot.eskotlinwrapper.ModelReaderAndWriter</a></td>
+<td>
+<p>Implement this for custom serialization/deserialization of objects in your index. Use this in combination with a <a href="../io.inbot.eskotlinwrapper/-index-d-a-o/index.html">IndexDAO</a>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-paged-search-results/index.html">io.inbot.eskotlinwrapper.PagedSearchResults</a></td>
+<td>
+<p>Represents a page of search results. Returned for non scrolling searches.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-scrolling-search-results/index.html">io.inbot.eskotlinwrapper.ScrollingSearchResults</a></td>
+<td>
+<p>Represents scrolling search results. Accessing the <a href="../io.inbot.eskotlinwrapper/-scrolling-search-results/search-hits.html">searchHits</a> causes pages of results to be retrieved lazily.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-search-results/index.html">io.inbot.eskotlinwrapper.SearchResults</a></td>
+<td>
+<p>Abstraction for search results that applies to both scrolling and non scrolling searches.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../io.inbot.eskotlinwrapper/-suspending-action-listener/index.html">io.inbot.eskotlinwrapper.SuspendingActionListener</a></td>
+<td>
+<p>Action listener that can be used with to adapt the async methods across the java client to co-routines.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SearchResults - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="./index.html">SearchResults</a><br/>
+<br/>
+<h1>SearchResults</h1>
+<code><span class="keyword">interface </span><span class="identifier">SearchResults</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code>
+<p>Abstraction for search results that applies to both scrolling and non scrolling searches.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="hits.html">hits</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">hits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html"><span class="identifier">Pair</span></a><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">,</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code>
+<p>a sequence of pairs of search hits and their deserialized objects.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="mapped-hits.html">mappedHits</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">mappedHits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>deserialized objects inside the <code>searchHits</code>. Deserialization happens lazily.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="model-reader-and-writer.html">modelReaderAndWriter</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">modelReaderAndWriter</span><span class="symbol">: </span><a href="../-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>the model reader and writer used for deserialization.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="search-hits.html">searchHits</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">searchHits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">&gt;</span></code>
+<p>search hits as a sequence or an empty sequence.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="search-response.html">searchResponse</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">searchResponse</span><span class="symbol">: </span><span class="identifier">SearchResponse</span></code>
+<p>the original search response.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="total-hits.html">totalHits</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">totalHits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
+<p>The total number of hits for the query.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-paged-search-results/index.html">PagedSearchResults</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PagedSearchResults</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SearchResults</span></a><span class="symbol">&lt;</span><a href="../-paged-search-results/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Represents a page of search results. Returned for non scrolling searches.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-scrolling-search-results/index.html">ScrollingSearchResults</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ScrollingSearchResults</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SearchResults</span></a><span class="symbol">&lt;</span><a href="../-scrolling-search-results/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Represents scrolling search results. Accessing the <a href="../-scrolling-search-results/search-hits.html">searchHits</a> causes pages of results to be retrieved lazily.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

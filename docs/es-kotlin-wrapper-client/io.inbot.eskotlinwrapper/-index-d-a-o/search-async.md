@@ -1,9 +1,0 @@
-[es-kotlin-wrapper-client](../../index.md) / [io.inbot.eskotlinwrapper](../index.md) / [IndexDAO](index.md) / [searchAsync](./search-async.md)
-
-# searchAsync
-
-`suspend fun searchAsync(requestOptions: RequestOptions = this.defaultRequestOptions, block: SearchRequest.() -> `[`Unit`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)`): `[`SearchResults`](../-search-results/index.md)`<`[`T`](index.md#T)`>`
-
-Perform an asynchronous search against your index. Works similar to [search](search.md) but does not support scrolling
-searches currently.
-

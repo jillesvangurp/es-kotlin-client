@@ -1,0 +1,83 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../style.css">
+</HEAD>
+<BODY>
+<a href="./index.html">es-kotlin-wrapper-client</a><br/>
+<br/>
+<p>A kotlin client that adapts the Java HighLevel REST client from Elasticsearch. Note, much of this library consists of extension functions for classes in the <code>org.elasticsearch</code> hierarchy.</p>
+<p>Typical usage would involve creating a client and a dao instance:</p>
+<pre><code>// a short cut for creating a client + rest client
+// all of the parameters are optional if you want to run against localhost:9200
+// you can also use the original RestHighLevelClient constructor from the java SDK
+val esClient = RestHighLevelClient(
+  host="domain.com",
+  port=9999,
+  https=true,
+  user="thedude",
+  password="lebowski")
+
+// documents are backed by data classes   
+data class TestModel(var message: String)
+
+// the dao takes care of serialization/deserialization boilerplate, CRUD, and more
+// you can of course use your own serialization framework of choice
+val dao = esClient.crudDao&lt;TestModel&gt;("myindex", 
+  refreshAllowed = true,
+  modelReaderAndWriter = JacksonModelReaderAndWriter(
+                TestModel::class,
+                ObjectMapper().findAndRegisterModules()
+  )
+)
+</code></pre>
+<h3>Packages</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="io.inbot.eskotlinwrapper/index.html">io.inbot.eskotlinwrapper</a></p>
+</td>
+<td>
+<p>Misc. classes that support the various extension functions on the client.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="org.elasticsearch.action.search/index.html">org.elasticsearch.action.search</a></p>
+</td>
+<td>
+<p>Extension functions to add a few alternate source methods on queries. E.g. you can use multiline Kotlin templated strings.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="org.elasticsearch.client/index.html">org.elasticsearch.client</a></p>
+</td>
+<td>
+<p>Extension functions to add functions to the client. Like <code>RestHighLevelClient(...)</code> which is technically not a constructor ...</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="org.elasticsearch.common.xcontent/index.html">org.elasticsearch.common.xcontent</a></p>
+</td>
+<td>
+<p>Extension functions to support strings more easily.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="org.elasticsearch.search/index.html">org.elasticsearch.search</a></p>
+</td>
+<td>
+<p>Extension functions to adapt search responses.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Index</h3>
+<a href="alltypes/index.html">All Types</a>
+</BODY>
+</HTML>

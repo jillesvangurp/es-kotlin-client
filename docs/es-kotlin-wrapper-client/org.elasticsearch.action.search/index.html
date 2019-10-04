@@ -1,0 +1,33 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>org.elasticsearch.action.search - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="./index.html">org.elasticsearch.action.search</a><br/>
+<br/>
+<h2>Package org.elasticsearch.action.search</h2>
+<p>Extension functions to add a few alternate source methods on queries. E.g. you can use multiline Kotlin templated strings.</p>
+	
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="source.html">source</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">SearchRequest</span><span class="symbol">.</span><span class="identifier">source</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.action.search$source(org.elasticsearch.action.search.SearchRequest, kotlin.String, org.elasticsearch.common.xcontent.DeprecationHandler)/json">json</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.action.search$source(org.elasticsearch.action.search.SearchRequest, kotlin.String, org.elasticsearch.common.xcontent.DeprecationHandler)/deprecationHandler">deprecationHandler</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeprecationHandler</span>&nbsp;<span class="symbol">=</span>&nbsp;LOGGING_DEPRECATION_HANDLER<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds the missing piece to the SearchRequest API that allows you to paste raw json.
+This makes sense in Kotlin because it has multiline strings and support for template variables.</p>
+<code><span class="keyword">fun </span><span class="identifier">SearchRequest</span><span class="symbol">.</span><span class="identifier">source</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.action.search$source(org.elasticsearch.action.search.SearchRequest, java.io.Reader, org.elasticsearch.common.xcontent.DeprecationHandler)/reader">reader</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/Reader.html"><span class="identifier">Reader</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.action.search$source(org.elasticsearch.action.search.SearchRequest, java.io.Reader, org.elasticsearch.common.xcontent.DeprecationHandler)/deprecationHandler">deprecationHandler</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeprecationHandler</span>&nbsp;<span class="symbol">=</span>&nbsp;LOGGING_DEPRECATION_HANDLER<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Adds the missing piece to the SearchRequest API that allows you to paste raw using a Reader. Useful if you store your queries in files.</p>
+<code><span class="keyword">fun </span><span class="identifier">SearchRequest</span><span class="symbol">.</span><span class="identifier">source</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.action.search$source(org.elasticsearch.action.search.SearchRequest, java.io.InputStream, org.elasticsearch.common.xcontent.DeprecationHandler)/inputStream">inputStream</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html"><span class="identifier">InputStream</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.action.search$source(org.elasticsearch.action.search.SearchRequest, java.io.InputStream, org.elasticsearch.common.xcontent.DeprecationHandler)/deprecationHandler">deprecationHandler</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeprecationHandler</span>&nbsp;<span class="symbol">=</span>&nbsp;LOGGING_DEPRECATION_HANDLER<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Supports taking the query straight from an InputStream. You probably should use the reader version.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

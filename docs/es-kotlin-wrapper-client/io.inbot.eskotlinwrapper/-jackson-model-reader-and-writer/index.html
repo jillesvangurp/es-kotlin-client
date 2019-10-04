@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>JacksonModelReaderAndWriter - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="./index.html">JacksonModelReaderAndWriter</a><br/>
+<br/>
+<h1>JacksonModelReaderAndWriter</h1>
+<code><span class="keyword">class </span><span class="identifier">JacksonModelReaderAndWriter</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Simple implementation of <a href="../-model-reader-and-writer/index.html">ModelReaderAndWriter</a> that uses a jackson object mapper.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">JacksonModelReaderAndWriter</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter$<init>(java.lang.Class((io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter.T)), com.fasterxml.jackson.databind.ObjectMapper)/javaClazz">javaClazz</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html"><span class="identifier">Class</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter$<init>(java.lang.Class((io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter.T)), com.fasterxml.jackson.databind.ObjectMapper)/objectMapper">objectMapper</span><span class="symbol">:</span>&nbsp;<span class="identifier">ObjectMapper</span><span class="symbol">)</span></code>
+<p>Alternate constructor so we can instantiate from Java as well</p>
+<code><span class="identifier">JacksonModelReaderAndWriter</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter$<init>(kotlin.reflect.KClass((io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter.T)), com.fasterxml.jackson.databind.ObjectMapper)/clazz">clazz</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html"><span class="identifier">KClass</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter$<init>(kotlin.reflect.KClass((io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter.T)), com.fasterxml.jackson.databind.ObjectMapper)/objectMapper">objectMapper</span><span class="symbol">:</span>&nbsp;<span class="identifier">ObjectMapper</span><span class="symbol">)</span></code>
+<p>Simple implementation of <a href="../-model-reader-and-writer/index.html">ModelReaderAndWriter</a> that uses a jackson object mapper.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="clazz.html">clazz</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">clazz</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html"><span class="identifier">KClass</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="object-mapper.html">objectMapper</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">objectMapper</span><span class="symbol">: </span><span class="identifier">ObjectMapper</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="deserializer.html">deserializer</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">deserializer</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">?</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="serializer.html">serializer</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">serializer</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="symbol">(</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-model-reader-and-writer/deserialize.html">deserialize</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">deserialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$deserialize(kotlin.ByteArray)/bytes">bytes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-model-reader-and-writer/index.html#T"><span class="identifier">T</span></a></code><code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">deserialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$deserialize(org.elasticsearch.search.SearchHit)/searchHit">searchHit</span><span class="symbol">:</span>&nbsp;<span class="identifier">SearchHit</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-model-reader-and-writer/index.html#T"><span class="identifier">T</span></a></code>
+<p>deserialize a searchHit. The default implementation accesses the <code>sourceRef</code> inside the searchHit.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-model-reader-and-writer/serialize.html">serialize</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">serialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$serialize(io.inbot.eskotlinwrapper.ModelReaderAndWriter.T)/obj">obj</span><span class="symbol">:</span>&nbsp;<a href="../-model-reader-and-writer/index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,107 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>org.elasticsearch.client - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="./index.html">org.elasticsearch.client</a><br/>
+<br/>
+<h2>Package org.elasticsearch.client</h2>
+<p>Extension functions to add functions to the client. Like <code>RestHighLevelClient(...)</code> which is technically not a constructor ...</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="bulk-async.html">bulkAsync</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">bulkAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$bulkAsync(org.elasticsearch.client.RestHighLevelClient, org.elasticsearch.action.bulk.BulkRequest, org.elasticsearch.client.RequestOptions)/bulkRequest">bulkRequest</span><span class="symbol">:</span>&nbsp;<span class="identifier">BulkRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$bulkAsync(org.elasticsearch.client.RestHighLevelClient, org.elasticsearch.action.bulk.BulkRequest, org.elasticsearch.client.RequestOptions)/options">options</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">BulkResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="clear-scroll.html">clearScroll</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">clearScroll</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="org.elasticsearch.client$clearScroll(org.elasticsearch.client.RestHighLevelClient, kotlin.Array((kotlin.String)), org.elasticsearch.client.RequestOptions)/scrollIds">scrollIds</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$clearScroll(org.elasticsearch.client.RestHighLevelClient, kotlin.Array((kotlin.String)), org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClearScrollResponse</span></code>
+<p>Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clear-scroll-async.html">clearScrollAsync</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">clearScrollAsync</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="org.elasticsearch.client$clearScrollAsync(org.elasticsearch.client.RestHighLevelClient, kotlin.Array((kotlin.String)), org.elasticsearch.client.RequestOptions)/scrollIds">scrollIds</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$clearScrollAsync(org.elasticsearch.client.RestHighLevelClient, kotlin.Array((kotlin.String)), org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClearScrollResponse</span></code>
+<p>Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="create-index-async.html">createIndexAsync</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">createIndexAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$createIndexAsync(org.elasticsearch.client.IndicesClient, kotlin.String, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.client.indices.CreateIndexRequest, kotlin.Unit)))/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$createIndexAsync(org.elasticsearch.client.IndicesClient, kotlin.String, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.client.indices.CreateIndexRequest, kotlin.Unit)))/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$createIndexAsync(org.elasticsearch.client.IndicesClient, kotlin.String, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.client.indices.CreateIndexRequest, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="identifier">CreateIndexRequest</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">CreateIndexResponse</span></code>
+<p>Create index asynchronously.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="crud-dao.html">crudDao</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">crudDao</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/modelReaderAndWriter">modelReaderAndWriter</span><span class="symbol">:</span>&nbsp;<a href="../io.inbot.eskotlinwrapper/-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><a href="crud-dao.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;"_doc"<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/readAlias">readAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;index<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/writeAlias">writeAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;index<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/refreshAllowed">refreshAllowed</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/defaultRequestOptions">defaultRequestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><a href="../io.inbot.eskotlinwrapper/-index-d-a-o/index.html"><span class="identifier">IndexDAO</span></a><span class="symbol">&lt;</span><a href="crud-dao.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<p>Create a new Data Access Object (DAO), aka. repository class. If you've used J2EE style frameworks, you should be familiar with this pattern.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-rest-high-level-client.html">RestHighLevelClient</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">RestHighLevelClient</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$RestHighLevelClient(kotlin.String, kotlin.Int, kotlin.Boolean, kotlin.String, kotlin.String)/host">host</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;"localhost"<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$RestHighLevelClient(kotlin.String, kotlin.Int, kotlin.Boolean, kotlin.String, kotlin.String)/port">port</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;9200<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$RestHighLevelClient(kotlin.String, kotlin.Int, kotlin.Boolean, kotlin.String, kotlin.String)/https">https</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$RestHighLevelClient(kotlin.String, kotlin.Int, kotlin.Boolean, kotlin.String, kotlin.String)/user">user</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$RestHighLevelClient(kotlin.String, kotlin.Int, kotlin.Boolean, kotlin.String, kotlin.String)/password">password</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">RestHighLevelClient</span></code>
+<p>Fake constructor like factory that gives you sane defaults that will allow you to quickly connect to elastic cloud.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scroll.html">scroll</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">scroll</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$scroll(org.elasticsearch.client.RestHighLevelClient, kotlin.String, kotlin.Long, org.elasticsearch.client.RequestOptions)/scrollId">scrollId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$scroll(org.elasticsearch.client.RestHighLevelClient, kotlin.String, kotlin.Long, org.elasticsearch.client.RequestOptions)/ttl">ttl</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$scroll(org.elasticsearch.client.RestHighLevelClient, kotlin.String, kotlin.Long, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">SearchResponse</span></code>
+<p>Get the next page of a scrolling search. Note, use the DAO to do scrolling searches and avoid manually doing these requests.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="scroll-async.html">scrollAsync</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">scrollAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$scrollAsync(org.elasticsearch.client.RestHighLevelClient, kotlin.String, kotlin.Long, org.elasticsearch.client.RequestOptions)/scrollId">scrollId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$scrollAsync(org.elasticsearch.client.RestHighLevelClient, kotlin.String, kotlin.Long, org.elasticsearch.client.RequestOptions)/ttl">ttl</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$scrollAsync(org.elasticsearch.client.RestHighLevelClient, kotlin.String, kotlin.Long, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">SearchResponse</span></code>
+<p>Get the next page of a scrolling search. Note, use the DAO to do scrolling searches and avoid manually doing these requests.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="search.html">search</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">search</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$search(org.elasticsearch.client.RestHighLevelClient, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.action.search.SearchRequest, kotlin.Unit)))/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$search(org.elasticsearch.client.RestHighLevelClient, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.action.search.SearchRequest, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="identifier">SearchRequest</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">SearchResponse</span></code>
+<p>Search documents in the index. Expects a search block that takes a <code>SearchRequest</code> where you specify the query.
+The search request already has your index. Also see extension functions added in <code>org.elasticsearch.action.search.SearchRequest</code></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="search-async.html">searchAsync</a></p>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">searchAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$searchAsync(org.elasticsearch.client.RestHighLevelClient, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.action.search.SearchRequest, kotlin.Unit)))/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$searchAsync(org.elasticsearch.client.RestHighLevelClient, org.elasticsearch.client.RequestOptions, kotlin.Function1((org.elasticsearch.action.search.SearchRequest, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="identifier">SearchRequest</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">SearchResponse</span></code>
+<p>Suspend version of search that you can use in a co-routine context. Works the same otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

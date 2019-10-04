@@ -57,7 +57,7 @@ afterEvaluate {
 }
 
 dokka {
-    outputFormat = 'gfm'
+    outputFormat = 'html'
     jdkVersion = 8
     outputDirectory = 'docs'
     includes = ['src/main/kotlin/io/inbot/eskotlinwrapper/module.md']

@@ -306,6 +306,8 @@ class IndexDAO<T : Any>(
      * [BulkIndexingSession]. You can control which bulkDispatcher is used for sending asynchronous bulk requests. The
      * default for this is `Dispatchers.IO`. Currently, this does not run requests in parallel. However, we are
      * exploring options for this as this could potentially speed up indexing.
+     *
+     *
      */
     @ExperimentalCoroutinesApi
     suspend fun bulkAsync(
@@ -314,7 +316,7 @@ class IndexDAO<T : Any>(
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
         itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
 
-        bulkDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        bulkDispatcher: CoroutineDispatcher? = null,
         operationsBlock: AsyncBulkIndexingSession<T>.() -> Unit
     ) {
         AsyncBulkIndexingSession.asyncBulk(

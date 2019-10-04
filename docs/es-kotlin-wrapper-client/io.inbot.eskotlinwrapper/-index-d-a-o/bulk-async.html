@@ -17,5 +17,7 @@ flag in your build and also at runtime.</p>
 <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a>. You can control which bulkDispatcher is used for sending asynchronous bulk requests. The
 default for this is <code>Dispatchers.IO</code>. Currently, this does not run requests in parallel. However, we are
 exploring options for this as this could potentially speed up indexing.</p>
+<p>Note. The design for this is still a bit in flux as this still depends on <code>@ExperimentalCoroutinesApi</code> and also
+there are some issues with using <code>Channel.sendBlocking</code> internally.</p>
 </BODY>
 </HTML>

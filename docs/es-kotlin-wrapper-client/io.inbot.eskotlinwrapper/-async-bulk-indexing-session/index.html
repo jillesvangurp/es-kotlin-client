@@ -13,6 +13,8 @@
 it fires bulk requests asynchronously on the specified dispatcher. On paper using multiple threads, allows ES to
 use multiple Threads to consume bulk requests.</p>
 <p>Note: you need the kotlin.Experimental flag set for this to work. As Flow is a bit in flux, I expect the internals of this may change still before they finalize this. So, beware when using this.</p>
+<p>Note. The design for this is still a bit in flux as this still depends on <code>@ExperimentalCoroutinesApi</code> and also
+there are some issues with using <code>Channel.sendBlocking</code> internally.</p>
 <h3>Functions</h3>
 <table>
 <tbody>

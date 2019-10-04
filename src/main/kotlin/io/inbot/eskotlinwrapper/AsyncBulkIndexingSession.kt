@@ -109,7 +109,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
             // FIXME: figure out how to actually get this called in parallel. Currently it seems to do this sequentially
             // loads of confusing suggestions in the issue tracker for this with a lot of intentions and uncertainty around this and without a good way to do this NOW.
             // https://github.com/Kotlin/kotlinx.coroutines/issues/1147
-            if(bulkDispatcher != null) {
+            if (bulkDispatcher != null) {
                 flow.flowOn(bulkDispatcher).collect {}
             } else {
                 flow.collect {}

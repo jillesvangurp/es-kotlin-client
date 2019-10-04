@@ -1,7 +1,6 @@
 package io.inbot.eskotlinwrapper
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils

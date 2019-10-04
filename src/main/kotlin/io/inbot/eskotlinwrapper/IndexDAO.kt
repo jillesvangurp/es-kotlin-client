@@ -306,7 +306,8 @@ class IndexDAO<T : Any>(
      * default for this is `Dispatchers.IO`. Currently, this does not run requests in parallel. However, we are
      * exploring options for this as this could potentially speed up indexing.
      *
-     *
+     * Note. The design for this is still a bit in flux as this still depends on `@ExperimentalCoroutinesApi` and also
+     * there are some issues with using `Channel.sendBlocking` internally.
      */
     @ExperimentalCoroutinesApi
     suspend fun bulkAsync(

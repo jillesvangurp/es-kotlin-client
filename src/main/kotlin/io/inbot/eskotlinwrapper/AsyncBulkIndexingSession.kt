@@ -36,6 +36,9 @@ private val logger = KotlinLogging.logger {}
  * use multiple Threads to consume bulk requests.
  *
  * Note: you need the kotlin.Experimental flag set for this to work. As Flow is a bit in flux, I expect the internals of this may change still before they finalize this. So, beware when using this.
+ *
+ * Note. The design for this is still a bit in flux as this still depends on `@ExperimentalCoroutinesApi` and also
+ * there are some issues with using `Channel.sendBlocking` internally.
  */
 @Suppress("unused")
 class AsyncBulkIndexingSession<T : Any> private constructor(

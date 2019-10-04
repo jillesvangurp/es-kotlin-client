@@ -29,8 +29,11 @@ import org.elasticsearch.client.sniff.SniffOnFailureListener
  * If you need https, set [https] to true.
  *
  * If you are connecting to a local cluster and don't use a loadbalancer, it is advisable to configure the sniffer.
- * Simply set [useSniffer] to true.
  *
+ * This enables client side load balancing between the nodes and adds some intelligence to deal with nodes being
+ * unresponsive or cluster layout changing. Simply set [useSniffer] to true. Note, beware that docker internal ips
+ * may not be reachable from your client and make sure that the addresses returned by `/_nodes/http` are
+ * actually reachable from where your client is running.
  */
 fun create(
     host: String = "localhost",
@@ -38,7 +41,7 @@ fun create(
     https: Boolean = false,
     user: String? = null,
     password: String? = null,
-    useSniffer: Boolean = true,
+    useSniffer: Boolean = false,
     sniffAfterFailureDelayMillis: Int = 30000,
     sniffIntervalMillis: Int = 10000
 ): RestHighLevelClient {
@@ -73,7 +76,7 @@ fun RestHighLevelClient(
     https: Boolean = false,
     user: String? = null,
     password: String? = null,
-    useSniffer: Boolean = true,
+    useSniffer: Boolean = false,
     sniffAfterFailureDelayMillis: Int = 30000,
     sniffIntervalMillis: Int = 10000
 ): RestHighLevelClient = create(host, port, https, user, password, useSniffer, sniffAfterFailureDelayMillis, sniffIntervalMillis)

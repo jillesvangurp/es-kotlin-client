@@ -23,7 +23,7 @@ apply plugin: 'kotlin'
 apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'docker-compose'
 apply plugin: 'project-report' // useful for gradle htmlDependencyReport
-apply plugin: 'com.diffplug.gradle.spotless'
+//apply plugin: 'com.diffplug.gradle.spotless'
 apply plugin: "de.thetaphi.forbiddenapis"
 apply plugin: 'com.github.ben-manes.versions'
 
@@ -31,30 +31,29 @@ forbiddenApis {
     // https://github.com/policeman-tools/forbidden-apis/wiki/GradleUsage
     bundledSignatures = ["jdk-unsafe-9", "jdk-deprecated-9", "jdk-non-portable", "jdk-internal-9"]
     // take out "jdk-system-out"
-    signaturesFiles = files("forbidden_signatures.txt")
+    signaturesFiles = files("../forbidden_signatures.txt")
     ignoreFailures = false
 }
 
 // this intentionally breaks the build if you mess up the formatting; pro tip: use Save Actions plugin in intellij and auto format and organize imports on save
-spotless {
-    java {
-        removeUnusedImports() // removes any unused imports
-    }
-    // to fix violations: gradle spotlessApply
-    // in intellij also tweak kotlin imports to require 999 imports before wildcards and remove java.util for always using wildcards
-    // do the same for java imports
-    // wildcards are verboten!
-    // currentlyb breaks offline build due to fucked up transitive dependency on ktlint & kotlin
-    kotlin {
-        // optionally takes a version
-        ktlint()
-    }
-}
-
-afterEvaluate {
-    // just ffing run it, way to anal to break the build every time
-    tasks.getByName('spotlessCheck').dependsOn(tasks.getByName('spotlessApply'))
-}
+// spotless {
+//     java {
+//         removeUnusedImports() // removes any unused imports
+//     }
+//     // to fix violations: gradle spotlessApply
+//     // in intellij also tweak kotlin imports to require 999 imports before wildcards and remove java.util for always using wildcards
+//     // do the same for java imports
+//     // wildcards are verboten!
+//     // currentlyb breaks offline build due to fucked up transitive dependency on ktlint & kotlin
+//     kotlin {
+//         // optionally takes a version
+//         ktlint()
+//     }
+// }
+// afterEvaluate {
+//     // just ffing run it, way to anal to break the build every time
+//     tasks.getByName('spotlessCheck').dependsOn(tasks.getByName('spotlessApply'))
+// }
 
 dokka {
     outputFormat = 'html'
@@ -93,9 +92,6 @@ dockerCompose {
     forceRecreate = true
 }
 
-group = 'io.inbot.search'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
@@ -124,10 +120,8 @@ compileTestKotlin {
 }
 
 repositories {
-    mavenCentral()
     maven { url 'https://dl.bintray.com/kotlin/dokka' }
 }
-
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -141,10 +135,8 @@ dependencies {
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
 
-    compile "org.elasticsearch:elasticsearch:$elasticsearchVersion"
     compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearchVersion"
     compile "org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticsearchVersion"
-
 
     // bring your own logging, but we need some in tests
     testCompile "org.slf4j:slf4j-api:${slf4jVersion}"

@@ -16,9 +16,9 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.CreateIndexResponse
-import org.elasticsearch.common.unit.TimeValue
-import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.client.sniff.SniffOnFailureListener
+import org.elasticsearch.client.sniff.Sniffer
+import org.elasticsearch.common.unit.TimeValue
 
 /**
  * Factory method that gives you sane defaults that will allow you to quickly connect to your cluster whether it is in

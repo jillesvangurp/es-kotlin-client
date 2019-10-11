@@ -1,5 +1,10 @@
 package io.inbot.eskotlinwrapper
 
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
@@ -12,11 +17,6 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
-import java.util.concurrent.ConcurrentLinkedDeque
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
 
 private val logger = KotlinLogging.logger {}
 

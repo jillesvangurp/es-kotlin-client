@@ -1,9 +1,9 @@
 package io.inbot.eskotlinwrapper
 
-import kotlinx.coroutines.suspendCancellableCoroutine
-import org.elasticsearch.action.ActionListener
 import java.lang.Exception
 import kotlin.coroutines.Continuation
+import kotlinx.coroutines.suspendCancellableCoroutine
+import org.elasticsearch.action.ActionListener
 
 /**
  * Action listener that can be used with to adapt the async methods across the java client to co-routines.

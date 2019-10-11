@@ -1,5 +1,6 @@
 package io.inbot.eskotlinwrapper
 
+import java.lang.IllegalArgumentException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mu.KotlinLogging
@@ -24,7 +25,6 @@ import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
-import java.lang.IllegalArgumentException
 
 private val logger = KotlinLogging.logger {}
 

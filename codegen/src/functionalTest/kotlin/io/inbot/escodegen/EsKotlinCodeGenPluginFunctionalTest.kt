@@ -15,7 +15,7 @@ class EsKotlinCodeGenPluginFunctionalTest {
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('io.inbot.escodegen.generateExtensionFunctions')
+                id('io.inbot.search.codegen')
             }
         """)
 
@@ -23,9 +23,9 @@ class EsKotlinCodeGenPluginFunctionalTest {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("generateExtensionFunctions")
+        runner.withArguments("codegen")
         runner.withProjectDir(projectDir)
-        val result = runner.build();
+        runner.build();
 
         // Verify the result
 //        assertTrue(result.output.contains("Hello from plugin 'com.jillesvangurp.escodegen.generateExtensionFunctions'"))

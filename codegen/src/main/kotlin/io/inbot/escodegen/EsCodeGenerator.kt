@@ -30,7 +30,9 @@ class EsCodeGenerator(
         generateActionListener(sharedCodePackageName)
         esRestClientReflectService.listCLientClasses().map(::generateCodeForClientClass)
             .forEach {
-                it.writeTo(File(sourceDir).absoluteFile)
+                val absoluteFile = File(sourceDir).absoluteFile
+                println(absoluteFile)
+                it.writeTo(absoluteFile)
             }
     }
 

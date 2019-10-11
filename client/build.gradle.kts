@@ -6,19 +6,26 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // intellij has some bug that causes it to somehow be unable to acknowledge this import exists
 // build actually works fine inside and outside intellij
-import de.thetaphi.forbiddenapis.gradle.CheckForbiddenApisExtension
-
+//import de.thetaphi.forbiddenapis.gradle.CheckForbiddenApisExtension
 
 plugins {
-    id("kotlin")
-    id("org.jetbrains.dokka")
+    id("org.jetbrains.kotlin.jvm") version "1.3.50"
+    id("com.diffplug.gradle.spotless") version "3.25.0"
+    id("org.jetbrains.dokka") version "0.9.18"
+    java
+
+//    id("kotlin")
     id("com.avast.gradle.docker-compose") version "0.9.5"
-    id("de.thetaphi.forbiddenapis") version "2.6"
-    id("com.diffplug.gradle.spotless")
+    `maven-publish`
+    id("io.inbot.search.codegen") version "1.0"
+}
+
+repositories {
+    jcenter()
 }
 
 tasks.withType<KotlinCompile> {
-    dependsOn("spotlessApply")
+    dependsOn("spotlessApply", "codegen")
     kotlinOptions.jvmTarget = "1.8"
 }
 
@@ -42,15 +49,6 @@ configure<SpotlessExtension> {
         ktlint()
     }
 }
-
-configure<CheckForbiddenApisExtension> {
-     // https://github.com/policeman-tools/forbidden-apis/wiki/GradleUsage
-     bundledSignatures = setOf("jdk-unsafe-9", "jdk-deprecated-9", "jdk-non-portable", "jdk-internal-9")
-     // take out "jdk-system-out"
-     signaturesFiles = files("../forbidden_signatures.txt")
-     ignoreFailures = false
-}
-
 
 tasks.withType<Test> {
     dependsOn("composeUp")

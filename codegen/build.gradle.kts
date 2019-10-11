@@ -1,17 +1,20 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import de.thetaphi.forbiddenapis.gradle.CheckForbiddenApisExtension
+import org.gradle.api.publish.PublishingExtension
+//import de.thetaphi.forbiddenapis.gradle.CheckForbiddenApisExtension
 
 
 plugins {
+    id("org.jetbrains.kotlin.jvm") version "1.3.50"
+    id("com.diffplug.gradle.spotless") version "3.25.0"
+    id("org.jetbrains.dokka") version "0.9.18"
+    java
     // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
     `java-gradle-plugin`
-    id("org.jetbrains.kotlin.jvm")
-    id("de.thetaphi.forbiddenapis") version "2.6"
+    `maven-publish`
+//    id("de.thetaphi.forbiddenapis") version "2.6"
 }
 
 repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     jcenter()
 }
 
@@ -21,13 +24,13 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-configure<CheckForbiddenApisExtension> {
-    // https://github.com/policeman-tools/forbidden-apis/wiki/GradleUsage
-    bundledSignatures = setOf("jdk-unsafe-9", "jdk-deprecated-9", "jdk-non-portable", "jdk-internal-9")
-    // take out "jdk-system-out"
-    signaturesFiles = files("../forbidden_signatures.txt")
-    ignoreFailures = false
-}
+//configure<CheckForbiddenApisExtension> {
+//    // https://github.com/policeman-tools/forbidden-apis/wiki/GradleUsage
+//    bundledSignatures = setOf("jdk-unsafe-9", "jdk-deprecated-9", "jdk-non-portable", "jdk-internal-9")
+//    // take out "jdk-system-out"
+//    signaturesFiles = files("../forbidden_signatures.txt")
+//    ignoreFailures = false
+//}
 
 dependencies {
     compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.0")
@@ -48,13 +51,30 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
+group = "io.inbot.search"
+version = "1.0"
+
 gradlePlugin {
     // Define the plugin
-    val generateExtensionFunctions by plugins.creating {
-        id = "io.inbot.escodegen.generateExtensionFunctions"
-        implementationClass = "io.inbot.escodegen.EsKotlinCodeGenPlugin"
+//    val generateExtensionFunctions by plugins.creating {
+//        id = "generateExtensionFunctions"
+//        group = "io.inbot.search"
+//        implementationClass = "io.inbot.escodegen.EsKotlinCodeGenPlugin"
+//    }
+    plugins {
+        create("codegen") {
+            id = "io.inbot.search.codegen"
+            implementationClass = "io.inbot.escodegen.EsKotlinCodeGenPlugin"
+        }
     }
 }
+
+configure<PublishingExtension> {
+    repositories {
+        maven("build/repository")
+    }
+}
+
 
 // Add a source set for the functional test suite
 val functionalTestSourceSet = sourceSets.create("functionalTest") {

@@ -9,7 +9,7 @@ import org.gradle.api.Project
 class EsKotlinCodeGenPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         // Register a task
-        project.tasks.register("generateExtensionFunctions") { task ->
+        project.tasks.register("codegen") { task ->
             task.doLast {
                 val esCodeGenerator = EsCodeGenerator()
                 esCodeGenerator.generateCode()

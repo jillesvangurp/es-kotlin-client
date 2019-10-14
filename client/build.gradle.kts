@@ -1,16 +1,21 @@
 import com.avast.gradle.dockercompose.ComposeExtension
-import com.diffplug.gradle.spotless.SpotlessExtension
+import io.inbot.escodegen.EsKotlinCodeGenPluginExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.kotlin.dsl.resolver.buildSrcSourceRootsFilePath
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
+import javax.xml.transform.Source
+
 // intellij has some bug that causes it to somehow be unable to acknowledge this import exists
 // build actually works fine inside and outside intellij
 //import de.thetaphi.forbiddenapis.gradle.CheckForbiddenApisExtension
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
-    id("com.diffplug.gradle.spotless") version "3.25.0"
+//    id("com.diffplug.gradle.spotless") version "3.25.0"
     id("org.jetbrains.dokka") version "0.9.18"
     java
 
@@ -22,11 +27,21 @@ plugins {
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
+sourceSets {
+    main {
+        kotlin {
+
+        }
+    }
+}
 tasks.withType<KotlinCompile> {
-    dependsOn("spotlessApply", "codegen")
+    dependsOn("codegen")
     kotlinOptions.jvmTarget = "1.8"
+    this.sourceFilesExtensions
+
 }
 
 val dokka by tasks.getting(DokkaTask::class) {
@@ -36,19 +51,30 @@ val dokka by tasks.getting(DokkaTask::class) {
     includes = listOf("src/main/kotlin/io/inbot/eskotlinwrapper/module.md")
 }
 
+configure<EsKotlinCodeGenPluginExtension> {
+    output = projectDir.absolutePath + "/build/generatedcode"
+}
+
+sourceSets.main {
+    withConvention(KotlinSourceSet::class) {
+        kotlin.srcDirs("src/main/kotlin", "build/generatedcode")
+    }
+}
+
 configure<ComposeExtension> {
     buildAdditionalArgs = listOf("--force-rm")
     forceRecreate = true
 }
 
-configure<SpotlessExtension> {
-    java {
-        removeUnusedImports()
-    }
-    kotlin {
-        ktlint()
-    }
-}
+//configure<SpotlessExtension> {
+//    java {
+//        removeUnusedImports()
+//    }
+//    kotlin {
+//        ktlint()
+//    }
+//
+//}
 
 tasks.withType<Test> {
     dependsOn("composeUp")
@@ -95,5 +121,5 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
     testCompile("io.mockk:mockk:1.9.3")
-    testCompile("com.willowtreeapps.assertk:assertk:0.20")
+    testCompile("com.willowtreeapps.assertk:assertk-jvm:0.20")
 }

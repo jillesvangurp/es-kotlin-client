@@ -6,12 +6,18 @@ package io.inbot.escodegen
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+open class EsKotlinCodeGenPluginExtension {
+    var output: String = "build/generated-kotlin-code"
+}
+
 class EsKotlinCodeGenPlugin: Plugin<Project> {
     override fun apply(project: Project) {
+
+        val ext = project.extensions.create("codegen", EsKotlinCodeGenPluginExtension::class.java)
         // Register a task
         project.tasks.register("codegen") { task ->
             task.doLast {
-                val esCodeGenerator = EsCodeGenerator()
+                val esCodeGenerator = EsCodeGenerator(sourceDir = ext.output)
                 esCodeGenerator.generateCode()
             }
         }

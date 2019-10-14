@@ -25,14 +25,18 @@ class EsCodeGenerator(
         val sharedCodePath = File(sourceDir + File.separatorChar + sharedCodePackageName.replace('.', File.separatorChar))
         // create the directory if it did not exist
         sharedCodePath.mkdirs()
+        println(sharedCodePath.absolutePath)
+
         File(sharedCodePath.absolutePath,"SuspendingActionListener.kt").writeText(generateActionListener(sharedCodePackageName))
 
         generateActionListener(sharedCodePackageName)
-        esRestClientReflectService.listCLientClasses().map(::generateCodeForClientClass)
+        val directory = File(sourceDir).absoluteFile
+        esRestClientReflectService.listCLientClasses().map {
+            println(it.name)
+            generateCodeForClientClass(it)
+        }
             .forEach {
-                val absoluteFile = File(sourceDir).absoluteFile
-                println(absoluteFile)
-                it.writeTo(absoluteFile)
+                it.writeTo(directory.toPath())
             }
     }
 
@@ -99,17 +103,19 @@ class SuspendingActionListener<T>(private val continuation: Continuation<T>) :
             funSpec.addParameter("request", requestBodyType)
             funSpec.addCode(
                 """
-                |return suspending {
-                |    this.$name(request,requestOptions,it)
-                |}
+                    |// generated code block
+                    |return suspending {
+                    |    this.$name(request,requestOptions,it)
+                    |}
                 """.trimMargin()
             )
         } else {
             funSpec.addCode(
                 """
-                |return suspending {
-                |    this.$name(requestOptions,it)
-                |}
+                    |// generated code block
+                    |return suspending {
+                    |    this.$name(requestOptions,it)
+                    |}
                 """.trimMargin()
             )
 
@@ -126,10 +132,20 @@ class SuspendingActionListener<T>(private val continuation: Continuation<T>) :
 
     private fun generateCodeForClientClass(clazz: Class<*>): FileSpec {
         val fileSpecBuilder = FileSpec.builder(clazz.packageName, "${clazz.simpleName}Ext")
-        fileSpecBuilder.addImport(sharedCodePackageName, "SuspendingActionListener")
+        fileSpecBuilder.addImport(sharedCodePackageName, "SuspendingActionListener.Companion.suspending")
 
         fileSpecBuilder.addComment(genByComment.trimIndent())
-        clazz.methods.filter { it.name.endsWith("Async") }.forEach {
+        clazz.methods
+            .filter { it.name.endsWith("Async") }
+            // don't generate code for deprecated methods
+            .filter { method -> method.annotations.firstOrNull { !(it.javaClass == Deprecated::class || it.javaClass == java.lang.Deprecated::class) } == null}
+            // java.lang.Boolean vs. kotlin.Boolean seems to break things; affects only a few methods
+            .filter {
+                val returnType  = getTypeParameter(it.parameters[it.parameterCount-1])
+                !(returnType == java.lang.Boolean::class.java || returnType == Boolean::class.java)
+            }
+            .forEach {
+            println("generating async method for ${it.name}")
             try {
 
                 when (it.parameterCount) {

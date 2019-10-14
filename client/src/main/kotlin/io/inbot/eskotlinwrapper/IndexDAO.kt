@@ -1,6 +1,5 @@
 package io.inbot.eskotlinwrapper
 
-import java.lang.IllegalArgumentException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mu.KotlinLogging

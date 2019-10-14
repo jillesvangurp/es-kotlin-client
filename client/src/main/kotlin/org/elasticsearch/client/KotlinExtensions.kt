@@ -2,7 +2,7 @@ package org.elasticsearch.client
 
 import io.inbot.eskotlinwrapper.IndexDAO
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
-import io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending
+import io.inbot.eskotlinwrapper.OldSuspendingActionListener.Companion.suspending
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -158,21 +158,21 @@ fun RestHighLevelClient.scroll(
  *
  * Note, there currently is no async version of this in the DAO.
  */
-suspend fun RestHighLevelClient.scrollAsync(
-    scrollId: String,
-    ttl: Long,
-    requestOptions: RequestOptions = RequestOptions.DEFAULT
-): SearchResponse {
-    return suspending {
-        this.scrollAsync(
-            SearchScrollRequest(scrollId).scroll(
-                TimeValue.timeValueMinutes(
-                    ttl
-                )
-            ), requestOptions, it
-        )
-    }
-}
+//suspend fun RestHighLevelClient.scrollAsync(
+//    scrollId: String,
+//    ttl: Long,
+//    requestOptions: RequestOptions = RequestOptions.DEFAULT
+//): SearchResponse {
+//    return suspending {
+//        this.scrollAsync(
+//            SearchScrollRequest(scrollId).scroll(
+//                TimeValue.timeValueMinutes(
+//                    ttl
+//                )
+//            ), requestOptions, it
+//        )
+//    }
+//}
 
 /**
  * Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.
@@ -189,35 +189,35 @@ fun RestHighLevelClient.clearScroll(
 /**
  * Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.
  */
-suspend fun RestHighLevelClient.clearScrollAsync(
-    vararg scrollIds: String,
-    requestOptions: RequestOptions = RequestOptions.DEFAULT
-): ClearScrollResponse {
-    // FIXME figure out a way to use this to create some kind of suspending Sequence<SearchResponse>, this seems to be hard currently
-    return suspending {
-        val clearScrollRequest = ClearScrollRequest()
-        scrollIds.forEach { clearScrollRequest.addScrollId(it) }
-        this.clearScrollAsync(clearScrollRequest, requestOptions, it)
-    }
-}
+//suspend fun RestHighLevelClient.clearScrollAsync(
+//    vararg scrollIds: String,
+//    requestOptions: RequestOptions = RequestOptions.DEFAULT
+//): ClearScrollResponse {
+//    // FIXME figure out a way to use this to create some kind of suspending Sequence<SearchResponse>, this seems to be hard currently
+//    return suspending {
+//        val clearScrollRequest = ClearScrollRequest()
+//        scrollIds.forEach { clearScrollRequest.addScrollId(it) }
+//        this.clearScrollAsync(clearScrollRequest, requestOptions, it)
+//    }
+//}
 
 /**
  * Create index asynchronously.
  */
-suspend fun IndicesClient.createIndexAsync(
-    index: String,
-    requestOptions: RequestOptions = RequestOptions.DEFAULT,
-    block: CreateIndexRequest.() -> Unit
-): CreateIndexResponse {
-    val request = CreateIndexRequest(index)
-    block.invoke(request)
-    return suspending {
-        this.createAsync(request, requestOptions, it)
-    }
-}
+//suspend fun IndicesClient.createIndexAsync(
+//    index: String,
+//    requestOptions: RequestOptions = RequestOptions.DEFAULT,
+//    block: CreateIndexRequest.() -> Unit
+//): CreateIndexResponse {
+//    val request = CreateIndexRequest(index)
+//    block.invoke(request)
+//    return suspending {
+//        this.createAsync(request, requestOptions, it)
+//    }
+//}
 
-suspend fun RestHighLevelClient.bulkAsync(bulkRequest: BulkRequest, options: RequestOptions = RequestOptions.DEFAULT): BulkResponse {
-    return suspending {
-        this.bulkAsync(bulkRequest, options, it)
-    }
-}
+//suspend fun RestHighLevelClient.bulkAsync(bulkRequest: BulkRequest, options: RequestOptions = RequestOptions.DEFAULT): BulkResponse {
+//    return suspending {
+//        this.bulkAsync(bulkRequest, options, it)
+//    }
+//}

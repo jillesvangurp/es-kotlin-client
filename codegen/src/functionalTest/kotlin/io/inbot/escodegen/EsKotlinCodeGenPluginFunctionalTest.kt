@@ -17,6 +17,10 @@ class EsKotlinCodeGenPluginFunctionalTest {
             plugins {
                 id('io.inbot.search.codegen')
             }
+            
+            codegen {
+                output = "/Users/jillesvangurp/git/es-kotlin-wrapper-client/client/build/generatedcode"
+            }
         """)
 
         // Run the build

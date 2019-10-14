@@ -1,5 +1,5 @@
-rootProject.name = 'es-kotlin-wrapper-client'
-
-include("codegen")
-include("client")
+//rootProject.name = "es-kotlin-wrapper-client"
+//
+//include("codegen")
+//include("client")
 

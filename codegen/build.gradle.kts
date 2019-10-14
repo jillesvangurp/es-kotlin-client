@@ -75,12 +75,12 @@ configure<PublishingExtension> {
     }
 }
 
-
 // Add a source set for the functional test suite
 val functionalTestSourceSet = sourceSets.create("functionalTest") {
 }
 
 gradlePlugin.testSourceSets(functionalTestSourceSet)
+
 configurations.getByName("functionalTestImplementation").extendsFrom(configurations.getByName("testImplementation"))
 
 // Add a task to run the functional tests

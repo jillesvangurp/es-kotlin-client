@@ -22,6 +22,9 @@ plugins {
 //    id("kotlin")
     id("com.avast.gradle.docker-compose") version "0.9.5"
     `maven-publish`
+    // this works because we define a local repo in settings.gradle.kts
+    // the flip side is that this breaks any task if the repo does not exist
+    // so make sure to build codegen before you do anything
     id("io.inbot.search.codegen") version "1.0"
 }
 

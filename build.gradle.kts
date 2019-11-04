@@ -2,31 +2,36 @@ import com.avast.gradle.dockercompose.ComposeExtension
 import io.inbot.escodegen.EsKotlinCodeGenPluginExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.kotlin.dsl.resolver.buildSrcSourceRootsFilePath
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
-import javax.xml.transform.Source
+import com.diffplug.gradle.spotless.SpotlessExtension
 
 // intellij has some bug that causes it to somehow be unable to acknowledge this import exists
 // build actually works fine inside and outside intellij
 //import de.thetaphi.forbiddenapis.gradle.CheckForbiddenApisExtension
 
+buildscript {
+    repositories {
+        maven(url = "https://jitpack.io")
+    }
+    dependencies {
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:0.9.1-7.4.2")
+    }
+}
+
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
-//    id("com.diffplug.gradle.spotless") version "3.25.0"
+    id("com.diffplug.gradle.spotless") version "3.25.0"
     id("org.jetbrains.dokka") version "0.9.18"
     java
 
-//    id("kotlin")
     id("com.avast.gradle.docker-compose") version "0.9.5"
     `maven-publish`
-    // this works because we define a local repo in settings.gradle.kts
-    // the flip side is that this breaks any task if the repo does not exist
-    // so make sure to build codegen before you do anything
-    id("io.inbot.search.codegen") version "1.0"
 }
+
+apply(plugin = "com.github.jillesvangurp.codegen")
 
 repositories {
     jcenter()
@@ -40,6 +45,7 @@ sourceSets {
         }
     }
 }
+
 tasks.withType<KotlinCompile> {
     dependsOn("codegen")
     kotlinOptions.jvmTarget = "1.8"
@@ -69,15 +75,15 @@ configure<ComposeExtension> {
     forceRecreate = true
 }
 
-//configure<SpotlessExtension> {
-//    java {
-//        removeUnusedImports()
-//    }
-//    kotlin {
-//        ktlint()
-//    }
-//
-//}
+configure<SpotlessExtension> {
+    java {
+        removeUnusedImports()
+    }
+    kotlin {
+        ktlint()
+    }
+
+}
 
 tasks.withType<Test> {
     dependsOn("composeUp")
@@ -93,7 +99,7 @@ tasks.withType<Test> {
 }
 
 val kotlinVersion = "1.3.50"
-val elasticVersion = "7.4.0"
+val elasticVersion = "7.4.2"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.5.2"
 

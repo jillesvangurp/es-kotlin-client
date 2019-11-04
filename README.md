@@ -12,7 +12,9 @@ The Java client is designed for Java users and comes with a lot of things that a
 
 Kotlin also has support for co-routines and we use this to make using the asynchronous methods in the Java client a lot nicer to use. Basics for this are in place but Kotlin's co-routine support is still evolving and some of the things we use are still labeled experimental. 
 
-This library makes use of code generated using our [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) for gradle. This uses reflection to generate extension functions for a lot of the Java SDK. E.g. all asynchronous functions gain a co-routine friendly variant this way. Future versions of this plugin will likely add more Kotlin specific stuff.
+## Code generation
+
+As of 1.0-M1, this library makes use of code generated using my [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) for gradle. This uses reflection to generate extension functions for a lot of the Java SDK. E.g. all asynchronous functions gain a co-routine friendly variant this way. Future versions of this plugin will add more Kotlin specific stuff. One obvious thing I'm considering is generating kotlin DSL extension functions for the builders in the java sdk. Builders are a Java thing and this would be a nice thing to have. Ideas welcome ...
 
 ## Platform support
 
@@ -20,11 +22,11 @@ This client requires Java 8 or higher (same JVM requirements as Elasticsearch). 
 
 # Documentation
 
-- [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - This demo project was used for a presentation and includes a some nice examples. Note. this may fall behind as I don't always update it to the latest version. If you need a quick overview, start there.
-- Check the code samples on this page. I try to keep these up to date but it's a manual thing currently.
+- [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - This demo project was used for a presentation and includes a some nice examples. I try to keep this in sync with the latest release. If you need a quick overview, start there.
+- Check the code samples on this page. I try to keep these up to date but it's a manual thing currently and they are not part of any build process currently. This is something I'm investigating some options for.
 - The tests test most of the important features and should be fairly readable and provide a good overview of how to use things. I like keeping the tests somewhat readable.
-- [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release. 
-- [java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff.
+- [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should be up to date.
+- [Elasticsearch java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff. Elasticsearch has awesome documentation for this.
 
 # Get it
 
@@ -346,40 +348,23 @@ Gradle will spin up Elasticsearch using the docker compose plugin for gradle and
 
 # Development status
 
-While **this is a pre-1.0 version**, it should be perfectly fine for general use at this point. Also note, that you can always access the underlying Java client, which is stable. However, major refactorings do still happen ocassionally and there is still a lot to learn.
+This library should be perfectly fine for general use at this point. Also note, that you can always access the underlying Java client, which is stable. However, until we release 1.0, refactoring can still happen ocassionally.
 
-Kotlin recently added co-routines and using that is an obvious use case for Elasticsearch. Basic support for this has been added. However, several things in this client have yet to be updated to make full use of this. We expect the main use case for most users will be asynchronous searches, which is one of the things that are already fully supported.
+Currently the main blockers for a 1.0 are:
 
-If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand before committing a lot of your time.
+- ES 7.5.x should include my pull request to enable suspendCancellableCoRoutine
+- We recently added reflection based code generation that scans the sdk and adds some useful extension functions. More feature work here is coming.
+- We depend on a few things related to flow and co-routines that still require annotations like `@InternalCoroutinesApi`. Ideally we get rid of needing that anywhere before 1.0.
+- Currently asynchronous is optional and I want to make this the default way of using the library as this can be so nice with co-routines and should be the default in a modern web server. 
+
+If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.
 
 ## Compatibility
 
-The general goal is to keep this client compatible with the current stable version of Elasticsearch. We rely on the most recent 7.x version. Presumably, this works fine against any 6.x node with the exception of some changes in APIs or query DSL; and possibly some older versions. 
+The general goal is to keep this client in sync with the current stable version of Elasticsearch. We rely on the most recent 7.x version. From experience, this mostly works fine against any 6.x node with the exception of some changes in APIs or query DSL; and possibly some older versions. Likewise, forward compatibility is generally not a big deal barring major changes such as the removal of types in v7.
 
-For version 6.x, you can use the es-6.7.x branch or use one of the older releases (<= 0.9.11).
+For version 6.x, you can use the es-6.7.x branch or use one of the older releases (<= 0.9.11). Obviously this lacks a lot of the recent feature work.
 
-Currently we update this libary regularly for the current stable version of Elasticsearch. As of v7.0.0, several things have been deprecated in the Java client and the current version of this client has  already addressed all relevant deprecations. A big upcoming change with v8 will be the removal of document types in Elasticsearch. If you need types, you can still configure them with the current version of the client but they default to null. With Elasticsearch 8 we will remove all support for those.
-
-## Features (done)
-
-- CRUD: index, update, get and delete of any jackson serializable object
-- Reliable update with retries and optimistic locking that uses a `T -> T` lambda to transform what is in the index to what it needs to be. Retry kicks in if there's a version conflict and it simply re-fetches the latest version and applies the lambda.
-- Bulk indexing with support for index, update, and delete. Supports callbacks for items and takes care of sending and creating bulk requests. The default callback can take care of retrying updates if they fail with a conflict if you set retryConflictingUpdates to a non zero value.
-- Easy search with jackson based result mapping
-- Easy scrolling search, also with jackson based result mapping. You can do this with the same method that does the normal paged search simply by setting `scrolling = true` (defaults to false)
-
-## Future feature ideas/TODO/Doing
-
-Mostly I develop on a need to have basis. The Elasticsearch API is enormous and there are many features I have never used. If it matters to you, feel free to jump in and help.
-
-Things currently on my horizon:
-
-- Async / co-routines: this is in progress but not completed yet. There is a `SuspendingActionListener` that you can use with all the high level async requests. Currently, the only stuff using that is search (non scrolling only), bulk, and a handful of other requests. 
-- Index and alias management with read and write alias support built in. This is work in progress. The daos do support read and write aliases but most of the management features for this are missing. Of course you do have access to the relevant APIs directly via the Java client.
-- Cutting down on the builder cruft and boilerplate in the query DSL and use extension methods with parameter defaults. Maybe adapt this project: https://github.com/mbuhot/eskotlin
-- Set up CI, travis? Github actiona? Docker might be tricky.
-
-If you have any ideas on how to improve this further, file a ticket. I'd love to hear your feedback.
 
 # License
 

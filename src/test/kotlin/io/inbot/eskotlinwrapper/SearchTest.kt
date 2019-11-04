@@ -5,6 +5,7 @@ import assertk.assertions.contains
 import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.search.source
 import org.elasticsearch.common.unit.TimeValue
@@ -14,6 +15,7 @@ import org.elasticsearch.index.query.QueryBuilders.matchAllQuery
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.junit.jupiter.api.Test
 
+@InternalCoroutinesApi
 class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
 
     @Test

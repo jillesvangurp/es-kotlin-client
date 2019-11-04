@@ -3,6 +3,7 @@ package io.inbot.eskotlinwrapper
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.InternalCoroutinesApi
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions.Type
@@ -11,6 +12,7 @@ import org.elasticsearch.client.crudDao
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
+@InternalCoroutinesApi
 class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex = false) {
     @Test
     fun `should list aliases`() {

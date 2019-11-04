@@ -5,6 +5,7 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.RepeatedTest
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
 @ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
 
     @Test

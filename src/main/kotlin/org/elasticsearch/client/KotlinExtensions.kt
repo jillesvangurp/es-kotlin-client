@@ -3,19 +3,16 @@ package org.elasticsearch.client
 import io.inbot.eskotlinwrapper.IndexDAO
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import io.inbot.eskotlinwrapper.OldSuspendingActionListener.Companion.suspending
+import kotlinx.coroutines.InternalCoroutinesApi
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
-import org.elasticsearch.action.bulk.BulkRequest
-import org.elasticsearch.action.bulk.BulkResponse
 import org.elasticsearch.action.search.ClearScrollRequest
 import org.elasticsearch.action.search.ClearScrollResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchScrollRequest
-import org.elasticsearch.client.indices.CreateIndexRequest
-import org.elasticsearch.client.indices.CreateIndexResponse
 import org.elasticsearch.client.sniff.SniffOnFailureListener
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.common.unit.TimeValue
@@ -62,14 +59,19 @@ fun create(
     }
     val restHighLevelClient = RestHighLevelClient(restClientBuilder)
     if (useSniffer) {
-        val sniffer = Sniffer.builder(restHighLevelClient.lowLevelClient).setSniffAfterFailureDelayMillis(sniffAfterFailureDelayMillis).setSniffIntervalMillis(sniffIntervalMillis).build()
+        val sniffer = Sniffer.builder(restHighLevelClient.lowLevelClient)
+            .setSniffAfterFailureDelayMillis(sniffAfterFailureDelayMillis).setSniffIntervalMillis(sniffIntervalMillis)
+            .build()
         sniffOnFailureListener.setSniffer(sniffer)
     }
     return restHighLevelClient
 }
 
 @Suppress("FunctionName")
-@Deprecated(message = "Use the create function", replaceWith = ReplaceWith("create(host,port,https,user,password,useSniffer,sniffAfterFailureDelayMillis,sniffIntervalMillis)"))
+@Deprecated(
+    message = "Use the create function",
+    replaceWith = ReplaceWith("create(host,port,https,user,password,useSniffer,sniffAfterFailureDelayMillis,sniffIntervalMillis)")
+)
 fun RestHighLevelClient(
     host: String = "localhost",
     port: Int = 9200,
@@ -79,7 +81,8 @@ fun RestHighLevelClient(
     useSniffer: Boolean = false,
     sniffAfterFailureDelayMillis: Int = 30000,
     sniffIntervalMillis: Int = 10000
-): RestHighLevelClient = create(host, port, https, user, password, useSniffer, sniffAfterFailureDelayMillis, sniffIntervalMillis)
+): RestHighLevelClient =
+    create(host, port, https, user, password, useSniffer, sniffAfterFailureDelayMillis, sniffIntervalMillis)
 
 /**
  * Create a new Data Access Object (DAO), aka. repository class. If you've used J2EE style frameworks, you should be familiar with this pattern.
@@ -87,6 +90,7 @@ fun RestHighLevelClient(
  * This abstracts the business of telling the client which index to run against and serializing/deserializing documents in it.
  *
  */
+@InternalCoroutinesApi
 fun <T : Any> RestHighLevelClient.crudDao(
     index: String,
     modelReaderAndWriter: ModelReaderAndWriter<T>,
@@ -154,27 +158,6 @@ fun RestHighLevelClient.scroll(
 }
 
 /**
- * Get the next page of a scrolling search. Note, use the DAO to do scrolling searches and avoid manually doing these requests.
- *
- * Note, there currently is no async version of this in the DAO.
- */
-//suspend fun RestHighLevelClient.scrollAsync(
-//    scrollId: String,
-//    ttl: Long,
-//    requestOptions: RequestOptions = RequestOptions.DEFAULT
-//): SearchResponse {
-//    return suspending {
-//        this.scrollAsync(
-//            SearchScrollRequest(scrollId).scroll(
-//                TimeValue.timeValueMinutes(
-//                    ttl
-//                )
-//            ), requestOptions, it
-//        )
-//    }
-//}
-
-/**
  * Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.
  */
 fun RestHighLevelClient.clearScroll(
@@ -185,39 +168,3 @@ fun RestHighLevelClient.clearScroll(
     scrollIds.forEach { clearScrollRequest.addScrollId(it) }
     return this.clearScroll(clearScrollRequest, requestOptions)
 }
-
-/**
- * Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.
- */
-//suspend fun RestHighLevelClient.clearScrollAsync(
-//    vararg scrollIds: String,
-//    requestOptions: RequestOptions = RequestOptions.DEFAULT
-//): ClearScrollResponse {
-//    // FIXME figure out a way to use this to create some kind of suspending Sequence<SearchResponse>, this seems to be hard currently
-//    return suspending {
-//        val clearScrollRequest = ClearScrollRequest()
-//        scrollIds.forEach { clearScrollRequest.addScrollId(it) }
-//        this.clearScrollAsync(clearScrollRequest, requestOptions, it)
-//    }
-//}
-
-/**
- * Create index asynchronously.
- */
-//suspend fun IndicesClient.createIndexAsync(
-//    index: String,
-//    requestOptions: RequestOptions = RequestOptions.DEFAULT,
-//    block: CreateIndexRequest.() -> Unit
-//): CreateIndexResponse {
-//    val request = CreateIndexRequest(index)
-//    block.invoke(request)
-//    return suspending {
-//        this.createAsync(request, requestOptions, it)
-//    }
-//}
-
-//suspend fun RestHighLevelClient.bulkAsync(bulkRequest: BulkRequest, options: RequestOptions = RequestOptions.DEFAULT): BulkResponse {
-//    return suspending {
-//        this.bulkAsync(bulkRequest, options, it)
-//    }
-//}

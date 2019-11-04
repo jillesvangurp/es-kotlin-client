@@ -1,6 +1,7 @@
 package io.inbot.eskotlinwrapper
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.InternalCoroutinesApi
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.create
 import org.elasticsearch.client.crudDao
@@ -8,6 +9,7 @@ import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
+@InternalCoroutinesApi
 open class AbstractElasticSearchTest(val indexPrefix: String = "test", val createIndex: Boolean = true, val deleteIndexAfterTest: Boolean = true) {
     lateinit var dao: IndexDAO<TestModel>
     lateinit var esClient: RestHighLevelClient

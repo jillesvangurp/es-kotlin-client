@@ -27,7 +27,9 @@ plugins {
     id("org.jetbrains.dokka") version "0.9.18"
     java
 
+
     id("com.avast.gradle.docker-compose") version "0.9.5"
+    maven
     `maven-publish`
 }
 
@@ -96,6 +98,25 @@ tasks.withType<Test> {
         TestLogEvent.STANDARD_ERROR,
         TestLogEvent.STANDARD_OUT
     )
+}
+val artifactName = "es-kotlin-wrapper-client"
+val artifactGroup = "com.github.jillesvangurp"
+
+publishing {
+    publications {
+        create<MavenPublication>("lib") {
+            groupId = artifactGroup
+            artifactId = artifactName
+            from(components["java"])
+
+        }
+    }
+    repositories {
+        maven {
+            name = "myRepo"
+            url = uri("file://${buildDir}/repo")
+        }
+    }
 }
 
 val kotlinVersion = "1.3.50"

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
 
     @Test
-    fun `lets find some things`() {
+    fun `lets query some things`() {
         // lets put some documents in an index
         dao.bulk {
             index(randomId(), TestModel("the quick brown emu"))

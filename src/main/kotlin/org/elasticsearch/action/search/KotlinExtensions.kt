@@ -1,5 +1,8 @@
 package org.elasticsearch.action.search
 
+import java.io.InputStream
+import java.io.Reader
+import java.util.Collections
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.common.settings.Settings
@@ -9,9 +12,6 @@ import org.elasticsearch.common.xcontent.XContentFactory
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import java.io.InputStream
-import java.io.Reader
-import java.util.Collections
 
 private val logger: KLogger = KotlinLogging.logger { }
 

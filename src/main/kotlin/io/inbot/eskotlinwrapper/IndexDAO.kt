@@ -24,7 +24,6 @@ import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
-import java.lang.IllegalArgumentException
 
 private val logger = KotlinLogging.logger {}
 

@@ -1,7 +1,5 @@
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
-**Important.** This repository used to be under the inbot account. As Inbot shut operations in October 2019, I've moved the repo to my private account (jillesvangurp). Any future updates will come from this repository.
-
 # Introduction
 
 ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) (introduced with Elasticsearch 6.x) with some Kotlin specific goodness. 
@@ -12,11 +10,13 @@ The highlevel elasticsearch client is written in Java and provides access to ess
 
 The Java client is designed for Java users and comes with a lot of things that are a bit awkward in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a friendly API over the underlying client functionality. 
 
-Kotlin also has support for co-routines and we use this to make using the asynchronous methods in the Java client a lot nicer to use. Basics for this are in place but Kotlin's co-routine support is still evolving and some of the things we use are still labeled experimental. Currently there is support for asynchronous search and bulk indexing that uses co-routines.
+Kotlin also has support for co-routines and we use this to make using the asynchronous methods in the Java client a lot nicer to use. Basics for this are in place but Kotlin's co-routine support is still evolving and some of the things we use are still labeled experimental. 
+
+This library makes use of code generated using our [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) for gradle. This uses reflection to generate extension functions for a lot of the Java SDK. E.g. all asynchronous functions gain a co-routine friendly variant this way. Future versions of this plugin will likely add more Kotlin specific stuff.
 
 ## Platform support
 
-This client requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the functionality is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin. Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch directly from a mobile phone in any case.
+This client requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the Kotlin functionality is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin. Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch directly from a mobile phone in any case.
 
 # Documentation
 

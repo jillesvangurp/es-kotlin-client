@@ -61,7 +61,7 @@ val esClient = RestHighLevelClient(host="domain.com",port=9999,https=true,user="
 
 Or pass in the builder and rest client as you would normally.
 
-**Everything** you do normally with the Java client works exactly as it does normally. But, we've added lots of extra methods to make things easier. For example searching is supported with a Kotlin DSL that adapts the existing `SearchRequest` and adds an alternative `source` method that takes a String, which in Kotlin you can template as well:
+**Everything** you do normally with the Java client works exactly as it does normally. But, we've added lots of extra extension functions to make things easier. Mostly these are in kotlin files with packages that match the classes they are extending. So, using a class from the java sdk means it it's in your imports already, which in turn makes the extension functions available for you to use.
 
 ## DAOs and serialization/deserialization
 
@@ -82,9 +82,9 @@ modelReaderAndWriter = JacksonModelReaderAndWriter(
 ))
 ```
 
-The `modelReaderAndWriter` parameter takes care of serializing/deserializing. In this case we are using an implementation that uses Jackson and we are using the kotlin extension for that, which registers itself via `findAndRegisterModules`. 
+The `modelReaderAndWriter` parameter takes care of serializing/deserializing. In this case we are using a default implementation that uses Jackson and we are using the kotlin extension for that, which registers itself via `findAndRegisterModules`. 
 
-Typically, most applications that use jackson, would want to inject their own custom object mappers. It's of course straightforward to use alternatives like GSon or whatever else you prefer. In the code below, we assume Jackson is used.
+Typically, most applications that use jackson, would want to inject their own custom object mappers. It's of course very straightforward to use alternatives like GSon or whatever else you prefer. In the code below, we assume Jackson is used.
 
 ## CRUD with Entities
 

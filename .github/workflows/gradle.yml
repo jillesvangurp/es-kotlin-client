@@ -11,11 +11,18 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: '13.0.1'
-    - name: Cache .gradle dir
+    - name: Cache build .gradle dir
       uses: actions/cache@v1
       with:
         path: .gradle
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    - name: Cache user .gradle dir
+      uses: actions/cache@v1
+      with:
+        path: ~/.gradle
+        key: ${{ runner.os }}-gradleuser-${{ hashFiles('**/build.gradle.kts') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
     - name: Gradle Build

@@ -1,4 +1,5 @@
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
+![](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/gradle/badge.svg)
 
 # Introduction
 

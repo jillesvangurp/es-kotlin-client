@@ -8,7 +8,14 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-java@v1
       with:
-        java-version: '12.0.2'
+        java-version: '13.0.1'
+    - name: Cache .gradle dir
+      uses: actions/cache@v1
+      with:
+        path: .gradle
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle.build.kts') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
     - name: Java -version
       run: java -version
     - name: Gradle Build

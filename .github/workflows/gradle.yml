@@ -5,8 +5,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-java@v1
+    - name: Checkout the code
+      uses: actions/checkout@master
+    - name: Setup Java
+      uses: actions/setup-java@v1
       with:
         java-version: '13.0.1'
     - name: Cache .gradle dir
@@ -16,8 +18,6 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle.build.kts') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    - name: Java -version
-      run: java -version
     - name: Gradle Build
       run: ./gradlew build
     

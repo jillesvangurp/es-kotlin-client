@@ -12,11 +12,13 @@ The highlevel elasticsearch client is written in Java and provides access to ess
 
 The Java client is designed for Java users and comes with a lot of things that are a bit awkward in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a friendly API over the underlying client functionality. 
 
-Kotlin also has support for co-routines and we use this to make using the asynchronous methods in the Java client a lot nicer to use. Basics for this are in place but Kotlin's co-routine support is still evolving and some of the things we use are still labeled experimental. 
+Kotlin also has support for co-routines and we use this to make using the asynchronous methods in the Java client a lot nicer to use. Basics for this are in place but Kotlin's co-routine support is still evolving and some of the things we use are still labeled experimental.
 
 ## Code generation
 
-As of 1.0-M1, this library makes use of code generated using my [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) for gradle. This uses reflection to generate extension functions for a lot of the Java SDK. E.g. all asynchronous functions gain a co-routine friendly variant this way. Future versions of this plugin will add more Kotlin specific stuff. One obvious thing I'm considering is generating kotlin DSL extension functions for the builders in the java sdk. Builders are a Java thing and this would be a nice thing to have. Ideas welcome ...
+As of 1.0-M1, this library makes use of code generated using my [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) for gradle. This uses reflection to generate extension functions for a lot of the Java SDK. E.g. all asynchronous functions gain a co-routine friendly variant this way. Future versions of this plugin will add more Kotlin specific stuff. One obvious thing I'm considering is generating kotlin DSL extension functions for the builders in the java sdk. Builders are a Java thing and this would be a nice thing to have. 
+
+Ideas welcome ...
 
 ## Platform support
 

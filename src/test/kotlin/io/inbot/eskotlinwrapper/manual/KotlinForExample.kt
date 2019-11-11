@@ -1,53 +1,114 @@
 package io.inbot.eskotlinwrapper.manual
 
-import org.apache.commons.lang3.StringUtils
+import mu.KLogger
+import mu.KotlinLogging
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintWriter
 
+private val logger: KLogger = KotlinLogging.logger { }
 
-class KotlinForExample private constructor(private val fileName: String,  title: String) : AutoCloseable {
-
+class KotlinForExample private constructor(
+    private val sourcePaths: List<String> = listOf("src/main/kotlin", "src/test/kotlin")
+) : AutoCloseable {
     private val buf = StringBuilder()
+    private val patternForBlock = "block.*?\\{+".toRegex(RegexOption.MULTILINE)
 
-    init {
-        buf.appendln("# $title")
-        buf.appendln()
+    operator fun String.unaryPlus() {
+        buf.appendln(this.trimIndent().trimMargin())
     }
 
-    fun <T> blockWithOutput(name:String, block: () -> T) {
-        val caller = Thread.currentThread()
-            .stackTrace.first { it.className != this.javaClass.name && it.className != "java.lang.Thread" }
-            .className.replace("\\$.*?$".toRegex(), "") // we don't want the inner class
+    fun mdCodeBlock(code: String, type: String = "kotlin") {
+        buf.appendln("```$type\n$code\n```\n")
+    }
 
-        buf.appendln("```kotlin")
-        buf.appendln("""println("$caller")""")
-        buf.appendln("```")
-        buf.appendln()
+    fun <T> block(block: () -> T) {
+        val callerSourceBlock = getCallerSourceBlock()
+        if (callerSourceBlock == null) {
+            // we are assuming a few things about the caller source:
+            // - MUST be a class with its own source file
+            // - The source file must be in the sourcePaths
+            logger.warn { "Could not find code block from stack trace and sourcePath" }
+        } else {
+            mdCodeBlock(callerSourceBlock)
+        }
+
         val response = block.invoke()
 
-        val stringified = response.toString()
-        if(stringified != "kotlin.Unit")  {
-            buf.appendln("Produces:\n\n```\n$stringified\n```")
+        val returnValue = response.toString()
+        if (returnValue != "kotlin.Unit") {
+            buf.appendln("Produces:\n")
+            mdCodeBlock(returnValue, type = "")
         }
     }
 
+
+    fun blockWithOutput(block: PrintWriter.() -> Unit) {
+        val callerSourceBlock = getCallerSourceBlock()
+
+        val outputBuffer = ByteArrayOutputStream()
+        val writer = PrintWriter(outputBuffer.writer())
+        writer.use {
+            block.invoke(writer)
+            if (callerSourceBlock == null) {
+                logger.warn { "Could not find code block from stack trace and sourcePath" }
+            } else {
+                mdCodeBlock(callerSourceBlock)
+            }
+            writer.flush()
+        }
+        val output = outputBuffer.toString()
+        if (output.isNotEmpty()) {
+            buf.appendln("Output:\n")
+            mdCodeBlock(output, type = "")
+        }
+    }
+
+    private fun getCallerSourceBlock(): String? {
+        val ste = getCallerStackTraceElement()
+        val line = ste.lineNumber
+        val sourceFile = ste.className.replace("\\$.*?$".toRegex(), "").replace('.', File.separatorChar) + ".kt"
+        val lines = sourcePaths.map { File(it, sourceFile) }.firstOrNull { it.exists() }?.readLines()
+        if (lines != null && line > 0) {
+            // off by one error. Line numbers start at 1; list numbers start at 0
+            val source = lines.subList(line - 1, lines.size).joinToString("\n")
+            val allBlocks = patternForBlock.findAll(source)
+            val match = allBlocks.first()
+            val start = match.range.last
+            var openCount = 1
+            var index = start + 1
+            while (openCount > 0 && index < source.length) {
+                when (source[index++]) {
+                    '{' -> openCount++
+                    '}' -> openCount--
+                }
+            }
+            if (index > start + 1 && index < source.length) {
+                return source.substring(start + 1, index - 1).trimIndent()
+
+            }
+
+        }
+        return null
+    }
+
+
+    private fun getCallerStackTraceElement(): StackTraceElement {
+        return Thread.currentThread()
+            .stackTrace.first { it.className != javaClass.name && it.className != "java.lang.Thread" }
+    }
+
     override fun close() {
-        println(fileName)
-        println("${buf.toString()}")
     }
 
 
     companion object {
         fun example(
-            title: String,
-            fileName: String = StringUtils.lowerCase(
-                title.replace(' ', '-').replace(
-                    "[^A-Za-z0-9\\-]".toRegex(),
-                    ""
-                ) + ".md"
-            ),
             block: KotlinForExample.() -> Unit
-        ) {
-            val example = KotlinForExample(fileName, title)
+        ): String {
+            val example = KotlinForExample()
             example.use(block)
+            return example.buf.toString()
         }
     }
 }

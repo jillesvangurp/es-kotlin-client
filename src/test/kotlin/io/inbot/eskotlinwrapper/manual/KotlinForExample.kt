@@ -16,13 +16,14 @@ class KotlinForExample private constructor(
 
     operator fun String.unaryPlus() {
         buf.appendln(this.trimIndent().trimMargin())
+        buf.appendln()
     }
 
     fun mdCodeBlock(code: String, type: String = "kotlin") {
         buf.appendln("```$type\n$code\n```\n")
     }
 
-    fun <T> block(block: () -> T) {
+    fun <T> block(runBlock: Boolean= false, block: () -> T) {
         val callerSourceBlock = getCallerSourceBlock()
         if (callerSourceBlock == null) {
             // we are assuming a few things about the caller source:
@@ -33,12 +34,14 @@ class KotlinForExample private constructor(
             mdCodeBlock(callerSourceBlock)
         }
 
-        val response = block.invoke()
+        if (runBlock) {
+            val response = block.invoke()
 
-        val returnValue = response.toString()
-        if (returnValue != "kotlin.Unit") {
-            buf.appendln("Produces:\n")
-            mdCodeBlock(returnValue, type = "")
+            val returnValue = response.toString()
+            if(returnValue != "kotlin.Unit") {
+                buf.appendln("Produces:\n")
+                mdCodeBlock(returnValue, type = "")
+            }
         }
     }
 
@@ -103,12 +106,22 @@ class KotlinForExample private constructor(
 
 
     companion object {
-        fun example(
+        fun markdown(
             block: KotlinForExample.() -> Unit
         ): String {
             val example = KotlinForExample()
             example.use(block)
             return example.buf.toString()
+        }
+
+        fun markdownFile(
+            fileName:String,
+            outputDir:String=".",
+            block: KotlinForExample.() -> Unit
+        ) {
+            val md = markdown(block)
+            File(outputDir).mkdirs()
+            File(outputDir,fileName).writeText(md)
         }
     }
 }

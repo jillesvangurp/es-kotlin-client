@@ -3,10 +3,10 @@ package io.inbot.eskotlinwrapper.manual
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
-class AnExampleTest {
+class KotlinForExampleTest {
     @Test
     fun `Example markdown`() {
-        val markdown = KotlinForExample.example {
+        val markdown = KotlinForExample.markdown {
             // we can inject arbitrary markdown, up to you
 
             +"""
@@ -61,6 +61,8 @@ class AnExampleTest {
             }
         }
         // what you do with the markdown is your problem. I'd suggest writing it to a file.
+
+
         println(markdown)
     }
 }

@@ -60,10 +60,10 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
 
         dao.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
             // gets and updates the document
-            getAndUpdate(id) { TestModel("${it.message} world!") }
             // or you can fetch the original yourself and specify the seq_no and primary terms manually
             // normally you'd be using a scrolling search to fetch and bulk update
             // see bulk indexer for that
+            getAndUpdate(id) { TestModel("${it.message} world!") }
             update(id2, seqNo, primaryTerm, original2) { d2 ->
                 d2.message = d2.message + " world!"
                 d2

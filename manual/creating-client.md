@@ -19,7 +19,7 @@ common use cases, the Kotlin client includes a convenient extension function tha
 
 ```kotlin
 // connects to localhost:9200
-val restHighLevelClient =  create()
+val restHighLevelClient = create()
 ```
 
 The `create` function has optional parameters that you can set. This is a pattern with Kotlin where
@@ -29,7 +29,7 @@ For example, this is how you would connect to Elastic Cloud:
 
 ```kotlin
 // connects to localhost:9200
-val restHighLevelClient =  create(
+val restHighLevelClient = create(
     host = "416ecf12457f486db3a30bdfbd21435c.eu-central-1.aws.cloud.es.io",
     port = 9243,
     https = true,
@@ -50,9 +50,9 @@ simple round robing load balancing as well as recover from nodes disappearing. B
 to have in production environment. 
 
 ```kotlin
-val restHighLevelClient =  create(
-    host="localhost",
-    port=9200,
+val restHighLevelClient = create(
+    host = "localhost",
+    port = 9200,
     useSniffer = true,
     // if requests fail, the sniffer will try to discover non failed nodes
     sniffAfterFailureDelayMillis = 2000,

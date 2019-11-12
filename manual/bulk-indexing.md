@@ -1,3 +1,5 @@
+[previous](crud-support.md) [parent](index.md) 
+---
 # Bulk Indexing
 
 An important part of working with Elasticsearch is adding content. While the CRUD support is useful
@@ -107,13 +109,12 @@ thingDao.bulk(
         // Elasticsearch confirms what it did for each item in a bulk request
         // and you can implement this callback to do something custom
         override fun invoke(op: BulkOperation<Thing>, response: BulkItemResponse) {
-            if(response.isFailed) {
+            if (response.isFailed) {
                 println("${op.id}: ${op.operation.opType().name} failed: ${response.failureMessage}")
             } else {
-                println("${op.id} ${op.operation.opType().name} succeeded")
+                println("${op.id}: ${op.operation.opType().name} succeeded")
             }
         }
-
     }
 ) {
 
@@ -133,8 +134,10 @@ thingDao.bulk(
 Output:
 
 ```
-doc-1 DELETE succeeded
-doc-2: UPDATE failed: [things/tg1qayR4RwuUh6ZGOgGaMQ][[things][2]] ElasticsearchException[Elasticsearch exception [type=version_conflict_engine_exception, reason=[doc-2]: version conflict, required seqNo [12], primary term [34]. current document has seqNo [1] and primary term [1]]]
+doc-1: DELETE succeeded
+doc-2: UPDATE failed: [things/cgxQXSDNTCeQMCavhkN6UQ][[things][2]] ElasticsearchException[Elasticsearch exception [type=version_conflict_engine_exception, reason=[doc-2]: version conflict, required seqNo [12], primary term [34]. current document has seqNo [1] and primary term [1]]]
 
 ```
+
+
 

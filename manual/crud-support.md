@@ -1,4 +1,6 @@
-# CRUD Support
+[previous](creating-client.md) [parent](index.md) [next](bulk-indexing.md)
+---
+# How to create the client
 
 To do anything with Elasticsearch we have to store documents in some index. The Java client
 provides everything you need to do this but using it the right way requires a deep understanding of
@@ -10,7 +12,8 @@ as Spring, Ruby on Rails, etc. In such frameworks a Data Access Object or Reposi
 provides primitives for interacting with objects in a particular database table.
 
 With the Kotlin client, we provide a similar abstraction the `IndexDAO`. You create one for each 
-index that you have.
+index that you have and it allows you to do Create, Read, Update, and Delete operations as well as 
+a few other things.
 
 Since Elasticsearch stores Json documents, we'll want to use a data class to represent on the 
 Kotlin side and let the client take care of serializing/deserializing.
@@ -26,8 +29,8 @@ data class Thing(val name: String, val amount: Long = 42)
 Now we can create an IndexDAO using the `crudDao` extension function:
 
 ```kotlin
-// lets use jackson to serialize our Thing, other serializers
-// can be supported by implementing ModelReaderAndWriter
+// lets use jackson to serialize our Thing
+// other serializers may be supported by implementing ModelReaderAndWriter
 val modelReaderAndWriter = JacksonModelReaderAndWriter(
     Thing::class,
     ObjectMapper().findAndRegisterModules()
@@ -37,9 +40,10 @@ val modelReaderAndWriter = JacksonModelReaderAndWriter(
 val thingDao = esClient.crudDao("things", modelReaderAndWriter)
 ```
 
-## Crud
+## Preparing the index
 
-Now that we have our `thingDao`, we can manipulate objects.
+Before we store any objects, we should create the index. Note this is optional but using
+Elasticsearch in schema-less mode is probably not what you want.
 
 ```kotlin
 // Probably a good idea to get those from some file.
@@ -76,6 +80,7 @@ That creates the index with a simple mapping.
 ```kotlin
 // prints null
 println(thingDao.get("first"))
+// so lets store something
 thingDao.index("first", Thing("A thing", 42))
 // Now we can get it and it's a data class so it has a `toString()`
 println(thingDao.get("first"))
@@ -97,6 +102,7 @@ try {
 } catch (e: ElasticsearchStatusException) {
     println("we already had one of those and es returned ${e.status().status}")
 }
+// this how you do upserts
 thingDao.index("1", Thing("Another thing", 666), create = false)
 println(thingDao.get("1"))
 ```
@@ -168,7 +174,7 @@ Version conflict because sequence number changed! Es returned 409
 ```
 
 While you can do this manually, the Kotlin client makes this a bit easier by providing a robust 
-update method instead.
+update method instead and do away with all the boiler plate above.
 
 ```kotlin
 thingDao.index("3", Thing("Another thing"))
@@ -197,11 +203,16 @@ Thing(name=we can do this again and again, amount=666)
 
 ```
 
-The update simply does the same as you would do manually. It then passes the current version
-to the update lambda function where you can do with it what you want. In this case
-we simply use Kotlin's copy to create a copy and modify one of the fields.
+The update simply does the same as we did manually earlier: it gets the current version, 
+it then passes the current version to the update lambda function where you can do with it what you 
+want. In this case we simply use Kotlin's copy to create a copy and modify one of the fields and 
+then we return it as the new value. 
 
-The `update` also traps the version conflict and retries a configurable number of times.
+The `update` also traps the version conflict and retries a configurable number of times. This can happen
+if you have concurrent writes to the same object. The retry gets the latest version and applies
+the update lambda again and then attempts to store that.
+
+To simulate what happens, we can throw some threads at this.
 
 ```kotlin
 thingDao.index("4", Thing("First version of the thing", amount = 0))
@@ -213,7 +224,7 @@ try {
         thingDao.update("4", 0) { Thing("nr_$n") }
     }
 } catch (e: Exception) {
-    println("Oops it failed")
+    println("Oops it failed because we disabled retries")
 }
 thingDao.index("5", Thing("First version of the thing", amount = 0))
 
@@ -221,14 +232,16 @@ thingDao.index("5", Thing("First version of the thing", amount = 0))
     // but if we let it retry a few times, it will be eventually consistent
     thingDao.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
 }
-println("All the updates succeeded: ${thingDao.get("5")?.amount}")
+println("All the updates succeeded: amount = ${thingDao.get("5")?.amount}.")
 ```
 
 Output:
 
 ```
-Oops it failed
-All the updates succeeded: 30
+Oops it failed because we disabled retries
+All the updates succeeded: amount = 30.
 
 ```
+
+
 

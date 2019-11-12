@@ -1,9 +1,14 @@
-# Client creation
+ [parent](index.md) [next](crud-support.md)
+---
+# How to create the client
 
-## Do it the standard way 
+To use the Kotlin extension functions included with this library, you have to create an instance
+of the Java High Level Restclient. There are several ways to do this.
+                
+## Do it the Java way 
 
-The Kotlin client does not need to be created separately. You simply create a 
-Java Highlevel Rest client as usual.
+If you have used the Java Highlevel client before, there is nothing special that you need to do. 
+You simply create a Java Highlevel Rest client as usual.
 
 ```kotlin
 val restClientBuilder = RestClient.builder(
@@ -15,7 +20,7 @@ val restHighLevelClient = RestHighLevelClient(restClientBuilder)
 ## Use the exension function
 
 There are a lot of options you can configure on the rest high level client. To cover the 
-common use cases, the Kotlin client includes a convenient extension function that you can call. 
+common use cases, this library includes a convenient extension function that you can call. 
 
 ```kotlin
 // connects to localhost:9200
@@ -60,4 +65,6 @@ val restHighLevelClient = create(
     sniffIntervalMillis = 30000
 )
 ```
+
+
 

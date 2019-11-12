@@ -1,17 +1,27 @@
 package io.inbot.eskotlinwrapper.manual
 
+import mu.KLogger
+import mu.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintWriter
-import mu.KLogger
-import mu.KotlinLogging
 
 private val logger: KLogger = KotlinLogging.logger { }
 
 fun mdLink(title: String, target: String) = "[$title]($target)"
-data class Page(val title: String, val fileName: String, val outputDir: String = "manual", val previous: Page? = null, val next: Page? = null, val parent: Page? = null) {
+
+data class Page(
+    val title: String,
+    val fileName: String,
+    val outputDir: String = "manual",
+    val previous: String? = null,
+    val next: String? = null,
+    val parent: String? = null
+) {
     val link = mdLink(title, fileName)
 }
+
+fun mdLink(page: Page) = mdLink(page.title, page.link)
 
 class KotlinForExample private constructor(
     private val sourcePaths: List<String> = listOf("src/main/kotlin", "src/test/kotlin")
@@ -126,18 +136,24 @@ class KotlinForExample private constructor(
 
         fun markdownPage(page: Page, block: KotlinForExample.() -> Unit) {
 
-            val nav = "${page.previous?.link ?: ""} ${page.parent?.link ?: ""} ${page.next?.link ?: ""}"
+            val nav = "${if (!page.previous.isNullOrBlank()) mdLink(
+                "previous",
+                page.previous
+            ) else ""} ${if (!page.parent.isNullOrBlank()) mdLink(
+                "parent",
+                page.parent ?: ""
+            ) else ""} ${if (!page.next.isNullOrBlank()) mdLink("next", page.next) else ""}"
 
-            val md = """
-                $nav
-                ---
-                # ${page.title}
-                
-                ${markdown(block)}
-                
-                ---
-                $nav
-                """.trimIndent()
+            val md =
+                """
+                    $nav
+                    ---
+                    # ${page.title}
+                """.trimIndent().trimMargin() +"\n\n"+ markdown(block)+"\n\n"
+                """ 
+                    ---
+                    $nav
+                """.trimIndent().trimMargin()
 
             File(page.outputDir).mkdirs()
             File(page.outputDir, page.fileName).writeText(md)

@@ -87,6 +87,12 @@ configure<SpotlessExtension> {
 
 }
 
+tasks {
+    "spotlessCheck" {
+        dependsOn("spotlessApply")
+    }
+}
+
 tasks.withType<Test> {
     dependsOn("composeUp")
     useJUnitPlatform()

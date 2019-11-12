@@ -21,7 +21,7 @@ data class Page(
     val link = mdLink(title, fileName)
 }
 
-fun mdLink(page: Page) = mdLink(page.title, page.link)
+fun mdLink(page: Page) = mdLink(page.title, page.fileName)
 
 class KotlinForExample private constructor(
     private val sourcePaths: List<String> = listOf("src/main/kotlin", "src/test/kotlin")

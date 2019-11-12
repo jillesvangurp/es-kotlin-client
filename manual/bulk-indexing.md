@@ -135,7 +135,7 @@ Output:
 
 ```
 doc-1: DELETE succeeded
-doc-2: UPDATE failed: [things/cgxQXSDNTCeQMCavhkN6UQ][[things][2]] ElasticsearchException[Elasticsearch exception [type=version_conflict_engine_exception, reason=[doc-2]: version conflict, required seqNo [12], primary term [34]. current document has seqNo [1] and primary term [1]]]
+doc-2: UPDATE failed: [things/PJA7IwZyTXye6GGyrXv28Q][[things][2]] ElasticsearchException[Elasticsearch exception [type=version_conflict_engine_exception, reason=[doc-2]: version conflict, required seqNo [12], primary term [34]. current document has seqNo [1] and primary term [1]]]
 
 ```
 

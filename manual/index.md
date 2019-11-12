@@ -6,9 +6,9 @@ Elasticsearch Rest High Level Client. This is mostly done through extension func
 
 In this manual, we introduce the features through examples.
 
-- [How to create the client]([How to create the client](creating-client.md))
-- [How to create the client]([How to create the client](crud-support.md))
-- [Bulk Indexing]([Bulk Indexing](bulk-indexing.md))
+- [How to create the client](creating-client.md)
+- [How to create the client](crud-support.md)
+- [Bulk Indexing](bulk-indexing.md)
 
 
 

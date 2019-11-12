@@ -9,7 +9,7 @@ val bulkIndexingMd = "bulk-indexing.md"
 
 val indexPage = Page("Es Kotlin Wrapper Client Manual", indexMd)
 val createClientPage = Page("How to create the client", createClientMd, parent = indexMd, next = crudSupportMd)
-val crudPage = Page("How to create the client", crudSupportMd,parent = indexMd, next = bulkIndexingMd, previous = createClientMd)
+val crudPage = Page("Working with objects", crudSupportMd,parent = indexMd, next = bulkIndexingMd, previous = createClientMd)
 val bulkPage = Page("Bulk Indexing", bulkIndexingMd,parent = indexMd, previous = crudSupportMd)
 
 class MainPageTest {

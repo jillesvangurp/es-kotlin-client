@@ -20,12 +20,13 @@ we simply do the following.
 ```kotlin
 // creates a BulkIndexingSession<Thing> and passes it to the block
 thingDao.bulk {
-    1.rangeTo(10).forEach {
+    1.rangeTo(5).forEach {
         index("doc-$it", Thing("indexed $it", 666))
     }
 }
 
-println("Indexed: " + 1.rangeTo(10).joinToString(", ") {
+//
+println("Indexed: " + 1.rangeTo(5).joinToString(", ") {
     thingDao.get("doc-$it")!!.name
 })
 ```
@@ -33,7 +34,7 @@ println("Indexed: " + 1.rangeTo(10).joinToString(", ") {
 Output:
 
 ```
-Indexed: indexed 1, indexed 2, indexed 3, indexed 4, indexed 5, indexed 6, indexed 7, indexed 8, indexed 9, indexed 10
+Indexed: indexed 1, indexed 2, indexed 3, indexed 4, indexed 5
 
 ```
 
@@ -72,6 +73,7 @@ thingDao.bulk {
 println(thingDao.get("doc-1"))
 println(thingDao.get("doc-2"))
 println(thingDao.get("doc-3"))
+// should print null
 println(thingDao.get("doc-4"))
 ```
 
@@ -84,6 +86,8 @@ Thing(name=indexed 3, amount=666)
 null
 
 ```
+
+## Fine-tuning how bulk works
 
 The bulk method has a few extra parameters with defaults that you 
 can override to fine tune how bulk works
@@ -130,7 +134,7 @@ Output:
 
 ```
 doc-1 DELETE succeeded
-doc-2: UPDATE failed: [things/vPlojwevRv6ltbQoR5fqXA][[things][2]] ElasticsearchException[Elasticsearch exception [type=version_conflict_engine_exception, reason=[doc-2]: version conflict, required seqNo [12], primary term [34]. current document has seqNo [1] and primary term [1]]]
+doc-2: UPDATE failed: [things/tg1qayR4RwuUh6ZGOgGaMQ][[things][2]] ElasticsearchException[Elasticsearch exception [type=version_conflict_engine_exception, reason=[doc-2]: version conflict, required seqNo [12], primary term [34]. current document has seqNo [1] and primary term [1]]]
 
 ```
 

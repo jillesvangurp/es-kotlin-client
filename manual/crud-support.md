@@ -15,7 +15,7 @@ index that you have.
 Since Elasticsearch stores Json documents, we'll want to use a data class to represent on the 
 Kotlin side and let the client take care of serializing/deserializing.
 
-## Creaing an IndexDAO
+## Creating an IndexDAO
 
 Lets use a simple data class with a few fields.
 
@@ -29,7 +29,7 @@ Now we can create an IndexDAO using the `crudDao` extension function:
 // lets use jackson to serialize our Thing, other serializers
 // can be supported by implementing ModelReaderAndWriter
 val modelReaderAndWriter = JacksonModelReaderAndWriter(
-    ManualCreatingTest.Thing::class,
+    Thing::class,
     ObjectMapper().findAndRegisterModules()
 )
 
@@ -76,7 +76,7 @@ That creates the index with a simple mapping.
 ```kotlin
 // prints null
 println(thingDao.get("first"))
-thingDao.index("first", ManualCreatingTest.Thing("A thing", 42))
+thingDao.index("first", Thing("A thing", 42))
 // Now we can get it and it's a data class so it has a `toString()`
 println(thingDao.get("first"))
 ```
@@ -93,11 +93,11 @@ You can't index an object twice unless you opt in to it being overridden.
 
 ```kotlin
 try {
-    thingDao.index("first", ManualCreatingTest.Thing("A thing", 42))
+    thingDao.index("first", Thing("A thing", 42))
 } catch (e: ElasticsearchStatusException) {
     println("we already had one of those and es returned ${e.status().status}")
 }
-thingDao.index("1", ManualCreatingTest.Thing("Another thing", 666), create = false)
+thingDao.index("1", Thing("Another thing", 666), create = false)
 println(thingDao.get("1"))
 ```
 
@@ -132,7 +132,7 @@ check that what you provide matches what it has and only overwrite the document 
 This works as follows.
 
 ```kotlin
-thingDao.index("2", ManualCreatingTest.Thing("Another thing"))
+thingDao.index("2", Thing("Another thing"))
 
 // we know it exists, so !!
 val (obj, rawGetResponse) = thingDao.getWithGetResponse("2")!!
@@ -140,7 +140,7 @@ println("obj '${obj.name}' has id: ${rawGetResponse.id}, primaryTerm: ${rawGetRe
 // works
 thingDao.index(
     "2",
-    ManualCreatingTest.Thing("Another Thing"),
+    Thing("Another Thing"),
     seqNo = rawGetResponse.seqNo,
     primaryTerm = rawGetResponse.primaryTerm,
     create = false
@@ -149,7 +149,7 @@ try {
     // but fails the second time
     thingDao.index(
         "2",
-        ManualCreatingTest.Thing("Another Thing"),
+        Thing("Another Thing"),
         seqNo = rawGetResponse.seqNo,
         primaryTerm = rawGetResponse.primaryTerm,
         create = false
@@ -171,7 +171,7 @@ While you can do this manually, the Kotlin client makes this a bit easier by pro
 update method instead.
 
 ```kotlin
-thingDao.index("3", ManualCreatingTest.Thing("Another thing"))
+thingDao.index("3", Thing("Another thing"))
 
 println(thingDao.get("3"))
 
@@ -204,22 +204,22 @@ we simply use Kotlin's copy to create a copy and modify one of the fields.
 The `update` also traps the version conflict and retries a configurable number of times.
 
 ```kotlin
-thingDao.index("4", ManualCreatingTest.Thing("First version of the thing", amount = 0))
+thingDao.index("4", Thing("First version of the thing", amount = 0))
 
 try {
     1.rangeTo(30).toList().parallelStream().forEach { n ->
         // the maxUpdateTries parameter is optional and has a default value of 2
         // so setting this to 0 and doing concurrent updates is going to fail
-        thingDao.update("4", 0) { ManualCreatingTest.Thing("nr_$n") }
+        thingDao.update("4", 0) { Thing("nr_$n") }
     }
 } catch (e: Exception) {
     println("Oops it failed")
 }
-thingDao.index("5", ManualCreatingTest.Thing("First version of the thing", amount = 0))
+thingDao.index("5", Thing("First version of the thing", amount = 0))
 
 1.rangeTo(30).toList().parallelStream().forEach { n ->
     // but if we let it retry a few times, it will be eventually consistent
-    thingDao.update("5", 10) { ManualCreatingTest.Thing("nr_$n", amount = it.amount + 1) }
+    thingDao.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
 }
 println("All the updates succeeded: ${thingDao.get("5")?.amount}")
 ```

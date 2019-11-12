@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
-import kotlinx.coroutines.InternalCoroutinesApi
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
@@ -42,7 +41,6 @@ private val logger = KotlinLogging.logger {}
  * @param defaultRequestOptions Defaults to what you configured on the `dao`
  *
  */
-@InternalCoroutinesApi
 class BulkIndexingSession<T : Any>(
     private val client: RestHighLevelClient,
     private val dao: IndexDAO<T>,

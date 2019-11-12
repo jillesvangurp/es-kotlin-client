@@ -53,8 +53,6 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             source(settings, XContentType.JSON)
         }
 
-
-
         KotlinForExample.markdownFile("bulk-indexing.md", "manual") {
             +"""
                 # Bulk Indexing
@@ -134,7 +132,6 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 println(thingDao.get("doc-4"))
             }
 
-
             +"""
                 ## Fine-tuning how bulk works
                 
@@ -157,13 +154,12 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         // Elasticsearch confirms what it did for each item in a bulk request
                         // and you can implement this callback to do something custom
                         override fun invoke(op: BulkOperation<Thing>, response: BulkItemResponse) {
-                            if(response.isFailed) {
+                            if (response.isFailed) {
                                 println("${op.id}: ${op.operation.opType().name} failed: ${response.failureMessage}")
                             } else {
-                                println("${op.id} ${op.operation.opType().name} succeeded")
+                                println("${op.id}: ${op.operation.opType().name} succeeded")
                             }
                         }
-
                     }
                 ) {
 

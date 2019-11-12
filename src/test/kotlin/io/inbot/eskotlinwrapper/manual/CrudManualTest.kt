@@ -228,5 +228,4 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             }
         }
     }
-
 }

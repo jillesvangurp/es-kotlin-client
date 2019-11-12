@@ -1,12 +1,17 @@
 package io.inbot.eskotlinwrapper.manual
 
-import mu.KLogger
-import mu.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintWriter
+import mu.KLogger
+import mu.KotlinLogging
 
 private val logger: KLogger = KotlinLogging.logger { }
+
+fun mdLink(title: String, target: String) = "[$title]($target)"
+data class Page(val title: String, val fileName: String, val outputDir: String = "manual", val previous: Page? = null, val next: Page? = null, val parent: Page? = null) {
+    val link = mdLink(title, fileName)
+}
 
 class KotlinForExample private constructor(
     private val sourcePaths: List<String> = listOf("src/main/kotlin", "src/test/kotlin")
@@ -23,7 +28,7 @@ class KotlinForExample private constructor(
         buf.appendln("```$type\n$code\n```\n")
     }
 
-    fun <T> block(runBlock: Boolean= false, block: () -> T) {
+    fun <T> block(runBlock: Boolean = false, block: () -> T) {
         val callerSourceBlock = getCallerSourceBlock()
         if (callerSourceBlock == null) {
             // we are assuming a few things about the caller source:
@@ -38,13 +43,12 @@ class KotlinForExample private constructor(
             val response = block.invoke()
 
             val returnValue = response.toString()
-            if(returnValue != "kotlin.Unit") {
+            if (returnValue != "kotlin.Unit") {
                 buf.appendln("Produces:\n")
                 mdCodeBlock(returnValue, type = "")
             }
         }
     }
-
 
     fun blockWithOutput(block: PrintWriter.() -> Unit) {
         val callerSourceBlock = getCallerSourceBlock()
@@ -88,13 +92,10 @@ class KotlinForExample private constructor(
             }
             if (index > start + 1 && index < source.length) {
                 return source.substring(start + 1, index - 1).trimIndent()
-
             }
-
         }
         return null
     }
-
 
     private fun getCallerStackTraceElement(): StackTraceElement {
         return Thread.currentThread()
@@ -103,7 +104,6 @@ class KotlinForExample private constructor(
 
     override fun close() {
     }
-
 
     companion object {
         fun markdown(
@@ -115,13 +115,32 @@ class KotlinForExample private constructor(
         }
 
         fun markdownFile(
-            fileName:String,
-            outputDir:String=".",
+            fileName: String,
+            outputDir: String = ".",
             block: KotlinForExample.() -> Unit
         ) {
             val md = markdown(block)
             File(outputDir).mkdirs()
-            File(outputDir,fileName).writeText(md)
+            File(outputDir, fileName).writeText(md)
+        }
+
+        fun markdownPage(page: Page, block: KotlinForExample.() -> Unit) {
+
+            val nav = "${page.previous?.link ?: ""} ${page.parent?.link ?: ""} ${page.next?.link ?: ""}"
+
+            val md = """
+                $nav
+                ---
+                # ${page.title}
+                
+                ${markdown(block)}
+                
+                ---
+                $nav
+                """.trimIndent()
+
+            File(page.outputDir).mkdirs()
+            File(page.outputDir, page.fileName).writeText(md)
         }
     }
 }

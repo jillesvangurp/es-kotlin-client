@@ -1,7 +1,7 @@
 package io.inbot.eskotlinwrapper.manual
 
-import org.junit.jupiter.api.Test
 import kotlin.random.Random
+import org.junit.jupiter.api.Test
 
 class KotlinForExampleTest {
     @Test
@@ -29,8 +29,8 @@ class KotlinForExampleTest {
                 We also capture the return value of the block and print it.
             """
             block {
-                val aNumber =Random.nextInt(10)
-                if(aNumber > 10) {
+                val aNumber = Random.nextInt(10)
+                if (aNumber > 10) {
                     "That would be unexpected"
                 } else {
                     // block's return value is captured and printed
@@ -61,7 +61,6 @@ class KotlinForExampleTest {
             }
         }
         // what you do with the markdown is your problem. I'd suggest writing it to a file.
-
 
         println(markdown)
     }

@@ -5,7 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.diffplug.gradle.spotless.SpotlessExtension
+// import com.diffplug.gradle.spotless.SpotlessExtension
 
 // intellij has some bug that causes it to somehow be unable to acknowledge this import exists
 // build actually works fine inside and outside intellij
@@ -23,7 +23,7 @@ buildscript {
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
-    id("com.diffplug.gradle.spotless") version "3.25.0"
+    // id("com.diffplug.gradle.spotless") version "3.25.0"
     id("org.jetbrains.dokka") version "0.9.18"
     java
 
@@ -77,21 +77,21 @@ configure<ComposeExtension> {
     forceRecreate = true
 }
 
-configure<SpotlessExtension> {
-    java {
-        removeUnusedImports()
-    }
-    kotlin {
-        ktlint()
-    }
+// configure<SpotlessExtension> {
+//     java {
+//         removeUnusedImports()
+//     }
+//     kotlin {
+//         ktlint()
+//     }
 
-}
+// }
 
-tasks {
-    "spotlessCheck" {
-        dependsOn("spotlessApply")
-    }
-}
+// tasks {
+//     "spotlessCheck" {
+//         dependsOn("spotlessApply")
+//     }
+// }
 
 tasks.withType<Test> {
     dependsOn("composeUp")

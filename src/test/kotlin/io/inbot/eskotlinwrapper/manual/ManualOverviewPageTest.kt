@@ -50,12 +50,14 @@ class ManualOverviewPageTest {
                  - Put that code in normal tests so that running the tests generates Github flavored markdown that I commit
                  along with the rest of the code.
                  
-                In short, that's what this does and I'm in the process of moving the old es-kotlin-demo here.
+                In short, that's what ${mdLink(KotlinForExample::class)} source code for how this works. does.
                 
                 This will probably move to a separate library when I'm happy enough 
-                with how it works. Currently, I'm using this to generate the manual for this project.
+                with how it works. Currently, I'm using this to generate the manual for this project and experimenting
+                a little with this.
                 
-                And obviously that project will eat its own dogfood to produce a more detailed manual for that.
+                And obviously that project will eat its own dogfood to produce a more detailed manual for that. Here's
+                a sneak preview of that.
             """
 
             // very meta
@@ -67,8 +69,16 @@ class ManualOverviewPageTest {
                         Once this code runs, it actually generates the page [you can open it here](demo.md)
                     """
                     blockWithOutput {
+                        // Block receives a PrintWriter so the output of the block is captured and shown.
                         println("Hello world")
                     }
+                    +"""
+                        We use a few kotlin helpers for links:
+                        
+                        - You can link to another page ${mdLink(indexPage)} (gets you back to the manual page if you
+                        clicked the demo.md link).
+                        - You can link to the source of any class ${mdLink(KotlinForExample::class)}
+                    """
                 }
             }
 

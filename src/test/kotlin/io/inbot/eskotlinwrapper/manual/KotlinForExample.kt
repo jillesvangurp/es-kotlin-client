@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintWriter
+import kotlin.reflect.KClass
 
 private val logger: KLogger = KotlinLogging.logger { }
 
@@ -36,6 +37,12 @@ class KotlinForExample private constructor(
 
     fun mdCodeBlock(code: String, type: String = "kotlin") {
         buf.appendln("```$type\n$code\n```\n")
+    }
+
+    fun mdLink(clazz: KClass<*>): String {
+        val fileName = clazz.qualifiedName!!.replace("\\$.*?$".toRegex(), "").replace('.', File.separatorChar) + ".kt"
+
+        return mdLink("`${clazz.simpleName!!}`",sourcePaths.map { File(it,fileName) }.first { it.exists() }.path)
     }
 
     fun <T> block(runBlock: Boolean = false, block: () -> T) {
@@ -116,22 +123,14 @@ class KotlinForExample private constructor(
     }
 
     companion object {
+
+
         fun markdown(
             block: KotlinForExample.() -> Unit
         ): String {
             val example = KotlinForExample()
             example.use(block)
             return example.buf.toString()
-        }
-
-        fun markdownFile(
-            fileName: String,
-            outputDir: String = ".",
-            block: KotlinForExample.() -> Unit
-        ) {
-            val md = markdown(block)
-            File(outputDir).mkdirs()
-            File(outputDir, fileName).writeText(md)
         }
 
         fun markdownPage(page: Page, block: KotlinForExample.() -> Unit) {

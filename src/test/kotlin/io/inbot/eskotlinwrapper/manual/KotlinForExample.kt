@@ -114,7 +114,7 @@ class KotlinForExample private constructor(
         return null
     }
 
-    private fun getCallerStackTraceElement(): StackTraceElement {
+    internal fun getCallerStackTraceElement(): StackTraceElement {
         return Thread.currentThread()
             .stackTrace.first { it.className != javaClass.name && it.className != "java.lang.Thread" }
     }
@@ -141,12 +141,17 @@ class KotlinForExample private constructor(
                 if (!page.next.isNullOrBlank()) mdLink("next", page.next) else null
             )
 
+            val example = KotlinForExample()
+            example.use(block)
             val md =
                 (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n---\n\n" else "") +
                 """
                     # ${page.title}
-                """.trimIndent().trimMargin() + "\n\n" + markdown(block) + "\n" +
-                if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") else ""
+                """.trimIndent().trimMargin() + "\n\n" + example.buf.toString() + "\n" +
+                (if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") +"\n\n" else "") +
+                        """
+                            This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.
+                        """.trimIndent()
 
             File(page.outputDir).mkdirs()
             File(page.outputDir, page.fileName).writeText(md)

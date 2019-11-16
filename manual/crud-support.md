@@ -248,3 +248,5 @@ All the updates succeeded: amount = 30.
 ---
 
 [previous](creating-client.md) | [parent](index.md) | [next](bulk-indexing.md)
+
+This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.

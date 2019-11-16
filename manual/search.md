@@ -168,3 +168,5 @@ Thing(title=Another thing: 65)
 ---
 
 [previous](bulk-indexing.md) | [parent](index.md)
+
+This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.

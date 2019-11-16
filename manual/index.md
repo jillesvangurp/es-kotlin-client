@@ -64,3 +64,5 @@ KotlinForExample.markdownPage(demoPage) {
 ---
 
 [parent](README.md)
+
+This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.

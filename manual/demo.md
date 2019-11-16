@@ -22,3 +22,4 @@ clicked the demo.md link).
 - You can link to the source of any class [`KotlinForExample`](src/test/kotlin/io/inbot/eskotlinwrapper/manual/KotlinForExample.kt)
 
 
+This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.

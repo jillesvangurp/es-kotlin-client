@@ -1,6 +1,3 @@
-[parent](README.md)
----
-
 # Es Kotlin Wrapper Client Manual
 
 The Elasticsearch Kotlin Wrapper Client adds a lot of functionality to the 
@@ -60,9 +57,5 @@ KotlinForExample.markdownPage(demoPage) {
 }
 ```
 
-
----
-
-[parent](README.md)
 
 This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.

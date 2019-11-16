@@ -2,7 +2,6 @@ package io.inbot.eskotlinwrapper
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
@@ -45,7 +44,6 @@ private val logger = KotlinLogging.logger {}
  * @param defaultRequestOptions passed on all API calls. Defaults to `RequestOptions.DEFAULT`. Use this to set custom headers or override on each call on the dao.
  *
  */
-@InternalCoroutinesApi
 class IndexDAO<T : Any>(
     val indexName: String,
     private val client: RestHighLevelClient,

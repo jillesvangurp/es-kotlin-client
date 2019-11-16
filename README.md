@@ -358,7 +358,6 @@ Currently the main blockers for a 1.0 are:
 
 - ES 7.5.x should include my pull request to enable suspendCancellableCoRoutine
 - We recently added reflection based code generation that scans the sdk and adds some useful extension functions. More feature work here is coming.
-- We depend on a few things related to flow and co-routines that still require annotations like `@InternalCoroutinesApi`. Ideally we get rid of needing that anywhere before 1.0.
 - Currently asynchronous is optional and I want to make this the default way of using the library as this can be so nice with co-routines and should be the default in a modern web server. 
 
 If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.

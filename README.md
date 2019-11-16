@@ -45,7 +45,7 @@ directly from a mobile phone in any case.
 
 # Documentation
 
-A simple example, check [documentaion for creating a client](manual/creating-client.md)
+A simple example, check [documentation for creating a client](manual/creating-client.md)
 
 ```kotlin
 // given some model class

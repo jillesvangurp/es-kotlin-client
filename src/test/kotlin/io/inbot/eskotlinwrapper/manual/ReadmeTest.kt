@@ -59,7 +59,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             
             # Documentation
 
-            A simple example, check [documentaion for creating a client](manual/creating-client.md)
+            A simple example, check [documentation for creating a client](manual/creating-client.md)
 
             """
 

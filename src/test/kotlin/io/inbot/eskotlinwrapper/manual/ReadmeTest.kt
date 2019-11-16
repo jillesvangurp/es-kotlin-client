@@ -56,18 +56,27 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding
             a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch 
             directly from a mobile phone in any case.
+            
+            # Documentation
+
+            A simple example, check [documentaion for creating a client](manual/creating-client.md)
+
             """
 
             block {
+                // given some model class
                 data class Thing(val name: String, val amount: Long = 42)
 
+                // that we want to serialize using jackson
                 val modelReaderAndWriter = JacksonModelReaderAndWriter(
                     Thing::class,
                     ObjectMapper().findAndRegisterModules()
                 )
 
+                // create a DAO (Data Access Object)
                 val thingDao = esClient.crudDao("things", modelReaderAndWriter, refreshAllowed = true)
 
+                // create the index
                 val settings = """
                     {
                       "settings": {
@@ -91,14 +100,17 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     source(settings, XContentType.JSON)
                 }
 
+                // put some things in it
                 thingDao.index("1", Thing("bar", 42))
                 thingDao.index("2", Thing("bar", 42))
                 thingDao.index("3", Thing("bar", 42))
 
+                // so we can search, note we opt in for this on
+                // the client to avoid people doing this in production code
                 thingDao.refresh()
 
                 // a simple bit of reindexing logic that
-                // shows of scrolling searches using plain json and bulk indexing
+                // shows off scrolling searches using plain json and bulk indexing
                 thingDao.bulk {
 
                     thingDao.search(scrolling = true) {
@@ -115,17 +127,16 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     }
                 }
             }
-            +"""
-            Check the manual for more examples.
+            +""" 
             
-            # Documentation
+            For more information and examples:
             
             - [manual](manual/index.md) I have a growing collection of executable examples. This manual is 
             actually generated using kotlin code and all the examples are actually run as part of the test suite. This is the best
             place to get started.
+            - [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
             - The tests test most of the important features and should be fairly readable and provide a good overview of
              how to use things. I like keeping the tests somewhat readable.
-            - [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
             - [Elasticsearch java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff. Elasticsearch has awesome documentation for this.
             - [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Note, this is outdated and I'm replacing it with a manual in this project.
             

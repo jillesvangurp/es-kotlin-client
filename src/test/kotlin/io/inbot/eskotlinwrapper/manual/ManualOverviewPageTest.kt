@@ -10,7 +10,7 @@ val bulkIndexingMd = "bulk-indexing.md"
 val searchMd = "search.md"
 
 val readmePage = Page("Es Kotlin Wrapper Client", readmeMd, outputDir = ".")
-val indexPage = Page("Es Kotlin Wrapper Client Manual", indexMd, parent = readmeMd)
+val indexPage = Page("Es Kotlin Wrapper Client Manual", indexMd)
 val createClientPage = Page("How to create the client", createClientMd, parent = indexMd, next = crudSupportMd)
 val crudPage =
     Page("Working with objects", crudSupportMd, parent = indexMd, next = bulkIndexingMd, previous = createClientMd)

@@ -18,7 +18,7 @@ val restClientBuilder = RestClient.builder(
 val restHighLevelClient = RestHighLevelClient(restClientBuilder)
 ```
 
-## Use the extension function
+## Use the exension function
 
 There are a lot of options you can configure on the rest high level client. To cover the 
 common use cases, this library includes a convenient extension function that you can call. 

@@ -50,7 +50,7 @@ class ManualOverviewPageTest {
                  - Put that code in normal tests so that running the tests generates Github flavored markdown that I commit
                  along with the rest of the code.
                  
-                In short, that's what ${mdLink(KotlinForExample::class)} source code for how this works. does.
+                In short, that's what ${mdLink(KotlinForExample::class)} does.
                 
                 This will probably move to a separate library when I'm happy enough 
                 with how it works. Currently, I'm using this to generate the manual for this project and experimenting

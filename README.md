@@ -43,6 +43,66 @@ Android is currently not supported as the minimum requirements for the highlevel
 a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch 
 directly from a mobile phone in any case.
 
+```kotlin
+data class Thing(val name: String, val amount: Long = 42)
+
+val modelReaderAndWriter = JacksonModelReaderAndWriter(
+    Thing::class,
+    ObjectMapper().findAndRegisterModules()
+)
+
+val thingDao = esClient.crudDao("things", modelReaderAndWriter, refreshAllowed = true)
+
+val settings = """
+    {
+      "settings": {
+        "index": {
+          "number_of_replicas": 0,
+        }
+      },
+      "mappings": {
+        "properties": {
+          "name": {
+            "type": "text"
+          },
+          "amount": {
+            "type": "long"
+          }
+        }
+      }
+    }
+"""
+thingDao.createIndex {
+    source(settings, XContentType.JSON)
+}
+
+thingDao.index("1", Thing("bar", 42))
+thingDao.index("2", Thing("bar", 42))
+thingDao.index("3", Thing("bar", 42))
+
+thingDao.refresh()
+
+// a simple bit of reindexing logic that
+// shows of scrolling searches using plain json and bulk indexing
+thingDao.bulk {
+
+    thingDao.search(scrolling = true) {
+        source("""
+            {
+                "query": {
+                    "match_all": {}
+                }
+            }
+        """.trimIndent())
+    }.hits.forEach {(esResult,deserialized) ->
+        // deserialized may be null if we disable source on the mapping
+        index(esResult.id, deserialized!!.copy(amount = deserialized!!.amount+1),create = false)
+    }
+}
+```
+
+Check the manual for more examples.
+
 # Documentation
 
 - [manual](manual/index.md) I have a growing collection of executable examples. This manual is 

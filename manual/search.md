@@ -165,7 +165,6 @@ Thing(title=Another thing: 65)
 ```
 
 
-
-                    ---
+---
 
 [previous](bulk-indexing.md) | [parent](index.md)

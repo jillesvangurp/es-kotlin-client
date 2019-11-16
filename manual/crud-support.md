@@ -245,7 +245,6 @@ All the updates succeeded: amount = 30.
 ```
 
 
-
-                    ---
+---
 
 [previous](creating-client.md) | [parent](index.md) | [next](bulk-indexing.md)

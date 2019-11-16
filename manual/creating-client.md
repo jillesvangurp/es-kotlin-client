@@ -68,7 +68,6 @@ val restHighLevelClient = create(
 ```
 
 
-
-                    ---
+---
 
 [parent](index.md) | [next](crud-support.md)

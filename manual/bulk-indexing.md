@@ -136,12 +136,11 @@ Output:
 
 ```
 doc-1: DELETE succeeded
-doc-2: UPDATE failed: [things/XCllD4bgRNSZto79UD6Txw][[things][2]] ElasticsearchException[Elasticsearch exception [type=version_conflict_engine_exception, reason=[doc-2]: version conflict, required seqNo [12], primary term [34]. current document has seqNo [1] and primary term [1]]]
+doc-2: UPDATE failed: [things/mOUMF06lSveQorf56OQgDA][[things][2]] ElasticsearchException[Elasticsearch exception [type=version_conflict_engine_exception, reason=[doc-2]: version conflict, required seqNo [12], primary term [34]. current document has seqNo [1] and primary term [1]]]
 
 ```
 
 
-
-                    ---
+---
 
 [previous](crud-support.md) | [parent](index.md) | [next](search.md)

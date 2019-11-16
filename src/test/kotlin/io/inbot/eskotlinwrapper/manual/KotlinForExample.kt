@@ -145,10 +145,8 @@ class KotlinForExample private constructor(
                 (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n---\n\n" else "") +
                 """
                     # ${page.title}
-                """.trimIndent().trimMargin() + "\n\n" + markdown(block) + "\n\n" +
-                """  
-                    ${if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") else ""}
-                """.trimIndent().trimMargin()
+                """.trimIndent().trimMargin() + "\n\n" + markdown(block) + "\n" +
+                if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") else ""
 
             File(page.outputDir).mkdirs()
             File(page.outputDir, page.fileName).writeText(md)

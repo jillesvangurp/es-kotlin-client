@@ -61,7 +61,6 @@ KotlinForExample.markdownPage(demoPage) {
 ```
 
 
-
-                    ---
+---
 
 [parent](README.md)

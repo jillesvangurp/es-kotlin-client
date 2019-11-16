@@ -136,23 +136,19 @@ class KotlinForExample private constructor(
 
         fun markdownPage(page: Page, block: KotlinForExample.() -> Unit) {
 
-            val nav = "${if (!page.previous.isNullOrBlank()) mdLink(
-                "previous",
-                page.previous
-            ) else ""} ${if (!page.parent.isNullOrBlank()) mdLink(
-                "parent",
-                page.parent ?: ""
-            ) else ""} ${if (!page.next.isNullOrBlank()) mdLink("next", page.next) else ""}"
+            val nav = listOfNotNull(
+                if (!page.previous.isNullOrBlank()) mdLink("previous", page.previous) else null,
+                if (!page.parent.isNullOrBlank()) mdLink("parent", page.parent) else null,
+                if (!page.next.isNullOrBlank()) mdLink("next", page.next) else null
+            )
 
             val md =
+                (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n---\n\n" else "") +
                 """
-                    $nav
-                    ---
                     # ${page.title}
-                """.trimIndent().trimMargin() +"\n\n"+ markdown(block)+"\n\n"
-                """ 
-                    ---
-                    $nav
+                """.trimIndent().trimMargin() + "\n\n" + markdown(block) + "\n\n" +
+                """  
+                    ${if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") else ""}
                 """.trimIndent().trimMargin()
 
             File(page.outputDir).mkdirs()

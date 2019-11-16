@@ -1,5 +1,6 @@
-[previous](bulk-indexing.md) [parent](index.md) 
+[previous](bulk-indexing.md) | [parent](index.md)
 ---
+
 # Search
 
 ```kotlin
@@ -60,18 +61,19 @@ thingDao.refresh()
 ```kotlin
 // a SearchRequest is created and passed into the block
 val results = thingDao.search {
+    // we can use templating
+    val text = "brown"
     source("""
         {
             "query": {
                 "match": {
                     "title": {
-                        "query": "brown"
+                        "query": "$text"
                     }
                 }
             }
         }
     """.trimIndent())
-
 }
 println("Found ${results.totalHits}")
 
@@ -164,3 +166,6 @@ Thing(title=Another thing: 65)
 
 
 
+                    ---
+
+[previous](bulk-indexing.md) | [parent](index.md)

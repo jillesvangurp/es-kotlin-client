@@ -101,7 +101,7 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                             "query": {
                                 "match": {
                                     "title": {
-                                        "query": $text
+                                        "query": "$text"
                                     }
                                 }
                             }

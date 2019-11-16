@@ -1,5 +1,6 @@
- [parent](index.md) [next](crud-support.md)
+[parent](index.md) | [next](crud-support.md)
 ---
+
 # How to create the client
 
 To use the Kotlin extension functions included with this library, you have to create an instance
@@ -68,3 +69,6 @@ val restHighLevelClient = create(
 
 
 
+                    ---
+
+[parent](index.md) | [next](crud-support.md)

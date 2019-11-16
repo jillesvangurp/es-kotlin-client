@@ -1,6 +1,7 @@
-[previous](creating-client.md) [parent](index.md) [next](bulk-indexing.md)
+[previous](creating-client.md) | [parent](index.md) | [next](bulk-indexing.md)
 ---
-# How to create the client
+
+# Working with objects
 
 To do anything with Elasticsearch we have to store documents in some index. The Java client
 provides everything you need to do this but using it the right way requires a deep understanding of
@@ -245,3 +246,6 @@ All the updates succeeded: amount = 30.
 
 
 
+                    ---
+
+[previous](creating-client.md) | [parent](index.md) | [next](bulk-indexing.md)

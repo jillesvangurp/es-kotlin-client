@@ -1,5 +1,9 @@
-# Es Kotlin Wrapper Client
+package io.inbot.eskotlinwrapper.manual
 
+import org.junit.jupiter.api.Test
+
+// TODO clean this up
+val md = """
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
@@ -126,5 +130,15 @@ For version 6.x, you can use the es-6.7.x branch or use one of the older release
 
 This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. Please exercise your rights under this license in any way you feel is appropriate. Forking is allowed and encouraged. I do appreciate attribution and pull requests ...
 
+"""
 
+class ReadmeTest {
+
+    @Test
+    fun `generate readme`() {
+        KotlinForExample.markdownPage(readmePage) {
+            +md
+        }
+    }
+}
 

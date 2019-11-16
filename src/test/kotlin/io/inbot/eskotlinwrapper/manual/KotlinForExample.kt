@@ -25,7 +25,8 @@ data class Page(
 fun mdLink(page: Page) = mdLink(page.title, page.fileName)
 
 class KotlinForExample private constructor(
-    private val sourcePaths: List<String> = listOf("src/main/kotlin", "src/test/kotlin")
+    private val sourcePaths: List<String> = listOf("src/main/kotlin", "src/test/kotlin"),
+    private val repoUrl: String="https://github.com/jillesvangurp/es-kotlin-wrapper-client"
 ) : AutoCloseable {
     private val buf = StringBuilder()
     private val patternForBlock = "block.*?\\{+".toRegex(RegexOption.MULTILINE)
@@ -42,7 +43,7 @@ class KotlinForExample private constructor(
     fun mdLink(clazz: KClass<*>): String {
         val fileName = clazz.qualifiedName!!.replace("\\$.*?$".toRegex(), "").replace('.', File.separatorChar) + ".kt"
 
-        return mdLink("`${clazz.simpleName!!}`",sourcePaths.map { File(it,fileName) }.first { it.exists() }.path)
+        return mdLink("`${clazz.simpleName!!}`","$repoUrl/tree/master/${sourcePaths.map { File(it,fileName) }.first { it.exists() }.path}")
     }
 
     fun <T> block(runBlock: Boolean = false, block: () -> T) {

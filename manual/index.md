@@ -27,7 +27,7 @@ The idea for this is extremely simple:
  - Put that code in normal tests so that running the tests generates Github flavored markdown that I commit
  along with the rest of the code.
  
-In short, that's what [`KotlinForExample`](src/test/kotlin/io/inbot/eskotlinwrapper/manual/KotlinForExample.kt) does.
+In short, that's what [`KotlinForExample`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/KotlinForExample.kt) does.
 
 This will probably move to a separate library when I'm happy enough 
 with how it works. Currently, I'm using this to generate the manual for this project and experimenting

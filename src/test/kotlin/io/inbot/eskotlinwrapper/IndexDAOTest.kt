@@ -3,12 +3,10 @@ package io.inbot.eskotlinwrapper
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.elasticsearch.ElasticsearchStatusException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@InternalCoroutinesApi
 class IndexDAOTest : AbstractElasticSearchTest(indexPrefix = "crud") {
     @Test
     fun `index and delete a document`() {

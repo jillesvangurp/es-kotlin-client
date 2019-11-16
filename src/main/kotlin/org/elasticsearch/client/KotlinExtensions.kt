@@ -3,7 +3,6 @@ package org.elasticsearch.client
 import io.inbot.eskotlinwrapper.IndexDAO
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import io.inbot.eskotlinwrapper.OldSuspendingActionListener.Companion.suspending
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -90,7 +89,6 @@ fun RestHighLevelClient(
  * This abstracts the business of telling the client which index to run against and serializing/deserializing documents in it.
  *
  */
-@InternalCoroutinesApi
 fun <T : Any> RestHighLevelClient.crudDao(
     index: String,
     modelReaderAndWriter: ModelReaderAndWriter<T>,

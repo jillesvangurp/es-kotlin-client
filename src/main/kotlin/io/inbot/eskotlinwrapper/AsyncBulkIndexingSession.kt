@@ -3,7 +3,6 @@ package io.inbot.eskotlinwrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -41,7 +40,6 @@ private val logger = KotlinLogging.logger {}
  * Note. The design for this is still a bit in flux as this still depends on `@ExperimentalCoroutinesApi` and also
  * there are some issues with using `Channel.sendBlocking` internally.
  */
-@InternalCoroutinesApi
 @Suppress("unused")
 class AsyncBulkIndexingSession<T : Any> private constructor(
     private val dao: IndexDAO<T>,
@@ -77,7 +75,6 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
                 }
             }
 
-        @InternalCoroutinesApi
         @ExperimentalCoroutinesApi
         suspend fun <T : Any> asyncBulk(
             client: RestHighLevelClient,

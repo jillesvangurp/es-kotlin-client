@@ -1,14 +1,12 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.apache.http.HttpHost
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.create
 import org.junit.jupiter.api.Test
 
-@InternalCoroutinesApi
 class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
     @Test

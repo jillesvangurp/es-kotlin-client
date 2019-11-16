@@ -3,13 +3,11 @@ package io.inbot.eskotlinwrapper.manual
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.client.crudDao
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
-@InternalCoroutinesApi
 class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
     private data class Thing(val name: String, val amount: Long = 42)

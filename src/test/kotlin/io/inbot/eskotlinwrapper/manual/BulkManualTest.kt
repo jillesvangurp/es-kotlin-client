@@ -4,14 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import io.inbot.eskotlinwrapper.BulkOperation
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.crudDao
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
-@InternalCoroutinesApi
 class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
     private data class Thing(val name: String, val amount: Long = 42)

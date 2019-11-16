@@ -3,7 +3,6 @@ package io.inbot.eskotlinwrapper.manual
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
-import kotlinx.coroutines.InternalCoroutinesApi
 import org.elasticsearch.action.search.source
 import org.elasticsearch.client.crudDao
 import org.elasticsearch.common.xcontent.XContentType
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test
 
 private data class Thing(val title: String)
 
-@InternalCoroutinesApi
 class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
     @Test
     fun `search manual`() {

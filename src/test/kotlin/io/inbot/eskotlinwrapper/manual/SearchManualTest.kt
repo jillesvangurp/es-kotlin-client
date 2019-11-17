@@ -9,17 +9,13 @@ import org.elasticsearch.client.crudDao
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
-private data class Thing(val title: String)
 
 class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
+    private data class Thing(val title: String)
     @Test
     fun `search manual`() {
         // we have to do this twice once for printing and once for using :-)
-        val modelReaderAndWriter =
-            JacksonModelReaderAndWriter(Thing::class, ObjectMapper().findAndRegisterModules())
-        // Create a Data Access Object
-
-        val thingDao = esClient.crudDao("things", modelReaderAndWriter, refreshAllowed = true)
+        val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
         // make sure we get rid of the things index before running the rest of this
         thingDao.deleteIndex()
         thingDao.createIndex {
@@ -45,7 +41,6 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                             }
                         """, XContentType.JSON)
         }
-
 
         KotlinForExample.markdownPage(searchPage) {
 

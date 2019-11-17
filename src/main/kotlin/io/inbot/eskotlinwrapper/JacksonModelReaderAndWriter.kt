@@ -20,4 +20,10 @@ class JacksonModelReaderAndWriter<T : Any>(
         objectMapper.readValue(bytes, clazz.java)!!
     }
     override fun serializer(): (T) -> ByteArray = { value -> objectMapper.writeValueAsBytes(value) }
+
+    companion object {
+        inline fun <reified T : Any> create(objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()): JacksonModelReaderAndWriter<T> {
+            return JacksonModelReaderAndWriter<T>(T::class,objectMapper)
+        }
+    }
 }

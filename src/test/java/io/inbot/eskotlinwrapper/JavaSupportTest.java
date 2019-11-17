@@ -37,7 +37,7 @@ public class JavaSupportTest {
         );
         // no extension functions but they can still be used
         String index = "test-" + randomId();
-        dao = KotlinExtensionsKt.crudDao(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, RequestOptions.DEFAULT);
+        dao = KotlinExtensionsKt.createCrudDao(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, RequestOptions.DEFAULT);
     }
 
     @Test

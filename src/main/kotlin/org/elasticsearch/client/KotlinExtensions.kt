@@ -1,6 +1,7 @@
 package org.elasticsearch.client
 
 import io.inbot.eskotlinwrapper.IndexDAO
+import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import io.inbot.eskotlinwrapper.OldSuspendingActionListener.Companion.suspending
 import org.apache.http.HttpHost
@@ -89,15 +90,35 @@ fun RestHighLevelClient(
  * This abstracts the business of telling the client which index to run against and serializing/deserializing documents in it.
  *
  */
-fun <T : Any> RestHighLevelClient.crudDao(
+inline fun <reified T : Any> RestHighLevelClient.crudDao(
     index: String,
-    modelReaderAndWriter: ModelReaderAndWriter<T>,
+    modelReaderAndWriter: ModelReaderAndWriter<T> = JacksonModelReaderAndWriter.create<T>(),
     type: String = "_doc",
     readAlias: String = index,
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
     defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ): IndexDAO<T> {
+    return IndexDAO(
+        indexName = index,
+        client = this,
+        modelReaderAndWriter = modelReaderAndWriter,
+        refreshAllowed = refreshAllowed,
+        type = type,
+        indexReadAlias = readAlias,
+        indexWriteAlias = writeAlias,
+        defaultRequestOptions = defaultRequestOptions
+
+    )
+}
+// non reified version for Java users
+fun <T : Any> RestHighLevelClient.createCrudDao(index: String,
+                                          modelReaderAndWriter: ModelReaderAndWriter<T>,
+                                          type: String = "_doc",
+                                          readAlias: String = index,
+                                          writeAlias: String = index,
+                                          refreshAllowed: Boolean = false,
+                                          defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT): IndexDAO<T> {
     return IndexDAO(
         indexName = index,
         client = this,
@@ -166,3 +187,4 @@ fun RestHighLevelClient.clearScroll(
     scrollIds.forEach { clearScrollRequest.addScrollId(it) }
     return this.clearScroll(clearScrollRequest, requestOptions)
 }
+

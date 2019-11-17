@@ -8,41 +8,11 @@
 data class Thing(val title: String)
 ```
 
-And lets use these settings and mappings:
-
-```
-
-    {
-      "settings": {
-        "index": {
-          "number_of_shards": 3,
-          "number_of_replicas": 0,
-          "blocks": {
-            "read_only_allow_delete": "false"
-          }
-        }
-      },
-      "mappings": {
-        "properties": {
-          "name": {
-            "type": "text"
-          }
-        }
-      }
-    }
-
-```
-
-```kotlin
-// for testing, it's useful to allow calling refresh. Note we disallow this by default because this
-// whould not be used in production.
-val thingDao = esClient.crudDao("things", modelReaderAndWriter, refreshAllowed = true)
-```
-
 Lets index some documents to look for ...
 
 ```kotlin
-thingDao.bulk {
+// force ES to commit everything to disk so search works right away
+thingDao.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
     index("1", Thing("The quick brown fox"))
     index("2", Thing("The quick brown emu"))
     index("3", Thing("The quick brown gnu"))
@@ -51,12 +21,9 @@ thingDao.bulk {
         index("$it", Thing("Another thing: $it"))
     }
 }
-// force ES to commit everything to disk so search works right away
-thingDao.refresh()
 ```
 
-## Doing a simple JSON search.
-
+## Searching
 
 ```kotlin
 // a SearchRequest is created and passed into the block
@@ -77,17 +44,19 @@ val results = thingDao.search {
 }
 println("Found ${results.totalHits}")
 
-// get the deserialized thing from the search response
+// we can get the deserialized thing from the search response
 results.mappedHits.forEach {
+    // kotlin sequences are lazy so nothing gets deserialized until you use the sequence
     println(it)
 }
 
-// we can also get the underlying SearchHit
+// we can also get the underlying `SearchHit` that Elasticsearch returns
 results.searchHits.first().apply {
-    println("Hit: ${id}\n${sourceAsString}")
+    // this would be useful if we wanted to do some bulk updates
+    println("Hit: $id $seqNo $primaryTerm\n$sourceAsString")
 }
 
-// or we can get both as Pair
+// or we can get both as a `Pair`
 results.hits.first().apply {
     val (searchHit,deserialized) = this
     println("Hit: ${searchHit.id} deserialized from\n ${searchHit.sourceAsString}\nto\n$deserialized")
@@ -101,7 +70,7 @@ Found 3
 Thing(title=The quick brown fox)
 Thing(title=The quick brown emu)
 Thing(title=The quick brown gnu)
-Hit: 1
+Hit: 1 -2 0
 {"title":"The quick brown fox"}
 Hit: 1 deserialized from
  {"title":"The quick brown fox"}
@@ -110,58 +79,76 @@ Thing(title=The quick brown fox)
 
 ```
 
-## Scrolling searches
+## Count
 
-Elasticsearch has a notion of scrolling searches for retrieving large amounts of 
-documents from an index. Normally this works by keeping track of a scroll token and
-passing that to Elasticsearch to fetch subsequent pages of results.
-
-To make this easier and less tedious, the search method on the dao has a simpler solution.
+We can also query just to get a document count.
 
 ```kotlin
-// simply set scrolling to true
-val results = thingDao.search(scrolling = true) {
+println("The total number of documents is ${thingDao.count()}")
+
+// like with search, we can pass in a JSON query
+val query = "quick"
+val count = thingDao.count {
     source("""
         {
-            "size": 2,
             "query": {
-                "match_all": {}
+                "match": {
+                    "title": {
+                        "query": "$query"
+                    }
+                }
             }
-        }
+        }                        
     """.trimIndent())
 }
-
-// with size: 2, this will page through ten pages of results before stopping
-results.mappedHits.take(20).forEach {
-    println(it)
-}
-// after the block exits, the scroll is cleaned up with an extra request
+println("We found $count results matching $query")
 ```
 
 Output:
 
 ```
-Thing(title=Another thing: 5)
-Thing(title=Another thing: 7)
-Thing(title=Another thing: 13)
-Thing(title=Another thing: 22)
-Thing(title=Another thing: 24)
-Thing(title=Another thing: 26)
-Thing(title=Another thing: 41)
-Thing(title=Another thing: 42)
-Thing(title=Another thing: 43)
-Thing(title=Another thing: 44)
-Thing(title=Another thing: 51)
-Thing(title=Another thing: 52)
-Thing(title=Another thing: 53)
-Thing(title=Another thing: 54)
-Thing(title=Another thing: 56)
-Thing(title=Another thing: 57)
-Thing(title=Another thing: 59)
-Thing(title=Another thing: 61)
-Thing(title=Another thing: 62)
-Thing(title=Another thing: 65)
+The total number of documents is 100
+We found 3 results matching quick
 
+```
+
+## Scrolling searches
+
+Elasticsearch has a notion of scrolling searches for retrieving large amounts of 
+documents from an index. Normally this works by keeping track of a scroll token and
+passing that to Elasticsearch to fetch subsequent pages of results. Scrolling is useful if
+you want to process large amounts of results.
+
+To make scrolling easier and less tedious, the search method on the dao has a simpler solution: simply
+set `scrolling` to `true`.
+ 
+A classic use case for using scrolls is to bulk update your documents. You can do this as follows. 
+
+```kotlin
+thingDao.bulk {
+    // simply set scrolling to true will allow us to scroll over the entire index
+    // this will scale no matter what the size of your index is. If you use scrolling,
+    // you can also set the ttl for the scroll (default is 1m)
+    val results = thingDao.search(scrolling = true,scrollTtlInMinutes = 10) {
+        source("""
+            {
+                "size": 10,
+                "query": {
+                    "match_all": {}
+                }
+            }
+        """.trimIndent())
+    }
+    results.hits.forEach { (hit,thing) ->
+        if(thing!=null) {
+            // we dig out the meta data we need for optimistic locking from the search response
+            update(hit.id, hit.seqNo,hit.primaryTerm, thing) { currentThing ->
+                currentThing.copy(title="updated thing")
+            }
+        }
+    }
+    // after the last page of results, the scroll is cleaned up with an extra request
+}
 ```
 
 

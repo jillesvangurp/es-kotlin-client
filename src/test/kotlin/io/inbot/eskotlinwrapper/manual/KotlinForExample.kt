@@ -24,6 +24,7 @@ data class Page(
 
 fun mdLink(page: Page) = mdLink(page.title, page.fileName)
 
+@Suppress("MemberVisibilityCanBePrivate")
 class KotlinForExample private constructor(
     private val sourcePaths: List<String> = listOf("src/main/kotlin", "src/test/kotlin"),
     private val repoUrl: String="https://github.com/jillesvangurp/es-kotlin-wrapper-client"

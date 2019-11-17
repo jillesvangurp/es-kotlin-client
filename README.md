@@ -45,59 +45,56 @@ directly from a mobile phone in any case.
 
 # Documentation
 
-A simple example, check [documentation for creating a client](manual/creating-client.md)
+A simple example. Check the [documentation for more examples](manual/index.md)
 
 ```kotlin
 // given some model class
 data class Thing(val name: String, val amount: Long = 42)
 
-// that we want to serialize using jackson
-val modelReaderAndWriter = JacksonModelReaderAndWriter(
-    Thing::class,
-    ObjectMapper().findAndRegisterModules()
-)
-
 // create a DAO (Data Access Object)
-val thingDao = esClient.crudDao("things", modelReaderAndWriter, refreshAllowed = true)
+// use the default jackson model reader and writer (you can customize)
+// opt in to refreshes (we don't want this in production code normally) so we can test
+val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
 
-// create the index
-val settings = """
-    {
-      "settings": {
-        "index": {
-          "number_of_replicas": 0,
-        }
-      },
-      "mappings": {
-        "properties": {
-          "name": {
-            "type": "text"
-          },
-          "amount": {
-            "type": "long"
-          }
-        }
-      }
-    }
-"""
+// let the DAO create the index
 thingDao.createIndex {
-    source(settings, XContentType.JSON)
+    source(
+        """
+            {
+              "settings": {
+                "index": {
+                  "number_of_replicas": 0,
+                }
+              },
+              "mappings": {
+                "properties": {
+                  "name": {
+                    "type": "text"
+                  },
+                  "amount": {
+                    "type": "long"
+                  }
+                }
+              }
+            }
+        """, XContentType.JSON)
 }
 
-// put some things in it
-thingDao.index("1", Thing("bar", 42))
+// put some things in our new index
+thingDao.index("1", Thing("foo", 42))
 thingDao.index("2", Thing("bar", 42))
-thingDao.index("3", Thing("bar", 42))
+thingDao.index("3", Thing("foobar", 42))
 
-// so we can search, note we opt in for this on
-// the client to avoid people doing this in production code
+// make sure ES commits this so we can search
 thingDao.refresh()
 
-// a simple bit of reindexing logic that
+// now lets do a little bit of reindexing logic that
 // shows off scrolling searches using plain json and bulk indexing
 thingDao.bulk {
+    // we are passed a BulkIndexingSession<Thing> in the block
 
     thingDao.search(scrolling = true) {
+        // we are given a SearchRequest in the block
         source("""
             {
                 "query": {
@@ -106,13 +103,17 @@ thingDao.bulk {
             }
         """.trimIndent())
     }.hits.forEach {(esResult,deserialized) ->
-        // deserialized may be null if we disable source on the mapping
-        index(esResult.id, deserialized!!.copy(amount = deserialized!!.amount+1),create = false)
+        // we get a lazy sequence that fetches results using the scroll api in es
+        if(deserialized != null) {
+            // deserialized may be null if we disable source on the mapping
+            // use the BulkIndexingSession to index a transformed version of the original
+            index(esResult.id, deserialized.copy(amount = deserialized.amount + 1), create = false)
+        }
     }
 }
 ```
 
-For more information and examples:
+For more information and examples we have a few places to look:
 
 - [manual](manual/index.md) I have a growing collection of executable examples. This manual is 
 actually generated using kotlin code and all the examples are actually run as part of the test suite. This is the best

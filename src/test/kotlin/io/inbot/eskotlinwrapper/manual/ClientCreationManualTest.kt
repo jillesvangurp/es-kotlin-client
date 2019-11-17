@@ -13,13 +13,14 @@ class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual
     fun `explain client creation`() {
         KotlinForExample.markdownPage(createClientPage) {
             +"""
-                To use the Kotlin extension functions included with this library, you have to create an instance
-                of the Java High Level Restclient. There are several ways to do this.
+                To use the ES Kotlin Wrapper Client, you simply have to create an instance
+                of the Java High Level Restclient (and have this library on the classpath). 
+                There are several ways to do this.
                                 
                 ## Do it the Java way 
                 
                 If you have used the Java Highlevel client before, there is nothing special that you need to do. 
-                You simply create a Java Highlevel Rest client as usual.
+                You simply create a Java Highlevel Rest client as usual. For example:
             """
 
             block() {
@@ -32,8 +33,9 @@ class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual
             +"""
                 ## Use the extension function
                 
-                There are a lot of options you can configure on the rest high level client. To cover the 
-                common use cases, this library includes a convenient extension function that you can call. 
+                The Java way is a bit boilerplate heavy. So we provide an alternative in the form of a `create()`
+                extension function that has a lot of parameters with sane default values.
+
             """
             block() {
                 // connects to localhost:9200
@@ -41,16 +43,14 @@ class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual
             }
 
             +"""
-                The `create` function has optional parameters that you can set. This is a pattern with Kotlin where
-                we avoid using builders and instead provide sane defaults that you optionally override.
-                
-                For example, this is how you would connect to Elastic Cloud:
+                The `create` function has optional parameters that you can set.  For example, this is how you would 
+                connect to Elastic Cloud:
             """
 
             block() {
                 // connects to localhost:9200
                 val restHighLevelClient = create(
-                    host = "416ecf12457f486db3a30bdfbd21435c.eu-central-1.aws.cloud.es.io",
+                    host = "XXXXXXXXXX.eu-central-1.aws.cloud.es.io",
                     port = 9243,
                     https = true,
                     user = "admin",
@@ -64,7 +64,7 @@ class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual
                 If your application has direct access to the Elasticsearch cluster and is not using a load balancer,
                 you can use client side load balancing. For this purpose, the create function has a `useSniffing` 
                 parameter. Obviously, this does not work if you are hosting in Elastic Cloud because in that case your
-                cluster is behind a load balancer.
+                cluster is behind a load balancer and the client won't be able to talk to nodes in the cluster directly.
                 
                 Sniffing allows the client to discover the cluster from an initial node and allows it to do
                 simple round robing load balancing as well as recover from nodes disappearing. Both are useful features 

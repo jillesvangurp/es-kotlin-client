@@ -18,6 +18,8 @@ import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.Request
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.core.CountRequest
+import org.elasticsearch.client.countAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.search
 import org.elasticsearch.client.searchAsync
@@ -403,5 +405,19 @@ class IndexDAO<T : Any>(
             block.invoke(this)
         }
         return PagedSearchResults(searchResponse, modelReaderAndWriter)
+    }
+
+    fun count(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
+        val request = CountRequest(indexReadAlias)
+        block.invoke(request)
+        val response = client.count(request, requestOptions)
+        return response.count
+    }
+
+    suspend fun countAsync(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
+        val request = CountRequest(indexReadAlias)
+        block.invoke(request)
+        val resp = client.countAsync(request,requestOptions)
+        return resp.count
     }
 }

@@ -3,7 +3,7 @@ package org.elasticsearch.client
 import io.inbot.eskotlinwrapper.IndexDAO
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
-import io.inbot.eskotlinwrapper.OldSuspendingActionListener.Companion.suspending
+import io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials

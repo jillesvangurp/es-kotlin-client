@@ -8,6 +8,7 @@ val createClientMd = "creating-client.md"
 val crudSupportMd = "crud-support.md"
 val bulkIndexingMd = "bulk-indexing.md"
 val searchMd = "search.md"
+val queryDslMd = "query-dsl.md"
 val coroutinesMd = "coroutines.md"
 
 
@@ -17,8 +18,9 @@ val createClientPage = Page("How to create the client", createClientMd, parent =
 val crudPage =
     Page("Working with objects", crudSupportMd, parent = indexMd, next = bulkIndexingMd, previous = createClientMd)
 val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd, next = searchMd, previous = crudSupportMd)
-val searchPage = Page("Search", searchMd, parent = indexMd, previous = bulkIndexingMd, next = coroutinesMd)
-val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd, previous = searchMd)
+val searchPage = Page("Search", searchMd, parent = indexMd, previous = bulkIndexingMd, next = queryDslMd)
+val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd, previous = searchMd, next = coroutinesMd)
+val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd, previous = queryDslMd)
 
 class ManualOverviewPageTest {
 

@@ -37,7 +37,7 @@ class CoRoutinesManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                               },
                               "mappings": {
                                 "properties": {
-                                  "name": {
+                                  "title": {
                                     "type": "text"
                                   }
                                 }

@@ -1,8 +1,6 @@
 package io.inbot.eskotlinwrapper.manual
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
-import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.crudDao
@@ -33,7 +31,7 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                               },
                               "mappings": {
                                 "properties": {
-                                  "name": {
+                                  "title": {
                                     "type": "text"
                                   }
                                 }

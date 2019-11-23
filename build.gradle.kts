@@ -22,14 +22,13 @@ buildscript {
 
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.50"
+    id("org.jetbrains.kotlin.jvm") version "1.3.60"
     // id("com.diffplug.gradle.spotless") version "3.25.0"
     id("org.jetbrains.dokka") version "0.9.18"
     java
 
 
     id("com.avast.gradle.docker-compose") version "0.9.5"
-    maven
     `maven-publish`
 }
 
@@ -131,31 +130,31 @@ val slf4jVersion = "1.7.26"
 val junitVersion = "5.5.2"
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    compile("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    compile("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.2")
-    compile("io.github.microutils:kotlin-logging:1.7.6")
+   api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+   api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+   api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.2")
+   api("io.github.microutils:kotlin-logging:1.7.6")
 
-    compile("org.apache.commons:commons-lang3:3.9")
+   api("org.apache.commons:commons-lang3:3.9")
 
-    compile("com.fasterxml.jackson.core:jackson-annotations:2.10.0")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.0")
+   api("com.fasterxml.jackson.core:jackson-annotations:2.10.0")
+   api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0")
+   api("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.0")
 
-    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticVersion")
-    compile("org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticVersion")
+   api("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticVersion")
+   api("org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticVersion")
 
     // bring your own logging, but we need some in tests
-    testCompile("org.slf4j:slf4j-api:$slf4jVersion")
-    testCompile("org.slf4j:jcl-over-slf4j:$slf4jVersion")
-    testCompile("org.slf4j:log4j-over-slf4j:$slf4jVersion")
-    testCompile("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    testCompile("org.apache.logging.log4j:log4j-to-slf4j:2.12.1") // es seems to insist on log4j2
-    testCompile("ch.qos.logback:logback-classic:1.2.3")
+    testImplementation("org.slf4j:slf4j-api:$slf4jVersion")
+    testImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
+    testImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
+    testImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
+    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.12.1") // es seems to insist on log4j2
+    testImplementation("ch.qos.logback:logback-classic:1.2.3")
 
-    testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
-    testCompile("io.mockk:mockk:1.9.3")
-    testCompile("com.willowtreeapps.assertk:assertk-jvm:0.20")
+    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.20")
 }

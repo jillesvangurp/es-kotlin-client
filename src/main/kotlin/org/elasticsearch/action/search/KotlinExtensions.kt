@@ -101,6 +101,12 @@ fun SearchRequest.source(
     }
 }
 
+fun SearchRequest.source(block: SearchSourceBuilder.()->Unit) {
+    val builder = SearchSourceBuilder()
+    block.invoke(builder)
+    source(builder)
+}
+
 /**
  * Supports taking the query straight from an InputStream. You probably should use the reader version.
  */
@@ -116,3 +122,10 @@ fun CountRequest.source(
         source(SearchSourceBuilder.fromXContent(it))
     }
 }
+
+fun CountRequest.source(block: SearchSourceBuilder.()->Unit) {
+    val builder = SearchSourceBuilder()
+    block.invoke(builder)
+    source(builder)
+}
+

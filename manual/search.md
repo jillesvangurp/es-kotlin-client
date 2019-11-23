@@ -1,4 +1,4 @@
-[previous](bulk-indexing.md) | [parent](index.md) | [next](coroutines.md)
+[previous](bulk-indexing.md) | [parent](index.md) | [next](query-dsl.md)
 ---
 
 # Search
@@ -154,6 +154,6 @@ thingDao.bulk {
 
 ---
 
-[previous](bulk-indexing.md) | [parent](index.md) | [next](coroutines.md)
+[previous](bulk-indexing.md) | [parent](index.md) | [next](query-dsl.md)
 
 This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.

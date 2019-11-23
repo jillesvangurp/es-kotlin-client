@@ -20,7 +20,7 @@ val results = thingDao.search {
             .size(20)
             .query(
                 boolQuery()
-                    .must(matchQuery("title", "quick"))
+                    .must(matchQuery("title", "quick").boost(2.0f))
                     .must(matchQuery("title","brown"))
             )
     )
@@ -95,4 +95,4 @@ We found 3 results.
 
 [previous](search.md) | [parent](index.md) | [next](coroutines.md)
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.
+This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/QueryDslManualTest.kt) from which this page is generated.

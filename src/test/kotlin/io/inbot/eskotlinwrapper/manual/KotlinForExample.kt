@@ -47,6 +47,11 @@ class KotlinForExample private constructor(
         return mdLink("`${clazz.simpleName!!}`","$repoUrl/tree/master/${sourcePaths.map { File(it,fileName) }.first { it.exists() }.path}")
     }
 
+    fun mdLinkToSelf(title: String="Link to this source file"): String {
+        val fn = this.sourceFile() ?: throw IllegalStateException("source file not found")
+        return mdLink(title,"$repoUrl/tree/master/${fn.path}")
+    }
+
     fun <T> block(runBlock: Boolean = false, block: () -> T) {
         val callerSourceBlock = getCallerSourceBlock()
         if (callerSourceBlock == null) {
@@ -116,9 +121,17 @@ class KotlinForExample private constructor(
         return null
     }
 
+    internal fun sourceFile(): File? {
+        val fileName = getCallerStackTraceElement().className.replace("\\$.*?$".toRegex(), "").replace(
+            '.',
+            File.separatorChar
+        ) + ".kt"
+        return sourcePaths.map { File(it, fileName) }.firstOrNull { it.exists() }
+    }
+
     internal fun getCallerStackTraceElement(): StackTraceElement {
         return Thread.currentThread()
-            .stackTrace.first { it.className != javaClass.name && it.className != "java.lang.Thread" }
+            .stackTrace.first { it.className != javaClass.name && it.className != "java.lang.Thread" && !it.className.contains("KotlinForExample") }
     }
 
     override fun close() {
@@ -152,7 +165,7 @@ class KotlinForExample private constructor(
                 """.trimIndent().trimMargin() + "\n\n" + example.buf.toString() + "\n" +
                 (if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") +"\n\n" else "") +
                         """
-                            This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.
+                            This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the ${example.mdLinkToSelf("source file")} from which this page is generated.
                         """.trimIndent()
 
             File(page.outputDir).mkdirs()

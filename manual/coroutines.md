@@ -83,4 +83,4 @@ with scrolling searches.
 
 [previous](query-dsl.md) | [parent](index.md)
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the source.
+This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/CoRoutinesManualTest.kt) from which this page is generated.

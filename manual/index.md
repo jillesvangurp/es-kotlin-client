@@ -9,6 +9,7 @@ In this manual, we introduce the features through examples.
 - [Working with objects](crud-support.md)
 - [Bulk Indexing](bulk-indexing.md)
 - [Search](search.md)
+- [Query DSL](query-dsl.md)
 - [Co-routines](coroutines.md)
 
 ## About this manual

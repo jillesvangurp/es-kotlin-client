@@ -37,6 +37,7 @@ class ManualOverviewPageTest {
                 - ${mdLink(crudPage)}
                 - ${mdLink(bulkPage)}
                 - ${mdLink(searchPage)}
+                - ${mdLink(queryDslPage)}
                 - ${mdLink(coroutinesPage)}
                 
                 ## About this manual

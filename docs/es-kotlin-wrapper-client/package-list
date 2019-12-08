@@ -1,8 +1,14 @@
 $dokka.format:html
 $dokka.linkExtension:html
-
+$dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.core.CountRequest, java.io.InputStream, org.elasticsearch.common.xcontent.DeprecationHandler)org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/source.html
+$dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.core.CountRequest, java.io.Reader, org.elasticsearch.common.xcontent.DeprecationHandler)org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/source.html
+$dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.core.CountRequest, kotlin.Function1((org.elasticsearch.search.builder.SearchSourceBuilder, kotlin.Unit)))org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/source.html
+$dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.core.CountRequest, kotlin.String, org.elasticsearch.common.xcontent.DeprecationHandler)org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/source.html
 io.inbot.eskotlinwrapper
 org.elasticsearch.action.search
 org.elasticsearch.client
+org.elasticsearch.client.node
+org.elasticsearch.client.support
+org.elasticsearch.client.transport
 org.elasticsearch.common.xcontent
 org.elasticsearch.search

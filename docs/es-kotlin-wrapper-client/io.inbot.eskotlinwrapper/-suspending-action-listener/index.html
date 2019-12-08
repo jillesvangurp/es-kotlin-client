@@ -8,19 +8,18 @@
 <a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="./index.html">SuspendingActionListener</a><br/>
 <br/>
 <h1>SuspendingActionListener</h1>
-<code><span class="keyword">class </span><span class="identifier">SuspendingActionListener</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">ActionListener</span><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">class </span><span class="identifier">SuspendingActionListener</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">ActionListener</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code>
 <p>Action listener that can be used with to adapt the async methods across the java client to co-routines.</p>
 <h3>Constructors</h3>
 <table>
 <tbody>
 <tr>
 <td>
-<p><a href="-init-.html">&lt;init&gt;</a></p>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
 </td>
 <td>
-<code><span class="identifier">SuspendingActionListener</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.SuspendingActionListener$<init>(kotlin.coroutines.Continuation((io.inbot.eskotlinwrapper.SuspendingActionListener.T)))/continuation">continuation</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-continuation/index.html"><span class="identifier">Continuation</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code>
 <p>Action listener that can be used with to adapt the async methods across the java client to co-routines.</p>
-</td>
+<code><span class="identifier">SuspendingActionListener</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.SuspendingActionListener$<init>(kotlin.coroutines.Continuation((io.inbot.eskotlinwrapper.SuspendingActionListener.T)))/continuation">continuation</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-continuation/index.html"><span class="identifier">Continuation</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -29,17 +28,17 @@
 <tbody>
 <tr>
 <td>
-<p><a href="on-failure.html">onFailure</a></p>
+<h4><a href="on-failure.html">onFailure</a></h4>
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="identifier">onFailure</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.SuspendingActionListener$onFailure(java.lang.Exception)/e">e</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Exception.html"><span class="identifier">Exception</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="on-response.html">onResponse</a></p>
+<h4><a href="on-response.html">onResponse</a></h4>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">onResponse</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.SuspendingActionListener$onResponse(io.inbot.eskotlinwrapper.SuspendingActionListener.T)/response">response</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">onResponse</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.SuspendingActionListener$onResponse(io.inbot.eskotlinwrapper.SuspendingActionListener.T)/response">response</span><span class="symbol">:</span>&nbsp;<span class="identifier">T</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -48,12 +47,11 @@
 <tbody>
 <tr>
 <td>
-<p><a href="suspending.html">suspending</a></p>
+<h4><a href="suspending.html">suspending</a></h4>
 </td>
 <td>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">suspending</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.SuspendingActionListener.Companion$suspending(kotlin.Function1((io.inbot.eskotlinwrapper.SuspendingActionListener((io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending.T)), kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="./index.html"><span class="identifier">SuspendingActionListener</span></a><span class="symbol">&lt;</span><a href="suspending.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="suspending.html#T"><span class="identifier">T</span></a></code>
 <p>Use this to call java async methods in a co-routine.</p>
-</td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">suspending</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.SuspendingActionListener.Companion$suspending(kotlin.Function1((io.inbot.eskotlinwrapper.SuspendingActionListener((io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending.T)), org.elasticsearch.client.Cancellable)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="./index.html"><span class="identifier">SuspendingActionListener</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<span class="identifier">Cancellable</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">T</span></code></td>
 </tr>
 </tbody>
 </table>

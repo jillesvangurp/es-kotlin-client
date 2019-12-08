@@ -8,7 +8,7 @@
 <a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="./index.html">ScrollingSearchResults</a><br/>
 <br/>
 <h1>ScrollingSearchResults</h1>
-<code><span class="keyword">class </span><span class="identifier">ScrollingSearchResults</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-search-results/index.html"><span class="identifier">SearchResults</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
+<code><span class="keyword">class </span><span class="identifier">ScrollingSearchResults</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-search-results/index.html"><span class="identifier">SearchResults</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code>
 <p>Represents scrolling search results. Accessing the <a href="search-hits.html">searchHits</a> causes pages of results to be retrieved lazily.</p>
 <p>Note. you can only consume the sequence once.</p>
 <h3>Constructors</h3>
@@ -16,12 +16,11 @@
 <tbody>
 <tr>
 <td>
-<p><a href="-init-.html">&lt;init&gt;</a></p>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
 </td>
 <td>
-<code><span class="identifier">ScrollingSearchResults</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/searchResponse">searchResponse</span><span class="symbol">:</span>&nbsp;<span class="identifier">SearchResponse</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/modelReaderAndWriter">modelReaderAndWriter</span><span class="symbol">:</span>&nbsp;<a href="../-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/restHighLevelClient">restHighLevelClient</span><span class="symbol">:</span>&nbsp;<span class="identifier">RestHighLevelClient</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/scrollTtlInMinutes">scrollTtlInMinutes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/defaultRequestOptions">defaultRequestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span></code>
 <p>Represents scrolling search results. Accessing the <a href="search-hits.html">searchHits</a> causes pages of results to be retrieved lazily.</p>
-</td>
+<code><span class="identifier">ScrollingSearchResults</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/searchResponse">searchResponse</span><span class="symbol">:</span>&nbsp;<span class="identifier">SearchResponse</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/modelReaderAndWriter">modelReaderAndWriter</span><span class="symbol">:</span>&nbsp;<a href="../-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/restHighLevelClient">restHighLevelClient</span><span class="symbol">:</span>&nbsp;<span class="identifier">RestHighLevelClient</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/scrollTtlInMinutes">scrollTtlInMinutes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.ScrollingSearchResults$<init>(org.elasticsearch.action.search.SearchResponse, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.ScrollingSearchResults.T)), org.elasticsearch.client.RestHighLevelClient, kotlin.Long, org.elasticsearch.client.RequestOptions)/defaultRequestOptions">defaultRequestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -30,83 +29,56 @@
 <tbody>
 <tr>
 <td>
-<p><a href="default-request-options.html">defaultRequestOptions</a></p>
+<h4><a href="default-request-options.html">defaultRequestOptions</a></h4>
 </td>
 <td>
 <code><span class="keyword">val </span><span class="identifier">defaultRequestOptions</span><span class="symbol">: </span><span class="identifier">RequestOptions</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="model-reader-and-writer.html">modelReaderAndWriter</a></p>
+<h4><a href="model-reader-and-writer.html">modelReaderAndWriter</a></h4>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">modelReaderAndWriter</span><span class="symbol">: </span><a href="../-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
 <p>the model reader and writer used for deserialization.</p>
-</td>
+<code><span class="keyword">val </span><span class="identifier">modelReaderAndWriter</span><span class="symbol">: </span><a href="../-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="rest-high-level-client.html">restHighLevelClient</a></p>
+<h4><a href="rest-high-level-client.html">restHighLevelClient</a></h4>
 </td>
 <td>
 <code><span class="keyword">val </span><span class="identifier">restHighLevelClient</span><span class="symbol">: </span><span class="identifier">RestHighLevelClient</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="scroll-ttl-in-minutes.html">scrollTtlInMinutes</a></p>
+<h4><a href="scroll-ttl-in-minutes.html">scrollTtlInMinutes</a></h4>
 </td>
 <td>
 <code><span class="keyword">val </span><span class="identifier">scrollTtlInMinutes</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="search-hits.html">searchHits</a></p>
+<h4><a href="search-hits.html">searchHits</a></h4>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">searchHits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">&gt;</span></code>
 <p>search hits as a sequence or an empty sequence.</p>
-</td>
+<code><span class="keyword">val </span><span class="identifier">searchHits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="search-response.html">searchResponse</a></p>
+<h4><a href="search-response.html">searchResponse</a></h4>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">searchResponse</span><span class="symbol">: </span><span class="identifier">SearchResponse</span></code>
 <p>the original search response.</p>
-</td>
+<code><span class="keyword">val </span><span class="identifier">searchResponse</span><span class="symbol">: </span><span class="identifier">SearchResponse</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="total-hits.html">totalHits</a></p>
+<h4><a href="total-hits.html">totalHits</a></h4>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">totalHits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code>
 <p>The total number of hits for the query.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3>Inherited Properties</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<p><a href="../-search-results/hits.html">hits</a></p>
-</td>
-<td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">hits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html"><span class="identifier">Pair</span></a><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">,</span>&nbsp;<a href="../-search-results/index.html#T"><span class="identifier">T</span></a><span class="symbol">?</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code>
-<p>a sequence of pairs of search hits and their deserialized objects.</p>
-</td>
-</tr>
-<tr>
-<td>
-<p><a href="../-search-results/mapped-hits.html">mappedHits</a></p>
-</td>
-<td>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">mappedHits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/index.html"><span class="identifier">Sequence</span></a><span class="symbol">&lt;</span><a href="../-search-results/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
-<p>deserialized objects inside the <code>searchHits</code>. Deserialization happens lazily.</p>
-</td>
+<code><span class="keyword">val </span><span class="identifier">totalHits</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code></td>
 </tr>
 </tbody>
 </table>

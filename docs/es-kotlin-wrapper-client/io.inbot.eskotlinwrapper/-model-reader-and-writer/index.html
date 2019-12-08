@@ -15,10 +15,10 @@
 <tbody>
 <tr>
 <td>
-<p><a href="clazz.html">clazz</a></p>
+<h4><a href="clazz.html">clazz</a></h4>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">clazz</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html"><span class="identifier">KClass</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">clazz</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html"><span class="identifier">KClass</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -27,33 +27,33 @@
 <tbody>
 <tr>
 <td>
-<p><a href="deserialize.html">deserialize</a></p>
+<h4><a href="deserialize.html">deserialize</a></h4>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">deserialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$deserialize(kotlin.ByteArray)/bytes">bytes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code><code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">deserialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$deserialize(org.elasticsearch.search.SearchHit)/searchHit">searchHit</span><span class="symbol">:</span>&nbsp;<span class="identifier">SearchHit</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html#T"><span class="identifier">T</span></a></code>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">deserialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$deserialize(kotlin.ByteArray)/bytes">bytes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">T</span></code>
 <p>deserialize a searchHit. The default implementation accesses the <code>sourceRef</code> inside the searchHit.</p>
-</td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">deserialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$deserialize(org.elasticsearch.search.SearchHit)/searchHit">searchHit</span><span class="symbol">:</span>&nbsp;<span class="identifier">SearchHit</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">T</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="deserializer.html">deserializer</a></p>
+<h4><a href="deserializer.html">deserializer</a></h4>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deserializer</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">?</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">deserializer</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="symbol">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a><span class="symbol">?</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<span class="identifier">T</span></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="serialize.html">serialize</a></p>
+<h4><a href="serialize.html">serialize</a></h4>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">serialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$serialize(io.inbot.eskotlinwrapper.ModelReaderAndWriter.T)/obj">obj</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">serialize</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.ModelReaderAndWriter$serialize(io.inbot.eskotlinwrapper.ModelReaderAndWriter.T)/obj">obj</span><span class="symbol">:</span>&nbsp;<span class="identifier">T</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
 </tr>
 <tr>
 <td>
-<p><a href="serializer.html">serializer</a></p>
+<h4><a href="serializer.html">serializer</a></h4>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">serializer</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="symbol">(</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">serializer</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="symbol">(</span><span class="identifier">T</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html"><span class="identifier">ByteArray</span></a></code></td>
 </tr>
 </tbody>
 </table>
@@ -62,12 +62,11 @@
 <tbody>
 <tr>
 <td>
-<p><a href="../-jackson-model-reader-and-writer/index.html">JacksonModelReaderAndWriter</a></p>
+<h4><a href="../-jackson-model-reader-and-writer/index.html">JacksonModelReaderAndWriter</a></h4>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">JacksonModelReaderAndWriter</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><a href="../-jackson-model-reader-and-writer/index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code>
 <p>Simple implementation of <a href="./index.html">ModelReaderAndWriter</a> that uses a jackson object mapper.</p>
-</td>
+<code><span class="keyword">class </span><span class="identifier">JacksonModelReaderAndWriter</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
 </tr>
 </tbody>
 </table>

@@ -28,9 +28,10 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
             friendly API over the underlying client functionality. 
             
-            Kotlin also has support for co-routines and we use this to make using the asynchronous methods in the Java client a 
-            lot nicer to use. Basics for this are in place but Kotlin's co-routine support is still evolving and some of the things we 
-            use are still labeled experimental.
+            Kotlin also has support for **co-routines** and we use this to make using the asynchronous methods in the Java client a 
+            lot nicer to use. To do so, we generate kotlin coroutine friendly versions of nearly all asynchronous methods 
+            using a code generator. The generated code uses `suspendCancellableCoroutine` to create suspend functions
+            that do the right thing if something happens to the coroutine context. 
             
             Finally, the despite being a high level client, the official client lacks a few abstractions that result in a lot of
             things being left as an exercise to the user. This library provides some helpful abstractions to deal with the common

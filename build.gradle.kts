@@ -16,15 +16,17 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:0.9.1-7.4.2")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:0.9.3-7.5.0")
     }
 }
 
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.60"
+    id("org.jetbrains.kotlin.jvm") version "1.3.61"
     // id("com.diffplug.gradle.spotless") version "3.25.0"
-    id("org.jetbrains.dokka") version "0.9.18"
+    id("org.jetbrains.dokka") version "0.10.0"
+    id("com.github.ben-manes.versions") version "0.27.0" // gradle dependencyUpdates -Drevision=release
+
     java
 
 
@@ -56,9 +58,9 @@ tasks.withType<KotlinCompile> {
 
 val dokka by tasks.getting(DokkaTask::class) {
     outputFormat = "html"
-    jdkVersion = 8
+    // jdkVersion = 8
     outputDirectory = "docs"
-    includes = listOf("src/main/kotlin/io/inbot/eskotlinwrapper/module.md")
+    // includes = listOf("src/main/kotlin/io/inbot/eskotlinwrapper/module.md")
 }
 
 configure<EsKotlinCodeGenPluginExtension> {
@@ -124,8 +126,8 @@ publishing {
     }
 }
 
-val kotlinVersion = "1.3.50"
-val elasticVersion = "7.4.2"
+val kotlinVersion = "1.3.61"
+val elasticVersion = "7.5.0"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.5.2"
 
@@ -137,8 +139,8 @@ dependencies {
 
    api("org.apache.commons:commons-lang3:3.9")
 
-   api("com.fasterxml.jackson.core:jackson-annotations:2.10.0")
    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0")
+   api("com.fasterxml.jackson.core:jackson-annotations:2.10.0")
    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.0")
 
    api("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticVersion")

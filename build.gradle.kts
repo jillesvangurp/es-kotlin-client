@@ -58,9 +58,11 @@ tasks.withType<KotlinCompile> {
 
 val dokka by tasks.getting(DokkaTask::class) {
     outputFormat = "html"
-    // jdkVersion = 8
     outputDirectory = "docs"
-    // includes = listOf("src/main/kotlin/io/inbot/eskotlinwrapper/module.md")
+    configuration {
+        jdkVersion = 8
+        includes = listOf("src/main/kotlin/io/inbot/eskotlinwrapper/module.md")
+    }
 }
 
 configure<EsKotlinCodeGenPluginExtension> {

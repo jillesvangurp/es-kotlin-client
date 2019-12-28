@@ -15,8 +15,8 @@ data class Page(
     val title: String,
     val fileName: String,
     val outputDir: String = "manual",
-    val previous: String? = null,
-    val next: String? = null,
+//    val previous: String? = null
+//    val next: String? = null,
     val parent: String? = null
 ) {
     val link = mdLink(title, fileName)
@@ -150,10 +150,13 @@ class KotlinForExample private constructor(
 
         fun markdownPage(page: Page, block: KotlinForExample.() -> Unit) {
 
+            val index = pages.indexOf(page)
+            val previous = if(index<0) null else if(index==0) null else pages[index-1].fileName
+            val next = if(index<0) null else if(index==pages.size-1) null else pages[index+1].fileName
             val nav = listOfNotNull(
-                if (!page.previous.isNullOrBlank()) mdLink("previous", page.previous) else null,
+                if (!previous.isNullOrBlank()) mdLink("previous", previous) else null,
                 if (!page.parent.isNullOrBlank()) mdLink("parent", page.parent) else null,
-                if (!page.next.isNullOrBlank()) mdLink("next", page.next) else null
+                if (!next.isNullOrBlank()) mdLink("next", next) else null
             )
 
             val example = KotlinForExample()

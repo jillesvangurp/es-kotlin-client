@@ -1,6 +1,7 @@
 package io.inbot.eskotlinwrapper.manual
 
 import org.junit.jupiter.api.Test
+import java.io.File
 
 val readmeMd = "README.md"
 val indexMd = "index.md"
@@ -14,15 +15,60 @@ val coroutinesMd = "coroutines.md"
 
 val readmePage = Page("Es Kotlin Wrapper Client", readmeMd, outputDir = ".")
 val indexPage = Page("Es Kotlin Wrapper Client Manual", indexMd)
-val createClientPage = Page("How to create the client", createClientMd, parent = indexMd, next = crudSupportMd)
+val createClientPage = Page("How to create the client", createClientMd, parent = indexMd)
 val crudPage =
-    Page("Working with objects", crudSupportMd, parent = indexMd, next = bulkIndexingMd, previous = createClientMd)
-val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd, next = searchMd, previous = crudSupportMd)
-val searchPage = Page("Search", searchMd, parent = indexMd, previous = bulkIndexingMd, next = queryDslMd)
-val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd, previous = searchMd, next = coroutinesMd)
-val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd, previous = queryDslMd)
+    Page("Working with objects", crudSupportMd, parent = indexMd)
+val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd)
+val searchPage = Page("Search", searchMd, parent = indexMd)
+val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd)
+val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd)
+
+val pages=listOf(createClientPage,crudPage,bulkPage,searchPage,queryDslPage,coroutinesPage)
 
 class ManualOverviewPageTest {
+
+    @Test
+    fun `create ebook create script`() {
+        File("epub","styles.css").writeText("""
+            /* This defines styles and classes used in the book */
+            body { margin: 0; text-align: justify; font-size: medium; font-family: Athelas, Georgia, serif; }
+            h1 { text-align: left; }
+            h2 { text-align: left; }
+            h3 { text-align: left; }
+            h4 { text-align: left; }
+            h5 { text-align: left; }
+            h6 { text-align: left; }
+            h1.title { }
+            h2.author { }
+            h3.date { }
+            nav#toc ol,
+            nav#landmarks ol { padding: 0; margin-left: 1em; }
+            nav#toc ol li,
+            nav#landmarks ol li { list-style-type: none; margin: 0; padding: 0; }
+            a.footnote-ref { vertical-align: super; }
+            em, em em em, em em em em em { font-style: italic;}
+            em em, em em em em { font-style: normal; }
+            pre {font-size: 60%;}
+            code{ font-family: monospace; white-space: pre-wrap; }
+            span.smallcaps{ font-variant: small-caps; }
+            span.underline{ text-decoration: underline; }
+            q { quotes: "“" "”" "‘" "’"; }
+            div.column{ display: inline-block; vertical-align: top; width: 50%; }
+            div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+        """.trimIndent())
+        File("epub","title.txt").writeText("""
+            ---
+            title: Searching Elasticsearch using Kotlin
+            author: Jilles van Gurp
+            rights:  Copyright Jilles van Gurp, 2019
+            language: en-US
+        """.trimIndent())
+        File("epub","create_ebook.sh").writeText("""
+            #!/bin/bash
+            pandoc --css styles.css -t epub2 -o book.epub -f gfm title.txt ${pages.joinToString (" ") {it.fileName}}
+        """.trimIndent())
+    }
 
     @Test
     fun `generate index md`() {
@@ -32,14 +78,9 @@ class ManualOverviewPageTest {
                 Elasticsearch Rest High Level Client. This is mostly done through extension functions.
                 
                 In this manual, we introduce the features through examples.
-                
-                - ${mdLink(createClientPage)}
-                - ${mdLink(crudPage)}
-                - ${mdLink(bulkPage)}
-                - ${mdLink(searchPage)}
-                - ${mdLink(queryDslPage)}
-                - ${mdLink(coroutinesPage)}
-                
+            """
+            +pages.joinToString("\n") { "- ${mdLink(it)}" }
+            +"""
                 ## About this manual
                 
                 This manual is my attempt at 
@@ -88,7 +129,6 @@ class ManualOverviewPageTest {
                     """
                 }
             }
-
         }
     }
 }

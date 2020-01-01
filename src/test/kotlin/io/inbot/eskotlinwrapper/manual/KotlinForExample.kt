@@ -37,7 +37,11 @@ class KotlinForExample private constructor(
         buf.appendln()
     }
 
-    fun mdCodeBlock(code: String, type: String = "kotlin") {
+    fun mdCodeBlock(c: String, type: String = "kotlin") {
+        val code = c.replace("    ","  ")
+        if(code.lines().firstOrNull { it.length > 80 } != null) {
+             logger.warn { "code block contains lines longer than 80 characters\n${1.rangeTo(79).joinToString("") { "." }+"|"}\n$code" }
+        }
         buf.appendln("```$type\n$code\n```\n")
     }
 
@@ -91,6 +95,9 @@ class KotlinForExample private constructor(
         val output = outputBuffer.toString()
         if (output.isNotEmpty()) {
             buf.appendln("Output:\n")
+            if(output.lines().firstOrNull { it.length > 80 } != null) {
+                logger.warn { "Output contains lines longer than 80 characters\n${1.rangeTo(79).joinToString("") { "." }+"|"}\n$output" }
+            }
             mdCodeBlock(output, type = "")
         }
     }
@@ -161,18 +168,19 @@ class KotlinForExample private constructor(
 
             val example = KotlinForExample()
             example.use(block)
-            val md =
-                (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n---\n\n" else "") +
-                """
+            val md =   """
                     # ${page.title}
-                """.trimIndent().trimMargin() + "\n\n" + example.buf.toString() + "\n" +
+                """.trimIndent().trimMargin() + "\n\n" + example.buf.toString()
+            val pageWithNavigationMd =
+                (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n---\n\n" else "") +
+                md + "\n" +
                 (if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") +"\n\n" else "") +
                         """
                             This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the ${example.mdLinkToSelf("source file")} from which this page is generated.
                         """.trimIndent()
 
             File(page.outputDir).mkdirs()
-            File(page.outputDir, page.fileName).writeText(md)
+            File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)
         }
     }
 }

@@ -54,31 +54,31 @@ data class Thing(val name: String, val amount: Long = 42)
 
 // create a DAO (Data Access Object)
 // use the default jackson model reader and writer (you can customize)
-// opt in to refreshes (we don't want this in production code normally) so we can test
+// opt in to refreshes (we don't want this in production code) so we can test
 val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
 
 // let the DAO create the index
 thingDao.createIndex {
-    source(
-        """
-            {
-              "settings": {
-                "index": {
-                  "number_of_replicas": 0,
-                }
-              },
-              "mappings": {
-                "properties": {
-                  "name": {
-                    "type": "text"
-                  },
-                  "amount": {
-                    "type": "long"
-                  }
-                }
-              }
-            }
-        """, XContentType.JSON)
+  source(
+    """
+      {
+        "settings": {
+        "index": {
+          "number_of_replicas": 0,
+        }
+        },
+        "mappings": {
+        "properties": {
+          "name": {
+          "type": "text"
+          },
+          "amount": {
+          "type": "long"
+          }
+        }
+        }
+      }
+    """, XContentType.JSON)
 }
 
 // put some things in our new index
@@ -92,25 +92,27 @@ thingDao.refresh()
 // now lets do a little bit of reindexing logic that
 // shows off scrolling searches using plain json and bulk indexing
 thingDao.bulk {
-    // we are passed a BulkIndexingSession<Thing> in the block
+  // we are passed a BulkIndexingSession<Thing> in the block
 
-    thingDao.search(scrolling = true) {
-        // we are given a SearchRequest in the block
-        source("""
-            {
-                "query": {
-                    "match_all": {}
-                }
-            }
-        """.trimIndent())
-    }.hits.forEach {(esResult,deserialized) ->
-        // we get a lazy sequence that fetches results using the scroll api in es
-        if(deserialized != null) {
-            // deserialized may be null if we disable source on the mapping
-            // use the BulkIndexingSession to index a transformed version of the original
-            index(esResult.id, deserialized.copy(amount = deserialized.amount + 1), create = false)
+  thingDao.search(scrolling = true) {
+    // we are given a SearchRequest in the block
+    source("""
+      {
+        "query": {
+          "match_all": {}
         }
+      }
+    """.trimIndent())
+  }.hits.forEach {(esResult,deserialized) ->
+    // we get a lazy sequence that fetches results using the scroll api in es
+    if(deserialized != null) {
+      // deserialized may be null if we disable source on the mapping
+      // use the BulkIndexingSession to index a transformed version
+      // of the original
+      index(esResult.id, deserialized.copy(amount = deserialized.amount + 1),
+        create = false)
     }
+  }
 }
 ```
 

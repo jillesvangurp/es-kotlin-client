@@ -41,30 +41,30 @@ Elasticsearch in schema-less mode is probably not what you want. We use a simple
 
 ```kotlin
 thingDao.createIndex {
-    source(
-        """
-            {
-              "settings": {
-                "index": {
-                  "number_of_shards": 3,
-                  "number_of_replicas": 0,
-                  "blocks": {
-                    "read_only_allow_delete": "false"
-                  }
-                }
-              },
-              "mappings": {
-                "properties": {
-                  "name": {
-                    "type": "text"
-                  },
-                  "amount": {
-                    "type": "long"
-                  }
-                }
-              }
-            }
-        """, XContentType.JSON)
+  source(
+    """
+      {
+        "settings": {
+        "index": {
+          "number_of_shards": 3,
+          "number_of_replicas": 0,
+          "blocks": {
+          "read_only_allow_delete": "false"
+          }
+        }
+        },
+        "mappings": {
+        "properties": {
+          "name": {
+          "type": "text"
+          },
+          "amount": {
+          "type": "long"
+          }
+        }
+        }
+      }
+    """, XContentType.JSON)
 }
 ```
 
@@ -92,9 +92,9 @@ You can't index an object twice unless you opt in to it being overwritten.
 
 ```kotlin
 try {
-    thingDao.index("first", Thing("A thing", 42))
+  thingDao.index("first", Thing("A thing", 42))
 } catch (e: ElasticsearchStatusException) {
-    println("we already had one of those and es returned ${e.status().status}")
+  println("we already had one of those and es returned ${e.status().status}")
 }
 // this how you do upserts
 thingDao.index("first", Thing("Another thing", 666), create = false)
@@ -136,28 +136,30 @@ This works as follows.
 thingDao.index("2", Thing("Another thing"))
 
 val (obj, rawGetResponse) = thingDao.getWithGetResponse("2")
-    ?: throw IllegalStateException("We just created this?!")
+  ?: throw IllegalStateException("We just created this?!")
 
-println("obj with id '${obj.name}' has id: ${rawGetResponse.id}, primaryTerm: ${rawGetResponse.primaryTerm}, and seqNo: ${rawGetResponse.seqNo}")
+println("obj with id '${obj.name}' has id: ${rawGetResponse.id}, " +
+    "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
+    "seqNo: ${rawGetResponse.seqNo}")
 // This works
 thingDao.index(
+  "2",
+  Thing("Another Thing"),
+  seqNo = rawGetResponse.seqNo,
+  primaryTerm = rawGetResponse.primaryTerm,
+  create = false
+)
+try {
+  // ... but if we use these values again it fails
+  thingDao.index(
     "2",
     Thing("Another Thing"),
     seqNo = rawGetResponse.seqNo,
     primaryTerm = rawGetResponse.primaryTerm,
     create = false
-)
-try {
-    // ... but if we use these values again it fails
-    thingDao.index(
-        "2",
-        Thing("Another Thing"),
-        seqNo = rawGetResponse.seqNo,
-        primaryTerm = rawGetResponse.primaryTerm,
-        create = false
-    )
+  )
 } catch (e: ElasticsearchStatusException) {
-    println("Version conflict because sequence number changed! Es returned ${e.status().status}")
+  println("Version conflict! Es returned ${e.status().status}")
 }
 ```
 
@@ -165,7 +167,7 @@ Output:
 
 ```
 obj with id 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 0
-Version conflict because sequence number changed! Es returned 409
+Version conflict! Es returned 409
 
 ```
 
@@ -176,13 +178,13 @@ providing a robust update method instead.
 thingDao.index("3", Thing("Yet another thing"))
 
 thingDao.update("3") { currentThing ->
-    currentThing.copy(name = "an updated thing", amount = 666)
+  currentThing.copy(name = "an updated thing", amount = 666)
 }
 
 println("It was updated: ${thingDao.get("3")}")
 
 thingDao.update("3") { currentThing ->
-    currentThing.copy(name = "we can do this again and again", amount = 666)
+  currentThing.copy(name = "we can do this again and again", amount = 666)
 }
 
 println("It was updated again ${thingDao.get("3")}")
@@ -212,20 +214,20 @@ retries:
 thingDao.index("4", Thing("First version of the thing", amount = 0))
 
 try {
-    1.rangeTo(30).toList().parallelStream().forEach { n ->
-        // the maxUpdateTries parameter is optional and has a default value of 2
-        // so setting this to 0 and doing concurrent updates is going to fail
-        thingDao.update("4", 0) { Thing("nr_$n") }
-    }
+  1.rangeTo(30).toList().parallelStream().forEach { n ->
+    // the maxUpdateTries parameter is optional and has a default value of 2
+    // so setting this to 0 and doing concurrent updates is going to fail
+    thingDao.update("4", 0) { Thing("nr_$n") }
+  }
 } catch (e: Exception) {
-    println("Oops it failed because we disabled retries and we got some conflict.")
+  println("It failed because we disabled retries and we got a conflict")
 }
 ```
 
 Output:
 
 ```
-Oops it failed because we disabled retries and we got some conflict.
+It failed because we disabled retries and we got a conflict
 
 ```
 
@@ -235,16 +237,16 @@ Doing the same with 10 retries, fixes the problem.
 thingDao.index("5", Thing("First version of the thing", amount = 0))
 
 1.rangeTo(30).toList().parallelStream().forEach { n ->
-    // but if we let it retry a few times, it will be eventually consistent
-    thingDao.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
+  // but if we let it retry a few times, it will be eventually consistent
+  thingDao.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
 }
-println("All the updates eventually succeeded! The amount is now ${thingDao.get("5")?.amount}.")
+println("All updates succeeded! amount = ${thingDao.get("5")?.amount}.")
 ```
 
 Output:
 
 ```
-All the updates eventually succeeded! The amount is now 30.
+All updates succeeded! amount = 30.
 
 ```
 
@@ -262,11 +264,12 @@ object mapper, you simply create your own instance and pass it to the `IndexDAO`
 ```kotlin
 // this is what is used by default but you can use your own implementation
 val modelReaderAndWriter = JacksonModelReaderAndWriter(
-    Thing::class,
-    ObjectMapper().findAndRegisterModules()
+  Thing::class,
+  ObjectMapper().findAndRegisterModules()
 )
 
-val thingDao = esClient.crudDao<Thing>(index = "things", modelReaderAndWriter = modelReaderAndWriter)
+val thingDao = esClient.crudDao<Thing>(
+  index = "things", modelReaderAndWriter = modelReaderAndWriter)
 ```
 
 

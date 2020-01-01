@@ -68,7 +68,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
                 // create a DAO (Data Access Object)
                 // use the default jackson model reader and writer (you can customize)
-                // opt in to refreshes (we don't want this in production code normally) so we can test
+                // opt in to refreshes (we don't want this in production code) so we can test
                 val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
 
                 // let the DAO create the index
@@ -121,8 +121,10 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         // we get a lazy sequence that fetches results using the scroll api in es
                         if(deserialized != null) {
                             // deserialized may be null if we disable source on the mapping
-                            // use the BulkIndexingSession to index a transformed version of the original
-                            index(esResult.id, deserialized.copy(amount = deserialized.amount + 1), create = false)
+                            // use the BulkIndexingSession to index a transformed version
+                            // of the original
+                            index(esResult.id, deserialized.copy(amount = deserialized.amount + 1),
+                                create = false)
                         }
                     }
                 }

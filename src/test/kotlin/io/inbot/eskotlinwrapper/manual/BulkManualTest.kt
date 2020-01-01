@@ -106,8 +106,8 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     // you can do a safe bulk update similar to the CRUD update.
                     // this has the disadvantage of doing 1 get per item and may not scale
                     getAndUpdate("doc-2") { currentVersion ->
-                        // this works just like the update on the dao and it will retry a configurable number
-                        // of times.
+                        // this works just like the update on the dao and it will retry a
+                        // configurable number of times.
                         currentVersion.copy(name = "updated 2")
                     }
 
@@ -116,7 +116,8 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     // a scrolling search.
                     update(
                         id = "doc-3",
-                        // yes, these two values are wrong; but it falls back to doing a getAndUpdate.
+                        // yes, these two values are wrong; but it falls back to doing a
+                        // getAndUpdate.
                         seqNo = 12,
                         primaryTerms = 34,
                         original = Thing("indexed $it", 666)
@@ -155,7 +156,8 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         // and you can implement this callback to do something custom
                         override fun invoke(op: BulkOperation<Thing>, response: BulkItemResponse) {
                             if (response.isFailed) {
-                                println("${op.id}: ${op.operation.opType().name} failed with status code: ${response.failure.status}")
+                                println("${op.id}: ${op.operation.opType().name} failed, " +
+                                        "code: ${response.failure.status}")
                             } else {
                                 println("${op.id}: ${op.operation.opType().name} succeeded!")
                             }
@@ -182,12 +184,14 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 """
                 blockWithOutput {
                     thingDao.bulk(
-                        // this controls the number of items to send to Elasticsearch
-                        // what is optimal depends on the size of your documents and your cluster setup.
+                        // controls the number of items to send to Elasticsearch
+                        // what is optimal depends on the size of your documents and
+                        // your cluster setup.
                         bulkSize = 10,
-                        // this controls how often documents are retried by the default item callback
+                        // controls how often documents are retried by the default
+                        // item callback
                         retryConflictingUpdates = 3,
-                        // this controls how Elasticsearch refreshes and whether
+                        // controls how Elasticsearch refreshes and whether
                         // the bulk request blocks until ES has refreshed or not
                         refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE
                     ) {

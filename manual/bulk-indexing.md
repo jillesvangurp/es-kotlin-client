@@ -25,9 +25,9 @@ simple `bulk` method that creates a session for you:
 ```kotlin
 // creates a BulkIndexingSession<Thing> and passes it to the block
 thingDao.bulk {
-    1.rangeTo(500).forEach {
-        index("doc-$it", Thing("indexed $it", 666))
-    }
+  1.rangeTo(500).forEach {
+    index("doc-$it", Thing("indexed $it", 666))
+  }
 }
 
 println("Lets get one of them " + thingDao.get("doc-100"))
@@ -50,32 +50,33 @@ In addition to `index` we have a few more operations.
 
 ```kotlin
 thingDao.bulk(bulkSize = 50) {
-    // setting create=false overwrites and is the appropriate thing
-    // to do if you are replacing documents in bulk
-    index("doc-1", Thing("upserted 1", 666), create = false)
+  // setting create=false overwrites and is the appropriate thing
+  // to do if you are replacing documents in bulk
+  index("doc-1", Thing("upserted 1", 666), create = false)
 
-    // you can do a safe bulk update similar to the CRUD update.
-    // this has the disadvantage of doing 1 get per item and may not scale
-    getAndUpdate("doc-2") { currentVersion ->
-        // this works just like the update on the dao and it will retry a configurable number
-        // of times.
-        currentVersion.copy(name = "updated 2")
-    }
+  // you can do a safe bulk update similar to the CRUD update.
+  // this has the disadvantage of doing 1 get per item and may not scale
+  getAndUpdate("doc-2") { currentVersion ->
+    // this works just like the update on the dao and it will retry a
+    // configurable number of times.
+    currentVersion.copy(name = "updated 2")
+  }
 
-    // if you already have the seqNo, primary term, and current version
-    // there you can skip the get. A good way to get these efficiently would be
-    // a scrolling search.
-    update(
-        id = "doc-3",
-        // yes, these two values are wrong; but it falls back to doing a getAndUpdate.
-        seqNo = 12,
-        primaryTerms = 34,
-        original = Thing("indexed $it", 666)
-    ) { currentVersion ->
-        currentVersion.copy(name = "safely updated 3")
-    }
-    // and of course you can delete items
-    delete("doc-4")
+  // if you already have the seqNo, primary term, and current version
+  // there you can skip the get. A good way to get these efficiently would be
+  // a scrolling search.
+  update(
+    id = "doc-3",
+    // yes, these two values are wrong; but it falls back to doing a
+    // getAndUpdate.
+    seqNo = 12,
+    primaryTerms = 34,
+    original = Thing("indexed $it", 666)
+  ) { currentVersion ->
+    currentVersion.copy(name = "safely updated 3")
+  }
+  // and of course you can delete items
+  delete("doc-4")
 }
 
 
@@ -113,91 +114,96 @@ There are a few more parameters that you can override.
 
 ```kotlin
 thingDao.bulk(
-    // this controls the number of items to send to Elasticsearch
-    // what is optimal depends on the size of your documents and your cluster setup.
-    bulkSize = 10,
-    // this controls how often documents are retried by the default item callback
-    retryConflictingUpdates = 3,
-    // this controls how Elasticsearch refreshes and whether
-    // the bulk request blocks until ES has refreshed or not
-    refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE
+  // controls the number of items to send to Elasticsearch
+  // what is optimal depends on the size of your documents and
+  // your cluster setup.
+  bulkSize = 10,
+  // controls how often documents are retried by the default
+  // item callback
+  retryConflictingUpdates = 3,
+  // controls how Elasticsearch refreshes and whether
+  // the bulk request blocks until ES has refreshed or not
+  refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE
 ) {
 
-    delete("doc-1")
-    update(
-        id = "doc-2",
-        // these values are wrong so this will be retried
-        seqNo = 12,
-        primaryTerms = 34,
-        original = Thing("updated 2", 666)
-    ) { currentVersion ->
-        currentVersion.copy(name = "safely updated 3")
-    }
+  delete("doc-1")
+  update(
+    id = "doc-2",
+    // these values are wrong so this will be retried
+    seqNo = 12,
+    primaryTerms = 34,
+    original = Thing("updated 2", 666)
+  ) { currentVersion ->
+    currentVersion.copy(name = "safely updated 3")
+  }
 }
 ```
 
 ```kotlin
 thingDao.bulk(
-    itemCallback = object : (BulkOperation<Thing>, BulkItemResponse) -> Unit {
-        // Elasticsearch confirms what it did for each item in a bulk request
-        // and you can implement this callback to do something custom
-        override fun invoke(op: BulkOperation<Thing>, response: BulkItemResponse) {
-            if (response.isFailed) {
-                println("${op.id}: ${op.operation.opType().name} failed with status code: ${response.failure.status}")
-            } else {
-                println("${op.id}: ${op.operation.opType().name} succeeded!")
-            }
-        }
+  itemCallback = object : (BulkOperation<Thing>, BulkItemResponse) -> Unit {
+    // Elasticsearch confirms what it did for each item in a bulk request
+    // and you can implement this callback to do something custom
+    override fun invoke(op: BulkOperation<Thing>, response: BulkItemResponse) {
+      if (response.isFailed) {
+        println("${op.id}: ${op.operation.opType().name} failed, " +
+            "code: ${response.failure.status}")
+      } else {
+        println("${op.id}: ${op.operation.opType().name} succeeded!")
+      }
     }
+  }
 ) {
 
-    update(
-        id = "doc-2",
-        // these values are wrong and this will now fail instead of retry
-        seqNo = 12,
-        primaryTerms = 34,
-        original = Thing("updated 2", 666)
-    ) { currentVersion ->
-        currentVersion.copy(name = "safely updated 3")
-    }
+  update(
+    id = "doc-2",
+    // these values are wrong and this will now fail instead of retry
+    seqNo = 12,
+    primaryTerms = 34,
+    original = Thing("updated 2", 666)
+  ) { currentVersion ->
+    currentVersion.copy(name = "safely updated 3")
+  }
 }
 println("" + thingDao.get("doc-2"))
 
 +"""
-    # Other parameters
-    
-    There are a few more parameters that you can override.
+  # Other parameters
+  
+  There are a few more parameters that you can override.
 """
 blockWithOutput {
-    thingDao.bulk(
-        // this controls the number of items to send to Elasticsearch
-        // what is optimal depends on the size of your documents and your cluster setup.
-        bulkSize = 10,
-        // this controls how often documents are retried by the default item callback
-        retryConflictingUpdates = 3,
-        // this controls how Elasticsearch refreshes and whether
-        // the bulk request blocks until ES has refreshed or not
-        refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE
-    ) {
+  thingDao.bulk(
+    // controls the number of items to send to Elasticsearch
+    // what is optimal depends on the size of your documents and
+    // your cluster setup.
+    bulkSize = 10,
+    // controls how often documents are retried by the default
+    // item callback
+    retryConflictingUpdates = 3,
+    // controls how Elasticsearch refreshes and whether
+    // the bulk request blocks until ES has refreshed or not
+    refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE
+  ) {
 
-        delete("doc-1")
-        update(
-            id = "doc-2",
-            // these values are wrong so this will be retried
-            seqNo = 12,
-            primaryTerms = 34,
-            original = Thing("updated 2", 666)
-        ) { currentVersion ->
-            currentVersion.copy(name = "safely updated 3")
-        }
+    delete("doc-1")
+    update(
+      id = "doc-2",
+      // these values are wrong so this will be retried
+      seqNo = 12,
+      primaryTerms = 34,
+      original = Thing("updated 2", 666)
+    ) { currentVersion ->
+      currentVersion.copy(name = "safely updated 3")
     }
+  }
 }
 ```
 
 Output:
 
 ```
-doc-2: UPDATE failed with status code: CONFLICT
+doc-2: UPDATE failed, code: CONFLICT
 Thing(name=updated 2, amount=666)
 
 ```

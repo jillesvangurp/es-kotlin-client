@@ -150,7 +150,9 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 val (obj, rawGetResponse) = thingDao.getWithGetResponse("2")
                     ?: throw IllegalStateException("We just created this?!")
 
-                println("obj with id '${obj.name}' has id: ${rawGetResponse.id}, primaryTerm: ${rawGetResponse.primaryTerm}, and seqNo: ${rawGetResponse.seqNo}")
+                println("obj with id '${obj.name}' has id: ${rawGetResponse.id}, " +
+                        "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
+                        "seqNo: ${rawGetResponse.seqNo}")
                 // This works
                 thingDao.index(
                     "2",
@@ -169,7 +171,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         create = false
                     )
                 } catch (e: ElasticsearchStatusException) {
-                    println("Version conflict because sequence number changed! Es returned ${e.status().status}")
+                    println("Version conflict! Es returned ${e.status().status}")
                 }
             }
 
@@ -217,7 +219,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         thingDao.update("4", 0) { Thing("nr_$n") }
                     }
                 } catch (e: Exception) {
-                    println("Oops it failed because we disabled retries and we got some conflict.")
+                    println("It failed because we disabled retries and we got a conflict")
                 }
             }
             +"""
@@ -230,7 +232,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     // but if we let it retry a few times, it will be eventually consistent
                     thingDao.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
                 }
-                println("All the updates eventually succeeded! The amount is now ${thingDao.get("5")?.amount}.")
+                println("All updates succeeded! amount = ${thingDao.get("5")?.amount}.")
             }
 
             +"""
@@ -252,7 +254,8 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     ObjectMapper().findAndRegisterModules()
                 )
 
-                val thingDao = esClient.crudDao<Thing>(index = "things", modelReaderAndWriter = modelReaderAndWriter)
+                val thingDao = esClient.crudDao<Thing>(
+                    index = "things", modelReaderAndWriter = modelReaderAndWriter)
             }
         }
     }

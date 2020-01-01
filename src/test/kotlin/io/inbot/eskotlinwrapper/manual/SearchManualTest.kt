@@ -89,7 +89,7 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
 
                 // we can get the deserialized thing from the search response
                 results.mappedHits.forEach {
-                    // kotlin sequences are lazy so nothing gets deserialized until you use the sequence
+                    // kotlin sequences are lazy; nothing is deserialized unless you use it
                     println(it)
                 }
 
@@ -102,7 +102,7 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                 // or we can get both as a `Pair`
                 results.hits.first().apply {
                     val (searchHit,deserialized) = this
-                    println("Hit: ${searchHit.id} deserialized from\n ${searchHit.sourceAsString}\nto\n$deserialized")
+                    println("Hit: ${searchHit.id}:\n$deserialized")
                 }
             }
 
@@ -149,8 +149,8 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
             blockWithOutput {
                 thingDao.bulk {
                     // simply set scrolling to true will allow us to scroll over the entire index
-                    // this will scale no matter what the size of your index is. If you use scrolling,
-                    // you can also set the ttl for the scroll (default is 1m)
+                    // this will scale no matter what the size of your index is. If you use
+                    // scrolling, you can also set the ttl for the scroll (default is 1m)
                     val results = thingDao.search(scrolling = true,scrollTtlInMinutes = 10) {
                         source("""
                             {
@@ -163,13 +163,14 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                     }
                     results.hits.forEach { (hit,thing) ->
                         if(thing!=null) {
-                            // we dig out the meta data we need for optimistic locking from the search response
+                            // we dig out the meta data we need for optimistic locking
+                            // from the search response
                             update(hit.id, hit.seqNo,hit.primaryTerm, thing) { currentThing ->
                                 currentThing.copy(title="updated thing")
                             }
                         }
                     }
-                    // after the last page of results, the scroll is cleaned up with an extra request
+                    // after the last page of results, the scroll is cleaned up
                 }
             }
         }

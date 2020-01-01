@@ -41,21 +41,20 @@ a sneak preview of that.
 ```kotlin
 val demoPage = Page("Demo Page", "demo.md")
 KotlinForExample.markdownPage(demoPage) {
-    +"""
-        A quick example. You can put any markdown here.
-        Once this code runs, it actually generates the page [you can open it here](demo.md)
-    """
-    blockWithOutput {
-        // Block receives a PrintWriter so the output of the block is captured and shown.
-        println("Hello world")
-    }
-    +"""
-        We use a few kotlin helpers for links:
-        
-        - You can link to another page ${mdLink(indexPage)} (gets you back to the manual page if you
-        clicked the demo.md link).
-        - You can link to the source of any class ${mdLink(KotlinForExample::class)}
-    """
+  +"""
+    A quick example. You can put any markdown here.
+    Once this code runs, it actually generates the page: [open it here](demo.md)
+  """
+  blockWithOutput {
+    // Block receives a PrintWrite, the output of the block is captured.
+    println("Hello world")
+  }
+  +"""
+    We use a few kotlin helpers for links:
+    
+    - You can link to another page ${mdLink(indexPage)}
+    - You can link to the source of any class ${mdLink(KotlinForExample::class)}
+  """
 }
 ```
 

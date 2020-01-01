@@ -14,7 +14,7 @@ You simply create a Java Highlevel Rest client as usual. For example:
 
 ```kotlin
 val restClientBuilder = RestClient.builder(
-    HttpHost("localhost", 9200, "http")
+  HttpHost("localhost", 9200, "http")
 )
 val restHighLevelClient = RestHighLevelClient(restClientBuilder)
 ```
@@ -35,11 +35,11 @@ connect to Elastic Cloud:
 ```kotlin
 // connects to localhost:9200
 val restHighLevelClient = create(
-    host = "XXXXXXXXXX.eu-central-1.aws.cloud.es.io",
-    port = 9243,
-    https = true,
-    user = "admin",
-    password = "secret" // please use something more secure
+  host = "XXXXXXXXXX.eu-central-1.aws.cloud.es.io",
+  port = 9243,
+  https = true,
+  user = "admin",
+  password = "secret" // please use something more secure
 )
 ```
 
@@ -56,13 +56,13 @@ to have in production environment.
 
 ```kotlin
 val restHighLevelClient = create(
-    host = "localhost",
-    port = 9200,
-    useSniffer = true,
-    // if requests fail, the sniffer will try to discover non failed nodes
-    sniffAfterFailureDelayMillis = 2000,
-    // regularly discover nodes in the cluster
-    sniffIntervalMillis = 30000
+  host = "localhost",
+  port = 9200,
+  useSniffer = true,
+  // if requests fail, the sniffer will try to discover non failed nodes
+  sniffAfterFailureDelayMillis = 2000,
+  // regularly discover nodes in the cluster
+  sniffIntervalMillis = 30000
 )
 ```
 

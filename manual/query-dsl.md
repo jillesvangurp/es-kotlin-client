@@ -15,15 +15,15 @@ Using the same example index as we used earlier:
 ```kotlin
 val results = thingDao.search {
 
-    source(
-        searchSource()
-            .size(20)
-            .query(
-                boolQuery()
-                    .must(matchQuery("title", "quick").boost(2.0f))
-                    .must(matchQuery("title","brown"))
-            )
-    )
+  source(
+    searchSource()
+      .size(20)
+      .query(
+        boolQuery()
+          .must(matchQuery("title", "quick").boost(2.0f))
+          .must(matchQuery("title","brown"))
+      )
+  )
 }
 println("We found ${results.totalHits} results.")
 ```
@@ -41,16 +41,16 @@ This is unfortunately quite ugly from a Kotlin point of view. Lets see if we can
 
 // more idomatic Kotlin using apply { ... }
 val results = thingDao.search {
-    source(searchSource().apply {
-        query(
-            boolQuery().apply {
-                must().apply {
-                    add(matchQuery("title", "quick").boost(2.0f))
-                    add(matchQuery("title", "brown"))
-                }
-            }
-        )
-    })
+  source(searchSource().apply {
+    query(
+      boolQuery().apply {
+        must().apply {
+          add(matchQuery("title", "quick").boost(2.0f))
+          add(matchQuery("title", "brown"))
+        }
+      }
+    )
+  })
 }
 println("We found ${results.totalHits} results.")
 ```
@@ -68,17 +68,17 @@ This is better but still a little verbose. To improve on this, a few extension f
 
 // more idomatic Kotlin using apply { ... }
 val results = thingDao.search {
-    // one of our extension functions gets rid of a bit of ugliness here
-    source {
-        query(
-            boolQuery().apply {
-                must().apply {
-                    add(matchQuery("title", "quick").boost(2.0f))
-                    add(matchQuery("title", "brown"))
-                }
-            }
-        )
-    }
+  // one of our extension functions gets rid of a bit of ugliness here
+  source {
+    query(
+      boolQuery().apply {
+        must().apply {
+          add(matchQuery("title", "quick").boost(2.0f))
+          add(matchQuery("title", "brown"))
+        }
+      }
+    )
+  }
 }
 println("We found ${results.totalHits} results.")
 ```

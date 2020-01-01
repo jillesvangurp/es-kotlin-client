@@ -16,7 +16,7 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:0.9.3-7.5.0")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:0.9.4-7.5.1")
     }
 }
 
@@ -129,7 +129,7 @@ publishing {
 }
 
 val kotlinVersion = "1.3.61"
-val elasticVersion = "7.5.0"
+val elasticVersion = "7.5.1"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.5.2"
 

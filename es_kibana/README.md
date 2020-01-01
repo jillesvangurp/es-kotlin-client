@@ -1,4 +1,4 @@
-Simple docker compose to fire up es & kibana on their normal ports. Doesn't mount any volumes so shutting it down means data is gone.
+Simple docker compose file to fire up es & kibana on their normal ports. Doesn't mount any volumes so shutting it down means data is gone.
 
 ```
 # start

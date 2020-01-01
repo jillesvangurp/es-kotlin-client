@@ -29,6 +29,7 @@ class ManualOverviewPageTest {
 
     @Test
     fun `create ebook create script`() {
+        File("epub").mkdirs()
         File("epub","styles.css").writeText("""
             /* This defines styles and classes used in the book */
             body { margin: 0; text-align: justify; font-size: medium; font-family: Athelas, Georgia, serif; }
@@ -57,7 +58,7 @@ class ManualOverviewPageTest {
             div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
         """.trimIndent())
-        File("epub","title.txt").writeText("""
+        File("epub","title.md").writeText("""
             ---
             title: Searching Elasticsearch using Kotlin
             author: Jilles van Gurp
@@ -66,7 +67,7 @@ class ManualOverviewPageTest {
         """.trimIndent())
         File("epub","create_ebook.sh").writeText("""
             #!/bin/bash
-            pandoc --css styles.css -t epub2 -o book.epub -f gfm title.txt ${pages.joinToString (" ") {it.fileName}}
+            pandoc --css styles.css -t epub2 -o book.epub -f gfm title.md ${pages.joinToString (" ") {it.fileName}}
         """.trimIndent())
     }
 

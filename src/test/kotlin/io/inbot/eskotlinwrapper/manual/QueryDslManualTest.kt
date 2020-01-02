@@ -53,7 +53,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             }
         }
 
-        KotlinForExample.markdownPage(queryDslPage) {
+        KotlinForExample.markdownPageWithNavigation(queryDslPage) {
 
             +"""
                 Elasticsearch has a Query DSL and the Java Rest High Level Client comes with a very expansive

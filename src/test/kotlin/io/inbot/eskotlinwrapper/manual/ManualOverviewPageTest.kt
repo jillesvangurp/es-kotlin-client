@@ -15,13 +15,13 @@ val coroutinesMd = "coroutines.md"
 
 val readmePage = Page("Es Kotlin Wrapper Client", readmeMd, outputDir = ".")
 val indexPage = Page("Es Kotlin Wrapper Client Manual", indexMd)
-val createClientPage = Page("How to create the client", createClientMd, parent = indexMd)
+val createClientPage = Page("How to create the client", createClientMd, parent = indexMd, emitBookPage = true)
 val crudPage =
-    Page("Working with objects", crudSupportMd, parent = indexMd)
-val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd)
-val searchPage = Page("Search", searchMd, parent = indexMd)
-val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd)
-val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd)
+    Page("Working with objects", crudSupportMd, parent = indexMd,emitBookPage = true)
+val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd,emitBookPage = true)
+val searchPage = Page("Search", searchMd, parent = indexMd,emitBookPage = true)
+val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd,emitBookPage = true)
+val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd,emitBookPage = true)
 
 val pages=listOf(createClientPage,crudPage,bulkPage,searchPage,queryDslPage,coroutinesPage)
 
@@ -49,7 +49,7 @@ class ManualOverviewPageTest {
             a.footnote-ref { vertical-align: super; }
             em, em em em, em em em em em { font-style: italic;}
             em em, em em em em { font-style: normal; }
-            pre {font-size: 60%;}
+            pre {font-size: 50%;}
             code{ font-family: monospace; white-space: pre-wrap; }
             span.smallcaps{ font-variant: small-caps; }
             span.underline{ text-decoration: underline; }
@@ -58,22 +58,24 @@ class ManualOverviewPageTest {
             div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
         """.trimIndent())
-        File("epub","title.md").writeText("""
+        File("epub","metadata.yml").writeText("""
             ---
             title: Searching Elasticsearch using Kotlin
             author: Jilles van Gurp
             rights:  Copyright Jilles van Gurp, 2019
             language: en-US
+            ...
+            
         """.trimIndent())
         File("epub","create_ebook.sh").writeText("""
             #!/bin/bash
-            pandoc --css styles.css -t epub2 -o book.epub -f gfm title.md ${pages.joinToString (" ") {it.fileName}}
+            pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml ${pages.joinToString (" ") {it.fileName}}
         """.trimIndent())
     }
 
     @Test
     fun `generate index md`() {
-        KotlinForExample.markdownPage(indexPage) {
+        KotlinForExample.markdownPageWithNavigation(indexPage) {
             +"""
                 The Elasticsearch Kotlin Wrapper Client adds a lot of functionality to the 
                 Elasticsearch Rest High Level Client. This is mostly done through extension functions.
@@ -112,7 +114,7 @@ class ManualOverviewPageTest {
             // very meta
             blockWithOutput {
                 val demoPage = Page("Demo Page", "demo.md")
-                KotlinForExample.markdownPage(demoPage) {
+                KotlinForExample.markdownPageWithNavigation(demoPage) {
                     +"""
                         A quick example. You can put any markdown here.
                         Once this code runs, it actually generates the page: [open it here](demo.md)

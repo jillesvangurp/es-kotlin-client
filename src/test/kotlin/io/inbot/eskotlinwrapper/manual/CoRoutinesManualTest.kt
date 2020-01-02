@@ -48,7 +48,7 @@ class CoRoutinesManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                             }
                         """, XContentType.JSON)
         }
-        KotlinForExample.markdownPage(coroutinesPage) {
+        KotlinForExample.markdownPageWithNavigation(coroutinesPage) {
             +"""
                 The RestHighLevelClient exposes asynchronous versions of most APIs that take a call back to process
                 the response when it comes back. Using this is kind of boiler plate heavy. 

@@ -40,7 +40,7 @@ a sneak preview of that.
 
 ```kotlin
 val demoPage = Page("Demo Page", "demo.md")
-KotlinForExample.markdownPage(demoPage) {
+KotlinForExample.markdownPageWithNavigation(demoPage) {
   +"""
     A quick example. You can put any markdown here.
     Once this code runs, it actually generates the page: [open it here](demo.md)

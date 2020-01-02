@@ -17,7 +17,8 @@ data class Page(
     val outputDir: String = "manual",
 //    val previous: String? = null
 //    val next: String? = null,
-    val parent: String? = null
+    val parent: String? = null,
+    val emitBookPage: Boolean = false
 ) {
     val link = mdLink(title, fileName)
 }
@@ -52,7 +53,7 @@ class KotlinForExample private constructor(
     }
 
     fun mdLinkToSelf(title: String="Link to this source file"): String {
-        val fn = this.sourceFile() ?: throw IllegalStateException("source file not found")
+        val fn = this.sourceFileOfExampleCaller() ?: throw IllegalStateException("source file not found")
         return mdLink(title,"$repoUrl/tree/master/${fn.path}")
     }
 
@@ -128,7 +129,7 @@ class KotlinForExample private constructor(
         return null
     }
 
-    internal fun sourceFile(): File? {
+    internal fun sourceFileOfExampleCaller(): File? {
         val fileName = getCallerStackTraceElement().className.replace("\\$.*?$".toRegex(), "").replace(
             '.',
             File.separatorChar
@@ -145,8 +146,6 @@ class KotlinForExample private constructor(
     }
 
     companion object {
-
-
         fun markdown(
             block: KotlinForExample.() -> Unit
         ): String {
@@ -155,8 +154,7 @@ class KotlinForExample private constructor(
             return example.buf.toString()
         }
 
-        fun markdownPage(page: Page, block: KotlinForExample.() -> Unit) {
-
+        fun markdownPageWithNavigation(page: Page, block: KotlinForExample.() -> Unit) {
             val index = pages.indexOf(page)
             val previous = if(index<0) null else if(index==0) null else pages[index-1].fileName
             val next = if(index<0) null else if(index==pages.size-1) null else pages[index+1].fileName
@@ -167,10 +165,12 @@ class KotlinForExample private constructor(
             )
 
             val example = KotlinForExample()
+
             example.use(block)
-            val md =   """
-                    # ${page.title}
-                """.trimIndent().trimMargin() + "\n\n" + example.buf.toString()
+            val md = """
+                # ${page.title}
+            """.trimIndent().trimMargin() + "\n\n" + example.buf.toString()
+
             val pageWithNavigationMd =
                 (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n---\n\n" else "") +
                 md + "\n" +
@@ -181,6 +181,8 @@ class KotlinForExample private constructor(
 
             File(page.outputDir).mkdirs()
             File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)
+            File("epub").mkdirs()
+            File("epub",page.fileName).writeText(md)
         }
     }
 }

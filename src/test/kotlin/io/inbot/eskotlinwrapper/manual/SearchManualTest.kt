@@ -40,7 +40,7 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                         """, XContentType.JSON)
         }
 
-        KotlinForExample.markdownPage(searchPage) {
+        KotlinForExample.markdownPageWithNavigation(searchPage) {
 
             block(true) {
                 // lets use a slightly different model class this time

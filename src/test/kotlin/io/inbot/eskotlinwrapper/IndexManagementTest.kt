@@ -9,6 +9,8 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasA
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.crudDao
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.common.xcontent.writeAny
+import org.elasticsearch.common.xcontent.xContent
 import org.junit.jupiter.api.Test
 
 class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex = false) {
@@ -40,6 +42,20 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
         assertThat(aliases.size).isEqualTo(2)
         aliases.forEach {
             println(it.alias)
+        }
+    }
+
+
+
+    @Test
+    fun `create custom mapping`() {
+        dao.createIndex {
+            source(xContent(
+                   mapOf("mapping" to mapOf(
+                       "properties" to mapOf(
+                           "title" to mapOf(
+                               "type" to "text"))))))
+
         }
     }
 }

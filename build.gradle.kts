@@ -16,7 +16,7 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:0.9.4-7.5.1")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:0.9.5-7.5.2")
     }
 }
 
@@ -30,7 +30,7 @@ plugins {
     java
 
 
-    id("com.avast.gradle.docker-compose") version "0.9.5"
+    id("com.avast.gradle.docker-compose") version "0.10.7"
     `maven-publish`
 }
 
@@ -129,21 +129,22 @@ publishing {
 }
 
 val kotlinVersion = "1.3.61"
-val elasticVersion = "7.5.1"
+val elasticVersion = "7.5.2"
 val slf4jVersion = "1.7.26"
-val junitVersion = "5.5.2"
+val junitVersion = "5.6.0"
+val jacksonVerion = "2.10.2"
 
 dependencies {
    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
    api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-   api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.2")
-   api("io.github.microutils:kotlin-logging:1.7.6")
+   api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.3")
+   api("io.github.microutils:kotlin-logging:1.7.8")
 
    api("org.apache.commons:commons-lang3:3.9")
 
-   api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.0")
-   api("com.fasterxml.jackson.core:jackson-annotations:2.10.0")
-   api("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.0")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVerion")
+   api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVerion")
+   api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVerion")
 
    api("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticVersion")
    api("org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticVersion")
@@ -153,7 +154,7 @@ dependencies {
     testImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
     testImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
     testImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.12.1") // es seems to insist on log4j2
+    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.13.0") // es seems to insist on log4j2
     testImplementation("ch.qos.logback:logback-classic:1.2.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")

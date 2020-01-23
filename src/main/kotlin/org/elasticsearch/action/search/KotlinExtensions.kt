@@ -11,6 +11,8 @@ import org.elasticsearch.common.xcontent.DeprecationHandler
 import org.elasticsearch.common.xcontent.NamedXContentRegistry
 import org.elasticsearch.common.xcontent.XContentFactory
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
 
@@ -53,7 +55,7 @@ fun CountRequest.source(json: String, deprecationHandler: DeprecationHandler = L
         deprecationHandler,
         json
     ).use {
-        source(SearchSourceBuilder.fromXContent(it))
+        query(SearchSourceBuilder.fromXContent(it).query())
     }
 }
 
@@ -81,7 +83,7 @@ fun CountRequest.source(reader: Reader, deprecationHandler: DeprecationHandler =
         deprecationHandler,
         reader
     ).use {
-        source(SearchSourceBuilder.fromXContent(it))
+        query(SearchSourceBuilder.fromXContent(it).query())
     }
 }
 
@@ -119,13 +121,13 @@ fun CountRequest.source(
         deprecationHandler,
         inputStream
     ).use {
-        source(SearchSourceBuilder.fromXContent(it))
+        query(SearchSourceBuilder.fromXContent(it).query())
     }
 }
 
 fun CountRequest.source(block: SearchSourceBuilder.()->Unit) {
     val builder = SearchSourceBuilder()
     block.invoke(builder)
-    source(builder)
+    query(builder.query())
 }
 

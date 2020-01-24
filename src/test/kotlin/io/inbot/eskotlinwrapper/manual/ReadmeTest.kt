@@ -213,12 +213,13 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
              underlying Java client, which is stable. However, until we release 1.0, refactoring can still happen occasionally.
             
             Currently the main blockers for a 1.0 are:
-            
-            - ES 7.5.x should include my pull request to enable suspendCancellableCoRoutine. I will likely move this library
-            to an async by default style. Currently a lot of things are blocking.
+
             - We recently added reflection based code generation that scans the sdk and adds some useful extension functions.
             More feature work here is coming. Particularly, I want to auto generate a kotlin query dsl from the Java builders.
-            - For 1.0, I want full coverage of all features in the manual.
+            - For 1.0, I want full coverage of all features in the manual. I've made some good progress here and currently the
+            manual is generated from source code.
+            - There are still a few missing features that I want to work on mainly related to index management and co-routines.
+            - My time is limited. I work on this in my spare time and when I feel like it.
             
             If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
             before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.

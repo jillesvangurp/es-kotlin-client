@@ -8,6 +8,7 @@ import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
@@ -27,6 +28,7 @@ import org.elasticsearch.client.getAliasAsync
 import org.elasticsearch.client.getAsync
 import org.elasticsearch.client.indexAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.refreshAsync
 import org.elasticsearch.client.search
 import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetaData
@@ -300,58 +302,21 @@ class AsyncIndexRepository<T : Any>(
      * Throws UnsupportedOperationException if you do not explicitly opt in to this by setting the `refreshAllowed` to
      * true when creating the repository.
      */
-    fun refresh() {
+    suspend fun refresh() {
         if (refreshAllowed) {
             // calling this is not safe in production settings but highly useful in tests
-            client.lowLevelClient.performRequest(Request("POST", "/$indexWriteAlias/_refresh"))
+            client.indices().refreshAsync(RefreshRequest(),defaultRequestOptions)
         } else {
             throw UnsupportedOperationException("refresh is not allowed; you need to opt in by setting refreshAllowed to true")
         }
     }
 
-    /**
-     * Perform a search against your index. This creates a `SearchRequest` that is passed into the [block] so you can
-     * customize it. Inside the [block] you can manipulate the request to set a `source` and other parameters.
-     *
-     * Returns a [SearchResults] instance that you can use to get the deserialized results or the raw response.
-     *
-     * If you want to perform a scrolling search, all you have to do is set [scrolling] to true (default is false).
-     * You can also set a [scrollTtlInMinutes] if you want something else than the default of 1 minute.
-     */
-    fun search(
-        scrolling: Boolean = false,
-        scrollTtlInMinutes: Long = 1,
-        requestOptions: RequestOptions = this.defaultRequestOptions,
-        block: SearchRequest.() -> Unit
-    ): SearchResults<T> {
-        val wrappedBlock: SearchRequest.() -> Unit = {
-            this.indices(indexReadAlias)
-            if (scrolling) {
-                scroll(TimeValue.timeValueMinutes(scrollTtlInMinutes))
-            }
-
-            block.invoke(this)
-        }
-
-        val searchResponse = client.search(requestOptions, wrappedBlock)
-        return if (searchResponse.scrollId == null) {
-            PagedSearchResults(searchResponse, modelReaderAndWriter)
-        } else {
-            ScrollingSearchResults(
-                searchResponse,
-                modelReaderAndWriter,
-                client,
-                scrollTtlInMinutes,
-                requestOptions
-            )
-        }
-    }
 
     /**
      * Perform an asynchronous search against your index. Works similar to [search] but does not support scrolling
      * searches currently.
      */
-    suspend fun searchAsync(
+    suspend fun search(
         requestOptions: RequestOptions = this.defaultRequestOptions,
         block: SearchRequest.() -> Unit
     ): SearchResults<T> {
@@ -365,14 +330,7 @@ class AsyncIndexRepository<T : Any>(
         return PagedSearchResults(searchResponse, modelReaderAndWriter)
     }
 
-    fun count(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
-        val request = CountRequest(indexReadAlias)
-        block.invoke(request)
-        val response = client.count(request, requestOptions)
-        return response.count
-    }
-
-    suspend fun countAsync(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
+    suspend fun count(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
         val request = CountRequest(indexReadAlias)
         block.invoke(request)
         val resp = client.countAsync(request,requestOptions)

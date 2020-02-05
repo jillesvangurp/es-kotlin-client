@@ -10,9 +10,22 @@ adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.e
 Elastic's highlevel elasticsearch client is written in Java and provides access to essentially everything in the 
 REST API that Elasticsearch exposes. **The kotlin wrapper takes away none of that and adds some power and convenience to it.**
 
+## Highlights
+
+- Extension functions, default argument values, and other kotlin features adds convenience and gets rid of Java specific boilerplate
+- A repository abstraction that allows you to: 
+    - manage indices
+    - do crud on index items with safe updates that retry in case of a version conflict
+    - bulk index to the index without boiler plate and with fine-grained error handling (via callbacks)
+    - search & count objects in the index.
+- Co-routine friendly & ready for reactive usage. We use generated extension functions to add cancellable 
+suspend functions for almost all client functions. Also the before mentioned `IndexRepository` has an `AsyncIndexRepository` variant with suspending variants of the same functionality. 
+    - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
+    asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
+
 ## Why?
 
-The Java client is designed for Java users and comes with a lot of things that are a bit awkward in Kotlin. 
+The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. 
 This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
 friendly API over the underlying client functionality. 
 
@@ -46,19 +59,22 @@ directly from a mobile phone in any case.
 
 # Documentation
 
-A simple example. Check the [documentation for more examples](manual/index.md)
+Check the [documentation for examples](manual/index.md) on how to use this library
+
+Here's a small example:
 
 ```kotlin
 // given some model class
 data class Thing(val name: String, val amount: Long = 42)
 
-// create a DAO (Data Access Object)
+// create a Repository
 // use the default jackson model reader and writer (you can customize)
 // opt in to refreshes (we don't want this in production code) so we can test
-val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
+val thingRepository = esClient.indexRepository<Thing>(
+  "things", refreshAllowed = true)
 
-// let the DAO create the index
-thingDao.createIndex {
+// let the Repository create the index
+thingRepository.createIndex {
   source(
     """
       {
@@ -82,19 +98,19 @@ thingDao.createIndex {
 }
 
 // put some things in our new index
-thingDao.index("1", Thing("foo", 42))
-thingDao.index("2", Thing("bar", 42))
-thingDao.index("3", Thing("foobar", 42))
+thingRepository.index("1", Thing("foo", 42))
+thingRepository.index("2", Thing("bar", 42))
+thingRepository.index("3", Thing("foobar", 42))
 
 // make sure ES commits this so we can search
-thingDao.refresh()
+thingRepository.refresh()
 
 // now lets do a little bit of reindexing logic that
 // shows off scrolling searches using plain json and bulk indexing
-thingDao.bulk {
+thingRepository.bulk {
   // we are passed a BulkIndexingSession<Thing> in the block
 
-  thingDao.search(scrolling = true) {
+  thingRepository.search(scrolling = true) {
     // we are given a SearchRequest in the block
     source("""
       {
@@ -121,11 +137,12 @@ For more information and examples we have a few places to look:
 - [manual](manual/index.md) I have a growing collection of executable examples. This manual is 
 actually generated using kotlin code and all the examples are actually run as part of the test suite. This is the best
 place to get started.
+- The same manual as an **[epub](book.epub)**. Very much a work in progress. Please give me feedback on this.
 - [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
 - The tests test most of the important features and should be fairly readable and provide a good overview of
  how to use things. I like keeping the tests somewhat readable.
 - [Elasticsearch java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff. Elasticsearch has awesome documentation for this.
-- [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Note, this is outdated and I'm replacing it with a manual in this project.
+- [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Note, this is outdated and has largely been replaced by the manual mentioned above.
 
 # Get it
 
@@ -147,7 +164,8 @@ For version 6.x, check the es-6.7.x branch.
 
 Note, co-routines are a **work in progress** and things may change as Kotlin evolves and as my understanding evolves. 
 This is all relatively new in Kotlin and there is still a lot of stuff happening around e.g. the 
-`Flow` and `Channel` concepts.
+`Flow` and `Channel` concepts. The upcoming 1.4 release of `kotlinx.coroutines` should stabilize a few things we 
+use for e.g. asynchronous bulk indexing.
 
 The `RestHighLevelClient` exposes asynchronous variants of all API calls as an alternative to the synchronous ones. 
 The main difference is that these use the asynchronous http client instead of the synchronous one. Additionally 
@@ -182,6 +200,7 @@ Simply use the gradle wrapper to build things:
 ```
 ./gradlew build
 ```
+
 Look inside the build file for comments and documentation.
 
 If you create a pull request, please also regenerate the documentation with `gradle dokka` as we host and version
@@ -209,6 +228,9 @@ manual is generated from source code.
 If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
 before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.
 
+Until I release 1.0, I reserve the freedom to make potentially large API changes. These are getting less frequent
+of course now that we are getting close to 1.0.
+
 ## Compatibility
 
 The general goal is to keep this client in sync with the current stable version of Elasticsearch. We rely on the most 
@@ -220,7 +242,7 @@ be fine.
 For version 6.x, you can use the es-6.7.x branch or use one of the older releases (<= 0.9.11). Obviously this lacks a 
 lot of the recent feature work. Likewise, we will create a 7x branch when v8 is released.
 
-# License
+## License
 
 This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. 
 Please exercise your rights under this license in any way you feel is appropriate. Forking is allowed and encouraged. 

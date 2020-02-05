@@ -1,29 +1,32 @@
+@file:Suppress("unused")
+
 package io.inbot.eskotlinwrapper.manual
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
-import io.inbot.eskotlinwrapper.IndexDAO
+import io.inbot.eskotlinwrapper.IndexRepository
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import org.elasticsearch.ElasticsearchStatusException
-import org.elasticsearch.client.crudDao
+import org.elasticsearch.client.indexRepository
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
+@Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
     private data class Thing(val name: String, val amount: Long = 42)
 
     @Test
-    fun `explain crud dao`() {
+    fun `explain crud repository`() {
         // we have to do this twice once for printing and once for using :-)
         val modelReaderAndWriter =
             JacksonModelReaderAndWriter(Thing::class, ObjectMapper().findAndRegisterModules())
         // Create a Data Access Object
 
-        val thingDao = esClient.crudDao("things", modelReaderAndWriter)
+        val thingRepository = esClient.indexRepository("things", modelReaderAndWriter)
         // make sure we get rid of the things index before running the rest of this
-        thingDao.deleteIndex()
+        thingRepository.deleteIndex()
 
         KotlinForExample.markdownPageWithNavigation(crudPage) {
             +""" 
@@ -33,17 +36,17 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 
                 An important part of this library is providing a user friendly abstraction for this that 
                 should be familiar if you've ever written a database application using modern frameworks such
-                as Spring, Ruby on Rails, etc. In such frameworks a Data Access Object or Repository object 
+                as Spring, Ruby on Rails, etc. In such frameworks a  Repository 
                 provides primitives for interacting with objects in a particular database table.
                 
-                Wee provide a similar abstraction the ${mdLink(IndexDAO::class)}. You create one for each 
+                Wee provide a similar abstraction the ${mdLink(IndexRepository::class)}. You create one for each 
                 index that you have and it allows you to do Create, Read, Update, and Delete (CRUD) operations as well as 
                 a few other things.
                 
                 Since Elasticsearch stores Json documents, we'll want to use a data class to represent on the 
-                Kotlin side and let the `IndexDAO` take care of serializing/deserializing.
+                Kotlin side and let the `IndexRepository` take care of serializing/deserializing.
                 
-                ## Creating an `IndexDAO`
+                ## Creating an `IndexRepository`
                 
                 Lets use a simple data class with a few fields.
             """
@@ -53,12 +56,12 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             }
 
             +"""
-                Now we can create an `IndexDAO` for our `Thing` using the `crudDao` extension function:
+                Now we can create an `IndexRepository` for our `Thing` using the `indexRepository` extension function:
             """
 
             block() {
                 // we pass in the index name
-                val thingDao = esClient.crudDao<Thing>("things")
+                val thingRepository = esClient.indexRepository<Thing>("things")
             }
 
             +"""
@@ -69,7 +72,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             block(true) {
-                thingDao.createIndex {
+                thingRepository.createIndex {
                     source(
                         """
                             {
@@ -104,11 +107,11 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             blockWithOutput {
-                println("Object does not exist yet so we get back: ${thingDao.get("first")}")
+                println("Object does not exist yet so we get back: ${thingRepository.get("first")}")
                 // so lets store something
-                thingDao.index("first", Thing("A thing", 42))
+                thingRepository.index("first", Thing("A thing", 42))
 
-                println("Now we get back our object: ${thingDao.get("first")}")
+                println("Now we get back our object: ${thingRepository.get("first")}")
             }
 
             +"""
@@ -117,21 +120,21 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
             blockWithOutput {
                 try {
-                    thingDao.index("first", Thing("A thing", 42))
+                    thingRepository.index("first", Thing("A thing", 42))
                 } catch (e: ElasticsearchStatusException) {
                     println("we already had one of those and es returned ${e.status().status}")
                 }
                 // this how you do upserts
-                thingDao.index("first", Thing("Another thing", 666), create = false)
-                println("It was changed: ${thingDao.get("1")}")
+                thingRepository.index("first", Thing("Another thing", 666), create = false)
+                println("It was changed: ${thingRepository.get("1")}")
             }
 
             +"""
                 Of course deleting an object is also possible.
             """
             blockWithOutput {
-                thingDao.delete("1")
-                println(thingDao.get("1"))
+                thingRepository.delete("1")
+                println(thingRepository.get("1"))
             }
 
             +"""
@@ -145,16 +148,16 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 This works as follows.
             """
             blockWithOutput {
-                thingDao.index("2", Thing("Another thing"))
+                thingRepository.index("2", Thing("Another thing"))
 
-                val (obj, rawGetResponse) = thingDao.getWithGetResponse("2")
+                val (obj, rawGetResponse) = thingRepository.getWithGetResponse("2")
                     ?: throw IllegalStateException("We just created this?!")
 
                 println("obj with id '${obj.name}' has id: ${rawGetResponse.id}, " +
                         "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
                         "seqNo: ${rawGetResponse.seqNo}")
                 // This works
-                thingDao.index(
+                thingRepository.index(
                     "2",
                     Thing("Another Thing"),
                     seqNo = rawGetResponse.seqNo,
@@ -163,7 +166,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 )
                 try {
                     // ... but if we use these values again it fails
-                    thingDao.index(
+                    thingRepository.index(
                         "2",
                         Thing("Another Thing"),
                         seqNo = rawGetResponse.seqNo,
@@ -180,19 +183,19 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 providing a robust update method instead.
             """
             blockWithOutput {
-                thingDao.index("3", Thing("Yet another thing"))
+                thingRepository.index("3", Thing("Yet another thing"))
 
-                thingDao.update("3") { currentThing ->
+                thingRepository.update("3") { currentThing ->
                     currentThing.copy(name = "an updated thing", amount = 666)
                 }
 
-                println("It was updated: ${thingDao.get("3")}")
+                println("It was updated: ${thingRepository.get("3")}")
 
-                thingDao.update("3") { currentThing ->
+                thingRepository.update("3") { currentThing ->
                     currentThing.copy(name = "we can do this again and again", amount = 666)
                 }
 
-                println("It was updated again ${thingDao.get("3")}")
+                println("It was updated again ${thingRepository.get("3")}")
             }
 
             +"""
@@ -210,13 +213,13 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             blockWithOutput {
-                thingDao.index("4", Thing("First version of the thing", amount = 0))
+                thingRepository.index("4", Thing("First version of the thing", amount = 0))
 
                 try {
                     1.rangeTo(30).toList().parallelStream().forEach { n ->
                         // the maxUpdateTries parameter is optional and has a default value of 2
                         // so setting this to 0 and doing concurrent updates is going to fail
-                        thingDao.update("4", 0) { Thing("nr_$n") }
+                        thingRepository.update("4", 0) { Thing("nr_$n") }
                     }
                 } catch (e: Exception) {
                     println("It failed because we disabled retries and we got a conflict")
@@ -226,13 +229,13 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 Doing the same with 10 retries, fixes the problem.
             """
             blockWithOutput {
-                thingDao.index("5", Thing("First version of the thing", amount = 0))
+                thingRepository.index("5", Thing("First version of the thing", amount = 0))
 
                 1.rangeTo(30).toList().parallelStream().forEach { n ->
                     // but if we let it retry a few times, it will be eventually consistent
-                    thingDao.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
+                    thingRepository.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
                 }
-                println("All updates succeeded! amount = ${thingDao.get("5")?.amount}.")
+                println("All updates succeeded! amount = ${thingRepository.get("5")?.amount}.")
             }
 
             +"""
@@ -245,7 +248,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                uses Jackson to serialize and deserialize our `Thing` objects. 
                
                If you don't want the default Jackson based serialization, or if you want to customize the jackson 
-               object mapper, you simply create your own instance and pass it to the `IndexDAO`.
+               object mapper, you simply create your own instance and pass it to the `IndexRepository`.
             """
             block() {
                 // this is what is used by default but you can use your own implementation
@@ -254,9 +257,22 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     ObjectMapper().findAndRegisterModules()
                 )
 
-                val thingDao = esClient.crudDao<Thing>(
+                val thingRepository = esClient.indexRepository<Thing>(
                     index = "things", modelReaderAndWriter = modelReaderAndWriter)
             }
+
+            +"""
+                ## Co-routine support
+                
+                As with most of this library, the same functionality is also available in a co-routine friendly
+                variant `AsyncIndexRepository`. To use that, you need to use `esClient.asyncIndexRepository`. 
+                
+                This works almost the same as the synchronous version except all of the functions are marked as 
+                suspend on the `AsyncIndexRepository` class. To call these, you will need to call these from a
+                `CoRoutineScope`.
+
+                For more details on how to use co-routines, see ${mdLink(coroutinesPage)}
+            """.trimIndent()
         }
     }
 }

@@ -12,24 +12,30 @@
 <tr>
 <h5><a href="../io.inbot.eskotlinwrapper/-async-bulk-indexing-session/index.html">io.inbot.eskotlinwrapper.AsyncBulkIndexingSession</a></h5>
 <p>Asynchronous bulk indexing that uses the experimental Kotlin flows. Works similar to the synchronous version except
-it fires bulk requests asynchronously on the specified dispatcher. On paper using multiple threads, allows ES to
+it fires bulk requests asynchronously. On paper using multiple threads, allows ES to
 use multiple Threads to consume bulk requests.</p>
 </tr>
 <tr>
+<h5><a href="../io.inbot.eskotlinwrapper/-async-bulk-operation/index.html">io.inbot.eskotlinwrapper.AsyncBulkOperation</a></h5>
+</tr>
+<tr>
+<h5><a href="../io.inbot.eskotlinwrapper/-async-index-repository/index.html">io.inbot.eskotlinwrapper.AsyncIndexRepository</a></h5>
+<p>Repository abstraction that allows you to work with indices asynchronously via co-routines.</p>
+</tr>
+<tr>
 <h5><a href="../io.inbot.eskotlinwrapper/-bulk-indexing-session/index.html">io.inbot.eskotlinwrapper.BulkIndexingSession</a></h5>
-<p>Makes using bulk request easier. You can use this directly but you probably want to use it via <a href="../io.inbot.eskotlinwrapper/-index-d-a-o/index.html">IndexDAO</a>. Implements <code>AutoCloseable</code> to ensure all operations are processed.</p>
+<p>Makes using bulk request easier. You can use this directly but you probably want to use it via <a href="../io.inbot.eskotlinwrapper/-index-repository/index.html">IndexRepository</a>. Implements <code>AutoCloseable</code> to ensure all operations are processed.</p>
 </tr>
 <tr>
 <h5><a href="../io.inbot.eskotlinwrapper/-bulk-operation/index.html">io.inbot.eskotlinwrapper.BulkOperation</a></h5>
-<p>Bulk operation model used for e.g. <code>itemCallback</code>.</p>
 </tr>
 <tr>
  (extensions in package org.elasticsearch.action.search)
 <h5><a href="../org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/index.html">org.elasticsearch.client.core.CountRequest</a></h5>
 </tr>
 <tr>
-<h5><a href="../io.inbot.eskotlinwrapper/-index-d-a-o/index.html">io.inbot.eskotlinwrapper.IndexDAO</a></h5>
-<p>DAO (Data Access Object) abstraction that allows you to work with indices.</p>
+<h5><a href="../io.inbot.eskotlinwrapper/-index-repository/index.html">io.inbot.eskotlinwrapper.IndexRepository</a></h5>
+<p>Repository abstraction that allows you to work with indices.</p>
 </tr>
 <tr>
 <h5><a href="../io.inbot.eskotlinwrapper/-jackson-model-reader-and-writer/index.html">io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter</a></h5>
@@ -37,7 +43,7 @@ use multiple Threads to consume bulk requests.</p>
 </tr>
 <tr>
 <h5><a href="../io.inbot.eskotlinwrapper/-model-reader-and-writer/index.html">io.inbot.eskotlinwrapper.ModelReaderAndWriter</a></h5>
-<p>Implement this for custom serialization/deserialization of objects in your index. Use this in combination with a <a href="../io.inbot.eskotlinwrapper/-index-d-a-o/index.html">IndexDAO</a>.</p>
+<p>Implement this for custom serialization/deserialization of objects in your index. Use this in combination with a <a href="../io.inbot.eskotlinwrapper/-index-repository/index.html">IndexRepository</a>.</p>
 </tr>
 <tr>
 <h5><a href="../io.inbot.eskotlinwrapper/-paged-search-results/index.html">io.inbot.eskotlinwrapper.PagedSearchResults</a></h5>

@@ -10,27 +10,27 @@ For that, bulk indexing should be used. The bulk API in Elasticsearch is one of 
 in ES. The Kotlin client provides a few key abstractions to make bulk indexing easy, robust, 
 and straightforward.
 
-## Using the DAO to bulk index
+## Using the Repository to bulk index
 
-Again we use our `Thing` class and `thingDao`
+Again we use our `Thing` class and `thingRepository`
 
 ```kotlin
 data class Thing(val name: String, val amount: Long = 42)
 ```
 
 To make this easy, the library comes with a [`BulkIndexingSession`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSession.kt). This takes care
-of all the boiler plate of constructing and sending bulk requests. Of course, our `IndexDAO` provides a
+of all the boiler plate of constructing and sending bulk requests. Of course, our `IndexRepository` provides a
 simple `bulk` method that creates a session for you:
 
 ```kotlin
 // creates a BulkIndexingSession<Thing> and passes it to the block
-thingDao.bulk {
+thingRepository.bulk {
   1.rangeTo(500).forEach {
     index("doc-$it", Thing("indexed $it", 666))
   }
 }
 
-println("Lets get one of them " + thingDao.get("doc-100"))
+println("Lets get one of them " + thingRepository.get("doc-100"))
 ```
 
 Output:
@@ -49,7 +49,7 @@ course.
 In addition to `index` we have a few more operations.
 
 ```kotlin
-thingDao.bulk(bulkSize = 50) {
+thingRepository.bulk(bulkSize = 50) {
   // setting create=false overwrites and is the appropriate thing
   // to do if you are replacing documents in bulk
   index("doc-1", Thing("upserted 1", 666), create = false)
@@ -57,7 +57,7 @@ thingDao.bulk(bulkSize = 50) {
   // you can do a safe bulk update similar to the CRUD update.
   // this has the disadvantage of doing 1 get per item and may not scale
   getAndUpdate("doc-2") { currentVersion ->
-    // this works just like the update on the dao and it will retry a
+    // this works just like the update on the repository and it will retry a
     // configurable number of times.
     currentVersion.copy(name = "updated 2")
   }
@@ -80,11 +80,11 @@ thingDao.bulk(bulkSize = 50) {
 }
 
 
-println(thingDao.get("doc-1"))
-println(thingDao.get("doc-2"))
-println(thingDao.get("doc-3"))
+println(thingRepository.get("doc-1"))
+println(thingRepository.get("doc-2"))
+println(thingRepository.get("doc-3"))
 // should print null
-println(thingDao.get("doc-4"))
+println(thingRepository.get("doc-4"))
 ```
 
 Output:
@@ -113,7 +113,7 @@ For most users this should be OK but if you want, you can do something custom:
 There are a few more parameters that you can override.
 
 ```kotlin
-thingDao.bulk(
+thingRepository.bulk(
   // controls the number of items to send to Elasticsearch
   // what is optimal depends on the size of your documents and
   // your cluster setup.
@@ -140,7 +140,7 @@ thingDao.bulk(
 ```
 
 ```kotlin
-thingDao.bulk(
+thingRepository.bulk(
   itemCallback = object : (BulkOperation<Thing>, BulkItemResponse) -> Unit {
     // Elasticsearch confirms what it did for each item in a bulk request
     // and you can implement this callback to do something custom
@@ -165,7 +165,7 @@ thingDao.bulk(
     currentVersion.copy(name = "safely updated 3")
   }
 }
-println("" + thingDao.get("doc-2"))
+println("" + thingRepository.get("doc-2"))
 
 +"""
   # Other parameters
@@ -173,7 +173,7 @@ println("" + thingDao.get("doc-2"))
   There are a few more parameters that you can override.
 """
 blockWithOutput {
-  thingDao.bulk(
+  thingRepository.bulk(
     // controls the number of items to send to Elasticsearch
     // what is optimal depends on the size of your documents and
     // your cluster setup.

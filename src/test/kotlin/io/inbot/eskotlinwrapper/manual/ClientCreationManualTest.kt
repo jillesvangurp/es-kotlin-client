@@ -7,6 +7,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.create
 import org.junit.jupiter.api.Test
 
+@Suppress("UNUSED_VARIABLE")
 class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
     @Test

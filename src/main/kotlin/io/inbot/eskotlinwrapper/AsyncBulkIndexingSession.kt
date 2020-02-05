@@ -3,6 +3,7 @@ package io.inbot.eskotlinwrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -30,24 +31,29 @@ import org.elasticsearch.rest.RestStatus
 
 private val logger = KotlinLogging.logger {}
 
+data class AsyncBulkOperation<T : Any>(
+    val operation: DocWriteRequest<*>,
+    val id: String,
+    val updateFunction: suspend ((T) -> T) = {it},
+    val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit
+)
+
 /**
  * Asynchronous bulk indexing that uses the experimental Kotlin flows. Works similar to the synchronous version except
- * it fires bulk requests asynchronously on the specified dispatcher. On paper using multiple threads, allows ES to
+ * it fires bulk requests asynchronously. On paper using multiple threads, allows ES to
  * use multiple Threads to consume bulk requests.
  *
  * Note: you need the kotlin.Experimental flag set for this to work. As Flow is a bit in flux, I expect the internals of this may change still before they finalize this. So, beware when using this.
  *
- * Note. The design for this is still a bit in flux as this still depends on `@ExperimentalCoroutinesApi` and also
- * there are some issues with using `Channel.sendBlocking` internally.
  */
 @Suppress("unused")
-class AsyncBulkIndexingSession<T : Any> private constructor(
-    private val dao: IndexDAO<T>,
-    private val modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
+class AsyncBulkIndexingSession<T : Any> constructor(
+    private val repository: AsyncIndexRepository<T>,
+    private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
     private val retryConflictingUpdates: Int = 0,
-    private val operationChannel: SendChannel<BulkOperation<T>>,
-    private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-    private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
+    private val operationChannel: SendChannel<AsyncBulkOperation<T>>,
+    private val itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit),
+    private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
 ) {
     companion object {
         @ExperimentalCoroutinesApi
@@ -78,28 +84,42 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
         @ExperimentalCoroutinesApi
         suspend fun <T : Any> asyncBulk(
             client: RestHighLevelClient,
-            dao: IndexDAO<T>,
-            modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
+            repository: AsyncIndexRepository<T>,
+            modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
             bulkSize: Int = 100,
             retryConflictingUpdates: Int = 0,
             refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-            itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-            defaultRequestOptions: RequestOptions = dao.defaultRequestOptions,
-            block: AsyncBulkIndexingSession<T>.() -> Unit,
+            itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation,itemResponse ->
+                if (itemResponse.isFailed) {
+                    if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
+                        repository.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
+                        logger.debug { "retried updating ${operation.id} after version conflict" }
+                    } else {
+                        logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
+                    }
+                }
+            },
+            defaultRequestOptions: RequestOptions = repository.defaultRequestOptions,
+            block: suspend AsyncBulkIndexingSession<T>.() -> Unit,
             bulkDispatcher: CoroutineDispatcher?
         ) {
-            val flow = chunkFLow<BulkOperation<T>>(chunkSize = bulkSize) { channel ->
+            val flow = chunkFLow<AsyncBulkOperation<T>>(chunkSize = bulkSize) { channel ->
                 val session = AsyncBulkIndexingSession<T>(
-                    dao,
+                    repository,
                     modelReaderAndWriter,
                     retryConflictingUpdates,
                     channel,
                     itemCallback,
                     defaultRequestOptions
                 )
-                block.invoke(session)
-                // close the channel so the collector doesn't wait forever
-                channel.close()
+                launch {
+                    val asyncJob = async {
+                        block.invoke(session)
+                    }
+                    asyncJob.await()
+                    // close the channel so the collector doesn't wait forever
+                    channel.close()
+                }
             }.map { ops ->
                 val bulkRequest = BulkRequest()
                 bulkRequest.refreshPolicy = refreshPolicy
@@ -120,41 +140,25 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
         }
     }
 
-    private fun defaultItemResponseCallback(operation: BulkOperation<T>, itemResponse: BulkItemResponse) {
-        if (itemCallback == null) {
-            if (itemResponse.isFailed) {
-                if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                    dao.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction!!)
-                    logger.debug { "retried updating ${operation.id} after version conflict" }
-                } else {
-                    logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
-                }
-            }
-        } else {
-            itemCallback.invoke(operation, itemResponse)
-        }
-    }
-
     @Suppress("DEPRECATION") // we allow using types for now
     fun index(
         id: String,
         obj: T,
-        create: Boolean = true,
-        itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback
+        create: Boolean = true
     ) {
         val indexRequest = IndexRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
-        if (!dao.type.isNullOrBlank()) {
-            indexRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            indexRequest.type(repository.type)
         }
 
         operationChannel.sendBlocking(
-            BulkOperation(
-                indexRequest,
-                id,
+            AsyncBulkOperation(
+                operation = indexRequest,
+                id = id,
                 itemCallback = itemCallback
             )
         )
@@ -163,15 +167,14 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
     /**
      * Safe way to bulk update objects. Gets the object from the index first before applying the lambda to it to modify the existing object. If you set `retryConflictingUpdates` > 0, it will attempt to retry to get the latest document and apply the `updateFunction` if there is a version conflict.
      */
-    fun getAndUpdate(
+    suspend fun getAndUpdate(
         id: String,
-        itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback,
-        updateFunction: (T) -> T
+        updateFunction: suspend (T) -> T
     ) {
-        val pair = dao.getWithGetResponse(id)
+        val pair = repository.getWithGetResponse(id)
         if (pair != null) {
             val (retrieved, resp) = pair
-            update(id, resp.seqNo, resp.primaryTerm, retrieved, itemCallback, updateFunction)
+            update(id, resp.seqNo, resp.primaryTerm, retrieved, updateFunction)
         }
     }
 
@@ -179,26 +182,25 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
      * Bulk update objects. If you have the object (e.g. because you are processing the sequence of a scrolling search), you can update what you have in a safe way.  If you set `retryConflictingUpdates` > 0, it will retry by getting the latest version and re-applying the `updateFunction` in case of a version conflict.
      */
     @Suppress("DEPRECATION") // we allow using types for now
-    fun update(
+    suspend fun update(
         id: String,
         seqNo: Long,
         primaryTerms: Long,
         original: T,
-        itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback,
-        updateFunction: (T) -> T
+        updateFunction: suspend (T) -> T
     ) {
         val updateRequest = UpdateRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
             .detectNoop(true)
             .setIfSeqNo(seqNo)
             .setIfPrimaryTerm(primaryTerms)
             .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
-        if (!dao.type.isNullOrBlank()) {
-            updateRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            updateRequest.type(repository.type)
         }
         operationChannel.sendBlocking(
-            BulkOperation(
+            AsyncBulkOperation(
                 updateRequest,
                 id,
                 updateFunction = updateFunction,
@@ -214,15 +216,14 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
     fun delete(
         id: String,
         seqNo: Long? = null,
-        term: Long? = null,
-        itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback
+        term: Long? = null
     ) {
         val deleteRequest = DeleteRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
 
-        if (!dao.type.isNullOrBlank()) {
-            deleteRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            deleteRequest.type(repository.type)
         }
 
         if (seqNo != null) {
@@ -232,7 +233,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
             }
         }
         operationChannel.sendBlocking(
-            BulkOperation(
+            AsyncBulkOperation(
                 deleteRequest,
                 id,
                 itemCallback = itemCallback

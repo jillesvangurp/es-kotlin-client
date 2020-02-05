@@ -1,10 +1,10 @@
 package io.inbot.eskotlinwrapper
 
-import kotlin.reflect.KClass
 import org.elasticsearch.search.SearchHit
+import kotlin.reflect.KClass
 
 /**
- * Implement this for custom serialization/deserialization of objects in your index. Use this in combination with a [IndexDAO].
+ * Implement this for custom serialization/deserialization of objects in your index. Use this in combination with a [IndexRepository].
  */
 interface ModelReaderAndWriter<T : Any> {
     val clazz: KClass<T>

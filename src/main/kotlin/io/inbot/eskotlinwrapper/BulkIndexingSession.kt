@@ -1,10 +1,5 @@
 package io.inbot.eskotlinwrapper
 
-import java.util.concurrent.ConcurrentLinkedDeque
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
@@ -17,14 +12,26 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 private val logger = KotlinLogging.logger {}
 
+data class BulkOperation<T : Any>(
+    val operation: DocWriteRequest<*>,
+    val id: String,
+    val updateFunction: ((T) -> T)? = null,
+    val itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
+)
+
 /**
- * Makes using bulk request easier. You can use this directly but you probably want to use it via [IndexDAO]. Implements `AutoCloseable` to ensure all operations are processed.
+ * Makes using bulk request easier. You can use this directly but you probably want to use it via [IndexRepository]. Implements `AutoCloseable` to ensure all operations are processed.
  *
  * ```
- * dao.bulk() {
+ * repository.bulk() {
  *   index("xxx",myObject)
  *   index("yyy",anotherObject)
  *   delete("zzz")*
@@ -32,24 +39,24 @@ private val logger = KotlinLogging.logger {}
  * ```
  *
  * @param client
- * @param dao
- * @param modelReaderAndWriter Defaults to the one configured on the dao.
+ * @param repository
+ * @param modelReaderAndWriter Defaults to the one configured on the repository.
  * @param bulkSize override this to change the bulk page size (the number of items sent to ES with one request).
  * @param retryConflictingUpdates the default `itemCallback` is capable of retrying updates. When retrying it will get the document and try again. The default for this is 0.
  * @param refreshPolicy The bulk API returns a response that contains a per item response. This callback facilitates dealing with e.g. failures. The default implementation does logging and update retries.
- * @param itemCallback Override request options if you need to. Defaults to those configured on the dao.
- * @param defaultRequestOptions Defaults to what you configured on the `dao`
+ * @param itemCallback Override request options if you need to. Defaults to those configured on the repository.
+ * @param defaultRequestOptions Defaults to what you configured on the repository
  *
  */
 class BulkIndexingSession<T : Any>(
     private val client: RestHighLevelClient,
-    private val dao: IndexDAO<T>,
-    private val modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
+    private val repository: IndexRepository<T>,
+    private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
     private val bulkSize: Int = 100,
     private val retryConflictingUpdates: Int = 0,
     private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
     private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-    private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
+    private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
 
 ) : AutoCloseable {
     // adding things to a request should be thread safe
@@ -63,7 +70,7 @@ class BulkIndexingSession<T : Any>(
         if (itemCallback == null) {
             if (itemResponse.isFailed) {
                 if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                    dao.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction!!)
+                    repository.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction!!)
                     logger.debug { "retried updating ${operation.id} after version conflict" }
                 } else {
                     logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
@@ -83,12 +90,12 @@ class BulkIndexingSession<T : Any>(
     fun index(id: String, obj: T, create: Boolean = true, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val indexRequest = IndexRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
-        if (!dao.type.isNullOrBlank()) {
-            indexRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            indexRequest.type(repository.type)
         }
         rwLock.read { page.add(
             BulkOperation(
@@ -104,7 +111,7 @@ class BulkIndexingSession<T : Any>(
      * Safe way to bulk update objects. Gets the object from the index first before applying the lambda to it to modify the existing object. If you set `retryConflictingUpdates` > 0, it will attempt to retry to get the latest document and apply the `updateFunction` if there is a version conflict.
      */
     fun getAndUpdate(id: String, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
-        val pair = dao.getWithGetResponse(id)
+        val pair = repository.getWithGetResponse(id)
         if (pair != null) {
             val (retrieved, resp) = pair
             update(id, resp.seqNo, resp.primaryTerm, retrieved, itemCallback, updateFunction)
@@ -118,14 +125,14 @@ class BulkIndexingSession<T : Any>(
     fun update(id: String, seqNo: Long, primaryTerms: Long, original: T, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
         check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val updateRequest = UpdateRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
             .detectNoop(true)
             .setIfSeqNo(seqNo)
             .setIfPrimaryTerm(primaryTerms)
             .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
-        if (!dao.type.isNullOrBlank()) {
-            updateRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            updateRequest.type(repository.type)
         }
         rwLock.read { page.add(
             BulkOperation(
@@ -145,11 +152,11 @@ class BulkIndexingSession<T : Any>(
     fun delete(id: String, seqNo: Long? = null, term: Long? = null, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val deleteRequest = DeleteRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
 
-        if (!dao.type.isNullOrBlank()) {
-            deleteRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            deleteRequest.type(repository.type)
         }
 
         if (seqNo != null) {

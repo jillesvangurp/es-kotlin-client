@@ -2,7 +2,7 @@ package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import org.elasticsearch.action.search.source
-import org.elasticsearch.client.crudDao
+import org.elasticsearch.client.indexRepository
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
@@ -66,13 +66,14 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 // given some model class
                 data class Thing(val name: String, val amount: Long = 42)
 
-                // create a DAO (Data Access Object)
+                // create a Repository
                 // use the default jackson model reader and writer (you can customize)
                 // opt in to refreshes (we don't want this in production code) so we can test
-                val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
+                val thingRepository = esClient.indexRepository<Thing>(
+                    "things", refreshAllowed = true)
 
-                // let the DAO create the index
-                thingDao.createIndex {
+                // let the Repository create the index
+                thingRepository.createIndex {
                     source(
                         """
                             {
@@ -96,19 +97,19 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 }
 
                 // put some things in our new index
-                thingDao.index("1", Thing("foo", 42))
-                thingDao.index("2", Thing("bar", 42))
-                thingDao.index("3", Thing("foobar", 42))
+                thingRepository.index("1", Thing("foo", 42))
+                thingRepository.index("2", Thing("bar", 42))
+                thingRepository.index("3", Thing("foobar", 42))
 
                 // make sure ES commits this so we can search
-                thingDao.refresh()
+                thingRepository.refresh()
 
                 // now lets do a little bit of reindexing logic that
                 // shows off scrolling searches using plain json and bulk indexing
-                thingDao.bulk {
+                thingRepository.bulk {
                     // we are passed a BulkIndexingSession<Thing> in the block
 
-                    thingDao.search(scrolling = true) {
+                    thingRepository.search(scrolling = true) {
                         // we are given a SearchRequest in the block
                         source("""
                             {

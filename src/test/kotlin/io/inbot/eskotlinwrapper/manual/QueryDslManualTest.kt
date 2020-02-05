@@ -3,7 +3,7 @@ package io.inbot.eskotlinwrapper.manual
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
-import org.elasticsearch.client.crudDao
+import org.elasticsearch.client.indexRepository
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.elasticsearch.index.query.QueryBuilders.matchQuery
@@ -16,10 +16,10 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
     @Test
     fun `query dsl manual`() {
         // we have to do this twice once for printing and once for using :-)
-        val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
+        val thingRepository = esClient.indexRepository<Thing>("things", refreshAllowed = true)
         // make sure we get rid of the things index before running the rest of this
-        thingDao.deleteIndex()
-        thingDao.createIndex {
+        thingRepository.deleteIndex()
+        thingRepository.createIndex {
             source(
                 """
                             {
@@ -43,7 +43,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         """, XContentType.JSON
             )
         }
-        thingDao.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
+        thingRepository.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
             index("1", Thing("The quick brown fox"))
             index("2", Thing("The quick brown emu"))
             index("3", Thing("The quick brown gnu"))
@@ -67,7 +67,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             blockWithOutput {
-                val results = thingDao.search {
+                val results = thingRepository.search {
 
                     source(
                         searchSource()
@@ -88,7 +88,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             blockWithOutput {
 
                 // more idomatic Kotlin using apply { ... }
-                val results = thingDao.search {
+                val results = thingRepository.search {
                     source(searchSource().apply {
                         query(
                             boolQuery().apply {
@@ -110,7 +110,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             blockWithOutput {
 
                 // more idomatic Kotlin using apply { ... }
-                val results = thingDao.search {
+                val results = thingRepository.search {
                     // one of our extension functions gets rid of a bit of ugliness here
                     source {
                         query(

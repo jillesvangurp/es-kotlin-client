@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 public class JavaSupportTest {
-    private IndexDAO<TestBean> dao;
+    private IndexRepository<TestBean> dao;
 
     @BeforeEach
     public void before() {
@@ -37,7 +37,7 @@ public class JavaSupportTest {
         );
         // no extension functions but they can still be used
         String index = "test-" + randomId();
-        dao = KotlinExtensionsKt.createCrudDao(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, RequestOptions.DEFAULT);
+        dao = KotlinExtensionsKt.createIndexRepository(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, RequestOptions.DEFAULT);
     }
 
     @Test

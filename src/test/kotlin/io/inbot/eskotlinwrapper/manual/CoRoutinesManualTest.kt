@@ -4,23 +4,24 @@ import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.ActionListener
 import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.crudDao
+import org.elasticsearch.client.indexRepository
 import org.elasticsearch.client.indices.ReloadAnalyzersRequest
 import org.elasticsearch.client.indices.ReloadAnalyzersResponse
 import org.elasticsearch.client.reloadAnalyzersAsync
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
+@Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 class CoRoutinesManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
     private data class Thing(val title: String)
 
     @Test
     fun `coroutines manual`() {
         // we have to do this twice once for printing and once for using :-)
-        val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
+        val thingRepository = esClient.indexRepository<Thing>("things", refreshAllowed = true)
         // make sure we get rid of the things index before running the rest of this
-        thingDao.deleteIndex()
-        thingDao.createIndex {
+        thingRepository.deleteIndex()
+        thingRepository.createIndex {
             source(
                 """
                             {
@@ -97,57 +98,6 @@ class CoRoutinesManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                         ReloadAnalyzersRequest("myindex"), RequestOptions.DEFAULT)
                 }
             }
-
-//            +"""
-//                This works the same for all the async functions in the Java client.
-//
-//                ## IndexDAO Async
-//
-//                Of course, ${mdLink(IndexDAO::class)} has async functions as well and using that works
-//                exactly the same as the synchronous version.
-//            """
-//
-//            blockWithOutput {
-//                runBlocking {
-//                    // simply use async versions the same way as you would use the
-//                    // regular versions and it will suspend at the appropriate moments
-//                    thingDao.bulkAsync(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
-//                        1.rangeTo(50).forEach {
-//                            index("$it",Thing("document $it"))
-//                        }
-//                    }
-//
-//                    println("We indexed  ${thingDao.countAsync()} things asynchronously")
-//                }
-//            }
-//
-//            +"""
-//                Another useful application might be doing several searches asynchronously and then combining their results.
-//            """
-//
-//            blockWithOutput {
-//                runBlocking {
-//                    // asynchronously do a few searches
-//
-//                    val combinedTotals = 0.until(5).map {
-//                        async {
-//                            thingDao.searchAsync {
-//                                source {
-//                                    from(it*5)
-//                                    size(5)
-//                                    val q = QueryBuilders.matchPhrasePrefixQuery("title", "docu")
-//                                    query(q)
-//                                }
-//                            }
-//                        }
-//                    }.map {
-//                        // get each result and extract the number of hits
-//                        it.await().mappedHits.count()
-//                    }.reduce { l, r->l+r}
-//
-//                    println("We fetched $combinedTotals Things")
-//                }
-//            }
 
             +"""
                 ## Development status

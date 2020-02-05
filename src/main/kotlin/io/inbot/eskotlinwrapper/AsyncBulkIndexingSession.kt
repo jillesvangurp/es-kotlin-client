@@ -2,6 +2,7 @@ package io.inbot.eskotlinwrapper
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
@@ -30,6 +31,13 @@ import org.elasticsearch.rest.RestStatus
 
 private val logger = KotlinLogging.logger {}
 
+data class AsyncBulkOperation<T : Any>(
+    val operation: DocWriteRequest<*>,
+    val id: String,
+    val updateFunction: suspend ((T) -> T) = {it},
+    val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit
+)
+
 /**
  * Asynchronous bulk indexing that uses the experimental Kotlin flows. Works similar to the synchronous version except
  * it fires bulk requests asynchronously. On paper using multiple threads, allows ES to
@@ -40,14 +48,15 @@ private val logger = KotlinLogging.logger {}
  */
 @Suppress("unused")
 class AsyncBulkIndexingSession<T : Any> constructor(
-    private val dao: AsyncIndexDAO<T>,
-    private val modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
+    private val repository: AsyncIndexRepository<T>,
+    private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
     private val retryConflictingUpdates: Int = 0,
     private val operationChannel: SendChannel<AsyncBulkOperation<T>>,
     private val itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit),
-    private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
+    private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
 ) {
     companion object {
+        @ExperimentalCoroutinesApi
         private fun <T> chunkFLow(
             chunkSize: Int = 20,
             producerBlock: CoroutineScope.(channel: SendChannel<T>) -> Unit
@@ -72,30 +81,31 @@ class AsyncBulkIndexingSession<T : Any> constructor(
                 }
             }
 
+        @ExperimentalCoroutinesApi
         suspend fun <T : Any> asyncBulk(
             client: RestHighLevelClient,
-            dao: AsyncIndexDAO<T>,
-            modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
+            repository: AsyncIndexRepository<T>,
+            modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
             bulkSize: Int = 100,
             retryConflictingUpdates: Int = 0,
             refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
             itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation,itemResponse ->
                 if (itemResponse.isFailed) {
                     if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                        dao.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
+                        repository.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
                         logger.debug { "retried updating ${operation.id} after version conflict" }
                     } else {
                         logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
                     }
                 }
             },
-            defaultRequestOptions: RequestOptions = dao.defaultRequestOptions,
+            defaultRequestOptions: RequestOptions = repository.defaultRequestOptions,
             block: suspend AsyncBulkIndexingSession<T>.() -> Unit,
             bulkDispatcher: CoroutineDispatcher?
         ) {
             val flow = chunkFLow<AsyncBulkOperation<T>>(chunkSize = bulkSize) { channel ->
                 val session = AsyncBulkIndexingSession<T>(
-                    dao,
+                    repository,
                     modelReaderAndWriter,
                     retryConflictingUpdates,
                     channel,
@@ -137,12 +147,12 @@ class AsyncBulkIndexingSession<T : Any> constructor(
         create: Boolean = true
     ) {
         val indexRequest = IndexRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
             .create(create)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
-        if (!dao.type.isNullOrBlank()) {
-            indexRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            indexRequest.type(repository.type)
         }
 
         operationChannel.sendBlocking(
@@ -161,7 +171,7 @@ class AsyncBulkIndexingSession<T : Any> constructor(
         id: String,
         updateFunction: suspend (T) -> T
     ) {
-        val pair = dao.getWithGetResponse(id)
+        val pair = repository.getWithGetResponse(id)
         if (pair != null) {
             val (retrieved, resp) = pair
             update(id, resp.seqNo, resp.primaryTerm, retrieved, updateFunction)
@@ -180,14 +190,14 @@ class AsyncBulkIndexingSession<T : Any> constructor(
         updateFunction: suspend (T) -> T
     ) {
         val updateRequest = UpdateRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
             .detectNoop(true)
             .setIfSeqNo(seqNo)
             .setIfPrimaryTerm(primaryTerms)
             .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
-        if (!dao.type.isNullOrBlank()) {
-            updateRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            updateRequest.type(repository.type)
         }
         operationChannel.sendBlocking(
             AsyncBulkOperation(
@@ -209,11 +219,11 @@ class AsyncBulkIndexingSession<T : Any> constructor(
         term: Long? = null
     ) {
         val deleteRequest = DeleteRequest()
-            .index(dao.indexWriteAlias)
+            .index(repository.indexWriteAlias)
             .id(id)
 
-        if (!dao.type.isNullOrBlank()) {
-            deleteRequest.type(dao.type)
+        if (!repository.type.isNullOrBlank()) {
+            deleteRequest.type(repository.type)
         }
 
         if (seqNo != null) {

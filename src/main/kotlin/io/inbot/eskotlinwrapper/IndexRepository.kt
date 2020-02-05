@@ -1,11 +1,8 @@
 package io.inbot.eskotlinwrapper
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
-import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
@@ -20,28 +17,20 @@ import org.elasticsearch.client.Request
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.core.CountRequest
-import org.elasticsearch.client.countAsync
-import org.elasticsearch.client.createAsync
-import org.elasticsearch.client.deleteAsync
-import org.elasticsearch.client.getAliasAsync
-import org.elasticsearch.client.getAsync
-import org.elasticsearch.client.indexAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.search
-import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
-import org.elasticsearch.rest.RestStatus
 
 private val logger = KotlinLogging.logger {}
 
 /**
- * DAO (Data Access Object) abstraction that allows you to work with indices asynchronously via co-routines.
+ * Repository abstraction that allows you to work with indices.
  *
- * You should create a DAO for each index you work with. You need to specify a [ModelReaderAndWriter] for serialization and deserialization.
+ * You should create a Repository for each index you work with. You need to specify a [ModelReaderAndWriter] for serialization and deserialization.
  *
- * @see `RestHighLevelClient.crudDao` for a convenient way to create a dao.
+ * @see `RestHighLevelClient.indexRepository` for a convenient way to create a repository.
  *
  * @param T the type of the object that is stored in the index.
  * @param indexName name of the index
@@ -50,10 +39,10 @@ private val logger = KotlinLogging.logger {}
  * @param type the type of the documents in the index; defaults to null. Since ES 6, there can only be one type. Types are deprecated in ES 7 and removed in ES 8.
  * @param modelReaderAndWriter serialization of your model class.
  * @param refreshAllowed if false, the refresh will throw an exception. Defaults to false.
- * @param defaultRequestOptions passed on all API calls. Defaults to `RequestOptions.DEFAULT`. Use this to set custom headers or override on each call on the dao.
+ * @param defaultRequestOptions passed on all API calls. Defaults to `RequestOptions.DEFAULT`. Use this to set custom headers or override on each call on the repository.
  *
  */
-class AsyncIndexDAO<T : Any>(
+class IndexRepository<T : Any>(
     val indexName: String,
     private val client: RestHighLevelClient,
     internal val modelReaderAndWriter: ModelReaderAndWriter<T>,
@@ -74,26 +63,27 @@ class AsyncIndexDAO<T : Any>(
      * }
      * ```
      */
-    suspend fun createIndex(
+    fun createIndex(
         requestOptions: RequestOptions = this.defaultRequestOptions,
         waitForActiveShards: ActiveShardCount? = null,
-        block: suspend CreateIndexRequest.() -> Unit
+        block: CreateIndexRequest.() -> Unit
     ) {
+
         val indexRequest = CreateIndexRequest(indexName)
         if (waitForActiveShards != null) {
             indexRequest.waitForActiveShards(waitForActiveShards)
         }
         block.invoke(indexRequest)
 
-        client.indices().createAsync(indexRequest, requestOptions)
+        client.indices().create(indexRequest, requestOptions)
     }
 
     /**
-     * Delete the index associated with the dao. Returns true if successful or false if the index did not exist
+     * Delete the index associated with the repository. Returns true if successful or false if the index did not exist
      */
-    suspend fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions): Boolean {
+    fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions): Boolean {
         return try {
-            client.indices().deleteAsync(DeleteIndexRequest(indexName), requestOptions)
+            client.indices().delete(DeleteIndexRequest(indexName), requestOptions)
             true
         } catch (e: ElasticsearchStatusException) {
             if (e.status().status == 404) {
@@ -109,8 +99,8 @@ class AsyncIndexDAO<T : Any>(
     /**
      * Returns a set of the current `AliasMetaData` associated with the `indexName`.
      */
-    suspend fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetaData> {
-        return client.indices().getAliasAsync(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName]
+    fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetaData> {
+        return client.indices().getAlias(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName]
             ?: throw IllegalStateException("Inde $indexName does not exist")
     }
 
@@ -121,7 +111,7 @@ class AsyncIndexDAO<T : Any>(
      * [update] which does this for you.
      */
     @Suppress("DEPRECATION")
-    suspend fun index(
+    fun index(
         id: String,
         obj: T,
         create: Boolean = true,
@@ -141,7 +131,7 @@ class AsyncIndexDAO<T : Any>(
             indexRequest.setIfSeqNo(seqNo)
             indexRequest.setIfPrimaryTerm(primaryTerm ?: throw IllegalArgumentException("you must also set primaryTerm when setting a seqNo"))
         }
-        client.indexAsync(
+        client.index(
             indexRequest, requestOptions
         )
     }
@@ -151,20 +141,20 @@ class AsyncIndexDAO<T : Any>(
      *
      * if [maxUpdateTries] > 0, it will deal with version conflicts (e.g. due to concurrent updates) by retrying with the latest version.
      */
-    suspend fun update(
+    fun update(
         id: String,
         maxUpdateTries: Int = 2,
         requestOptions: RequestOptions = this.defaultRequestOptions,
-        transformFunction: suspend (T) -> T
+        transformFunction: (T) -> T
     ) {
         update(0, id, transformFunction, maxUpdateTries, requestOptions)
     }
 
     @Suppress("DEPRECATION")
-    private suspend fun update(
+    private fun update(
         tries: Int,
         id: String,
-        transformFunction: suspend (T) -> T,
+        transformFunction: (T) -> T,
         maxUpdateTries: Int,
         requestOptions: RequestOptions
 
@@ -176,7 +166,7 @@ class AsyncIndexDAO<T : Any>(
             }
 
             val response =
-                client.getAsync(getRequest, requestOptions)
+                client.get(getRequest, requestOptions)
 
             val sourceAsBytes = response.sourceAsBytes
             if (sourceAsBytes != null) {
@@ -211,20 +201,20 @@ class AsyncIndexDAO<T : Any>(
      * Deletes the object object identified by `id`.
      */
     @Suppress("DEPRECATION")
-    suspend fun delete(id: String, requestOptions: RequestOptions = this.defaultRequestOptions) {
+    fun delete(id: String, requestOptions: RequestOptions = this.defaultRequestOptions) {
         val deleteRequest = DeleteRequest().index(indexWriteAlias).id(id)
         if (!type.isNullOrBlank()) {
             deleteRequest.type(type)
         }
 
-        client.deleteAsync(deleteRequest, requestOptions)
+        client.delete(deleteRequest, requestOptions)
     }
 
     /**
      * Returns the deserialized [T] for the document identified by `id`.
      */
 
-    suspend fun get(id: String): T? {
+    fun get(id: String): T? {
         return getWithGetResponse(id)?.first
     }
 
@@ -232,7 +222,7 @@ class AsyncIndexDAO<T : Any>(
      * Returns a `Pair` of the deserialized [T] and the `GetResponse` with all the relevant metadata.
      */
     @Suppress("DEPRECATION")
-    suspend fun getWithGetResponse(
+    fun getWithGetResponse(
         id: String,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ): Pair<T, GetResponse>? {
@@ -241,7 +231,7 @@ class AsyncIndexDAO<T : Any>(
             getRequest.type(type)
         }
 
-        val response = client.getAsync(getRequest, requestOptions)
+        val response = client.get(getRequest, requestOptions)
         val sourceAsBytes = response.sourceAsBytes
 
         if (sourceAsBytes != null) {
@@ -263,41 +253,51 @@ class AsyncIndexDAO<T : Any>(
      * See [BulkIndexingSession] for the meaning of the other parameters.
      *
      */
-    suspend fun bulk(
+    fun bulk(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation,itemResponse ->
-            if (itemResponse.isFailed) {
-                if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                    update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
-                    logger.debug { "retried updating ${operation.id} after version conflict" }
-                } else {
-                    logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
-                }
-            }
-        },
-        bulkDispatcher: CoroutineDispatcher? = null,
-        operationsBlock: suspend AsyncBulkIndexingSession<T>.() -> Unit
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        operationsBlock: BulkIndexingSession<T>.(session: BulkIndexingSession<T>) -> Unit
     ) {
-        AsyncBulkIndexingSession.asyncBulk(
+        val indexer = bulkIndexer(
             bulkSize = bulkSize,
             retryConflictingUpdates = retryConflictingUpdates,
             refreshPolicy = refreshPolicy,
-            itemCallback = itemCallback,
-            client = this.client,
-            bulkDispatcher = bulkDispatcher,
-            dao = this,
-            block = operationsBlock
+            itemCallback = itemCallback
         )
+        // autocloseable so we flush all the items ...
+        indexer.use {
+            operationsBlock.invoke(indexer, indexer)
+        }
     }
+
+    /**
+     * Returns a [BulkIndexingSession] for this repository. See [BulkIndexingSession] for the meaning of the other parameters.
+     */
+    fun bulkIndexer(
+        bulkSize: Int = 100,
+        retryConflictingUpdates: Int = 0,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        requestOptions: RequestOptions = this.defaultRequestOptions
+    ) = BulkIndexingSession(
+        client,
+        this,
+        modelReaderAndWriter,
+        bulkSize,
+        retryConflictingUpdates = retryConflictingUpdates,
+        refreshPolicy = refreshPolicy,
+        itemCallback = itemCallback,
+        defaultRequestOptions = requestOptions
+    )
 
     /**
      * Call the refresh API on elasticsearch. You should not use this other than in tests. E.g. when testing search
      * queries, you often want to refresh after indexing before calling search
      *
      * Throws UnsupportedOperationException if you do not explicitly opt in to this by setting the `refreshAllowed` to
-     * true when creating the dao.
+     * true when creating the repository.
      */
     fun refresh() {
         if (refreshAllowed) {
@@ -346,35 +346,10 @@ class AsyncIndexDAO<T : Any>(
         }
     }
 
-    /**
-     * Perform an asynchronous search against your index. Works similar to [search] but does not support scrolling
-     * searches currently.
-     */
-    suspend fun searchAsync(
-        requestOptions: RequestOptions = this.defaultRequestOptions,
-        block: SearchRequest.() -> Unit
-    ): SearchResults<T> {
-        // FIXME figure out how to return a scrolling of this with scrolling search and a suspending sequence
-
-        val searchResponse = client.searchAsync(requestOptions) {
-            indices(indexReadAlias)
-
-            block.invoke(this)
-        }
-        return PagedSearchResults(searchResponse, modelReaderAndWriter)
-    }
-
     fun count(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
         val request = CountRequest(indexReadAlias)
         block.invoke(request)
         val response = client.count(request, requestOptions)
         return response.count
-    }
-
-    suspend fun countAsync(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
-        val request = CountRequest(indexReadAlias)
-        block.invoke(request)
-        val resp = client.countAsync(request,requestOptions)
-        return resp.count
     }
 }

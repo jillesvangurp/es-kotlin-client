@@ -14,7 +14,7 @@ open class AbstractAsyncElasticSearchTest(
     val createIndex: Boolean = true,
     val deleteIndexAfterTest: Boolean = true
 ) {
-    lateinit var dao: AsyncIndexDAO<TestModel>
+    lateinit var repository: AsyncIndexRepository<TestModel>
     lateinit var esClient: RestHighLevelClient
     lateinit var indexName: String
 
@@ -25,7 +25,7 @@ open class AbstractAsyncElasticSearchTest(
         // each test gets a fresh index
         indexName = "$indexPrefix-" + randomId()
 
-        dao = esClient.asyncIndexRepository(
+        repository = esClient.asyncIndexRepository(
             index = indexName,
             refreshAllowed = true,
             modelReaderAndWriter = JacksonModelReaderAndWriter(
@@ -37,7 +37,7 @@ open class AbstractAsyncElasticSearchTest(
         if (createIndex) {
             val settings = this.javaClass.getResource("/testmodel-settings.json").readText()
 
-            dao.createIndex {
+            repository.createIndex {
                 source(settings, XContentType.JSON)
             }
         }
@@ -47,7 +47,7 @@ open class AbstractAsyncElasticSearchTest(
     fun after() = runBlocking {
         // delete the index after the test
         if (deleteIndexAfterTest) {
-            dao.deleteIndex()
+            repository.deleteIndex()
         }
     }
 }

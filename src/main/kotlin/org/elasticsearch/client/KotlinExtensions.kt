@@ -1,7 +1,7 @@
 package org.elasticsearch.client
 
-import io.inbot.eskotlinwrapper.AsyncIndexDAO
-import io.inbot.eskotlinwrapper.IndexDAO
+import io.inbot.eskotlinwrapper.AsyncIndexRepository
+import io.inbot.eskotlinwrapper.IndexRepository
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending
@@ -85,12 +85,10 @@ fun RestHighLevelClient(
 ): RestHighLevelClient =
     create(host, port, https, user, password, useSniffer, sniffAfterFailureDelayMillis, sniffIntervalMillis)
 
-/**
- * Create a new Data Access Object (DAO), aka. repository class. If you've used J2EE style frameworks, you should be familiar with this pattern.
- *
- * This abstracts the business of telling the client which index to run against and serializing/deserializing documents in it.
- *
- */
+@Deprecated(
+    "Use indexRepository",
+    ReplaceWith("RestHighLevelClient.indexRepository(index,type,modelReaderAndWriter,refreshAllowed,readAlias,writeAlias,defaultRequestOptions)")
+)
 inline fun <reified T : Any> RestHighLevelClient.crudDao(
     index: String,
     modelReaderAndWriter: ModelReaderAndWriter<T> = JacksonModelReaderAndWriter.create<T>(),
@@ -99,8 +97,36 @@ inline fun <reified T : Any> RestHighLevelClient.crudDao(
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
     defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
-): IndexDAO<T> {
-    return IndexDAO(
+): IndexRepository<T> {
+    return IndexRepository(
+        indexName = index,
+        client = this,
+        modelReaderAndWriter = modelReaderAndWriter,
+        refreshAllowed = refreshAllowed,
+        type = type,
+        indexReadAlias = readAlias,
+        indexWriteAlias = writeAlias,
+        defaultRequestOptions = defaultRequestOptions
+
+    )
+}
+
+/**
+ * Create a new Index Repository. If you've used enterprise frameworks, you should be familiar with this pattern.
+ *
+ * This abstracts the business of telling the client which index to run against and serializing/deserializing documents in it.
+ *
+ */
+inline fun <reified T : Any> RestHighLevelClient.indexRepository(
+    index: String,
+    modelReaderAndWriter: ModelReaderAndWriter<T> = JacksonModelReaderAndWriter.create<T>(),
+    type: String = "_doc",
+    readAlias: String = index,
+    writeAlias: String = index,
+    refreshAllowed: Boolean = false,
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+): IndexRepository<T> {
+    return IndexRepository(
         indexName = index,
         client = this,
         modelReaderAndWriter = modelReaderAndWriter,
@@ -121,8 +147,8 @@ inline fun <reified T : Any> RestHighLevelClient.asyncIndexRepository(
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
     defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
-): AsyncIndexDAO<T> {
-    return AsyncIndexDAO(
+): AsyncIndexRepository<T> {
+    return AsyncIndexRepository(
         indexName = index,
         client = this,
         modelReaderAndWriter = modelReaderAndWriter,
@@ -136,14 +162,16 @@ inline fun <reified T : Any> RestHighLevelClient.asyncIndexRepository(
 }
 
 // non reified version for Java users
-fun <T : Any> RestHighLevelClient.createCrudDao(index: String,
-                                          modelReaderAndWriter: ModelReaderAndWriter<T>,
-                                          type: String = "_doc",
-                                          readAlias: String = index,
-                                          writeAlias: String = index,
-                                          refreshAllowed: Boolean = false,
-                                          defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT): IndexDAO<T> {
-    return IndexDAO(
+fun <T : Any> RestHighLevelClient.createIndexRepository(
+    index: String,
+    modelReaderAndWriter: ModelReaderAndWriter<T>,
+    type: String = "_doc",
+    readAlias: String = index,
+    writeAlias: String = index,
+    refreshAllowed: Boolean = false,
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+): IndexRepository<T> {
+    return IndexRepository(
         indexName = index,
         client = this,
         modelReaderAndWriter = modelReaderAndWriter,
@@ -184,7 +212,7 @@ suspend fun RestHighLevelClient.searchAsync(
 }
 
 /**
- * Get the next page of a scrolling search. Note, use the DAO to do scrolling searches and avoid manually doing these requests.
+ * Get the next page of a scrolling search. Note, use the Repository to do scrolling searches and avoid manually doing these requests.
  */
 fun RestHighLevelClient.scroll(
     scrollId: String,
@@ -201,7 +229,7 @@ fun RestHighLevelClient.scroll(
 }
 
 /**
- * Clear the scroll after you are done. If you use the DAO for scrolling searches, this is called for you.
+ * Clear the scroll after you are done. If you use the Repository for scrolling searches, this is called for you.
  */
 fun RestHighLevelClient.clearScroll(
     vararg scrollIds: String,

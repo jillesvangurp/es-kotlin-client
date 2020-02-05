@@ -1,9 +1,11 @@
+@file:Suppress("unused")
+
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
-import org.elasticsearch.client.crudDao
+import org.elasticsearch.client.indexRepository
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
@@ -13,10 +15,10 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
     @Test
     fun `search manual`() {
         // we have to do this twice once for printing and once for using :-)
-        val thingDao = esClient.crudDao<Thing>("things", refreshAllowed = true)
+        val thingRepository = esClient.indexRepository<Thing>("things", refreshAllowed = true)
         // make sure we get rid of the things index before running the rest of this
-        thingDao.deleteIndex()
-        thingDao.createIndex {
+        thingRepository.deleteIndex()
+        thingRepository.createIndex {
             source(
                 """
                             {
@@ -53,7 +55,7 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
 
             block(true) {
                 // force ES to commit everything to disk so search works right away
-                thingDao.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
+                thingRepository.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
                     index("1", Thing("The quick brown fox"))
                     index("2", Thing("The quick brown emu"))
                     index("3", Thing("The quick brown gnu"))
@@ -70,7 +72,7 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
             """
             blockWithOutput {
                 // a SearchRequest is created and passed into the block
-                val results = thingDao.search {
+                val results = thingRepository.search {
                     // we can use templating
                     val text = "brown"
                     source("""
@@ -112,11 +114,11 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                 We can also query just to get a document count.
             """
             blockWithOutput {
-                println("The total number of documents is ${thingDao.count()}")
+                println("The total number of documents is ${thingRepository.count()}")
 
                 // like with search, we can pass in a JSON query
                 val query = "quick"
-                val count = thingDao.count {
+                val count = thingRepository.count {
                     source("""
                         {
                             "query": {
@@ -140,18 +142,18 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                 passing that to Elasticsearch to fetch subsequent pages of results. Scrolling is useful if
                 you want to process large amounts of results.
                 
-                To make scrolling easier and less tedious, the search method on the dao has a simpler solution: simply
-                set `scrolling` to `true`.
+                To make scrolling easier and less tedious, the search method on the repository 
+                has a simpler solution: simply set `scrolling` to `true`.
                  
                 A classic use case for using scrolls is to bulk update your documents. You can do this as follows. 
             """
 
             blockWithOutput {
-                thingDao.bulk {
+                thingRepository.bulk {
                     // simply set scrolling to true will allow us to scroll over the entire index
                     // this will scale no matter what the size of your index is. If you use
                     // scrolling, you can also set the ttl for the scroll (default is 1m)
-                    val results = thingDao.search(scrolling = true,scrollTtlInMinutes = 10) {
+                    val results = thingRepository.search(scrolling = true,scrollTtlInMinutes = 10) {
                         source("""
                             {
                                 "size": 10,

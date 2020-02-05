@@ -110,8 +110,8 @@ class AsyncBulkIndexingSessionTest : AbstractAsyncElasticSearchTest(indexPrefix 
 
     @Test
     fun `Instead of per operation callbacks you can also just use the same one for all operations`() {
-        val successes = mutableListOf<Any>()
         runBlocking {
+            val successes = mutableListOf<Any>()
             // instead of haveing a per operation callback, you can also tell the bulkIndexer to always use the same lambda
             dao.bulk(itemCallback = { operation, response ->
                 if (!response.isFailed) {
@@ -121,7 +121,7 @@ class AsyncBulkIndexingSessionTest : AbstractAsyncElasticSearchTest(indexPrefix 
                 this.index(randomId(), TestModel("another object"))
                 this.index(randomId(), TestModel("and another object"))
             }
+            assertThat(successes).hasSize(2)
         }
-        assertThat(successes).hasSize(2)
     }
 }

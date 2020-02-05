@@ -5,6 +5,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
+import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
@@ -31,6 +32,7 @@ import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.rest.RestStatus
 
 private val logger = KotlinLogging.logger {}
 
@@ -265,19 +267,28 @@ class AsyncIndexDAO<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = {_,_ -> },
+        itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation,itemResponse ->
+            if (itemResponse.isFailed) {
+                if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
+                    update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
+                    logger.debug { "retried updating ${operation.id} after version conflict" }
+                } else {
+                    logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
+                }
+            }
+        },
         bulkDispatcher: CoroutineDispatcher? = null,
         operationsBlock: suspend AsyncBulkIndexingSession<T>.() -> Unit
     ) {
-        val indexer = AsyncBulkIndexingSession.asyncBulk(
+        AsyncBulkIndexingSession.asyncBulk(
             bulkSize = bulkSize,
             retryConflictingUpdates = retryConflictingUpdates,
             refreshPolicy = refreshPolicy,
             itemCallback = itemCallback,
-            block = operationsBlock,
             client = this.client,
             bulkDispatcher = bulkDispatcher,
-            dao = this
+            dao = this,
+            block = operationsBlock
         )
     }
 

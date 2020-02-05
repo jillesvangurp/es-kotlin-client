@@ -44,24 +44,9 @@ class AsyncBulkIndexingSession<T : Any> constructor(
     private val modelReaderAndWriter: ModelReaderAndWriter<T> = dao.modelReaderAndWriter,
     private val retryConflictingUpdates: Int = 0,
     private val operationChannel: SendChannel<AsyncBulkOperation<T>>,
-    private val itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = {_,_ -> },
+    private val itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit),
     private val defaultRequestOptions: RequestOptions = dao.defaultRequestOptions
 ) {
-//    private suspend fun defaultItemResponseCallback(operation: AsyncBulkOperation<T>, itemResponse: BulkItemResponse) {
-//        if (itemCallback == null) {
-//            if (itemResponse.isFailed) {
-//                if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-//                    dao.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction!!)
-//                    logger.debug { "retried updating ${operation.id} after version conflict" }
-//                } else {
-//                    logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
-//                }
-//            }
-//        } else {
-//            itemCallback.invoke(operation, itemResponse)
-//        }
-//    }
-
     companion object {
         private fun <T> chunkFLow(
             chunkSize: Int = 20,
@@ -162,8 +147,9 @@ class AsyncBulkIndexingSession<T : Any> constructor(
 
         operationChannel.sendBlocking(
             AsyncBulkOperation(
-                indexRequest,
-                id
+                operation = indexRequest,
+                id = id,
+                itemCallback = itemCallback
             )
         )
     }
@@ -221,7 +207,6 @@ class AsyncBulkIndexingSession<T : Any> constructor(
         id: String,
         seqNo: Long? = null,
         term: Long? = null
-//        itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit = { o,r -> defaultItemResponseCallback(o,r) }
     ) {
         val deleteRequest = DeleteRequest()
             .index(dao.indexWriteAlias)

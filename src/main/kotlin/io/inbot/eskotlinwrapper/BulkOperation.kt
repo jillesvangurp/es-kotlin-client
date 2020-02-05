@@ -19,5 +19,5 @@ data class AsyncBulkOperation<T : Any>(
     val operation: DocWriteRequest<*>,
     val id: String,
     val updateFunction: suspend ((T) -> T) = {it},
-    val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
+    val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit
 )

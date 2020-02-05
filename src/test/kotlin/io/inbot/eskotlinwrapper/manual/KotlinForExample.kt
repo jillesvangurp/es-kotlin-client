@@ -11,17 +11,16 @@ private val logger: KLogger = KotlinLogging.logger { }
 
 fun mdLink(title: String, target: String) = "[$title]($target)"
 
+/**
+ * Simple abstraction for a page. Pages go in some output directory, have a title, and may or may not be part of a book.
+ */
 data class Page(
     val title: String,
     val fileName: String,
     val outputDir: String = "manual",
-//    val previous: String? = null
-//    val next: String? = null,
     val parent: String? = null,
     val emitBookPage: Boolean = false
-) {
-    val link = mdLink(title, fileName)
-}
+)
 
 fun mdLink(page: Page) = mdLink(page.title, page.fileName)
 
@@ -47,10 +46,39 @@ class KotlinForExample private constructor(
     }
 
     fun mdLink(clazz: KClass<*>): String {
-        val fileName = clazz.qualifiedName!!.replace("\\$.*?$".toRegex(), "").replace('.', File.separatorChar) + ".kt"
-
-        return mdLink("`${clazz.simpleName!!}`","$repoUrl/tree/master/${sourcePaths.map { File(it,fileName) }.first { it.exists() }.path}")
+        return mdLink("`${clazz.simpleName!!}`",
+            "$repoUrl/tree/master/${sourcePathForClass(clazz)}"
+        )
     }
+
+    fun snippetBlockFromClass(clazz: KClass<*>, snippetId: String) {
+        val fileName = sourcePathForClass(clazz)
+        val snippetLines = mutableListOf<String>()
+        val lines = File(fileName).readLines()
+        var inSnippet = false
+        for(line in lines) {
+            if(inSnippet && line.contains(snippetId)) {
+                break // break out of the loop
+            }
+            if(inSnippet) {
+                snippetLines.add(line)
+            }
+
+            if(!inSnippet && line.contains(snippetId)) {
+                inSnippet = true
+            }
+        }
+        if(snippetLines.size == 0) {
+            throw IllegalArgumentException("Snippet $snippetId not found in $fileName")
+        }
+        mdCodeBlock(snippetLines.joinToString("\n").trimIndent())
+    }
+
+    private fun sourcePathForClass(clazz: KClass<*>) =
+        sourcePaths.map { File(it, fileName(clazz)) }.first { it.exists() }.path
+
+    private fun fileName(clazz: KClass<*>) =
+        clazz.qualifiedName!!.replace("\\$.*?$".toRegex(), "").replace('.', File.separatorChar) + ".kt"
 
     fun mdLinkToSelf(title: String="Link to this source file"): String {
         val fn = this.sourceFileOfExampleCaller() ?: throw IllegalStateException("source file not found")
@@ -181,8 +209,10 @@ class KotlinForExample private constructor(
 
             File(page.outputDir).mkdirs()
             File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)
-            File("epub").mkdirs()
-            File("epub",page.fileName).writeText(md)
+            if(page.emitBookPage) {
+                File("epub").mkdirs()
+                File("epub", page.fileName).writeText(md)
+            }
         }
     }
 }

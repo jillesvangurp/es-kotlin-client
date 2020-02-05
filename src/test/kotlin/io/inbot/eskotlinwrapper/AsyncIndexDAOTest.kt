@@ -47,7 +47,7 @@ class AsyncIndexDAOTest : AbstractAsyncElasticSearchTest(indexPrefix = "crud") {
 
             val jobs = mutableListOf<Deferred<Any>>()
             // do some concurrent updates; without retries this will fail
-            for (n in 0.rangeTo(30)) {
+            for (n in 0.rangeTo(10)) {
                 // this requires using multiple threads otherwise the failures will pile up
                 jobs.add(async(Dispatchers.Unconfined) {
                     dao.update(id, 10) { TestModel("nr_$n") }

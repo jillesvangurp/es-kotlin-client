@@ -14,3 +14,10 @@ data class BulkOperation<T : Any>(
     val updateFunction: ((T) -> T)? = null,
     val itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
 )
+
+data class AsyncBulkOperation<T : Any>(
+    val operation: DocWriteRequest<*>,
+    val id: String,
+    val updateFunction: suspend ((T) -> T) = {it},
+    val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
+)

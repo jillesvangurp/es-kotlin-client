@@ -4,14 +4,11 @@ import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
-@ExperimentalCoroutinesApi
 class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
 
     @Test
@@ -137,29 +134,29 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
         assertThat(successes).hasSize(2)
     }
 
-    @Test
-    fun `async bulk test`() {
-        val successes = mutableListOf<Any>()
-        runBlocking {
-            val totalItems = 10000
-            dao.bulkAsync(
-                bulkSize = 200,
-                refreshPolicy = WriteRequest.RefreshPolicy.NONE,
-                itemCallback = { operation, response ->
-                    if (response.isFailed) {
-                        println(response.failureMessage)
-                    } else {
-                        // this only gets called if ES reports back with a success response
-                        successes.add(operation)
-                    }
-                }
-            ) {
-                (0 until totalItems).forEach {
-                    index(randomId(), TestModel("object $it"))
-                }
-            }
-            // ES has confirmed we have the exact number of items that we bulk indexed
-            assertThat(successes).hasSize(totalItems)
-        }
-    }
+//    @Test
+//    fun `async bulk test`() {
+//        val successes = mutableListOf<Any>()
+//        runBlocking {
+//            val totalItems = 10000
+//            dao.bulkAsync(
+//                bulkSize = 200,
+//                refreshPolicy = WriteRequest.RefreshPolicy.NONE,
+//                itemCallback = { operation, response ->
+//                    if (response.isFailed) {
+//                        println(response.failureMessage)
+//                    } else {
+//                        // this only gets called if ES reports back with a success response
+//                        successes.add(operation)
+//                    }
+//                }
+//            ) {
+//                (0 until totalItems).forEach {
+//                    index(randomId(), TestModel("object $it"))
+//                }
+//            }
+//            // ES has confirmed we have the exact number of items that we bulk indexed
+//            assertThat(successes).hasSize(totalItems)
+//        }
+//    }
 }

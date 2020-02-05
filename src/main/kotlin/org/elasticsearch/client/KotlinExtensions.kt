@@ -1,5 +1,6 @@
 package org.elasticsearch.client
 
+import io.inbot.eskotlinwrapper.AsyncIndexDAO
 import io.inbot.eskotlinwrapper.IndexDAO
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
@@ -111,6 +112,29 @@ inline fun <reified T : Any> RestHighLevelClient.crudDao(
 
     )
 }
+
+inline fun <reified T : Any> RestHighLevelClient.asyncIndexRepository(
+    index: String,
+    modelReaderAndWriter: ModelReaderAndWriter<T> = JacksonModelReaderAndWriter.create<T>(),
+    type: String = "_doc",
+    readAlias: String = index,
+    writeAlias: String = index,
+    refreshAllowed: Boolean = false,
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+): AsyncIndexDAO<T> {
+    return AsyncIndexDAO(
+        indexName = index,
+        client = this,
+        modelReaderAndWriter = modelReaderAndWriter,
+        refreshAllowed = refreshAllowed,
+        type = type,
+        indexReadAlias = readAlias,
+        indexWriteAlias = writeAlias,
+        defaultRequestOptions = defaultRequestOptions
+
+    )
+}
+
 // non reified version for Java users
 fun <T : Any> RestHighLevelClient.createCrudDao(index: String,
                                           modelReaderAndWriter: ModelReaderAndWriter<T>,

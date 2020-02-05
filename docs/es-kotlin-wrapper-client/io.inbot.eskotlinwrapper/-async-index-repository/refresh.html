@@ -1,0 +1,18 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AsyncIndexRepository.refresh - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="index.html">AsyncIndexRepository</a>&nbsp;/&nbsp;<a href="./refresh.html">refresh</a><br/>
+<br/>
+<h1>refresh</h1>
+<a name="io.inbot.eskotlinwrapper.AsyncIndexRepository$refresh()"></a>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">refresh</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Call the refresh API on elasticsearch. You should not use this other than in tests. E.g. when testing search
+queries, you often want to refresh after indexing before calling search</p>
+<p>Throws UnsupportedOperationException if you do not explicitly opt in to this by setting the <code>refreshAllowed</code> to
+true when creating the repository.</p>
+</BODY>
+</HTML>

@@ -13,7 +13,7 @@ examples that get us increasingly closer to a more idiomatic way of using Kotlin
 Using the same example index as we used earlier:
 
 ```kotlin
-val results = thingDao.search {
+val results = thingRepository.search {
 
   source(
     searchSource()
@@ -40,7 +40,7 @@ This is unfortunately quite ugly from a Kotlin point of view. Lets see if we can
 ```kotlin
 
 // more idomatic Kotlin using apply { ... }
-val results = thingDao.search {
+val results = thingRepository.search {
   source(searchSource().apply {
     query(
       boolQuery().apply {
@@ -67,7 +67,7 @@ This is better but still a little verbose. To improve on this, a few extension f
 ```kotlin
 
 // more idomatic Kotlin using apply { ... }
-val results = thingDao.search {
+val results = thingRepository.search {
   // one of our extension functions gets rid of a bit of ugliness here
   source {
     query(

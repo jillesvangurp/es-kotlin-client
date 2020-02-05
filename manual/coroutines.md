@@ -55,70 +55,9 @@ runBlocking {
 }
 ```
 
-This works the same for all the async functions in the Java client. 
-
-## IndexDAO Async
-
-Of course, [`IndexDAO`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/io/inbot/eskotlinwrapper/IndexDAO.kt) has async functions as well and using that works 
-exactly the same as the synchronous version.
-
-```kotlin
-runBlocking {
-  // simply use async versions the same way as you would use the
-  // regular versions and it will suspend at the appropriate moments
-  thingDao.bulkAsync(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
-    1.rangeTo(50).forEach {
-      index("$it",Thing("document $it"))
-    }
-  }
-
-  println("We indexed  ${thingDao.countAsync()} things asynchronously")
-}
-```
-
-Output:
-
-```
-We indexed  50 things asynchronously
-
-```
-
-Another useful application might be doing several searches asynchronously and then combining their results.
-
-```kotlin
-runBlocking {
-  // asynchronously do a few searches
-
-  val combinedTotals = 0.until(5).map {
-    async {
-      thingDao.searchAsync {
-        source {
-          from(it*5)
-          size(5)
-          val q = QueryBuilders.matchPhrasePrefixQuery("title", "docu")
-          query(q)
-        }
-      }
-    }
-  }.map {
-    // get each result and extract the number of hits
-    it.await().mappedHits.count()
-  }.reduce { l, r->l+r}
-
-  println("We fetched $combinedTotals Things")
-}
-```
-
-Output:
-
-```
-We fetched 25 Things
-
-```
-
 ## Development status
 
-Co-routine support is still somewhat experimental in this library and there may be more changes
+Co-routine support is still somewhat in flux in this library and there may be more changes
 related to this in future versions as our code generator evolves. E.g. `Flow` seems like it 
 could be useful when dealing with (scrolling) searches. Another topic of attention is using multiple
 threads for asynchronous bulk indexing to improve throughput.

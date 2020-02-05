@@ -18,16 +18,31 @@
 </td>
 <td>
 <p>Asynchronous bulk indexing that uses the experimental Kotlin flows. Works similar to the synchronous version except
-it fires bulk requests asynchronously on the specified dispatcher. On paper using multiple threads, allows ES to
+it fires bulk requests asynchronously. On paper using multiple threads, allows ES to
 use multiple Threads to consume bulk requests.</p>
 <code><span class="keyword">class </span><span class="identifier">AsyncBulkIndexingSession</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-async-bulk-operation/index.html">AsyncBulkOperation</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AsyncBulkOperation</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-async-index-repository/index.html">AsyncIndexRepository</a></h4>
+</td>
+<td>
+<p>Repository abstraction that allows you to work with indices asynchronously via co-routines.</p>
+<code><span class="keyword">class </span><span class="identifier">AsyncIndexRepository</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
 <h4><a href="-bulk-indexing-session/index.html">BulkIndexingSession</a></h4>
 </td>
 <td>
-<p>Makes using bulk request easier. You can use this directly but you probably want to use it via <a href="-index-d-a-o/index.html">IndexDAO</a>. Implements <code>AutoCloseable</code> to ensure all operations are processed.</p>
+<p>Makes using bulk request easier. You can use this directly but you probably want to use it via <a href="-index-repository/index.html">IndexRepository</a>. Implements <code>AutoCloseable</code> to ensure all operations are processed.</p>
 <code><span class="keyword">class </span><span class="identifier">BulkIndexingSession</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html"><span class="identifier">AutoCloseable</span></a></code></td>
 </tr>
 <tr>
@@ -35,16 +50,15 @@ use multiple Threads to consume bulk requests.</p>
 <h4><a href="-bulk-operation/index.html">BulkOperation</a></h4>
 </td>
 <td>
-<p>Bulk operation model used for e.g. <code>itemCallback</code>.</p>
 <code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">BulkOperation</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
-<h4><a href="-index-d-a-o/index.html">IndexDAO</a></h4>
+<h4><a href="-index-repository/index.html">IndexRepository</a></h4>
 </td>
 <td>
-<p>DAO (Data Access Object) abstraction that allows you to work with indices.</p>
-<code><span class="keyword">class </span><span class="identifier">IndexDAO</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+<p>Repository abstraction that allows you to work with indices.</p>
+<code><span class="keyword">class </span><span class="identifier">IndexRepository</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -59,7 +73,7 @@ use multiple Threads to consume bulk requests.</p>
 <h4><a href="-model-reader-and-writer/index.html">ModelReaderAndWriter</a></h4>
 </td>
 <td>
-<p>Implement this for custom serialization/deserialization of objects in your index. Use this in combination with a <a href="-index-d-a-o/index.html">IndexDAO</a>.</p>
+<p>Implement this for custom serialization/deserialization of objects in your index. Use this in combination with a <a href="-index-repository/index.html">IndexRepository</a>.</p>
 <code><span class="keyword">interface </span><span class="identifier">ModelReaderAndWriter</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>

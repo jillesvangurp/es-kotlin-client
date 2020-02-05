@@ -14,6 +14,21 @@
 <tbody>
 <tr>
 <td>
+<h4><a href="arr.html">arr</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">XContentBuilder</span><span class="symbol">.</span><span class="identifier">arr</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.common.xcontent$arr(org.elasticsearch.common.xcontent.XContentBuilder, kotlin.String, kotlin.Function1((org.elasticsearch.common.xcontent.XContentBuilder, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.common.xcontent$arr(org.elasticsearch.common.xcontent.XContentBuilder, kotlin.String, kotlin.Function1((org.elasticsearch.common.xcontent.XContentBuilder, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="identifier">XContentBuilder</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="obj.html">obj</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">XContentBuilder</span><span class="symbol">.</span><span class="identifier">obj</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.common.xcontent$obj(org.elasticsearch.common.xcontent.XContentBuilder, kotlin.Function1((org.elasticsearch.common.xcontent.XContentBuilder, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="identifier">XContentBuilder</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">XContentBuilder</span><span class="symbol">.</span><span class="identifier">obj</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.common.xcontent$obj(org.elasticsearch.common.xcontent.XContentBuilder, kotlin.String, kotlin.Function1((org.elasticsearch.common.xcontent.XContentBuilder, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.common.xcontent$obj(org.elasticsearch.common.xcontent.XContentBuilder, kotlin.String, kotlin.Function1((org.elasticsearch.common.xcontent.XContentBuilder, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="identifier">XContentBuilder</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="stringify.html">stringify</a></h4>
 </td>
 <td>
@@ -21,6 +36,20 @@
 <code><span class="keyword">fun </span><span class="identifier">ToXContent</span><span class="symbol">.</span><span class="identifier">stringify</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.common.xcontent$stringify(org.elasticsearch.common.xcontent.ToXContent, kotlin.Boolean)/pretty">pretty</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
 <p>Helper to write json to an output stream.</p>
 <code><span class="keyword">fun </span><span class="identifier">ToXContent</span><span class="symbol">.</span><span class="identifier">stringify</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.common.xcontent$stringify(org.elasticsearch.common.xcontent.ToXContent, java.io.OutputStream, kotlin.Boolean)/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html"><span class="identifier">OutputStream</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.common.xcontent$stringify(org.elasticsearch.common.xcontent.ToXContent, java.io.OutputStream, kotlin.Boolean)/pretty">pretty</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="write-any.html">writeAny</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">XContentBuilder</span><span class="symbol">.</span><span class="identifier">writeAny</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.common.xcontent$writeAny(org.elasticsearch.common.xcontent.XContentBuilder, kotlin.Any)/obj">obj</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="x-content.html">xContent</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">xContent</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.common.xcontent$xContent(kotlin.Any)/obj">obj</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">XContentBuilder</span></code></td>
 </tr>
 </tbody>
 </table>

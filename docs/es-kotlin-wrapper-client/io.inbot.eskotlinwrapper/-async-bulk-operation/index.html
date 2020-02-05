@@ -1,0 +1,58 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AsyncBulkOperation - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="./index.html">AsyncBulkOperation</a><br/>
+<br/>
+<h1>AsyncBulkOperation</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">AsyncBulkOperation</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<code><span class="identifier">AsyncBulkOperation</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncBulkOperation$<init>(org.elasticsearch.action.DocWriteRequest((kotlin.Any)), kotlin.String, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkOperation.T, )), kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncBulkOperation.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)))/operation">operation</span><span class="symbol">:</span>&nbsp;<span class="identifier">DocWriteRequest</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncBulkOperation$<init>(org.elasticsearch.action.DocWriteRequest((kotlin.Any)), kotlin.String, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkOperation.T, )), kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncBulkOperation.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)))/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncBulkOperation$<init>(org.elasticsearch.action.DocWriteRequest((kotlin.Any)), kotlin.String, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkOperation.T, )), kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncBulkOperation.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)))/updateFunction">updateFunction</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="symbol">(</span><span class="identifier">T</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">=</span>&nbsp;{it}<span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncBulkOperation$<init>(org.elasticsearch.action.DocWriteRequest((kotlin.Any)), kotlin.String, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkOperation.T, )), kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncBulkOperation.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)))/itemCallback">itemCallback</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="symbol">(</span><a href="./index.html"><span class="identifier">AsyncBulkOperation</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<span class="identifier">BulkItemResponse</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="id.html">id</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="item-callback.html">itemCallback</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">itemCallback</span><span class="symbol">: </span><span class="keyword">suspend </span><span class="symbol">(</span><a href="./index.html"><span class="identifier">AsyncBulkOperation</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<span class="identifier">BulkItemResponse</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="operation.html">operation</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">operation</span><span class="symbol">: </span><span class="identifier">DocWriteRequest</span><span class="symbol">&lt;</span><span class="identifier">*</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="update-function.html">updateFunction</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">updateFunction</span><span class="symbol">: </span><span class="keyword">suspend </span><span class="symbol">(</span><span class="identifier">T</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<span class="identifier">T</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

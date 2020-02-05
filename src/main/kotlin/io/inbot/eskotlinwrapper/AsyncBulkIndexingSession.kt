@@ -32,7 +32,7 @@ private val logger = KotlinLogging.logger {}
 
 /**
  * Asynchronous bulk indexing that uses the experimental Kotlin flows. Works similar to the synchronous version except
- * it fires bulk requests asynchronously on the specified dispatcher. On paper using multiple threads, allows ES to
+ * it fires bulk requests asynchronously. On paper using multiple threads, allows ES to
  * use multiple Threads to consume bulk requests.
  *
  * Note: you need the kotlin.Experimental flag set for this to work. As Flow is a bit in flux, I expect the internals of this may change still before they finalize this. So, beware when using this.

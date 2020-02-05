@@ -153,7 +153,8 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                     // simply set scrolling to true will allow us to scroll over the entire index
                     // this will scale no matter what the size of your index is. If you use
                     // scrolling, you can also set the ttl for the scroll (default is 1m)
-                    val results = thingRepository.search(scrolling = true,scrollTtlInMinutes = 10) {
+                    val results = thingRepository.search(scrolling = true,
+                        scrollTtlInMinutes = 10) {
                         source("""
                             {
                                 "size": 10,

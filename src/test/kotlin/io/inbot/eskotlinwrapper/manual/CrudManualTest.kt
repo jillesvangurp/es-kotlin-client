@@ -36,7 +36,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 
                 An important part of this library is providing a user friendly abstraction for this that 
                 should be familiar if you've ever written a database application using modern frameworks such
-                as Spring, Ruby on Rails, etc. In such frameworks a Data Access Object or Repository object 
+                as Spring, Ruby on Rails, etc. In such frameworks a  Repository 
                 provides primitives for interacting with objects in a particular database table.
                 
                 Wee provide a similar abstraction the ${mdLink(IndexRepository::class)}. You create one for each 
@@ -260,6 +260,19 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 val thingRepository = esClient.indexRepository<Thing>(
                     index = "things", modelReaderAndWriter = modelReaderAndWriter)
             }
+
+            +"""
+                ## Co-routine support
+                
+                As with most of this library, the same functionality is also available in a co-routine friendly
+                variant `AsyncIndexRepository`. To use that, you need to use `esClient.asyncIndexRepository`. 
+                
+                This works almost the same as the synchronous version except all of the functions are marked as 
+                suspend on the `AsyncIndexRepository` class. To call these, you will need to call these from a
+                `CoRoutineScope`.
+
+                For more details on how to use co-routines, see ${mdLink(coroutinesPage)}
+            """.trimIndent()
         }
     }
 }

@@ -1,6 +1,7 @@
 package io.inbot.eskotlinwrapper
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
@@ -264,6 +265,7 @@ class AsyncIndexRepository<T : Any>(
      * See [BulkIndexingSession] for the meaning of the other parameters.
      *
      */
+    @ExperimentalCoroutinesApi
     suspend fun bulk(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,

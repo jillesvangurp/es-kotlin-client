@@ -17,7 +17,6 @@ import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.ActiveShardCount
 import org.elasticsearch.action.support.WriteRequest
-import org.elasticsearch.client.Request
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.core.CountRequest
@@ -32,7 +31,6 @@ import org.elasticsearch.client.refreshAsync
 import org.elasticsearch.client.search
 import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetaData
-import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
 

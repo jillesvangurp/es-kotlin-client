@@ -1,8 +1,5 @@
 package org.elasticsearch.action.search
 
-import java.io.InputStream
-import java.io.Reader
-import java.util.Collections
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest
@@ -11,10 +8,11 @@ import org.elasticsearch.common.xcontent.DeprecationHandler
 import org.elasticsearch.common.xcontent.NamedXContentRegistry
 import org.elasticsearch.common.xcontent.XContentFactory
 import org.elasticsearch.common.xcontent.XContentType
-import org.elasticsearch.index.query.QueryBuilder
-import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
+import java.io.InputStream
+import java.io.Reader
+import java.util.Collections
 
 private val logger: KLogger = KotlinLogging.logger { }
 

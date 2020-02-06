@@ -1,50 +1,47 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractAsyncElasticSearchTest
-import io.inbot.eskotlinwrapper.manual.recipesearch.Recipe
-import kotlinx.coroutines.runBlocking
-import org.elasticsearch.client.asyncIndexRepository
-import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class BuildingARealSearchEngine : AbstractAsyncElasticSearchTest(indexPrefix = "searchengine", createIndex = false) {
+class BuildingARealSearchEngine {
 
     @Test
     fun `article markdown`() {
-        val recipeRepository = esClient.asyncIndexRepository<Recipe>("searchengine")
-        runBlocking {
-
-            // make sure we get rid of the things index before running the rest of this
-            recipeRepository.deleteIndex()
-            recipeRepository.createIndex {
-                source(
-                    """
-                                {
-                                  "settings": {
-                                    "index": {
-                                      "number_of_shards": 3,
-                                      "number_of_replicas": 0,
-                                      "blocks": {
-                                        "read_only_allow_delete": "false"
-                                      }
-                                    }
-                                  },
-                                  "mappings": {
-                                    "properties": {
-                                      "name": {
-                                        "type": "text"
-                                      },
-                                      "amount": {
-                                        "type": "long"
-                                      }
-                                    }
-                                  }
-                                }
-                            """, XContentType.JSON)
-            }
-            KotlinForExample.markdownPageWithNavigation(recipeSearchEnginePage) {
-                +"""
+//        val recipeRepository = esClient.asyncIndexRepository<Recipe>("searchengine")
+//        runBlocking {
+//
+//            // make sure we get rid of the things index before running the rest of this
+//            recipeRepository.deleteIndex()
+//            recipeRepository.createIndex {
+//                source(
+//                    """
+//                                {
+//                                  "settings": {
+//                                    "index": {
+//                                      "number_of_shards": 3,
+//                                      "number_of_replicas": 0,
+//                                      "blocks": {
+//                                        "read_only_allow_delete": "false"
+//                                      }
+//                                    }
+//                                  },
+//                                  "mappings": {
+//                                    "properties": {
+//                                      "name": {
+//                                        "type": "text"
+//                                      },
+//                                      "amount": {
+//                                        "type": "long"
+//                                      }
+//                                    }
+//                                  }
+//                                }
+//                            """, XContentType.JSON)
+//            }
+        KotlinForExample.markdownPageWithNavigation(recipeSearchEnginePage) {
+            sourcePaths += "src/examples/kotlin"
+            +"""
                     The Elastic Search Kotlin Wrapper is designed to simplify writing production code that
                     interacts with Elasticsearch.
                     
@@ -61,19 +58,17 @@ class BuildingARealSearchEngine : AbstractAsyncElasticSearchTest(indexPrefix = "
                     Consider this simple example json file for chicken enchilladas:
                     
                 """
-                mdCodeBlock(File("example_data/recipes/homemade-chicken-enchiladas.json").readText(),"javascript")
-                +"""
+            mdCodeBlock(File("src/examples/resources/recipes/homemade-chicken-enchiladas.json").readText(), "json")
+            +"""
                     We can create a simple Kotlin data model to represent recipes like this:
                 """
-                snippetBlockFromClass(Recipe::class, "model classes")
+            snippetFromSourceFile("src/examples/kotlin/recipesearch/Recipe.kt", "model classes")
 
-                +"""
+            +"""
                     ## Creating an index
-                    
-                    
-                """
-            }
-        }
 
+                    
+            """
+        }
     }
 }

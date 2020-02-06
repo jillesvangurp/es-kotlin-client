@@ -26,7 +26,7 @@ fun mdLink(page: Page) = mdLink(page.title, page.fileName)
 
 @Suppress("MemberVisibilityCanBePrivate")
 class KotlinForExample private constructor(
-    private val sourcePaths: List<String> = listOf("src/main/kotlin", "src/test/kotlin"),
+    val sourcePaths: MutableSet<String> = mutableSetOf("src/main/kotlin", "src/test/kotlin"),
     private val repoUrl: String="https://github.com/jillesvangurp/es-kotlin-wrapper-client"
 ) : AutoCloseable {
     private val buf = StringBuilder()
@@ -37,9 +37,9 @@ class KotlinForExample private constructor(
         buf.appendln()
     }
 
-    fun mdCodeBlock(c: String, type: String = "kotlin") {
+    fun mdCodeBlock(c: String, type: String = "kotlin", warnLineLength: Boolean = true) {
         val code = c.replace("    ","  ")
-        if(code.lines().firstOrNull { it.length > 80 } != null) {
+        if(warnLineLength && code.lines().firstOrNull { it.length > 80 } != null) {
              logger.warn { "code block contains lines longer than 80 characters\n${1.rangeTo(79).joinToString("") { "." }+"|"}\n$code" }
         }
         buf.appendln("```$type\n$code\n```\n")
@@ -53,22 +53,26 @@ class KotlinForExample private constructor(
 
     fun snippetBlockFromClass(clazz: KClass<*>, snippetId: String) {
         val fileName = sourcePathForClass(clazz)
+        snippetFromSourceFile(fileName, snippetId)
+    }
+
+    fun snippetFromSourceFile(fileName: String, snippetId: String) {
         val snippetLines = mutableListOf<String>()
         val lines = File(fileName).readLines()
         var inSnippet = false
-        for(line in lines) {
-            if(inSnippet && line.contains(snippetId)) {
+        for (line in lines) {
+            if (inSnippet && line.contains(snippetId)) {
                 break // break out of the loop
             }
-            if(inSnippet) {
+            if (inSnippet) {
                 snippetLines.add(line)
             }
 
-            if(!inSnippet && line.contains(snippetId)) {
+            if (!inSnippet && line.contains(snippetId)) {
                 inSnippet = true
             }
         }
-        if(snippetLines.size == 0) {
+        if (snippetLines.size == 0) {
             throw IllegalArgumentException("Snippet $snippetId not found in $fileName")
         }
         mdCodeBlock(snippetLines.joinToString("\n").trimIndent())

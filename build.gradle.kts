@@ -5,6 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 // import com.diffplug.gradle.spotless.SpotlessExtension
 
 // intellij has some bug that causes it to somehow be unable to acknowledge this import exists
@@ -47,7 +48,24 @@ sourceSets {
 
         }
     }
+    // create a new source dir for our examples, ensure the main output is added to the classpath.
+    create("examples") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+        kotlin {
+
+        }
+    }
 }
+
+// so we can add dependencies
+val examplesImplementation: Configuration by configurations.getting {
+    // we can get this because this is generated when we added the examples src dir
+    extendsFrom(configurations.implementation.get())
+}
+
+// add our production dependencies to the examples
+configurations["examplesRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
 tasks.withType<KotlinCompile> {
     dependsOn("codegen")
@@ -97,7 +115,7 @@ configure<ComposeExtension> {
 // }
 
 tasks.withType<Test> {
-    dependsOn("composeUp")
+    dependsOn("examplesClasses","composeUp")
     useJUnitPlatform()
     testLogging.exceptionFormat = TestExceptionFormat.FULL
     testLogging.events = setOf(
@@ -132,22 +150,25 @@ val kotlinVersion = "1.3.61"
 val elasticVersion = "7.5.2"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.6.0"
-val jacksonVerion = "2.10.2"
+val jacksonVersion = "2.10.2"
+val ktorVersion = "1.3.0"
+
+
 
 dependencies {
-   api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-   api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-   api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.3")
-   api("io.github.microutils:kotlin-logging:1.7.8")
+    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.3")
+    api("io.github.microutils:kotlin-logging:1.7.8")
 
-   api("org.apache.commons:commons-lang3:3.9")
+    api("org.apache.commons:commons-lang3:3.9")
 
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVerion")
-   api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVerion")
-   api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVerion")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
-   api("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticVersion")
-   api("org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticVersion")
+    api("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticVersion")
+    api("org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticVersion")
 
     // bring your own logging, but we need some in tests
     testImplementation("org.slf4j:slf4j-api:$slf4jVersion")
@@ -162,4 +183,15 @@ dependencies {
 
     testImplementation("io.mockk:mockk:1.9.3")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.20")
+
+    examplesImplementation("io.ktor:ktor-server-netty:$ktorVersion")
+    examplesImplementation("io.ktor:ktor-server-core:$ktorVersion")
+    examplesImplementation("io.ktor:ktor-jackson:$ktorVersion")
+
+    examplesImplementation("org.slf4j:slf4j-api:$slf4jVersion")
+    examplesImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
+    examplesImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
+    examplesImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
+    examplesImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.13.0") // es seems to insist on log4j2
+    examplesImplementation("ch.qos.logback:logback-classic:1.2.3")
 }

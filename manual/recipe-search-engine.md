@@ -69,12 +69,13 @@ data class Recipe(
   val description: String,
   val ingredients: List<String>,
   val directions: List<String>,
-  val prep_time_min: Int,
-  val cook_time_min: Int,
+  val prepTimeMin: Int,
+  val cookTimeMin: Int,
   val servings: Int,
   val tags: List<String>,
   val author: Author,
-  val source_url: String
+  // we will use this as our ID as well
+  val sourceUrl: String
 )
 ```
 

@@ -11,6 +11,7 @@ In this manual, we introduce the features through examples.
 - [Search](search.md)
 - [Query DSL](query-dsl.md)
 - [Co-routines](coroutines.md)
+- [Building a Recipe Search Engine](recipe-search-engine.md)
 
 ## About this manual
 

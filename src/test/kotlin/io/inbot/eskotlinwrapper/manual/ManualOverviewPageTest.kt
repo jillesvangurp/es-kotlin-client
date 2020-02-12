@@ -11,7 +11,7 @@ val bulkIndexingMd = "bulk-indexing.md"
 val searchMd = "search.md"
 val queryDslMd = "query-dsl.md"
 val coroutinesMd = "coroutines.md"
-
+val recipeSearchEngineMd = "recipe-search-engine.md"
 
 val readmePage = Page("Es Kotlin Wrapper Client", readmeMd, outputDir = ".")
 val indexPage = Page("Es Kotlin Wrapper Client Manual", indexMd)
@@ -22,8 +22,9 @@ val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd,emitBookPa
 val searchPage = Page("Search", searchMd, parent = indexMd,emitBookPage = true)
 val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd,emitBookPage = true)
 val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd,emitBookPage = true)
+val recipeSearchEnginePage = Page("Building a Recipe Search Engine",recipeSearchEngineMd, parent = indexMd, emitBookPage = true)
 
-val pages=listOf(createClientPage,crudPage,bulkPage,searchPage,queryDslPage,coroutinesPage)
+val pages=listOf(createClientPage,crudPage,bulkPage,searchPage,queryDslPage,coroutinesPage,recipeSearchEnginePage)
 
 class ManualOverviewPageTest {
 

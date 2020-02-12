@@ -57,7 +57,7 @@ private val logger = KotlinLogging.logger {}
 @Suppress("unused")
 class AsyncIndexRepository<T : Any>(
     val indexName: String,
-    private val client: RestHighLevelClient,
+    val client: RestHighLevelClient,
     internal val modelReaderAndWriter: ModelReaderAndWriter<T>,
     private val refreshAllowed: Boolean = false,
     @Deprecated("Types are deprecated in ES 7.x and will be removed in v8") val type: String? = null,

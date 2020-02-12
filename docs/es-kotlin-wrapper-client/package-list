@@ -7,8 +7,5 @@ $dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.
 io.inbot.eskotlinwrapper
 org.elasticsearch.action.search
 org.elasticsearch.client
-org.elasticsearch.client.node
-org.elasticsearch.client.support
-org.elasticsearch.client.transport
 org.elasticsearch.common.xcontent
 org.elasticsearch.search

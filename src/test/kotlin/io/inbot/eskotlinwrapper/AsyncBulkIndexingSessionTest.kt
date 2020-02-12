@@ -4,12 +4,14 @@ import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
+@ExperimentalCoroutinesApi
 class AsyncBulkIndexingSessionTest : AbstractAsyncElasticSearchTest(indexPrefix = "bulk") {
     @Test
     fun `This is how you bulk index some documents`() {

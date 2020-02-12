@@ -27,7 +27,7 @@ fun mdLink(page: Page) = mdLink(page.title, page.fileName)
 @Suppress("MemberVisibilityCanBePrivate")
 class KotlinForExample private constructor(
     val sourcePaths: MutableSet<String> = mutableSetOf("src/main/kotlin", "src/test/kotlin"),
-    private val repoUrl: String="https://github.com/jillesvangurp/es-kotlin-wrapper-client"
+    private val repoUrl: String = "https://github.com/jillesvangurp/es-kotlin-wrapper-client"
 ) : AutoCloseable {
     private val buf = StringBuilder()
     private val patternForBlock = "block.*?\\{+".toRegex(RegexOption.MULTILINE)
@@ -37,26 +37,35 @@ class KotlinForExample private constructor(
         buf.appendln()
     }
 
-    fun mdCodeBlock(c: String, type: String = "kotlin", warnLineLength: Boolean = true) {
-        val code = c.replace("    ","  ")
-        if(warnLineLength && code.lines().firstOrNull { it.length > 80 } != null) {
-             logger.warn { "code block contains lines longer than 80 characters\n${1.rangeTo(79).joinToString("") { "." }+"|"}\n$code" }
+    fun mdCodeBlock(c: String, type: String = "kotlin", allowLongLines: Boolean = false, lineLength: Int = 80) {
+        val code = c.replace("    ", "  ")
+        if (!allowLongLines && code.lines().firstOrNull { it.length > lineLength } != null) {
+            logger.warn { "code block contains lines longer than 80 characters\n${(1 until lineLength).joinToString("") { "." } + "|"}\n$code" }
+            throw IllegalArgumentException("code block exceeds line length of ")
         }
         buf.appendln("```$type\n$code\n```\n")
     }
 
     fun mdLink(clazz: KClass<*>): String {
-        return mdLink("`${clazz.simpleName!!}`",
+        return mdLink(
+            "`${clazz.simpleName!!}`",
             "$repoUrl/tree/master/${sourcePathForClass(clazz)}"
         )
     }
+
+    fun mdLinkToRepoResource(title: String, relativeUrl: String, branch: String ="master") = mdLink(title, "$repoUrl/tree/$branch/$relativeUrl")
 
     fun snippetBlockFromClass(clazz: KClass<*>, snippetId: String) {
         val fileName = sourcePathForClass(clazz)
         snippetFromSourceFile(fileName, snippetId)
     }
 
-    fun snippetFromSourceFile(fileName: String, snippetId: String) {
+    fun snippetFromSourceFile(
+        fileName: String,
+        snippetId: String,
+        allowLongLines: Boolean = false,
+        lineLength: Int = 80
+    ) {
         val snippetLines = mutableListOf<String>()
         val lines = File(fileName).readLines()
         var inSnippet = false
@@ -75,7 +84,11 @@ class KotlinForExample private constructor(
         if (snippetLines.size == 0) {
             throw IllegalArgumentException("Snippet $snippetId not found in $fileName")
         }
-        mdCodeBlock(snippetLines.joinToString("\n").trimIndent())
+        mdCodeBlock(
+            snippetLines.joinToString("\n").trimIndent(),
+            allowLongLines = allowLongLines,
+            lineLength = lineLength
+        )
     }
 
     private fun sourcePathForClass(clazz: KClass<*>) =
@@ -84,9 +97,9 @@ class KotlinForExample private constructor(
     private fun fileName(clazz: KClass<*>) =
         clazz.qualifiedName!!.replace("\\$.*?$".toRegex(), "").replace('.', File.separatorChar) + ".kt"
 
-    fun mdLinkToSelf(title: String="Link to this source file"): String {
+    fun mdLinkToSelf(title: String = "Link to this source file"): String {
         val fn = this.sourceFileOfExampleCaller() ?: throw IllegalStateException("source file not found")
-        return mdLink(title,"$repoUrl/tree/master/${fn.path}")
+        return mdLink(title, "$repoUrl/tree/master/${fn.path}")
     }
 
     fun <T> block(runBlock: Boolean = false, block: () -> T) {
@@ -128,8 +141,8 @@ class KotlinForExample private constructor(
         val output = outputBuffer.toString()
         if (output.isNotEmpty()) {
             buf.appendln("Output:\n")
-            if(output.lines().firstOrNull { it.length > 80 } != null) {
-                logger.warn { "Output contains lines longer than 80 characters\n${1.rangeTo(79).joinToString("") { "." }+"|"}\n$output" }
+            if (output.lines().firstOrNull { it.length > 80 } != null) {
+                logger.warn { "Output contains lines longer than 80 characters\n${1.rangeTo(79).joinToString("") { "." } + "|"}\n$output" }
             }
             mdCodeBlock(output, type = "")
         }
@@ -171,7 +184,11 @@ class KotlinForExample private constructor(
 
     internal fun getCallerStackTraceElement(): StackTraceElement {
         return Thread.currentThread()
-            .stackTrace.first { it.className != javaClass.name && it.className != "java.lang.Thread" && !it.className.contains("KotlinForExample") }
+            .stackTrace.first {
+            it.className != javaClass.name && it.className != "java.lang.Thread" && !it.className.contains(
+                "KotlinForExample"
+            )
+        }
     }
 
     override fun close() {
@@ -188,8 +205,8 @@ class KotlinForExample private constructor(
 
         fun markdownPageWithNavigation(page: Page, block: KotlinForExample.() -> Unit) {
             val index = pages.indexOf(page)
-            val previous = if(index<0) null else if(index==0) null else pages[index-1].fileName
-            val next = if(index<0) null else if(index==pages.size-1) null else pages[index+1].fileName
+            val previous = if (index < 0) null else if (index == 0) null else pages[index - 1].fileName
+            val next = if (index < 0) null else if (index == pages.size - 1) null else pages[index + 1].fileName
             val nav = listOfNotNull(
                 if (!previous.isNullOrBlank()) mdLink("previous", previous) else null,
                 if (!page.parent.isNullOrBlank()) mdLink("parent", page.parent) else null,
@@ -205,15 +222,17 @@ class KotlinForExample private constructor(
 
             val pageWithNavigationMd =
                 (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n---\n\n" else "") +
-                md + "\n" +
-                (if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") +"\n\n" else "") +
+                        md + "\n" +
+                        (if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") + "\n\n" else "") +
                         """
-                            This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the ${example.mdLinkToSelf("source file")} from which this page is generated.
+                            This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the ${example.mdLinkToSelf(
+                            "source file"
+                        )} from which this page is generated.
                         """.trimIndent()
 
             File(page.outputDir).mkdirs()
             File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)
-            if(page.emitBookPage) {
+            if (page.emitBookPage) {
                 File("epub").mkdirs()
                 File("epub", page.fileName).writeText(md)
             }

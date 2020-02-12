@@ -16,21 +16,22 @@ class RecipeSearch(
     private val objectMapper: ObjectMapper
 ) {
 
-    suspend fun deleteIndex() {
-        recipeRepository.deleteIndex()
+    suspend fun healthStatus(): ClusterHealthStatus {
+        return recipeRepository.client.cluster().healthAsync(ClusterHealthRequest()).status
     }
 
     suspend fun createNewIndex() {
         recipeRepository.createIndex {
-//            source(
-//                """
-//
-//            """.trimIndent(), XContentType.JSON
-//            )
+            // we could do some fancy mapping here but lets go schema less
         }
     }
 
+    suspend fun deleteIndex() {
+        recipeRepository.deleteIndex()
+    }
+
     @ExperimentalCoroutinesApi // will hopefully stabilize with next version
+    // BEGIN index_recipes
     suspend fun indexExamples() {
         // use a small bulk size to illustrate how this can
         // work with potentially large amounts of files.
@@ -38,18 +39,18 @@ class RecipeSearch(
             File("src/examples/resources/recipes")
                 .listFiles { f -> f.extension == "json" }?.forEach {
                     val parsed = objectMapper.readValue<Recipe>(it.readText())
+                    // lets use the sourceUrl as an id
                     // use create=false to allow updates
                     index(parsed.sourceUrl, parsed, create = false)
                 }
         }
     }
+    // END index_recipes
 
-    suspend fun healthStatus(): ClusterHealthStatus {
-        return recipeRepository.client.cluster().healthAsync(ClusterHealthRequest()).status
-    }
-
-    suspend fun search(query: String, from: Int, size: Int): SearchResponse<Recipe> {
-        val results = recipeRepository.search {
+    // BEGIN search_recipes
+    suspend fun search(query: String, from: Int, size: Int):
+            SearchResponse<Recipe> {
+        return recipeRepository.search {
             source(SearchSourceBuilder.searchSource().apply {
                 from(from)
                 size(size)
@@ -64,7 +65,8 @@ class RecipeSearch(
                 )
             })
         }.toSearchResponse()
-        return results
     }
+    // END search_recipes
 }
+
 

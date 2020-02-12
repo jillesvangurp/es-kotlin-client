@@ -107,7 +107,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             blockWithOutput {
-                println("Object does not exist yet so we get back: ${thingRepository.get("first")}")
+                println("Object does not exist: ${thingRepository.get("first")}")
                 // so lets store something
                 thingRepository.index("first", Thing("A thing", 42))
 

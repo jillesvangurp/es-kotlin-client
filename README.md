@@ -1,6 +1,6 @@
 # Es Kotlin Wrapper Client
 
-[![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg/1.0-Beta-1-7.5.2)](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client/1.0-Beta-1-7.5.2)
+[![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
 

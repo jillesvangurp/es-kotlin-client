@@ -14,66 +14,44 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             +"""
             [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
             [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
-            
-            
+
             The ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that 
             adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) with some Kotlin specific goodness. 
             
-            Elastic's highlevel elasticsearch client is written in Java and provides access to essentially everything in the 
-            REST API that Elasticsearch exposes. **The kotlin wrapper takes away none of that and adds some power and convenience to it.**
-            
+
             ## Highlights
             
-            - Extension functions, default argument values, and other kotlin features adds convenience and gets rid of Java specific boilerplate
+            Elastic's `HighLevelRestClient` is written in Java and provides access to essentially everything in the 
+            REST API that Elasticsearch exposes. It reuses a lot of classes that Elasticsearch uses internally that used to be part
+            of their embedded Java client, which literally ran an Elasticsearch node inside your application. It's a very powerful API
+            but maybe not the most easy thing to work with directly. **The kotlin wrapper takes away none of that but it adds a lot of power and convenience.**
+
+            - Extension functions, default argument values, and other kotlin features add convenience and get rid of 
+            Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
+            friendly API over the underlying client functionality. 
             - A repository abstraction that allows you to: 
-                - manage indices
-                - do crud on index items with safe updates that retry in case of a version conflict
-                - bulk index to the index without boiler plate and with fine-grained error handling (via callbacks)
-                - search & count objects in the index.
-            - Co-routine friendly & ready for reactive usage. We use generated extension functions to add cancellable 
-            suspend functions for almost all client functions. Also the before mentioned `IndexRepository` has an `AsyncIndexRepository` variant with suspending variants of the same functionality. 
+                - Manage indices
+                - Do crud on index items with safe updates that retry in case of a version conflict
+                - Bulk indexin DSL to do bulk operations without boiler plate and with fine-grained error handling (via callbacks)
+                - Search & count objects in the index using a Kotlin friendly version of their DSL or simply use raw json from either a file or a templated multiline kotlin string.
+                - Much more
+            - Co-routine friendly & ready for reactive usage. We use generated extension functions that we add with a source generation plugin to add cancellable suspend functions for almost all client functions. Additionally, the before mentioned `IndexRepository` has an `AsyncIndexRepository` variant with suspending variants of the same functionality. 
                 - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
                 asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
             
-            ## Why?
+            ## Documentation
             
-            The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. 
-            This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
-            friendly API over the underlying client functionality. 
+            - [manual](manual/index.md) I have a growing collection of executable examples. This manual is 
+            actually generated using kotlin code and all the examples in it are actually run as part of the test suite. This is the best
+            place to get started.
+            - The same manual as an **[epub](book.epub)**. Very much a work in progress. Please give me feedback on this.
+            - [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
+            - The tests test most of the important features and should be fairly readable and provide a good overview of
+             how to use things. I like keeping the tests somewhat readable.
+            - [Elasticsearch java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff. Elasticsearch has awesome documentation for this.
+            - [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Note, this is outdated and has largely been replaced by the manual mentioned above.
             
-            Kotlin also has support for **co-routines** and we use this to make using the asynchronous methods in the Java client a 
-            lot nicer to use. To do so, we generate kotlin coroutine friendly versions of nearly all asynchronous methods 
-            using a code generator. The generated code uses `suspendCancellableCoroutine` to create suspend functions
-            that do the right thing if something happens to the coroutine context. 
-            
-            Finally, the despite being a high level client, the official client lacks a few abstractions that result in a lot of
-            things being left as an exercise to the user. This library provides some helpful abstractions to deal with the common
-            tasks of indexing documents in bulk, doing scrolling searches, or index management.
-            
-            ## Code generation
-            
-            As of 1.0-M1, this library also makes use of code generated by my 
-            [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin). This uses 
-            reflection to generate extension functions for a lot of the Java SDK. E.g. all asynchronous functions gain a 
-            co-routine friendly variant this way. Future versions of this plugin will add a lot more Kotlin specific stuff. 
-            One obvious thing I'm considering is generating kotlin DSL extension functions for all the builders in the java sdk. 
-            Builders are a Java thing and this would be a nice thing to have. 
-            
-            Ideas/PRs welcome ...
-            
-            ## Platform support
-            
-            This client requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the Kotlin functionality 
-            is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin.
-            Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding
-            a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch 
-            directly from a mobile phone in any case.
-            
-            # Documentation
-
-            Check the [documentation for examples](manual/index.md) on how to use this library
-            
-            Here's a small example:
+            ## Example
             """
 
             block {
@@ -144,20 +122,24 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     }
                 }
             }
-            +""" 
+            +"""
             
-            For more information and examples we have a few places to look:
+            ## Code generation
             
-            - [manual](manual/index.md) I have a growing collection of executable examples. This manual is 
-            actually generated using kotlin code and all the examples are actually run as part of the test suite. This is the best
-            place to get started.
-            - The same manual as an **[epub](book.epub)**. Very much a work in progress. Please give me feedback on this.
-            - [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
-            - The tests test most of the important features and should be fairly readable and provide a good overview of
-             how to use things. I like keeping the tests somewhat readable.
-            - [Elasticsearch java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff. Elasticsearch has awesome documentation for this.
-            - [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Note, this is outdated and has largely been replaced by the manual mentioned above.
+            This library makes use of code generated by a 
+            [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin). This plugin uses 
+            reflection to generate extension functions for a lot of the Java SDK. E.g. all asynchronous functions gain a 
+            co-routine friendly variant this way.  
             
+            Ideas/PRs welcome ...
+            
+            ## Platform support
+            
+            This client requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the Kotlin functionality 
+            is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin.
+            Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding
+            a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch 
+            directly from a mobile phone in any case.
             # Get it
             
             We are using jitpack for releases currently; the nice thing is all I need to do is tag the release in Git and 
@@ -173,39 +155,8 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             Elasticsearch releases.
             
             For version 6.x, check the es-6.7.x branch.
-            
-            # A few notes on Co-routines
-            
-            Note, co-routines are a **work in progress** and things may change as Kotlin evolves and as my understanding evolves. 
-            This is all relatively new in Kotlin and there is still a lot of stuff happening around e.g. the 
-            `Flow` and `Channel` concepts. The upcoming 1.4 release of `kotlinx.coroutines` should stabilize a few things we 
-            use for e.g. asynchronous bulk indexing.
-            
-            The `RestHighLevelClient` exposes asynchronous variants of all API calls as an alternative to the synchronous ones. 
-            The main difference is that these use the asynchronous http client instead of the synchronous one. Additionally 
-            they use callbacks to provide a response or an error. We provide a `SuspendingActionListener` that adapts this to 
-            Kotlin's co-routines.
-            
-            For example, here is the async search [extension function](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/main/kotlin/org/elasticsearch/client/KotlinExtensions.kt) we add to the client:
-            ```
-            suspend fun RestHighLevelClient.searchAsync(
-                requestOptions: RequestOptions = RequestOptions.DEFAULT,
-                block: SearchRequest.() -> Unit
-            ): SearchResponse {
-                val searchRequest = SearchRequest()
-                block.invoke(searchRequest)
-                return suspending {
-                    this.searchAsync(searchRequest, requestOptions, it)
-                }
-            }
-            ```
-            
-            The `suspending` call here creates a [`SuspendingActionListener`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/src/main/kotlin/io/inbot/eskotlinwrapper/SuspendingActionListener.kt) 
-            and passes it as `it` to the lambda. Inside the lambda we simply pass that into the searchAsync call. There are more 
-            than a hundred async methods in the RestHighLevel client and we currently don't cover most of them but you can easily 
-            adapt them yourself by doing something similar.
-            
-            # Building
+
+            ## Building
             
             You need java >= 8 and docker + docker compose (to run elasticsearch and the tests).
             
@@ -225,25 +176,25 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making 
             a mess there (I learned that lesson a long time ago).
             
-            # Development status
+            ## Development status
             
-            This library should be perfectly fine for general use at this point. Also note, that you can always access the
-             underlying Java client, which is stable. However, until we release 1.0, refactoring can still happen occasionally.
+            This library should be perfectly fine for general use at this point and is currently available as a beta release. 
+            
+            Please note, that you can always access the underlying Java client, which is stable. However, until we 
+            release 1.0, refactoring & api changes can still happen occasionally.
             
             Currently the main blockers for a 1.0 are:
 
             - We recently added reflection based code generation that scans the sdk and adds some useful extension functions.
             More feature work here is coming. Particularly, I want to auto generate a kotlin query dsl from the Java builders.
             - For 1.0, I want full coverage of all features in the manual. I've made some good progress here and currently the
-            manual is generated from source code.
-            - There are still a few missing features that I want to work on mainly related to index management and co-routines.
+            manual is generated from source code. 
+            - I'm planning to combine the 1.0 release with an epub version of the manual that I am currently considering to self publish. The idea with this is that I want the library and manual to cover all of what I consider the core use cases for someone building search functionality with Elasticsearch. 
+            - There are still a few missing features that I want to work on mainly related to index management and the query DSL.
             - My time is limited. I work on this in my spare time and when I feel like it.
             
             If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
             before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.
-            
-            Until I release 1.0, I reserve the freedom to make potentially large API changes. These are getting less frequent
-            of course now that we are getting close to 1.0.
             
             ## Compatibility
             
@@ -251,7 +202,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             recent 7.x version. From experience, this mostly works fine against any 6.x node with the exception of some changes in 
             APIs or query DSL; and possibly some older versions. Likewise, forward compatibility is generally not a big deal 
             barring major changes such as the removal of types in v7. The upcoming v8 release is currently not tested but should 
-            be fine. 
+            be fine. With recent release tags, I've started adding the version number of the Elasticsearch release it is based on.
             
             For version 6.x, you can use the es-6.7.x branch or use one of the older releases (<= 0.9.11). Obviously this lacks a 
             lot of the recent feature work. Likewise, we will create a 7x branch when v8 is released.

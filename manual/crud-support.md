@@ -73,7 +73,7 @@ thingRepository.createIndex {
 Now that we have an index, we can use the CRUD operations.
 
 ```kotlin
-println("Object does not exist yet so we get back: ${thingRepository.get("first")}")
+println("Object does not exist: ${thingRepository.get("first")}")
 // so lets store something
 thingRepository.index("first", Thing("A thing", 42))
 
@@ -83,7 +83,7 @@ println("Now we get back our object: ${thingRepository.get("first")}")
 Output:
 
 ```
-Object does not exist yet so we get back: null
+Object does not exist: null
 Now we get back our object: Thing(name=A thing, amount=42)
 
 ```

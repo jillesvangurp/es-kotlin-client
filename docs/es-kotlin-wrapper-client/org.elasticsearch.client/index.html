@@ -59,7 +59,7 @@
 <h4><a href="cancel-async.html">cancelAsync</a></h4>
 </td>
 <td>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">TasksClient</span><span class="symbol">.</span><span class="identifier">cancelAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$cancelAsync(org.elasticsearch.client.TasksClient, org.elasticsearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">CancelTasksRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$cancelAsync(org.elasticsearch.client.TasksClient, org.elasticsearch.action.admin.cluster.node.tasks.cancel.CancelTasksRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">CancelTasksResponse</span></code></td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">TasksClient</span><span class="symbol">.</span><span class="identifier">cancelAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$cancelAsync(org.elasticsearch.client.TasksClient, org.elasticsearch.client.tasks.CancelTasksRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">CancelTasksRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$cancelAsync(org.elasticsearch.client.TasksClient, org.elasticsearch.client.tasks.CancelTasksRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">CancelTasksResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -109,7 +109,7 @@
 <h4><a href="clone-async.html">cloneAsync</a></h4>
 </td>
 <td>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">cloneAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$cloneAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.action.admin.indices.shrink.ResizeRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ResizeRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$cloneAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.action.admin.indices.shrink.ResizeRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ResizeResponse</span></code></td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">cloneAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$cloneAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.ResizeRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ResizeRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$cloneAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.ResizeRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ResizeResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -197,6 +197,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">SecurityClient</span><span class="symbol">.</span><span class="identifier">delegatePkiAuthenticationAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$delegatePkiAuthenticationAsync(org.elasticsearch.client.SecurityClient, org.elasticsearch.client.security.DelegatePkiAuthenticationRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DelegatePkiAuthenticationRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$delegatePkiAuthenticationAsync(org.elasticsearch.client.SecurityClient, org.elasticsearch.client.security.DelegatePkiAuthenticationRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">DelegatePkiAuthenticationResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="delete-alias-async.html">deleteAliasAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">deleteAliasAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$deleteAliasAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.DeleteAliasRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeleteAliasRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$deleteAliasAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.DeleteAliasRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -384,6 +391,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="delete-trained-model-async.html">deleteTrainedModelAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">deleteTrainedModelAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$deleteTrainedModelAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.DeleteTrainedModelRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeleteTrainedModelRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$deleteTrainedModelAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.DeleteTrainedModelRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="delete-transform-async.html">deleteTransformAsync</a></h4>
 </td>
 <td>
@@ -402,13 +416,6 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">WatcherClient</span><span class="symbol">.</span><span class="identifier">deleteWatchAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$deleteWatchAsync(org.elasticsearch.client.WatcherClient, org.elasticsearch.client.watcher.DeleteWatchRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeleteWatchRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$deleteWatchAsync(org.elasticsearch.client.WatcherClient, org.elasticsearch.client.watcher.DeleteWatchRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">DeleteWatchResponse</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="estimate-memory-usage-async.html">estimateMemoryUsageAsync</a></h4>
-</td>
-<td>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">estimateMemoryUsageAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$estimateMemoryUsageAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.PutDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">PutDataFrameAnalyticsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$estimateMemoryUsageAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.PutDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">EstimateMemoryUsageResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -454,6 +461,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="explain-data-frame-analytics-async.html">explainDataFrameAnalyticsAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">explainDataFrameAnalyticsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$explainDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.ExplainDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ExplainDataFrameAnalyticsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$explainDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.ExplainDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ExplainDataFrameAnalyticsResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="explain-lifecycle-async.html">explainLifecycleAsync</a></h4>
 </td>
 <td>
@@ -493,13 +507,6 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">flushJobAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$flushJobAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.FlushJobRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">FlushJobRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$flushJobAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.FlushJobRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">FlushJobResponse</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="flush-synced-async.html">flushSyncedAsync</a></h4>
-</td>
-<td>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">flushSyncedAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$flushSyncedAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.action.admin.indices.flush.SyncedFlushRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">SyncedFlushRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$flushSyncedAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.action.admin.indices.flush.SyncedFlushRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">SyncedFlushResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -850,6 +857,20 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="get-trained-models-async.html">getTrainedModelsAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">getTrainedModelsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$getTrainedModelsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.GetTrainedModelsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">GetTrainedModelsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$getTrainedModelsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.GetTrainedModelsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">GetTrainedModelsResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-trained-models-stats-async.html">getTrainedModelsStatsAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">getTrainedModelsStatsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$getTrainedModelsStatsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.GetTrainedModelsStatsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">GetTrainedModelsStatsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$getTrainedModelsStatsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.GetTrainedModelsStatsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">GetTrainedModelsStatsResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="get-transform-async.html">getTransformAsync</a></h4>
 </td>
 <td>
@@ -1181,6 +1202,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="put-trained-model-async.html">putTrainedModelAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">putTrainedModelAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$putTrainedModelAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.PutTrainedModelRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">PutTrainedModelRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$putTrainedModelAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.PutTrainedModelRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">PutTrainedModelResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="put-transform-async.html">putTransformAsync</a></h4>
 </td>
 <td>
@@ -1234,6 +1262,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">reloadAnalyzersAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$reloadAnalyzersAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.ReloadAnalyzersRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ReloadAnalyzersRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$reloadAnalyzersAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.ReloadAnalyzersRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ReloadAnalyzersResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="remote-info-async.html">remoteInfoAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">ClusterClient</span><span class="symbol">.</span><span class="identifier">remoteInfoAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$remoteInfoAsync(org.elasticsearch.client.ClusterClient, org.elasticsearch.client.cluster.RemoteInfoRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">RemoteInfoRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$remoteInfoAsync(org.elasticsearch.client.ClusterClient, org.elasticsearch.client.cluster.RemoteInfoRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">RemoteInfoResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -1344,7 +1379,7 @@ The search request already has your index. Also see extension functions added in
 <h4><a href="shrink-async.html">shrinkAsync</a></h4>
 </td>
 <td>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">shrinkAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$shrinkAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.action.admin.indices.shrink.ResizeRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ResizeRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$shrinkAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.action.admin.indices.shrink.ResizeRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ResizeResponse</span></code></td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">shrinkAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$shrinkAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.ResizeRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ResizeRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$shrinkAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.ResizeRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ResizeResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -1358,7 +1393,7 @@ The search request already has your index. Also see extension functions added in
 <h4><a href="split-async.html">splitAsync</a></h4>
 </td>
 <td>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">splitAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$splitAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.action.admin.indices.shrink.ResizeRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ResizeRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$splitAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.action.admin.indices.shrink.ResizeRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ResizeResponse</span></code></td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">splitAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$splitAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.ResizeRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ResizeRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$splitAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.ResizeRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ResizeResponse</span></code></td>
 </tr>
 <tr>
 <td>

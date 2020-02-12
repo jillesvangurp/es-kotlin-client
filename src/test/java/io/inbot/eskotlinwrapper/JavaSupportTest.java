@@ -31,7 +31,7 @@ public class JavaSupportTest {
         RestClientBuilder builder = RestClient.builder(new HttpHost("localhost", 9999, "http"));
         RestHighLevelClient restHighLevelClient = new RestHighLevelClient(builder);
         ObjectMapper objectMapper = new ObjectMapper();
-        JacksonModelReaderAndWriter jacksonModelReaderAndWriter = new JacksonModelReaderAndWriter(
+        JacksonModelReaderAndWriter<TestBean> jacksonModelReaderAndWriter = new JacksonModelReaderAndWriter<>(
                 TestBean.class,
                 objectMapper
         );

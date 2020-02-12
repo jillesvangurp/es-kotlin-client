@@ -17,7 +17,7 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:0.9.5-7.5.2")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-2-7.6.0")
     }
 }
 
@@ -25,7 +25,7 @@ buildscript {
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.61"
     // id("com.diffplug.gradle.spotless") version "3.25.0"
-    id("org.jetbrains.dokka") version "0.10.0"
+    id("org.jetbrains.dokka") version "0.10.1"
     id("com.github.ben-manes.versions") version "0.27.0" // gradle dependencyUpdates -Drevision=release
 
     java
@@ -147,7 +147,8 @@ publishing {
 }
 
 val kotlinVersion = "1.3.61"
-val elasticVersion = "7.5.2"
+// match the version used by the es-kotlin-codegen-plugin
+val elasticVersion = "7.6.0"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.6.0"
 val jacksonVersion = "2.10.2"

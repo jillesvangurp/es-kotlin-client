@@ -18,7 +18,9 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.withContext
 import org.elasticsearch.client.asyncIndexRepository
 import org.elasticsearch.client.create
 import org.elasticsearch.cluster.health.ClusterHealthStatus
@@ -39,7 +41,7 @@ suspend fun main(vararg args: String) {
         val recipeRepository =
             esClient.asyncIndexRepository<Recipe>(index = "recipes")
         val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
-        if(args.any { it == "-c" }) {
+        if (args.any { it == "-c" }) {
             // if you pass -c it bootstraps an index
             recipeSearch.deleteIndex()
             recipeSearch.createNewIndex()
@@ -71,40 +73,54 @@ private fun createServer(
                 call.respondText("Hello World!", ContentType.Text.Plain)
             }
             post("/recipe_index") {
-                recipeSearch.createNewIndex()
-                call.respond(HttpStatusCode.Created)
+                withContext(Dispatchers.Default) {
+                    recipeSearch.createNewIndex()
+                    call.respond(HttpStatusCode.Created)
+                }
             }
 
             delete("/recipe_index") {
-                recipeSearch.deleteIndex()
-                call.respond(HttpStatusCode.Gone)
+                withContext(Dispatchers.Default) {
+                    recipeSearch.deleteIndex()
+                    call.respond(HttpStatusCode.Gone)
+                }
             }
 
             post("/index_examples") {
-                recipeSearch.indexExamples()
-                call.respond(HttpStatusCode.Accepted)
+                withContext(Dispatchers.Default) {
+                    recipeSearch.indexExamples()
+                    call.respond(HttpStatusCode.Accepted)
+                }
             }
 
             get("/health") {
-                val healthStatus = recipeSearch.healthStatus()
-                if (healthStatus == ClusterHealthStatus.RED) {
-                    call.respond(
-                        HttpStatusCode.ServiceUnavailable,
-                        "es cluster is $healthStatus")
-                } else {
-                    call.respond(
-                        HttpStatusCode.OK,
-                        "es cluster is $healthStatus")
+                withContext(Dispatchers.Default) {
+
+                    val healthStatus = recipeSearch.healthStatus()
+                    if (healthStatus == ClusterHealthStatus.RED) {
+                        call.respond(
+                            HttpStatusCode.ServiceUnavailable,
+                            "es cluster is $healthStatus"
+                        )
+                    } else {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            "es cluster is $healthStatus"
+                        )
+                    }
                 }
             }
 
             get("/search") {
-                val params = call.request.queryParameters
-                val query = params["q"].orEmpty()
-                val from = params["from"]?.toInt() ?: 0
-                val size = params["size"]?.toInt() ?: 10
+                withContext(Dispatchers.Default) {
 
-                call.respond(recipeSearch.search(query, from, size))
+                    val params = call.request.queryParameters
+                    val query = params["q"].orEmpty()
+                    val from = params["from"]?.toInt() ?: 0
+                    val size = params["size"]?.toInt() ?: 10
+
+                    call.respond(recipeSearch.search(query, from, size))
+                }
             }
         }
     }

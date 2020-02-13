@@ -3,7 +3,7 @@ package io.inbot.eskotlinwrapper.manual
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class RecipeSearchEngine {
+class RecipeSearchEngineTest {
 
     @Test
     fun `article markdown`() {
@@ -18,10 +18,9 @@ class RecipeSearchEngine {
                     [Elastic examples repository](https://github.com/elastic/examples/tree/master/Search/recipe_search_java) 
                     and borrows data from that project.
 
-                    In this article, we will create a simple KTor server that 
-                    implements a simple Rest service for indexing and searching recipes.
-                    To make things interesting, we'll use co-routines, which just means that KTor uses asynchronous 
-                    communication and can scale really well without using a lot of threads.
+                    In this article, we will create a simple [KTor](https://ktor.io/servers/index.html) server that 
+                    implements a simple Rest service for indexing and searching recipes. Since both ktor and this library
+                    support co-routines, we'll do the extra bit of work to fully utilize that.
                     
                     You can find the source code for this example 
                     ${mdLinkToRepoResource("here","src/examples/kotlin/recipesearch")}.
@@ -39,26 +38,26 @@ class RecipeSearchEngine {
 
             +"""
                     Given this model, we can create simple `AsyncIndexRepository` and use it (see ${mdLink(crudPage)}) 
-                    to create a simple ktor server. Lets start with our `main` function
+                    to create a simple ktor server that can index and search through recipes. 
+
+                    Lets start with our `main` function:
+                    
             """
             snippetFromSourceFile("src/examples/kotlin/recipesearch/ServerMain.kt", "main_function")
 
             +"""
                 This creates an Elasticsearch client, a jackson object mapper, which we will use for serialization, 
-                and an `AsyncIndexRepository`, which is version of the IndexRepository that can use co-routines. 
+                and an `AsyncIndexRepository`, which is version of the `IndexRepository` that can use co-routines. 
 
                 These objects are injected into a `RecipeSearch` instance that contains
-                our business logic. Finally, we pass that instance to a method that constructs a simple asynchronous 
-                KTor server.
+                our business logic. Finally, we pass that instance to a function that constructs a simple asynchronous 
+                KTor server (see code at the end of this article).
                 
-                Note that our `main` function is marked as `suspend`. This means our KTor server creates a co-routine 
-                for each request. And since we used `AsyncIndexRepository` instead of the `IndexRepository`, everything
-                is asynchronous.
-                
-                ## The business logic
+                ## Indexing
                 
                 First we need to be able to index recipe documents. We do this with a simple function that uses the
-                bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory.
+                bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory. Bulk indexing 
+                allows Elasticsearch to process batches of documents efficiently.
             """
             snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "index_recipes")
 
@@ -68,9 +67,20 @@ class RecipeSearchEngine {
                 and iterate over a bigger data source. It doesn't matter where the data comes from. You could iterate
                 over a database table, a CSV file, crawl the web, etc.
                 
+                The `RecipeSearch` class also contains functions for creating and deleting the index. For the purpose 
+                of this article, we use Elasticsearch in a schema-less mode instead of explicitly defining a mapping. 
+                
+                # Searching
+                
                 Once we have documents in our index, we can search through them as follows:
             """
             snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "search_recipes")
+
+            +"""
+                Since returning the raw Elasticsearch Response is not very nice, we use our own response format and 
+                convert object that Elasticsearch returns using an extension function.
+            """
+            snippetFromSourceFile("src/examples/kotlin/recipesearch/SearchResponse.kt", "search_response")
 
             +"""
                 As you can see, searching is similarly simple. The `search` extension function takes a block that
@@ -89,14 +99,13 @@ class RecipeSearchEngine {
             """
             snippetFromSourceFile("src/examples/kotlin/recipesearch/ServerMain.kt", "ktor_setup")
 
-            """
-                KTor use a DSL for defining the server. In this case, we simply reuse our Jackson object mapper
+            +"""
+                KTor uses a DSL for defining the server. In this case, we simply reuse our Jackson object mapper
                 to setup content negotiation and data conversion and then add a router with a few simple endpoints.
                 
-                Note tha
+                Note that we use `withContext { ... }` to launch our suspending business logic. This suspends the ktor
+                pipeline until we have results.
             """
-
-
         }
     }
 }

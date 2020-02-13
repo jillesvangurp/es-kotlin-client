@@ -11,10 +11,9 @@ example. The code below is very loosely based on an example in the
 [Elastic examples repository](https://github.com/elastic/examples/tree/master/Search/recipe_search_java) 
 and borrows data from that project.
 
-In this article, we will create a simple KTor server that 
-implements a simple Rest service for indexing and searching recipes.
-To make things interesting, we'll use co-routines, which just means that KTor uses asynchronous 
-communication and can scale really well without using a lot of threads.
+In this article, we will create a simple [KTor](https://ktor.io/servers/index.html) server that 
+implements a simple Rest service for indexing and searching recipes. Since both ktor and this library
+support co-routines, we'll do the extra bit of work to fully utilize that.
 
 You can find the source code for this example 
 [here](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/examples/kotlin/recipesearch).
@@ -85,7 +84,9 @@ data class Recipe(
 ```
 
 Given this model, we can create simple `AsyncIndexRepository` and use it (see [Working with objects](crud-support.md)) 
-to create a simple ktor server. Lets start with our `main` function
+to create a simple ktor server that can index and search through recipes. 
+
+Lets start with our `main` function:
 
 ```kotlin
 @ExperimentalCoroutinesApi
@@ -97,13 +98,13 @@ suspend fun main(vararg args: String) {
   // from kotlin (camelCase)
   objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 
-  val esClient = create(host = "localhost", port = 9200)
+  val esClient = create(host = "localhost", port = 9999)
   // shut down client cleanly after ktor exits
   esClient.use {
     val recipeRepository =
       esClient.asyncIndexRepository<Recipe>(index = "recipes")
     val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
-    if(args.any { it == "-c" }) {
+    if (args.any { it == "-c" }) {
       // if you pass -c it bootstraps an index
       recipeSearch.deleteIndex()
       recipeSearch.createNewIndex()
@@ -117,20 +118,17 @@ suspend fun main(vararg args: String) {
 ```
 
 This creates an Elasticsearch client, a jackson object mapper, which we will use for serialization, 
-and an `AsyncIndexRepository`, which is version of the IndexRepository that can use co-routines. 
+and an `AsyncIndexRepository`, which is version of the `IndexRepository` that can use co-routines. 
 
 These objects are injected into a `RecipeSearch` instance that contains
-our business logic. Finally, we pass that instance to a method that constructs a simple asynchronous 
-KTor server.
+our business logic. Finally, we pass that instance to a function that constructs a simple asynchronous 
+KTor server (see code at the end of this article).
 
-Note that our `main` function is marked as `suspend`. This means our KTor server creates a co-routine 
-for each request. And since we used `AsyncIndexRepository` instead of the `IndexRepository`, everything
-is asynchronous.
-
-## The business logic
+## Indexing
 
 First we need to be able to index recipe documents. We do this with a simple function that uses the
-bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory.
+bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory. Bulk indexing 
+allows Elasticsearch to process batches of documents efficiently.
 
 ```kotlin
 suspend fun indexExamples() {
@@ -153,6 +151,11 @@ and it could trivially be modified to process many millions of documents. Simply
 and iterate over a bigger data source. It doesn't matter where the data comes from. You could iterate
 over a database table, a CSV file, crawl the web, etc.
 
+The `RecipeSearch` class also contains functions for creating and deleting the index. For the purpose 
+of this article, we use Elasticsearch in a schema-less mode instead of explicitly defining a mapping. 
+
+# Searching
+
 Once we have documents in our index, we can search through them as follows:
 
 ```kotlin
@@ -174,6 +177,21 @@ suspend fun search(query: String, from: Int, size: Int):
     })
   }.toSearchResponse()
 }
+```
+
+Since returning the raw Elasticsearch Response is not very nice, we use our own response format and 
+convert object that Elasticsearch returns using an extension function.
+
+```kotlin
+data class SearchResponse<T : Any>(val totalHits: Int, val items: List<T>) {
+  constructor(searchResponse: SearchResults<T>) :
+      this(
+        searchResponse.totalHits.toInt(),
+        searchResponse.mappedHits.toList()
+      )
+}
+
+fun <T : Any> SearchResults<T>.toSearchResponse() =  SearchResponse(this)
 ```
 
 As you can see, searching is similarly simple. The `search` extension function takes a block that
@@ -208,48 +226,68 @@ private fun createServer(
         call.respondText("Hello World!", ContentType.Text.Plain)
       }
       post("/recipe_index") {
-        recipeSearch.createNewIndex()
-        call.respond(HttpStatusCode.Created)
+        withContext(Dispatchers.Default) {
+          recipeSearch.createNewIndex()
+          call.respond(HttpStatusCode.Created)
+        }
       }
 
       delete("/recipe_index") {
-        recipeSearch.deleteIndex()
-        call.respond(HttpStatusCode.Gone)
+        withContext(Dispatchers.Default) {
+          recipeSearch.deleteIndex()
+          call.respond(HttpStatusCode.Gone)
+        }
       }
 
       post("/index_examples") {
-        recipeSearch.indexExamples()
-        call.respond(HttpStatusCode.Accepted)
+        withContext(Dispatchers.Default) {
+          recipeSearch.indexExamples()
+          call.respond(HttpStatusCode.Accepted)
+        }
       }
 
       get("/health") {
-        val healthStatus = recipeSearch.healthStatus()
-        if (healthStatus == ClusterHealthStatus.RED) {
-          call.respond(
-            HttpStatusCode.ServiceUnavailable,
-            "es cluster is $healthStatus")
-        } else {
-          call.respond(
-            HttpStatusCode.OK,
-            "es cluster is $healthStatus")
+        withContext(Dispatchers.Default) {
+
+          val healthStatus = recipeSearch.healthStatus()
+          if (healthStatus == ClusterHealthStatus.RED) {
+            call.respond(
+              HttpStatusCode.ServiceUnavailable,
+              "es cluster is $healthStatus"
+            )
+          } else {
+            call.respond(
+              HttpStatusCode.OK,
+              "es cluster is $healthStatus"
+            )
+          }
         }
       }
 
       get("/search") {
-        val params = call.request.queryParameters
-        val query = params["q"].orEmpty()
-        val from = params["from"]?.toInt() ?: 0
-        val size = params["size"]?.toInt() ?: 10
+        withContext(Dispatchers.Default) {
 
-        call.respond(recipeSearch.search(query, from, size))
+          val params = call.request.queryParameters
+          val query = params["q"].orEmpty()
+          val from = params["from"]?.toInt() ?: 0
+          val size = params["size"]?.toInt() ?: 10
+
+          call.respond(recipeSearch.search(query, from, size))
+        }
       }
     }
   }
 ```
+
+KTor uses a DSL for defining the server. In this case, we simply reuse our Jackson object mapper
+to setup content negotiation and data conversion and then add a router with a few simple endpoints.
+
+Note that we use `withContext { ... }` to launch our suspending business logic. This suspends the ktor
+pipeline until we have results.
 
 
 ---
 
 [previous](coroutines.md) | [parent](index.md)
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/RecipeSearchEngine.kt) from which this page is generated.
+This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/RecipeSearchEngineTest.kt) from which this page is generated.

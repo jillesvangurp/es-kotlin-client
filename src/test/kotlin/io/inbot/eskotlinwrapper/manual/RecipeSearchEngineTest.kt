@@ -77,12 +77,6 @@ class RecipeSearchEngineTest {
             snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "search_recipes")
 
             +"""
-                Since returning the raw Elasticsearch Response is not very nice, we use our own response format and 
-                convert object that Elasticsearch returns using an extension function.
-            """
-            snippetFromSourceFile("src/examples/kotlin/recipesearch/SearchResponse.kt", "search_response")
-
-            +"""
                 As you can see, searching is similarly simple. The `search` extension function takes a block that
                 allows you to customise a `SearchRequest`. Inside the block we set the `size` and `from` so we can 
                 page through multiple pages of results.
@@ -92,6 +86,12 @@ class RecipeSearchEngineTest {
                 a bit more idiomatic. The advantage of this is that we don't have to chain the builder methods and gain some 
                 compile time safety. We could also have opted to use a templated multi-line string as the source.
                 
+                Since returning the raw Elasticsearch Response is not very nice, we use our own response format and 
+                convert object that Elasticsearch returns using an extension function.
+            """
+            snippetFromSourceFile("src/examples/kotlin/recipesearch/SearchResponse.kt", "search_response")
+
+            +"""                
                 ## Creating a Ktor server
                 
                 To expose the business logic via a simple REST service, we use KTor. Note that recent versions of

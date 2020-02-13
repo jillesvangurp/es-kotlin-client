@@ -179,6 +179,15 @@ suspend fun search(query: String, from: Int, size: Int):
 }
 ```
 
+As you can see, searching is similarly simple. The `search` extension function takes a block that
+allows you to customise a `SearchRequest`. Inside the block we set the `size` and `from` so we can 
+page through multiple pages of results.
+
+Then hardest part is adding a query. For this the client provides several options. In this case,
+we use Kotlin's `apply` extension function to make dealing with the Java builders in the `RestHighLevelClient`
+a bit more idiomatic. The advantage of this is that we don't have to chain the builder methods and gain some 
+compile time safety. We could also have opted to use a templated multi-line string as the source.
+
 Since returning the raw Elasticsearch Response is not very nice, we use our own response format and 
 convert object that Elasticsearch returns using an extension function.
 
@@ -193,15 +202,6 @@ data class SearchResponse<T : Any>(val totalHits: Int, val items: List<T>) {
 
 fun <T : Any> SearchResults<T>.toSearchResponse() =  SearchResponse(this)
 ```
-
-As you can see, searching is similarly simple. The `search` extension function takes a block that
-allows you to customise a `SearchRequest`. Inside the block we set the `size` and `from` so we can 
-page through multiple pages of results.
-
-Then hardest part is adding a query. For this the client provides several options. In this case,
-we use Kotlin's `apply` extension function to make dealing with the Java builders in the `RestHighLevelClient`
-a bit more idiomatic. The advantage of this is that we don't have to chain the builder methods and gain some 
-compile time safety. We could also have opted to use a templated multi-line string as the source.
 
 ## Creating a Ktor server
 
@@ -286,6 +286,10 @@ Note that we use `withContext { ... }` to launch our suspending business logic. 
 pipeline until we have results.
 
 ## Doing some requests
+
+To start the server, simply run `ServerMain` from your IDE and start Elasticsearch (e.g. by using the docker-compose file in the es_kibana directory).
+
+After it starts, you should be able to do some curl requests:
 
 ```
 $ curl -X POST localhost:8080/index_examples

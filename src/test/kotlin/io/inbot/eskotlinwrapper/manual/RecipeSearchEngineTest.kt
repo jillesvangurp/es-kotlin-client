@@ -53,9 +53,25 @@ class RecipeSearchEngineTest {
                 our business logic. Finally, we pass that instance to a function that constructs a simple asynchronous 
                 KTor server (see code at the end of this article).
                 
+                ## Creating an index
+                
+                We create a custom index with the custom mapping DSL that is part of the Kotlin client.
+            """
+            snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "mapping_dsl")
+
+
+            +"""
+                This somewhat elaborate mapping example shows how you can mix our DSL with simple put
+                calls on the underlying `MutableMap`. The DSL provides some support for commonly used things
+                but since Elasticsearch has so many custom things, it's not feasible to manually map all of
+                that to the DSL. For unmapped things, you can simply use put with primitives, maps, lists, etc.
+                
+                If you prefer, you can also use `source` to inject raw json from either a string or an InputStream,
+                or attempt to use the very limited builder that comes with the RestHighLevelClient.
+                
                 ## Indexing
                 
-                First we need to be able to index recipe documents. We do this with a simple function that uses the
+                To index recipe documents, we use a simple function that uses the
                 bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory. Bulk indexing 
                 allows Elasticsearch to process batches of documents efficiently.
             """
@@ -90,6 +106,15 @@ class RecipeSearchEngineTest {
                 convert object that Elasticsearch returns using an extension function.
             """
             snippetFromSourceFile("src/examples/kotlin/recipesearch/SearchResponse.kt", "search_response")
+
+            +"""
+                ## Simple Autocomplete
+                
+                Since we added custom analyzers on the `title.autocomplete` field, we can also implement that. The response 
+                format for that is the same.
+            """
+            snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "autocomplete_recipes")
+
 
             +"""                
                 ## Creating a Ktor server

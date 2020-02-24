@@ -25,6 +25,36 @@ annotation class MapPropertiesDSL
 class IndexSettings : MapBackedProperties() {
     var replicas: Int by property("index.number_of_replicas")
     var shards: Int by property("index.number_of_shards")
+
+    fun addAnalyzer(name: String, block: MapBackedProperties.()-> Unit) {
+        val analysis = _properties["analysis"] as MapBackedProperties? ?: MapBackedProperties()
+        val analyzers = analysis["analyzer"] as MapBackedProperties? ?: MapBackedProperties()
+        val analyzer = MapBackedProperties()
+        block.invoke(analyzer)
+        analyzers[name] = analyzer
+        analysis["analyzer"] = analyzers
+        _properties["analysis"] = analysis
+    }
+
+    fun addTokenizer(name: String, block: MapBackedProperties.()-> Unit) {
+        val analysis = _properties["analysis"] as MapBackedProperties? ?: MapBackedProperties()
+        val tokenizers = analysis["tokenizer"] as MapBackedProperties? ?: MapBackedProperties()
+        val tokenizer = MapBackedProperties()
+        block.invoke(tokenizer)
+        tokenizers[name] = tokenizer
+        analysis["tokenizer"] = tokenizers
+        _properties["analysis"] = analysis
+    }
+
+    fun addCharFilter(name: String, block: MapBackedProperties.()-> Unit) {
+        val analysis = _properties["analysis"] as MapBackedProperties? ?: MapBackedProperties()
+        val charFilters = analysis["char_filter"] as MapBackedProperties? ?: MapBackedProperties()
+        val charFilter = MapBackedProperties()
+        block.invoke(charFilter)
+        charFilters[name] = charFilter
+        analysis["char_filter"] = charFilters
+        _properties["analysis"] = analysis
+    }
 }
 
 @MapPropertiesDSL
@@ -32,6 +62,9 @@ class FieldMapping(typeName: String) : MapBackedProperties() {
     var type: String by property()
     //    var properties: Map<String, FieldMapping>? by property()
     var copyTo: List<String> by property()
+
+    var analyzer: String by property()
+    var searchAnalyzer: String by property()
 
     init {
         type = typeName

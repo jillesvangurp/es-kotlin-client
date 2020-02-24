@@ -130,33 +130,35 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 useful if you maintain your mappings as separate json files.
             """
 
-            // delete the previous version
-            thingRepository.deleteIndex()
-            // create a new one
-            thingRepository.createIndex {
-                source("""
-                    {
-                      "settings": {
-                        "index": {
-                          "number_of_shards": 3,
-                          "number_of_replicas": 0,
-                          "blocks": {
-                            "read_only_allow_delete": "false"
-                          }
-                        }
-                      },
-                      "mappings": {
-                        "properties": {
-                          "title": {
-                            "type": "text"
+            block {
+                // delete the previous version of our index
+                thingRepository.deleteIndex()
+                // create a new one using json source
+                thingRepository.createIndex {
+                    source("""
+                        {
+                          "settings": {
+                            "index": {
+                              "number_of_shards": 3,
+                              "number_of_replicas": 0,
+                              "blocks": {
+                                "read_only_allow_delete": "false"
+                              }
+                            }
                           },
-                          "amount": {
-                            "type": "long"
+                          "mappings": {
+                            "properties": {
+                              "title": {
+                                "type": "text"
+                              },
+                              "amount": {
+                                "type": "long"
+                              }
+                            }
                           }
                         }
-                      }
-                    }
-                """)
+                    """)
+                }
             }
 
             +"""

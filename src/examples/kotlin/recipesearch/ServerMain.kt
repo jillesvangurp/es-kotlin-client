@@ -2,6 +2,7 @@ package recipesearch
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
@@ -39,9 +40,14 @@ suspend fun main(vararg args: String) {
     // shut down client cleanly after ktor exits
     esClient.use {
         val recipeRepository =
-            esClient.asyncIndexRepository<Recipe>(index = "recipes")
+            esClient.asyncIndexRepository<Recipe>(
+                index = "recipes",
+                // we override the default because we want to reuse the objectMapper
+                // and reuse our snake case setup
+                modelReaderAndWriter = JacksonModelReaderAndWriter(Recipe::class,objectMapper)
+            )
         val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
-        if (args.any { it == "-c" }) {
+        if (true || args.any { it == "-c" }) {
             // if you pass -c it bootstraps an index
             recipeSearch.deleteIndex()
             recipeSearch.createNewIndex()
@@ -120,6 +126,17 @@ private fun createServer(
                     val size = params["size"]?.toInt() ?: 10
 
                     call.respond(recipeSearch.search(query, from, size))
+                }
+            }
+
+            get("/autocomplete") {
+                withContext(Dispatchers.Default) {
+                    val params = call.request.queryParameters
+                    val query = params["q"].orEmpty()
+                    val from = params["from"]?.toInt() ?: 0
+                    val size = params["size"]?.toInt() ?: 10
+
+                    call.respond(recipeSearch.autocomplete(query, from, size))
                 }
             }
         }

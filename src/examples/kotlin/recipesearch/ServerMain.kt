@@ -49,10 +49,14 @@ suspend fun main(vararg args: String) {
             )
         val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
         if (args.any { it == "-c" }) {
-            // if you pass -c it bootstraps an index
-            recipeSearch.deleteIndex()
-            recipeSearch.createNewIndex()
-            recipeSearch.indexExamples()
+            // since recipe search does async stuff
+            // we need a coroutine scope
+            withContext(Dispatchers.IO) {
+                // if you pass -c it bootstraps an index
+                recipeSearch.deleteIndex()
+                recipeSearch.createNewIndex()
+                recipeSearch.indexExamples()
+            }
         }
 
         // creates a simple ktor server
@@ -80,28 +84,28 @@ private fun createServer(
                 call.respondText("Hello World!", ContentType.Text.Plain)
             }
             post("/recipe_index") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     recipeSearch.createNewIndex()
                     call.respond(HttpStatusCode.Created)
                 }
             }
 
             delete("/recipe_index") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     recipeSearch.deleteIndex()
                     call.respond(HttpStatusCode.Gone)
                 }
             }
 
             post("/index_examples") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     recipeSearch.indexExamples()
                     call.respond(HttpStatusCode.Accepted)
                 }
             }
 
             get("/health") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
 
                     val healthStatus = recipeSearch.healthStatus()
                     if (healthStatus == ClusterHealthStatus.RED) {
@@ -119,7 +123,7 @@ private fun createServer(
             }
 
             get("/search") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
 
                     val params = call.request.queryParameters
                     val query = params["q"].orEmpty()
@@ -131,7 +135,7 @@ private fun createServer(
             }
 
             get("/autocomplete") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     val params = call.request.queryParameters
                     val query = params["q"].orEmpty()
                     val from = params["from"]?.toInt() ?: 0

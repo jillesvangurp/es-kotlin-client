@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.inbot.eskotlinwrapper
 
 import org.elasticsearch.common.xcontent.XContentBuilder
@@ -139,7 +141,7 @@ class FieldMappings : MapBackedProperties() {
     }
 }
 
-data class IndexSettingsAndMappings private constructor(private val generateMetaFields: Boolean) {
+class IndexSettingsAndMappings private constructor(private val generateMetaFields: Boolean) {
     private var settings: IndexSettings? = null
     private var meta: MapBackedProperties? = null
     private var mappings: FieldMappings? = null

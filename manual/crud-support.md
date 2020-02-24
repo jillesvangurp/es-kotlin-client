@@ -96,10 +96,10 @@ Output:
   "things" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1582569444854",
+    "creation_date" : "1582585487130",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "Yuwg_1dPRiirdxJXVV5TPg",
+    "uuid" : "8iBk_xFSQN-z9U92i1N_Aw",
     "version" : {
       "created" : "7060099"
     },
@@ -109,13 +109,44 @@ Output:
   }
 }
 things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-02-24T18:37:24.815893Z"},"properties":{"amount":{"type":"long","fields":{"abette
+02-24T23:04:47.102989Z"},"properties":{"amount":{"type":"long","fields":{"abette
 rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
 yword"}}},"title":{"type":"text"}}}
 ```
 
 Of course you can also simply set the settings json using source. This is 
 useful if you maintain your mappings as separate json files.
+
+```kotlin
+// delete the previous version of our index
+thingRepository.deleteIndex()
+// create a new one using json source
+thingRepository.createIndex {
+  source("""
+    {
+      "settings": {
+      "index": {
+        "number_of_shards": 3,
+        "number_of_replicas": 0,
+        "blocks": {
+        "read_only_allow_delete": "false"
+        }
+      }
+      },
+      "mappings": {
+      "properties": {
+        "title": {
+        "type": "text"
+        },
+        "amount": {
+        "type": "long"
+        }
+      }
+      }
+    }
+  """)
+}
+```
 
 ## CRUD operations
 
@@ -215,7 +246,7 @@ try {
 Output:
 
 ```
-obj with id 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 0
+obj with id 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 3
 Version conflict! Es returned 409
 
 ```

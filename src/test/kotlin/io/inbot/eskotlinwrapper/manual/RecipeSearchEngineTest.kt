@@ -10,7 +10,7 @@ class RecipeSearchEngineTest {
         KotlinForExample.markdownPageWithNavigation(recipeSearchEnginePage) {
             sourcePaths += "src/examples/kotlin"
             +"""
-                    The Elastic Search Kotlin Wrapper is designed to simplify writing production code that
+                    The Elastic Search Kotlin Wrapper is designed to simplify writing code that
                     interacts with Elasticsearch.
                     
                     The easiest way to demonstrate how it works is just showing it with a simple 
@@ -49,9 +49,9 @@ class RecipeSearchEngineTest {
                 This creates an Elasticsearch client, a jackson object mapper, which we will use for serialization, 
                 and an `AsyncIndexRepository`, which is version of the `IndexRepository` that can use co-routines. 
 
-                These objects are injected into a `RecipeSearch` instance that contains
-                our business logic. Finally, we pass that instance to a function that constructs a simple asynchronous 
-                KTor server (see code at the end of this article).
+                These are injected into the `RecipeSearch` constructor. This class contains
+                our business logic. Finally, we pass that to a function that constructs a simple asynchronous 
+                KTor server (see code at the end of this article) to implement a simple REST api.
                 
                 ## Creating an index
                 
@@ -69,7 +69,7 @@ class RecipeSearchEngineTest {
                 If you prefer, you can also use `source` to inject raw json from either a string or an InputStream,
                 or attempt to use the very limited builder that comes with the RestHighLevelClient.
                 
-                ## Indexing
+                ## Indexing using the Bulk DSL
                 
                 To index recipe documents, we use a simple function that uses the
                 bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory. Bulk indexing 
@@ -82,9 +82,6 @@ class RecipeSearchEngineTest {
                 and it could trivially be modified to process many millions of documents. Simply set a larger bulk size 
                 and iterate over a bigger data source. It doesn't matter where the data comes from. You could iterate
                 over a database table, a CSV file, crawl the web, etc.
-                
-                The `RecipeSearch` class also contains functions for creating and deleting the index. For the purpose 
-                of this article, we use Elasticsearch in a schema-less mode instead of explicitly defining a mapping. 
                 
                 # Searching
                 
@@ -111,7 +108,7 @@ class RecipeSearchEngineTest {
                 ## Simple Autocomplete
                 
                 Since we added custom analyzers on the `title.autocomplete` field, we can also implement that. The response 
-                format for that is the same.
+                format for that is the same. Our mapping uses a simple edge ngram analyzer.
             """
             snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "autocomplete_recipes")
 
@@ -129,7 +126,7 @@ class RecipeSearchEngineTest {
                 to setup content negotiation and data conversion and then add a router with a few simple endpoints.
                 
                 Note that we use `withContext { ... }` to launch our suspending business logic. This suspends the ktor
-                pipeline until we have results.
+                pipeline until the asynchronous stuff completes.
                 
                 ## Doing some requests
                 
@@ -138,8 +135,11 @@ class RecipeSearchEngineTest {
                 After it starts, you should be able to do some curl requests:
                 
                 ```
-                $ curl -X POST localhost:8080/index_examples
-                $ curl 'localhost:8080/search?q=banana'
+                ${'$'} curl -X DELETE localhost:8080/recipe_index
+                ${'$'} curl -X POST localhost:8080/recipe_index
+                ${'$'} curl -X POST localhost:8080/index_examples
+
+                ${'$'} curl 'localhost:8080/search?q=banana'
                 {"total_hits":1,"items":[{"title":"Banana Oatmeal Cookie","description":"This recipe has been handed down in my family for generations. It's a good way to use overripe bananas. It's also a moist cookie that travels well either in the mail or car.","ingredients":["1 1/2 cups sifted all-purpose flour","1/2 teaspoon baking soda","1 teaspoon salt","1/4 teaspoon ground nutmeg","3/4 teaspoon ground cinnamon","3/4 cup shortening","1 cup white sugar","1 egg","1 cup mashed bananas","1 3/4 cups quick cooking oats","1/2 cup chopped nuts"],"directions":["Preheat oven to 400 degrees F (200 degrees C).","Sift together the flour, baking soda, salt, nutmeg and cinnamon.","Cream together the shortening and sugar; beat until light and fluffy. Add egg, banana, oatmeal and nuts. Mix well.","Add dry ingredients, mix well and drop by the teaspoon on ungreased cookie sheet.","Bake at 400 degrees F (200 degrees C) for 15 minutes or until edges turn lightly brown. Cool on wire rack. Store in a closed container."],"prep_time_min":0,"cook_time_min":0,"servings":24,"tags":["dessert","fruit"],"author":{"name":"Blair Bunny","url":"http://allrecipes.com/cook/10179/profile.aspx"},"source_url":"http://allrecipes.com/Recipe/Banana-Oatmeal-Cookie/Detail.aspx"}]}
                 ```
             """

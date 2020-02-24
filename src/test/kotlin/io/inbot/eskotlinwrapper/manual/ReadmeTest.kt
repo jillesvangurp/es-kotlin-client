@@ -30,7 +30,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
             friendly API over the underlying client functionality. 
             - A repository abstraction that allows you to: 
-                - Manage indices
+                - Manage indices with a flexible DSL for mappings
                 - Do crud on index items with safe updates that retry in case of a version conflict
                 - Bulk indexin DSL to do bulk operations without boiler plate and with fine-grained error handling (via callbacks)
                 - Search & count objects in the index using a Kotlin friendly version of their DSL or simply use raw json from either a file or a templated multiline kotlin string.

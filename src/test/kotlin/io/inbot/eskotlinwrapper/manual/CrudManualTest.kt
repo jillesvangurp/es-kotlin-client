@@ -8,14 +8,18 @@ import io.inbot.eskotlinwrapper.IndexRepository
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import org.elasticsearch.ElasticsearchStatusException
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest
+import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
-import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.client.source
+import org.elasticsearch.common.xcontent.stringify
 import org.junit.jupiter.api.Test
 
 @Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
-    private data class Thing(val name: String, val amount: Long = 42)
+    private data class Thing(val title: String, val amount: Long = 42)
 
     @Test
     fun `explain crud repository`() {
@@ -52,7 +56,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             block {
-                data class Thing(val name: String, val amount: Long = 42)
+                data class Thing(val title: String, val amount: Long = 42)
             }
 
             +"""
@@ -73,31 +77,86 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
             block(true) {
                 thingRepository.createIndex {
-                    source(
-                        """
-                            {
-                              "settings": {
-                                "index": {
-                                  "number_of_shards": 3,
-                                  "number_of_replicas": 0,
-                                  "blocks": {
-                                    "read_only_allow_delete": "false"
-                                  }
+                    // use our friendly DSL to configure the index
+                    configure {
+                        settings {
+                            replicas = 0
+                            shards = 1
+                        }
+                        mappings {
+                            // in the block you receive FieldMappings as this
+                            // a simple text field "title": {"type":"text"}
+                            text("title")
+                            // a numeric field with sub fields, use generics
+                            // to indicate what kind of number
+                            number<Long>("amount") {
+                                // we can customize the FieldMapping object
+                                // that we receive in the block
+                                fields {
+                                    // we get another FieldMappings
+                                    // lets add a keyword field
+                                    keyword("somesubfield")
+                                    // if you want, you can manipulate the
+                                    // FieldMapping as a map
+                                    // this is great for accessing features
+                                    // not covered by our Kotlin DSL
+                                    this["imadouble"] = mapOf("type" to "double")
+                                    number<Double>("abetterway")
                                 }
-                              },
-                              "mappings": {
-                                "properties": {
-                                  "name": {
-                                    "type": "text"
-                                  },
-                                  "amount": {
-                                    "type": "long"
-                                  }
-                                }
-                              }
                             }
-                        """, XContentType.JSON)
+                        }
+                    }
                 }
+            }
+
+            +"""
+                Note. The mapping DSL is a work in progress. The goal is not to support everything as you
+                can simply fall back to Kotlin's Map DSL with `mapOf("myfield" to someValue)`. Both `FieldMapping`
+                and `FieldMappings` extend a `MapBackedProperties` class that delegates to a `MutableMap`. This allows 
+                us to have type safe properties and helper methods and mix that with raw map access where our DSL misses
+                features.
+            """
+            blockWithOutput(wrapOutput = true) {
+                // stringify is a useful extension function we added to the response
+                println(thingRepository.getSettings().stringify(true))
+
+                thingRepository.getMappings().mappings()
+                    .forEach { (name, meta) ->
+                    print("$name -> ${meta.source().string()}")
+                }
+            }
+             +"""   
+                Of course you can also simply set the settings json using source. This is 
+                useful if you maintain your mappings as separate json files.
+            """
+
+            // delete the previous version
+            thingRepository.deleteIndex()
+            // create a new one
+            thingRepository.createIndex {
+                source("""
+                    {
+                      "settings": {
+                        "index": {
+                          "number_of_shards": 3,
+                          "number_of_replicas": 0,
+                          "blocks": {
+                            "read_only_allow_delete": "false"
+                          }
+                        }
+                      },
+                      "mappings": {
+                        "properties": {
+                          "title": {
+                            "type": "text"
+                          },
+                          "amount": {
+                            "type": "long"
+                          }
+                        }
+                      }
+                    }
+                """)
             }
 
             +"""
@@ -153,7 +212,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 val (obj, rawGetResponse) = thingRepository.getWithGetResponse("2")
                     ?: throw IllegalStateException("We just created this?!")
 
-                println("obj with id '${obj.name}' has id: ${rawGetResponse.id}, " +
+                println("obj with id '${obj.title}' has id: ${rawGetResponse.id}, " +
                         "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
                         "seqNo: ${rawGetResponse.seqNo}")
                 // This works
@@ -186,13 +245,13 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 thingRepository.index("3", Thing("Yet another thing"))
 
                 thingRepository.update("3") { currentThing ->
-                    currentThing.copy(name = "an updated thing", amount = 666)
+                    currentThing.copy(title = "an updated thing", amount = 666)
                 }
 
                 println("It was updated: ${thingRepository.get("3")}")
 
                 thingRepository.update("3") { currentThing ->
-                    currentThing.copy(name = "we can do this again and again", amount = 666)
+                    currentThing.copy(title = "we can do this again and again", amount = 666)
                 }
 
                 println("It was updated again ${thingRepository.get("3")}")

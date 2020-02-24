@@ -5,6 +5,7 @@ import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
@@ -18,6 +19,9 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.indices.GetFieldMappingsRequest
+import org.elasticsearch.client.indices.GetIndexRequest
+import org.elasticsearch.client.indices.GetMappingsRequest
 import org.elasticsearch.client.search
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
@@ -77,6 +81,10 @@ class IndexRepository<T : Any>(
 
         client.indices().create(indexRequest, requestOptions)
     }
+
+    fun getSettings() = client.indices().getSettings(GetSettingsRequest().indices(indexName), defaultRequestOptions)
+    fun getMappings() = client.indices().getMapping(GetMappingsRequest().indices(indexName), defaultRequestOptions)
+    fun getMappingsAndSettings() = client.indices().get(GetIndexRequest(indexName),defaultRequestOptions)
 
     /**
      * Delete the index associated with the repository. Returns true if successful or false if the index did not exist

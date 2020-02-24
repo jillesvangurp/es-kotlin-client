@@ -12,8 +12,6 @@ import java.security.MessageDigest
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.Base64
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 fun String.snakeCaseToUnderscore(): String {
     val re = "(?<=[a-z])[A-Z]".toRegex()
@@ -22,42 +20,6 @@ fun String.snakeCaseToUnderscore(): String {
 
 @DslMarker
 annotation class MapPropertiesDSL
-
-@Suppress("UNCHECKED_CAST")
-@MapPropertiesDSL
-open class MapBackedProperties internal constructor(
-    internal val _properties: MutableMap<String, Any> = mutableMapOf()
-) : MutableMap<String, Any> by _properties {
-
-    override fun get(key: String) = _properties[key.snakeCaseToUnderscore()]
-    override fun put(key: String, value: Any) {
-        _properties[key.snakeCaseToUnderscore()] = value
-    }
-
-    internal fun <T : Any?> property(): ReadWriteProperty<MapBackedProperties, T> {
-        return object : ReadWriteProperty<MapBackedProperties, T> {
-            override fun getValue(thisRef: MapBackedProperties, property: KProperty<*>): T {
-                return _properties[property.name.snakeCaseToUnderscore()] as T
-            }
-
-            override fun setValue(thisRef: MapBackedProperties, property: KProperty<*>, value: T) {
-                _properties[property.name.snakeCaseToUnderscore()] = value as Any // cast is needed here apparently
-            }
-        }
-    }
-
-    internal fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T> {
-        return object : ReadWriteProperty<MapBackedProperties, T> {
-            override fun getValue(thisRef: MapBackedProperties, property: KProperty<*>): T {
-                return _properties[customPropertyName] as T
-            }
-
-            override fun setValue(thisRef: MapBackedProperties, property: KProperty<*>, value: T) {
-                _properties[customPropertyName] = value as Any // cast is needed here apparently
-            }
-        }
-    }
-}
 
 @MapPropertiesDSL
 class IndexSettings : MapBackedProperties() {
@@ -91,6 +53,7 @@ class FieldMappings : MapBackedProperties() {
     fun bool(name: String) = field(name, "boolean") {}
     fun bool(name: String, block: FieldMapping.() -> Unit) = field(name, "boolean", block)
 
+    inline fun <reified T : Number> number(name: String) = number<T>(name) {}
 
     inline fun <reified T : Number> number(name: String, noinline block: FieldMapping.() -> Unit) {
         val type = when (T::class) {

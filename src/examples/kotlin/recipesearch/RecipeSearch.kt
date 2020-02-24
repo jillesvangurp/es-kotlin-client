@@ -36,6 +36,7 @@ class RecipeSearch(
                         put("type", "edge_ngram")
                         put("min_gram", 2)
                         put("max_gram", 10)
+                        put("token_chars",listOf("letter"))
                     }
                     addAnalyzer("autocomplete") {
                         put("tokenizer", "autocomplete")
@@ -103,11 +104,15 @@ class RecipeSearch(
                 from(from)
                 size(size)
                 query(
-                    QueryBuilders.boolQuery().apply {
-                        should().apply {
-                            add(QueryBuilders.matchPhraseQuery("title", query).boost(2.0f))
-                            add(QueryBuilders.matchQuery("title", query).boost(2.0f))
-                            add(QueryBuilders.matchQuery("description", query))
+                    if(query.isBlank()) {
+                        QueryBuilders.matchAllQuery()
+                    } else {
+                        QueryBuilders.boolQuery().apply {
+                            should().apply {
+                                add(QueryBuilders.matchPhraseQuery("title", query).boost(2.0f))
+                                add(QueryBuilders.matchQuery("title", query).boost(2.0f))
+                                add(QueryBuilders.matchQuery("description", query))
+                            }
                         }
                     }
                 )
@@ -124,7 +129,7 @@ class RecipeSearch(
                 from(from)
                 size(size)
                 query(
-                    QueryBuilders.matchPhraseQuery("title.autocomplete", query)
+                    QueryBuilders.matchQuery("title.autocomplete", query)
                 )
             })
         }.toSearchResponse()

@@ -48,7 +48,7 @@ suspend fun main(vararg args: String) {
                 modelReaderAndWriter = customSerde
             )
         val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
-        if (true || args.any { it == "-c" }) {
+        if (args.any { it == "-c" }) {
             // if you pass -c it bootstraps an index
             recipeSearch.deleteIndex()
             recipeSearch.createNewIndex()

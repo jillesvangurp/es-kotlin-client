@@ -101,10 +101,16 @@ suspend fun main(vararg args: String) {
   val esClient = create(host = "localhost", port = 9999)
   // shut down client cleanly after ktor exits
   esClient.use {
+    val customSerde = JacksonModelReaderAndWriter(Recipe::class, objectMapper)
     val recipeRepository =
-      esClient.asyncIndexRepository<Recipe>(index = "recipes")
+      esClient.asyncIndexRepository<Recipe>(
+        index = "recipes",
+        // we override the default because we want to reuse the objectMapper
+        // and reuse our snake case setup
+        modelReaderAndWriter = customSerde
+      )
     val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
-    if (args.any { it == "-c" }) {
+    if (true || args.any { it == "-c" }) {
       // if you pass -c it bootstraps an index
       recipeSearch.deleteIndex()
       recipeSearch.createNewIndex()
@@ -124,9 +130,72 @@ These objects are injected into a `RecipeSearch` instance that contains
 our business logic. Finally, we pass that instance to a function that constructs a simple asynchronous 
 KTor server (see code at the end of this article).
 
+## Creating an index
+
+We create a custom index with the custom mapping DSL that is part of the Kotlin client.
+
+```kotlin
+recipeRepository.createIndex {
+  configure {
+    settings {
+      replicas = 0
+      shards = 1
+      // we have some syntactic sugar for adding custom analysis
+      // however we don't hava a complete DSL for this
+      // so we fall back to using put for things
+      // not in the DSL
+      addTokenizer("autocomplete") {
+        put("type", "edge_ngram")
+        put("min_gram", 2)
+        put("max_gram", 10)
+      }
+      addAnalyzer("autocomplete") {
+        put("tokenizer", "autocomplete")
+        put("filter", listOf("lowercase"))
+      }
+      addAnalyzer("autocomplete_search") {
+        put("tokenizer", "lowercase")
+      }
+    }
+    mappings {
+      text("allfields")
+      text("title") {
+        copyTo = listOf("allfields")
+        fields {
+          text("autocomplete") {
+            analyzer = "autocomplete"
+            searchAnalyzer = "autocomplete_search"
+          }
+        }
+
+      }
+      text("description") {
+        copyTo = listOf("allfields")
+      }
+      number<Int>("prep_time_min")
+      number<Int>("cook_time_min")
+      number<Int>("servings")
+      keyword("tags")
+      objField("author") {
+        text("name")
+        keyword("url")
+      }
+    }
+  }
+}
+```
+
+This somewhat elaborate mapping example shows how you can mix our DSL with simple put
+calls on the underlying `MutableMap`. The DSL provides some support for commonly used things
+but since Elasticsearch has so many custom things, it's not feasible to manually map all of
+that to the DSL. For unmapped things, you can simply use put with primitives, maps, lists, etc.
+
+If you prefer, you can also use `source` to inject raw json from either a string or an InputStream,
+or attempt to use the very limited builder that comes with the RestHighLevelClient.
+
 ## Indexing
 
-First we need to be able to index recipe documents. We do this with a simple function that uses the
+To index recipe documents, we use a simple function that uses the
 bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory. Bulk indexing 
 allows Elasticsearch to process batches of documents efficiently.
 
@@ -203,6 +272,26 @@ data class SearchResponse<T : Any>(val totalHits: Int, val items: List<T>) {
 fun <T : Any> SearchResults<T>.toSearchResponse() =  SearchResponse(this)
 ```
 
+## Simple Autocomplete
+
+Since we added custom analyzers on the `title.autocomplete` field, we can also implement that. The response 
+format for that is the same.
+
+```kotlin
+suspend fun autocomplete(query: String, from: Int, size: Int):
+    SearchResponse<Recipe> {
+  return recipeRepository.search {
+    source(SearchSourceBuilder.searchSource().apply {
+      from(from)
+      size(size)
+      query(
+        QueryBuilders.matchPhraseQuery("title.autocomplete", query)
+      )
+    })
+  }.toSearchResponse()
+}
+```
+
 ## Creating a Ktor server
 
 To expose the business logic via a simple REST service, we use KTor. Note that recent versions of
@@ -273,6 +362,17 @@ private fun createServer(
           val size = params["size"]?.toInt() ?: 10
 
           call.respond(recipeSearch.search(query, from, size))
+        }
+      }
+
+      get("/autocomplete") {
+        withContext(Dispatchers.Default) {
+          val params = call.request.queryParameters
+          val query = params["q"].orEmpty()
+          val from = params["from"]?.toInt() ?: 0
+          val size = params["size"]?.toInt() ?: 10
+
+          call.respond(recipeSearch.autocomplete(query, from, size))
         }
       }
     }

@@ -36,15 +36,16 @@ suspend fun main(vararg args: String) {
     // from kotlin (camelCase)
     objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 
-    val esClient = create(host = "localhost", port = 9200)
+    val esClient = create(host = "localhost", port = 9999)
     // shut down client cleanly after ktor exits
     esClient.use {
+        val customSerde = JacksonModelReaderAndWriter(Recipe::class, objectMapper)
         val recipeRepository =
             esClient.asyncIndexRepository<Recipe>(
                 index = "recipes",
                 // we override the default because we want to reuse the objectMapper
                 // and reuse our snake case setup
-                modelReaderAndWriter = JacksonModelReaderAndWriter(Recipe::class,objectMapper)
+                modelReaderAndWriter = customSerde
             )
         val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
         if (true || args.any { it == "-c" }) {

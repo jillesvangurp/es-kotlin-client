@@ -16,9 +16,11 @@
 <code>pretty</code> - pretty print, defaults to false</p>
 <a name="org.elasticsearch.common.xcontent$stringify(org.elasticsearch.common.xcontent.ToXContent, java.io.OutputStream, kotlin.Boolean)"></a>
 <code><span class="keyword">fun </span><span class="identifier">ToXContent</span><span class="symbol">.</span><span class="identifier">stringify</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.common.xcontent$stringify(org.elasticsearch.common.xcontent.ToXContent, java.io.OutputStream, kotlin.Boolean)/out">out</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html"><span class="identifier">OutputStream</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.common.xcontent$stringify(org.elasticsearch.common.xcontent.ToXContent, java.io.OutputStream, kotlin.Boolean)/pretty">pretty</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
-<p>Helper to write json to an output stream.</p>
-<h3>Parameters</h3>
-<p><a name="pretty"></a>
-<code>pretty</code> - pretty print, defaults to false</p>
+<p>Helper to write json to an output stream. Set <a href="stringify.html#org.elasticsearch.common.xcontent$stringify(org.elasticsearch.common.xcontent.ToXContent, java.io.OutputStream, kotlin.Boolean)/pretty">pretty</a> to true to pretty print the json.</p>
+<a name="org.elasticsearch.common.xcontent$stringify(org.elasticsearch.common.xcontent.XContentBuilder)"></a>
+<code><span class="keyword">fun </span><span class="identifier">XContentBuilder</span><span class="symbol">.</span><span class="identifier">stringify</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Helper to write XContentBuilder to string. Note. if you want pretty printing, you need to enable
+that on the builder before you start building. Also, this only works if the underlying
+outputstream is a ByteArrayOutputStream.</p>
 </BODY>
 </HTML>

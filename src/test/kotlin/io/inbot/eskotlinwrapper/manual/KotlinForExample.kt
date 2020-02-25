@@ -37,13 +37,29 @@ class KotlinForExample private constructor(
         buf.appendln()
     }
 
-    fun mdCodeBlock(c: String, type: String = "kotlin", allowLongLines: Boolean = false, lineLength: Int = 80) {
-        val code = c.replace("    ", "  ")
-        if (!allowLongLines && code.lines().firstOrNull { it.length > lineLength } != null) {
-            logger.warn { "code block contains lines longer than 80 characters\n${(1 until lineLength).joinToString("") { "." } + "|"}\n$code" }
+    fun mdCodeBlock(
+        code: String,
+        type: String = "kotlin",
+        allowLongLines: Boolean = false,
+        wrap: Boolean = false,
+        lineLength: Int = 80
+    ) {
+        var c = code.replace("    ", "  ")
+        if(wrap) {
+            c = c.lines().flatMap { line ->
+                if(line.length<=lineLength) {
+                    listOf<String>(line)
+                } else {
+                    line.chunked(lineLength)
+                }
+            }.joinToString("\n")
+        }
+        if (!allowLongLines && c.lines().firstOrNull { it.length > lineLength } != null) {
+            logger.warn { "code block contains lines longer than 80 characters\n${(1 until lineLength).joinToString("") { "." } + "|"}\n$c" }
             throw IllegalArgumentException("code block exceeds line length of ")
         }
-        buf.appendln("```$type\n$code\n```\n")
+
+        buf.appendln("```$type\n$c\n```\n")
     }
 
     fun mdLink(clazz: KClass<*>): String {
@@ -53,7 +69,8 @@ class KotlinForExample private constructor(
         )
     }
 
-    fun mdLinkToRepoResource(title: String, relativeUrl: String, branch: String ="master") = mdLink(title, "$repoUrl/tree/$branch/$relativeUrl")
+    fun mdLinkToRepoResource(title: String, relativeUrl: String, branch: String = "master") =
+        mdLink(title, "$repoUrl/tree/$branch/$relativeUrl")
 
     fun snippetBlockFromClass(clazz: KClass<*>, snippetId: String) {
         val fileName = sourcePathForClass(clazz)
@@ -64,6 +81,7 @@ class KotlinForExample private constructor(
         fileName: String,
         snippetId: String,
         allowLongLines: Boolean = false,
+        wrap: Boolean = false,
         lineLength: Int = 80
     ) {
         val snippetLines = mutableListOf<String>()
@@ -87,6 +105,7 @@ class KotlinForExample private constructor(
         mdCodeBlock(
             snippetLines.joinToString("\n").trimIndent(),
             allowLongLines = allowLongLines,
+            wrap = wrap,
             lineLength = lineLength
         )
     }
@@ -124,7 +143,14 @@ class KotlinForExample private constructor(
         }
     }
 
-    fun blockWithOutput(block: PrintWriter.() -> Unit) {
+    fun blockWithOutput(
+        allowLongLines: Boolean = false,
+        allowLongLinesInOutput: Boolean = false,
+        wrap: Boolean = false,
+        wrapOutput: Boolean = false,
+        lineLength: Int = 80,
+        block: PrintWriter.() -> Unit
+    ) {
         val callerSourceBlock = getCallerSourceBlock()
 
         val outputBuffer = ByteArrayOutputStream()
@@ -134,17 +160,14 @@ class KotlinForExample private constructor(
             if (callerSourceBlock == null) {
                 logger.warn { "Could not find code block from stack trace and sourcePath" }
             } else {
-                mdCodeBlock(callerSourceBlock)
+                mdCodeBlock(code = callerSourceBlock, allowLongLines = allowLongLines, lineLength = lineLength, wrap = wrap)
             }
             writer.flush()
         }
         val output = outputBuffer.toString()
         if (output.isNotEmpty()) {
             buf.appendln("Output:\n")
-            if (output.lines().firstOrNull { it.length > 80 } != null) {
-                logger.warn { "Output contains lines longer than 80 characters\n${1.rangeTo(79).joinToString("") { "." } + "|"}\n$output" }
-            }
-            mdCodeBlock(output, type = "")
+            mdCodeBlock(code = output, allowLongLines = allowLongLinesInOutput, wrap = wrapOutput, lineLength = lineLength, type = "")
         }
     }
 

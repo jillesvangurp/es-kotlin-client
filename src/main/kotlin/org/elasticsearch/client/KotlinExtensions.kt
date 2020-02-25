@@ -2,6 +2,7 @@ package org.elasticsearch.client
 
 import io.inbot.eskotlinwrapper.AsyncIndexRepository
 import io.inbot.eskotlinwrapper.IndexRepository
+import io.inbot.eskotlinwrapper.IndexSettingsAndMappings
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending
@@ -14,9 +15,11 @@ import org.elasticsearch.action.search.ClearScrollResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchScrollRequest
+import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.sniff.SniffOnFailureListener
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.common.unit.TimeValue
+import org.elasticsearch.common.xcontent.XContentType
 
 /**
  * Factory method that gives you sane defaults that will allow you to quickly connect to your cluster whether it is in
@@ -240,3 +243,10 @@ fun RestHighLevelClient.clearScroll(
     return this.clearScroll(clearScrollRequest, requestOptions)
 }
 
+fun CreateIndexRequest.source(json:String): CreateIndexRequest = source(json,XContentType.JSON)
+
+fun CreateIndexRequest.configure(generateMetaFields: Boolean = true,
+                                 pretty: Boolean = false,
+                                 block: IndexSettingsAndMappings.() -> Unit) {
+    source(IndexSettingsAndMappings.indexSettingsAndMappings(generateMetaFields = generateMetaFields, pretty = pretty, block = block))
+}

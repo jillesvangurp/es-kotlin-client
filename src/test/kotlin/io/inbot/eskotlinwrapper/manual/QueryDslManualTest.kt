@@ -3,6 +3,7 @@ package io.inbot.eskotlinwrapper.manual
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
+import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
@@ -20,28 +21,11 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
         // make sure we get rid of the things index before running the rest of this
         thingRepository.deleteIndex()
         thingRepository.createIndex {
-            source(
-                """
-                            {
-                              "settings": {
-                                "index": {
-                                  "number_of_shards": 3,
-                                  "number_of_replicas": 0,
-                                  "blocks": {
-                                    "read_only_allow_delete": "false"
-                                  }
-                                }
-                              },
-                              "mappings": {
-                                "properties": {
-                                  "title": {
-                                    "type": "text"
-                                  }
-                                }
-                              }
-                            }
-                        """, XContentType.JSON
-            )
+            configure {
+                mappings {
+                    text("title")
+                }
+            }
         }
         thingRepository.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
             index("1", Thing("The quick brown fox"))

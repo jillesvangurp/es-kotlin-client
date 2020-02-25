@@ -24,7 +24,7 @@ Kotlin side and let the `IndexRepository` take care of serializing/deserializing
 Lets use a simple data class with a few fields.
 
 ```kotlin
-data class Thing(val name: String, val amount: Long = 42)
+data class Thing(val title: String, val amount: Long = 42)
 ```
 
 Now we can create an `IndexRepository` for our `Thing` using the `indexRepository` extension function:
@@ -41,30 +41,110 @@ Elasticsearch in schema-less mode is probably not what you want. We use a simple
 
 ```kotlin
 thingRepository.createIndex {
-  source(
-    """
-      {
-        "settings": {
-        "index": {
-          "number_of_shards": 3,
-          "number_of_replicas": 0,
-          "blocks": {
-          "read_only_allow_delete": "false"
-          }
-        }
-        },
-        "mappings": {
-        "properties": {
-          "name": {
-          "type": "text"
-          },
-          "amount": {
-          "type": "long"
-          }
-        }
+  // use our friendly DSL to configure the index
+  configure {
+    settings {
+      replicas = 0
+      shards = 1
+    }
+    mappings {
+      // in the block you receive FieldMappings as this
+      // a simple text field "title": {"type":"text"}
+      text("title")
+      // a numeric field with sub fields, use generics
+      // to indicate what kind of number
+      number<Long>("amount") {
+        // we can customize the FieldMapping object
+        // that we receive in the block
+        fields {
+          // we get another FieldMappings
+          // lets add a keyword field
+          keyword("somesubfield")
+          // if you want, you can manipulate the
+          // FieldMapping as a map
+          // this is great for accessing features
+          // not covered by our Kotlin DSL
+          this["imadouble"] = mapOf("type" to "double")
+          number<Double>("abetterway")
         }
       }
-    """, XContentType.JSON)
+    }
+  }
+}
+```
+
+Note. The mapping DSL is a work in progress. The goal is not to support everything as you
+can simply fall back to Kotlin's Map DSL with `mapOf("myfield" to someValue)`. Both `FieldMapping`
+and `FieldMappings` extend a `MapBackedProperties` class that delegates to a `MutableMap`. This allows 
+us to have type safe properties and helper methods and mix that with raw map access where our DSL misses
+features.
+
+```kotlin
+// stringify is a useful extension function we added to the response
+println(thingRepository.getSettings().stringify(true))
+
+thingRepository.getMappings().mappings()
+  .forEach { (name, meta) ->
+  print("$name -> ${meta.source().string()}")
+}
+```
+
+Output:
+
+```
+{
+  "things" : {
+  "settings" : {
+    "index" : {
+    "creation_date" : "1582585487130",
+    "number_of_shards" : "1",
+    "number_of_replicas" : "0",
+    "uuid" : "8iBk_xFSQN-z9U92i1N_Aw",
+    "version" : {
+      "created" : "7060099"
+    },
+    "provided_name" : "things"
+    }
+  }
+  }
+}
+things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
+02-24T23:04:47.102989Z"},"properties":{"amount":{"type":"long","fields":{"abette
+rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
+yword"}}},"title":{"type":"text"}}}
+```
+
+Of course you can also simply set the settings json using source. This is 
+useful if you maintain your mappings as separate json files.
+
+```kotlin
+// delete the previous version of our index
+thingRepository.deleteIndex()
+// create a new one using json source
+thingRepository.createIndex {
+  source("""
+    {
+      "settings": {
+      "index": {
+        "number_of_shards": 3,
+        "number_of_replicas": 0,
+        "blocks": {
+        "read_only_allow_delete": "false"
+        }
+      }
+      },
+      "mappings": {
+      "properties": {
+        "title": {
+        "type": "text"
+        },
+        "amount": {
+        "type": "long"
+        }
+      }
+      }
+    }
+  """)
 }
 ```
 
@@ -84,7 +164,7 @@ Output:
 
 ```
 Object does not exist: null
-Now we get back our object: Thing(name=A thing, amount=42)
+Now we get back our object: Thing(title=A thing, amount=42)
 
 ```
 
@@ -138,7 +218,7 @@ thingRepository.index("2", Thing("Another thing"))
 val (obj, rawGetResponse) = thingRepository.getWithGetResponse("2")
   ?: throw IllegalStateException("We just created this?!")
 
-println("obj with id '${obj.name}' has id: ${rawGetResponse.id}, " +
+println("obj with id '${obj.title}' has id: ${rawGetResponse.id}, " +
     "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
     "seqNo: ${rawGetResponse.seqNo}")
 // This works
@@ -166,7 +246,7 @@ try {
 Output:
 
 ```
-obj with id 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 0
+obj with id 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 3
 Version conflict! Es returned 409
 
 ```
@@ -178,13 +258,13 @@ providing a robust update method instead.
 thingRepository.index("3", Thing("Yet another thing"))
 
 thingRepository.update("3") { currentThing ->
-  currentThing.copy(name = "an updated thing", amount = 666)
+  currentThing.copy(title = "an updated thing", amount = 666)
 }
 
 println("It was updated: ${thingRepository.get("3")}")
 
 thingRepository.update("3") { currentThing ->
-  currentThing.copy(name = "we can do this again and again", amount = 666)
+  currentThing.copy(title = "we can do this again and again", amount = 666)
 }
 
 println("It was updated again ${thingRepository.get("3")}")
@@ -193,8 +273,8 @@ println("It was updated again ${thingRepository.get("3")}")
 Output:
 
 ```
-It was updated: Thing(name=an updated thing, amount=666)
-It was updated again Thing(name=we can do this again and again, amount=666)
+It was updated: Thing(title=an updated thing, amount=666)
+It was updated again Thing(title=we can do this again and again, amount=666)
 
 ```
 

@@ -54,6 +54,20 @@ use multiple Threads to consume bulk requests.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="-field-mapping/index.html">FieldMapping</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FieldMapping</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-map-backed-properties/index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-field-mappings/index.html">FieldMappings</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FieldMappings</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-map-backed-properties/index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="-index-repository/index.html">IndexRepository</a></h4>
 </td>
 <td>
@@ -62,11 +76,35 @@ use multiple Threads to consume bulk requests.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="-index-settings/index.html">IndexSettings</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">IndexSettings</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-map-backed-properties/index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-index-settings-and-mappings/index.html">IndexSettingsAndMappings</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">IndexSettingsAndMappings</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="-jackson-model-reader-and-writer/index.html">JacksonModelReaderAndWriter</a></h4>
 </td>
 <td>
 <p>Simple implementation of <a href="-model-reader-and-writer/index.html">ModelReaderAndWriter</a> that uses a jackson object mapper.</p>
 <code><span class="keyword">class </span><span class="identifier">JacksonModelReaderAndWriter</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-map-backed-properties/index.html">MapBackedProperties</a></h4>
+</td>
+<td>
+<p>Use this to create XContent friendly classes where you mix type safe fields with allowing the user to add
+whatever to the underlying map. This way we don't have to map the full DSL and still get some benefits from
+using Kotlin.</p>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -107,6 +145,30 @@ use multiple Threads to consume bulk requests.</p>
 <td>
 <p>Action listener that can be used with to adapt the async methods across the java client to co-routines.</p>
 <code><span class="keyword">class </span><span class="identifier">SuspendingActionListener</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">ActionListener</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Annotations</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-map-properties-d-s-l/index.html">MapPropertiesDSL</a></h4>
+</td>
+<td>
+<code><span class="keyword">annotation</span> <span class="keyword">class </span><span class="identifier">MapPropertiesDSL</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extensions for External Classes</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="kotlin.-string/index.html">kotlin.String</a></h4>
+</td>
+<td>
+</td>
 </tr>
 </tbody>
 </table>

@@ -2,6 +2,7 @@ package recipesearch
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
@@ -35,17 +36,27 @@ suspend fun main(vararg args: String) {
     // from kotlin (camelCase)
     objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 
-    val esClient = create(host = "localhost", port = 9200)
+    val esClient = create(host = "localhost", port = 9999)
     // shut down client cleanly after ktor exits
     esClient.use {
+        val customSerde = JacksonModelReaderAndWriter(Recipe::class, objectMapper)
         val recipeRepository =
-            esClient.asyncIndexRepository<Recipe>(index = "recipes")
+            esClient.asyncIndexRepository<Recipe>(
+                index = "recipes",
+                // we override the default because we want to reuse the objectMapper
+                // and reuse our snake case setup
+                modelReaderAndWriter = customSerde
+            )
         val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
         if (args.any { it == "-c" }) {
-            // if you pass -c it bootstraps an index
-            recipeSearch.deleteIndex()
-            recipeSearch.createNewIndex()
-            recipeSearch.indexExamples()
+            // since recipe search does async stuff
+            // we need a coroutine scope
+            withContext(Dispatchers.IO) {
+                // if you pass -c it bootstraps an index
+                recipeSearch.deleteIndex()
+                recipeSearch.createNewIndex()
+                recipeSearch.indexExamples()
+            }
         }
 
         // creates a simple ktor server
@@ -73,28 +84,28 @@ private fun createServer(
                 call.respondText("Hello World!", ContentType.Text.Plain)
             }
             post("/recipe_index") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     recipeSearch.createNewIndex()
                     call.respond(HttpStatusCode.Created)
                 }
             }
 
             delete("/recipe_index") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     recipeSearch.deleteIndex()
                     call.respond(HttpStatusCode.Gone)
                 }
             }
 
             post("/index_examples") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     recipeSearch.indexExamples()
                     call.respond(HttpStatusCode.Accepted)
                 }
             }
 
             get("/health") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
 
                     val healthStatus = recipeSearch.healthStatus()
                     if (healthStatus == ClusterHealthStatus.RED) {
@@ -112,7 +123,7 @@ private fun createServer(
             }
 
             get("/search") {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
 
                     val params = call.request.queryParameters
                     val query = params["q"].orEmpty()
@@ -120,6 +131,17 @@ private fun createServer(
                     val size = params["size"]?.toInt() ?: 10
 
                     call.respond(recipeSearch.search(query, from, size))
+                }
+            }
+
+            get("/autocomplete") {
+                withContext(Dispatchers.IO) {
+                    val params = call.request.queryParameters
+                    val query = params["q"].orEmpty()
+                    val from = params["from"]?.toInt() ?: 0
+                    val size = params["size"]?.toInt() ?: 10
+
+                    call.respond(recipeSearch.autocomplete(query, from, size))
                 }
             }
         }

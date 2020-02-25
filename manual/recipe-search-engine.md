@@ -3,7 +3,7 @@
 
 # Building a Recipe Search Engine
 
-The Elastic Search Kotlin Wrapper is designed to simplify writing production code that
+The Elastic Search Kotlin Wrapper is designed to simplify writing code that
 interacts with Elasticsearch.
 
 The easiest way to demonstrate how it works is just showing it with a simple 
@@ -101,14 +101,24 @@ suspend fun main(vararg args: String) {
   val esClient = create(host = "localhost", port = 9999)
   // shut down client cleanly after ktor exits
   esClient.use {
+    val customSerde = JacksonModelReaderAndWriter(Recipe::class, objectMapper)
     val recipeRepository =
-      esClient.asyncIndexRepository<Recipe>(index = "recipes")
+      esClient.asyncIndexRepository<Recipe>(
+        index = "recipes",
+        // we override the default because we want to reuse the objectMapper
+        // and reuse our snake case setup
+        modelReaderAndWriter = customSerde
+      )
     val recipeSearch = RecipeSearch(recipeRepository, objectMapper)
     if (args.any { it == "-c" }) {
-      // if you pass -c it bootstraps an index
-      recipeSearch.deleteIndex()
-      recipeSearch.createNewIndex()
-      recipeSearch.indexExamples()
+      // since recipe search does async stuff
+      // we need a coroutine scope
+      withContext(Dispatchers.IO) {
+        // if you pass -c it bootstraps an index
+        recipeSearch.deleteIndex()
+        recipeSearch.createNewIndex()
+        recipeSearch.indexExamples()
+      }
     }
 
     // creates a simple ktor server
@@ -120,13 +130,77 @@ suspend fun main(vararg args: String) {
 This creates an Elasticsearch client, a jackson object mapper, which we will use for serialization, 
 and an `AsyncIndexRepository`, which is version of the `IndexRepository` that can use co-routines. 
 
-These objects are injected into a `RecipeSearch` instance that contains
-our business logic. Finally, we pass that instance to a function that constructs a simple asynchronous 
-KTor server (see code at the end of this article).
+These are injected into the `RecipeSearch` constructor. This class contains
+our business logic. Finally, we pass that to a function that constructs a simple asynchronous 
+KTor server (see code at the end of this article) to implement a simple REST api.
 
-## Indexing
+## Creating an index
 
-First we need to be able to index recipe documents. We do this with a simple function that uses the
+We create a custom index with the custom mapping DSL that is part of the Kotlin client.
+
+```kotlin
+recipeRepository.createIndex {
+  configure {
+    settings {
+      replicas = 0
+      shards = 1
+      // we have some syntactic sugar for adding custom analysis
+      // however we don't hava a complete DSL for this
+      // so we fall back to using put for things
+      // not in the DSL
+      addTokenizer("autocomplete") {
+        put("type", "edge_ngram")
+        put("min_gram", 2)
+        put("max_gram", 10)
+        put("token_chars",listOf("letter"))
+      }
+      addAnalyzer("autocomplete") {
+        put("tokenizer", "autocomplete")
+        put("filter", listOf("lowercase"))
+      }
+      addAnalyzer("autocomplete_search") {
+        put("tokenizer", "lowercase")
+      }
+    }
+    mappings {
+      text("allfields")
+      text("title") {
+        copyTo = listOf("allfields")
+        fields {
+          text("autocomplete") {
+            analyzer = "autocomplete"
+            searchAnalyzer = "autocomplete_search"
+          }
+        }
+
+      }
+      text("description") {
+        copyTo = listOf("allfields")
+      }
+      number<Int>("prep_time_min")
+      number<Int>("cook_time_min")
+      number<Int>("servings")
+      keyword("tags")
+      objField("author") {
+        text("name")
+        keyword("url")
+      }
+    }
+  }
+}
+```
+
+This somewhat elaborate mapping example shows how you can mix our DSL with simple put
+calls on the underlying `MutableMap`. The DSL provides some support for commonly used things
+but since Elasticsearch has so many custom things, it's not feasible to manually map all of
+that to the DSL. For unmapped things, you can simply use put with primitives, maps, lists, etc.
+
+If you prefer, you can also use `source` to inject raw json from either a string or an InputStream,
+or attempt to use the very limited builder that comes with the RestHighLevelClient.
+
+## Indexing using the Bulk DSL
+
+To index recipe documents, we use a simple function that uses the
 bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory. Bulk indexing 
 allows Elasticsearch to process batches of documents efficiently.
 
@@ -151,9 +225,6 @@ and it could trivially be modified to process many millions of documents. Simply
 and iterate over a bigger data source. It doesn't matter where the data comes from. You could iterate
 over a database table, a CSV file, crawl the web, etc.
 
-The `RecipeSearch` class also contains functions for creating and deleting the index. For the purpose 
-of this article, we use Elasticsearch in a schema-less mode instead of explicitly defining a mapping. 
-
 # Searching
 
 Once we have documents in our index, we can search through them as follows:
@@ -166,11 +237,15 @@ suspend fun search(query: String, from: Int, size: Int):
       from(from)
       size(size)
       query(
-        QueryBuilders.boolQuery().apply {
-          should().apply {
-            add(QueryBuilders.matchPhraseQuery("title", query).boost(2.0f))
-            add(QueryBuilders.matchQuery("title", query).boost(2.0f))
-            add(QueryBuilders.matchQuery("description", query))
+        if(query.isBlank()) {
+          QueryBuilders.matchAllQuery()
+        } else {
+          QueryBuilders.boolQuery().apply {
+            should().apply {
+              add(QueryBuilders.matchPhraseQuery("title", query).boost(2.0f))
+              add(QueryBuilders.matchQuery("title", query).boost(2.0f))
+              add(QueryBuilders.matchQuery("description", query))
+            }
           }
         }
       )
@@ -203,6 +278,26 @@ data class SearchResponse<T : Any>(val totalHits: Int, val items: List<T>) {
 fun <T : Any> SearchResults<T>.toSearchResponse() =  SearchResponse(this)
 ```
 
+## Simple Autocomplete
+
+Since we added custom analyzers on the `title.autocomplete` field, we can also implement that. The response 
+format for that is the same. Our mapping uses a simple edge ngram analyzer.
+
+```kotlin
+suspend fun autocomplete(query: String, from: Int, size: Int):
+    SearchResponse<Recipe> {
+  return recipeRepository.search {
+    source(SearchSourceBuilder.searchSource().apply {
+      from(from)
+      size(size)
+      query(
+        QueryBuilders.matchQuery("title.autocomplete", query)
+      )
+    })
+  }.toSearchResponse()
+}
+```
+
 ## Creating a Ktor server
 
 To expose the business logic via a simple REST service, we use KTor. Note that recent versions of
@@ -226,28 +321,28 @@ private fun createServer(
         call.respondText("Hello World!", ContentType.Text.Plain)
       }
       post("/recipe_index") {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
           recipeSearch.createNewIndex()
           call.respond(HttpStatusCode.Created)
         }
       }
 
       delete("/recipe_index") {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
           recipeSearch.deleteIndex()
           call.respond(HttpStatusCode.Gone)
         }
       }
 
       post("/index_examples") {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
           recipeSearch.indexExamples()
           call.respond(HttpStatusCode.Accepted)
         }
       }
 
       get("/health") {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
 
           val healthStatus = recipeSearch.healthStatus()
           if (healthStatus == ClusterHealthStatus.RED) {
@@ -265,7 +360,7 @@ private fun createServer(
       }
 
       get("/search") {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
 
           val params = call.request.queryParameters
           val query = params["q"].orEmpty()
@@ -273,6 +368,17 @@ private fun createServer(
           val size = params["size"]?.toInt() ?: 10
 
           call.respond(recipeSearch.search(query, from, size))
+        }
+      }
+
+      get("/autocomplete") {
+        withContext(Dispatchers.IO) {
+          val params = call.request.queryParameters
+          val query = params["q"].orEmpty()
+          val from = params["from"]?.toInt() ?: 0
+          val size = params["size"]?.toInt() ?: 10
+
+          call.respond(recipeSearch.autocomplete(query, from, size))
         }
       }
     }
@@ -283,7 +389,7 @@ KTor uses a DSL for defining the server. In this case, we simply reuse our Jacks
 to setup content negotiation and data conversion and then add a router with a few simple endpoints.
 
 Note that we use `withContext { ... }` to launch our suspending business logic. This suspends the ktor
-pipeline until we have results.
+pipeline until the asynchronous stuff completes.
 
 ## Doing some requests
 
@@ -292,7 +398,10 @@ To start the server, simply run `ServerMain` from your IDE and start Elasticsear
 After it starts, you should be able to do some curl requests:
 
 ```
+$ curl -X DELETE localhost:8080/recipe_index
+$ curl -X POST localhost:8080/recipe_index
 $ curl -X POST localhost:8080/index_examples
+
 $ curl 'localhost:8080/search?q=banana'
 {"total_hits":1,"items":[{"title":"Banana Oatmeal Cookie","description":"This recipe has been handed down in my family for generations. It's a good way to use overripe bananas. It's also a moist cookie that travels well either in the mail or car.","ingredients":["1 1/2 cups sifted all-purpose flour","1/2 teaspoon baking soda","1 teaspoon salt","1/4 teaspoon ground nutmeg","3/4 teaspoon ground cinnamon","3/4 cup shortening","1 cup white sugar","1 egg","1 cup mashed bananas","1 3/4 cups quick cooking oats","1/2 cup chopped nuts"],"directions":["Preheat oven to 400 degrees F (200 degrees C).","Sift together the flour, baking soda, salt, nutmeg and cinnamon.","Cream together the shortening and sugar; beat until light and fluffy. Add egg, banana, oatmeal and nuts. Mix well.","Add dry ingredients, mix well and drop by the teaspoon on ungreased cookie sheet.","Bake at 400 degrees F (200 degrees C) for 15 minutes or until edges turn lightly brown. Cool on wire rack. Store in a closed container."],"prep_time_min":0,"cook_time_min":0,"servings":24,"tags":["dessert","fruit"],"author":{"name":"Blair Bunny","url":"http://allrecipes.com/cook/10179/profile.aspx"},"source_url":"http://allrecipes.com/Recipe/Banana-Oatmeal-Cookie/Detail.aspx"}]}
 ```

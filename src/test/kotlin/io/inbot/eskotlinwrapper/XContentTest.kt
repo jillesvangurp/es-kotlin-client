@@ -1,0 +1,29 @@
+package io.inbot.eskotlinwrapper
+
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import org.elasticsearch.common.settings.Settings
+import org.elasticsearch.common.settings.SettingsModule
+import org.elasticsearch.common.xcontent.stringify
+import org.elasticsearch.common.xcontent.xContentBuilder
+import org.junit.jupiter.api.Test
+
+class XContentTest {
+    @Test
+    fun `it should combine XContentBuilders`() {
+        val stringified = xContentBuilder(
+            mapOf(
+                "mappings" to mapOf(
+                    "properties" to mapOf(
+                        "title" to xContentBuilder(
+                            mapOf(
+                                "type" to "long"
+                            )
+                        )
+                    )
+                )
+            )
+        ).stringify()
+        assertThat(stringified).isEqualTo("""{"mappings":{"properties":{"title":{"type":"long"}}}}""")
+    }
+}

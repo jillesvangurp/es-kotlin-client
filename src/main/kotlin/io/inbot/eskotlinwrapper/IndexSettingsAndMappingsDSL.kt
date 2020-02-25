@@ -19,9 +19,9 @@ fun String.snakeCaseToUnderscore(): String {
 }
 
 @DslMarker
-annotation class MapPropertiesDSL
+annotation class MapPropertiesDSLMarker
 
-@MapPropertiesDSL
+@MapPropertiesDSLMarker
 class IndexSettings : MapBackedProperties() {
     var replicas: Int by property("index.number_of_replicas")
     var shards: Int by property("index.number_of_shards")
@@ -57,7 +57,7 @@ class IndexSettings : MapBackedProperties() {
     }
 }
 
-@MapPropertiesDSL
+@MapPropertiesDSLMarker
 class FieldMapping(typeName: String) : MapBackedProperties() {
     var type: String by property()
     //    var properties: Map<String, FieldMapping>? by property()
@@ -77,7 +77,7 @@ class FieldMapping(typeName: String) : MapBackedProperties() {
     }
 }
 
-@MapPropertiesDSL
+@MapPropertiesDSLMarker
 class FieldMappings : MapBackedProperties() {
     fun text(name: String) = field(name, "text") {}
     fun text(name: String, block: FieldMapping.() -> Unit) = field(name, "text", block)
@@ -137,7 +137,7 @@ class FieldMappings : MapBackedProperties() {
     }
 }
 
-class IndexSettingsAndMappings private constructor(private val generateMetaFields: Boolean) {
+class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFields: Boolean) {
     private var settings: IndexSettings? = null
     private var meta: MapBackedProperties? = null
     private var mappings: FieldMappings? = null
@@ -195,9 +195,9 @@ class IndexSettingsAndMappings private constructor(private val generateMetaField
         fun indexSettingsAndMappings(
             generateMetaFields: Boolean = true,
             pretty: Boolean = false,
-            block: IndexSettingsAndMappings.() -> Unit
+            block: IndexSettingsAndMappingsDSL.() -> Unit
         ): XContentBuilder {
-            val settingsAndMappings = IndexSettingsAndMappings(generateMetaFields)
+            val settingsAndMappings = IndexSettingsAndMappingsDSL(generateMetaFields)
             block.invoke(settingsAndMappings)
             return settingsAndMappings.build(pretty)
         }

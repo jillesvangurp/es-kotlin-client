@@ -2,7 +2,7 @@ package io.inbot.eskotlinwrapper
 
 import assertk.assertThat
 import assertk.assertions.contains
-import io.inbot.eskotlinwrapper.IndexSettingsAndMappings.Companion.indexSettingsAndMappings
+import io.inbot.eskotlinwrapper.IndexSettingsAndMappingsDSL.Companion.indexSettingsAndMappings
 import org.elasticsearch.common.xcontent.stringify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

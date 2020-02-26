@@ -1,5 +1,7 @@
 package org.elasticsearch.action.search
 
+import io.inbot.eskotlinwrapper.MapBackedProperties
+import io.inbot.eskotlinwrapper.SearchDSL
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest
@@ -8,6 +10,7 @@ import org.elasticsearch.common.xcontent.DeprecationHandler
 import org.elasticsearch.common.xcontent.NamedXContentRegistry
 import org.elasticsearch.common.xcontent.XContentFactory
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import java.io.InputStream
@@ -69,6 +72,12 @@ fun SearchRequest.source(reader: Reader, deprecationHandler: DeprecationHandler 
     ).use {
         source(SearchSourceBuilder.fromXContent(it))
     }
+}
+
+fun SearchRequest.dsl(pretty: Boolean=false,block: SearchDSL.()->Unit) {
+    val searchDSL = SearchDSL()
+    block.invoke(searchDSL)
+    source(searchDSL.stringify(pretty))
 }
 
 /**

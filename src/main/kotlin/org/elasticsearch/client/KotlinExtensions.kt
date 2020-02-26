@@ -2,7 +2,7 @@ package org.elasticsearch.client
 
 import io.inbot.eskotlinwrapper.AsyncIndexRepository
 import io.inbot.eskotlinwrapper.IndexRepository
-import io.inbot.eskotlinwrapper.IndexSettingsAndMappings
+import io.inbot.eskotlinwrapper.IndexSettingsAndMappingsDSL
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import io.inbot.eskotlinwrapper.SuspendingActionListener.Companion.suspending
@@ -247,6 +247,6 @@ fun CreateIndexRequest.source(json:String): CreateIndexRequest = source(json,XCo
 
 fun CreateIndexRequest.configure(generateMetaFields: Boolean = true,
                                  pretty: Boolean = false,
-                                 block: IndexSettingsAndMappings.() -> Unit) {
-    source(IndexSettingsAndMappings.indexSettingsAndMappings(generateMetaFields = generateMetaFields, pretty = pretty, block = block))
+                                 block: IndexSettingsAndMappingsDSL.() -> Unit) {
+    source(IndexSettingsAndMappingsDSL.indexSettingsAndMappings(generateMetaFields = generateMetaFields, pretty = pretty, block = block))
 }

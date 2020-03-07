@@ -85,8 +85,8 @@ println(thingRepository.getSettings().stringify(true))
 
 thingRepository.getMappings().mappings()
   .forEach { (name, meta) ->
-  print("$name -> ${meta.source().string()}")
-}
+    print("$name -> ${meta.source().string()}")
+  }
 ```
 
 Output:
@@ -96,10 +96,10 @@ Output:
   "things" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1582585487130",
+    "creation_date" : "1583568746801",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "8iBk_xFSQN-z9U92i1N_Aw",
+    "uuid" : "LowPgEb9SqOqMAUu1mCiig",
     "version" : {
       "created" : "7060099"
     },
@@ -109,7 +109,7 @@ Output:
   }
 }
 things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-02-24T23:04:47.102989Z"},"properties":{"amount":{"type":"long","fields":{"abette
+03-07T08:12:26.795778Z"},"properties":{"amount":{"type":"long","fields":{"abette
 rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
 yword"}}},"title":{"type":"text"}}}
 ```
@@ -122,7 +122,8 @@ useful if you maintain your mappings as separate json files.
 thingRepository.deleteIndex()
 // create a new one using json source
 thingRepository.createIndex {
-  source("""
+  source(
+    """
     {
       "settings": {
       "index": {
@@ -144,7 +145,8 @@ thingRepository.createIndex {
       }
       }
     }
-  """)
+  """
+  )
 }
 ```
 
@@ -218,9 +220,11 @@ thingRepository.index("2", Thing("Another thing"))
 val (obj, rawGetResponse) = thingRepository.getWithGetResponse("2")
   ?: throw IllegalStateException("We just created this?!")
 
-println("obj with id '${obj.title}' has id: ${rawGetResponse.id}, " +
-    "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
-    "seqNo: ${rawGetResponse.seqNo}")
+println(
+  "obj with id '${obj.title}' has id: ${rawGetResponse.id}, " +
+      "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
+      "seqNo: ${rawGetResponse.seqNo}"
+)
 // This works
 thingRepository.index(
   "2",
@@ -349,7 +353,8 @@ val modelReaderAndWriter = JacksonModelReaderAndWriter(
 )
 
 val thingRepository = esClient.indexRepository<Thing>(
-  index = "things", modelReaderAndWriter = modelReaderAndWriter)
+  index = "things", modelReaderAndWriter = modelReaderAndWriter
+)
 ```
 
 ## Co-routine support

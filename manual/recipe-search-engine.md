@@ -152,7 +152,7 @@ recipeRepository.createIndex {
         put("type", "edge_ngram")
         put("min_gram", 2)
         put("max_gram", 10)
-        put("token_chars",listOf("letter"))
+        put("token_chars", listOf("letter"))
       }
       addAnalyzer("autocomplete") {
         put("tokenizer", "autocomplete")
@@ -172,7 +172,6 @@ recipeRepository.createIndex {
             searchAnalyzer = "autocomplete_search"
           }
         }
-
       }
       text("description") {
         copyTo = listOf("allfields")
@@ -237,7 +236,7 @@ suspend fun search(query: String, from: Int, size: Int):
       from(from)
       size(size)
       query(
-        if(query.isBlank()) {
+        if (query.isBlank()) {
           QueryBuilders.matchAllQuery()
         } else {
           QueryBuilders.boolQuery().apply {
@@ -275,7 +274,7 @@ data class SearchResponse<T : Any>(val totalHits: Int, val items: List<T>) {
       )
 }
 
-fun <T : Any> SearchResults<T>.toSearchResponse() =  SearchResponse(this)
+fun <T : Any> SearchResults<T>.toSearchResponse() = SearchResponse(this)
 ```
 
 ## Simple Autocomplete

@@ -61,3 +61,9 @@ open class MapBackedProperties internal constructor(
         return this[key] as MutableList<Any>
     }
 }
+
+fun mapProps(block: MapBackedProperties.()->Unit): MapBackedProperties {
+    val mapBackedProperties = MapBackedProperties()
+    block.invoke(mapBackedProperties)
+    return mapBackedProperties
+}

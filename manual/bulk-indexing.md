@@ -79,7 +79,6 @@ thingRepository.bulk(bulkSize = 50) {
   delete("doc-4")
 }
 
-
 println(thingRepository.get("doc-1"))
 println(thingRepository.get("doc-2"))
 println(thingRepository.get("doc-3"))

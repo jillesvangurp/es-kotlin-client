@@ -39,6 +39,13 @@ use multiple Threads to consume bulk requests.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="-bool-query/index.html">BoolQuery</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">BoolQuery</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-e-s-query/index.html"><span class="identifier">ESQuery</span></a></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="-bulk-indexing-session/index.html">BulkIndexingSession</a></h4>
 </td>
 <td>
@@ -51,6 +58,13 @@ use multiple Threads to consume bulk requests.</p>
 </td>
 <td>
 <code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">BulkOperation</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-e-s-query/index.html">ESQuery</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ESQuery</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -83,10 +97,10 @@ use multiple Threads to consume bulk requests.</p>
 </tr>
 <tr>
 <td>
-<h4><a href="-index-settings-and-mappings/index.html">IndexSettingsAndMappings</a></h4>
+<h4><a href="-index-settings-and-mappings-d-s-l/index.html">IndexSettingsAndMappingsDSL</a></h4>
 </td>
 <td>
-<code><span class="keyword">class </span><span class="identifier">IndexSettingsAndMappings</span></code></td>
+<code><span class="keyword">class </span><span class="identifier">IndexSettingsAndMappingsDSL</span></code></td>
 </tr>
 <tr>
 <td>
@@ -104,7 +118,21 @@ use multiple Threads to consume bulk requests.</p>
 <p>Use this to create XContent friendly classes where you mix type safe fields with allowing the user to add
 whatever to the underlying map. This way we don't have to map the full DSL and still get some benefits from
 using Kotlin.</p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">ToXContent</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-match-query/index.html">MatchQuery</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MatchQuery</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-e-s-query/index.html"><span class="identifier">ESQuery</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-match-query-config/index.html">MatchQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MatchQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-map-backed-properties/index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -132,6 +160,13 @@ using Kotlin.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="-search-d-s-l/index.html">SearchDSL</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">SearchDSL</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-map-backed-properties/index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="-search-results/index.html">SearchResults</a></h4>
 </td>
 <td>
@@ -153,10 +188,17 @@ using Kotlin.</p>
 <tbody>
 <tr>
 <td>
-<h4><a href="-map-properties-d-s-l/index.html">MapPropertiesDSL</a></h4>
+<h4><a href="-map-properties-d-s-l-marker/index.html">MapPropertiesDSLMarker</a></h4>
 </td>
 <td>
-<code><span class="keyword">annotation</span> <span class="keyword">class </span><span class="identifier">MapPropertiesDSL</span></code></td>
+<code><span class="keyword">annotation</span> <span class="keyword">class </span><span class="identifier">MapPropertiesDSLMarker</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-search-d-s-l-marker/index.html">SearchDSLMarker</a></h4>
+</td>
+<td>
+<code><span class="keyword">annotation</span> <span class="keyword">class </span><span class="identifier">SearchDSLMarker</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -169,6 +211,46 @@ using Kotlin.</p>
 </td>
 <td>
 </td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="bool.html">bool</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">bool</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper$bool(kotlin.Function1((io.inbot.eskotlinwrapper.BoolQuery, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<a href="-bool-query/index.html"><span class="identifier">BoolQuery</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-e-s-query/index.html"><span class="identifier">ESQuery</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="custom-query.html">customQuery</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">customQuery</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper$customQuery(kotlin.String, kotlin.Function1((io.inbot.eskotlinwrapper.MapBackedProperties, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper$customQuery(kotlin.String, kotlin.Function1((io.inbot.eskotlinwrapper.MapBackedProperties, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<a href="-map-backed-properties/index.html"><span class="identifier">MapBackedProperties</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-e-s-query/index.html"><span class="identifier">ESQuery</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="map-props.html">mapProps</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">mapProps</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper$mapProps(kotlin.Function1((io.inbot.eskotlinwrapper.MapBackedProperties, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<a href="-map-backed-properties/index.html"><span class="identifier">MapBackedProperties</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-map-backed-properties/index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="match.html">match</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">match</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper$match(kotlin.String, kotlin.String, kotlin.Function1((io.inbot.eskotlinwrapper.MatchQueryConfig, kotlin.Unit)))/field">field</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper$match(kotlin.String, kotlin.String, kotlin.Function1((io.inbot.eskotlinwrapper.MatchQueryConfig, kotlin.Unit)))/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper$match(kotlin.String, kotlin.String, kotlin.Function1((io.inbot.eskotlinwrapper.MatchQueryConfig, kotlin.Unit)))/block">block</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="-match-query-config/index.html"><span class="identifier">MatchQueryConfig</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="-e-s-query/index.html"><span class="identifier">ESQuery</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="match-all.html">matchAll</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">matchAll</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="-e-s-query/index.html"><span class="identifier">ESQuery</span></a></code></td>
 </tr>
 </tbody>
 </table>

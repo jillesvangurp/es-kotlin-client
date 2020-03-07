@@ -28,7 +28,7 @@ thingRepository.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
 ```kotlin
 // a SearchRequest is created and passed into the block
 val results = thingRepository.search {
-  // we can use templating
+  // we can use Kotlin's string templating
   val text = "brown"
   source("""
     {
@@ -58,7 +58,7 @@ results.searchHits.first().apply {
 
 // or we can get both as a `Pair`
 results.hits.first().apply {
-  val (searchHit,deserialized) = this
+  val (searchHit, deserialized) = this
   println("Hit: ${searchHit.id}:\n$deserialized")
 }
 ```
@@ -76,6 +76,8 @@ Hit: 1:
 Thing(title=The quick brown fox)
 
 ```
+
+We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see [Query DSL](query-dsl.md)
 
 ## Count
 
@@ -138,12 +140,12 @@ thingRepository.bulk {
       }
     """.trimIndent())
   }
-  results.hits.forEach { (hit,thing) ->
-    if(thing!=null) {
+  results.hits.forEach { (hit, thing) ->
+    if (thing != null) {
       // we dig out the meta data we need for optimistic locking
       // from the search response
-      update(hit.id, hit.seqNo,hit.primaryTerm, thing) { currentThing ->
-        currentThing.copy(title="updated thing")
+      update(hit.id, hit.seqNo, hit.primaryTerm, thing) { currentThing ->
+        currentThing.copy(title = "updated thing")
       }
     }
   }

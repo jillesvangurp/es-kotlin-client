@@ -106,12 +106,12 @@ runBlocking {
   // this uses the `AsyncBulkIndexingSession`, which uses the new
   // `Flow` API underneath.
   asyncRepo.bulk {
-    for( i in 2.rangeTo(10)) {
+    for (i in 2.rangeTo(10)) {
       index("thing_$i", Thing("thing $i"))
     }
   }
   asyncRepo.refresh()
-  val count = asyncRepo.count {  }
+  val count = asyncRepo.count { }
   println("indexed $count items")
 }
 ```

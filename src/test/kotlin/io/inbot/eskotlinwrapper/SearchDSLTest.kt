@@ -4,9 +4,6 @@ import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
-import io.inbot.eskotlinwrapper.ESQuery.Companion.bool
-import io.inbot.eskotlinwrapper.ESQuery.Companion.match
-import io.inbot.eskotlinwrapper.ESQuery.Companion.term
 import org.elasticsearch.common.xcontent.stringify
 import org.junit.jupiter.api.Test
 
@@ -17,7 +14,7 @@ class SearchDSLTest {
         s.apply {
             resultSize = 10
             from = 0
-            query(ESQuery.matchAll())
+            query(matchAll())
         }
         println(s.stringify(true))
 
@@ -33,7 +30,7 @@ class SearchDSLTest {
 
             query(bool {
                 should(
-                    term("title", "foo"),
+                    match("title", "foo"),
                     match("title", "quick brown fox") {
                         // ESQuery is a MutableMap that modifies the underlying queryDetails
                         this["value"] = "bar"

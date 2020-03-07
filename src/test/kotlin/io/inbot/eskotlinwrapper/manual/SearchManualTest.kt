@@ -52,7 +52,7 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             blockWithOutput {
                 // a SearchRequest is created and passed into the block
                 val results = thingRepository.search {
-                    // we can use templating
+                    // we can use Kotlin's string templating
                     val text = "brown"
                     source("""
                         {
@@ -86,6 +86,10 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     println("Hit: ${searchHit.id}:\n$deserialized")
                 }
             }
+
+            +"""
+                We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see ${mdLink(queryDslPage)}
+            """
 
             +"""
                 ## Count

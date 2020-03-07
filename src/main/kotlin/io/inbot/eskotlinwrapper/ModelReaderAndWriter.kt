@@ -1,7 +1,7 @@
 package io.inbot.eskotlinwrapper
 
-import org.elasticsearch.search.SearchHit
 import kotlin.reflect.KClass
+import org.elasticsearch.search.SearchHit
 
 /**
  * Implement this for custom serialization/deserialization of objects in your index. Use this in combination with a [IndexRepository].

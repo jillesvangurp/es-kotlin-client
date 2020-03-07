@@ -1,7 +1,7 @@
 package io.inbot.eskotlinwrapper.manual
 
-import org.junit.jupiter.api.Test
 import kotlin.random.Random
+import org.junit.jupiter.api.Test
 
 class KotlinForExampleTest {
     @Test

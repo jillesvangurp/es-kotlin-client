@@ -1,11 +1,11 @@
 package io.inbot.eskotlinwrapper.manual
 
-import mu.KLogger
-import mu.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintWriter
 import kotlin.reflect.KClass
+import mu.KLogger
+import mu.KotlinLogging
 
 private val logger: KLogger = KotlinLogging.logger { }
 
@@ -45,9 +45,9 @@ class KotlinForExample private constructor(
         lineLength: Int = 80
     ) {
         var c = code.replace("    ", "  ")
-        if(wrap) {
+        if (wrap) {
             c = c.lines().flatMap { line ->
-                if(line.length<=lineLength) {
+                if (line.length <= lineLength) {
                     listOf<String>(line)
                 } else {
                     line.chunked(lineLength)

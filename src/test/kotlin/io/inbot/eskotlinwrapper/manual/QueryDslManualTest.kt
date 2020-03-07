@@ -5,7 +5,6 @@ import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
-import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.elasticsearch.index.query.QueryBuilders.matchQuery
 import org.elasticsearch.search.builder.SearchSourceBuilder.searchSource
@@ -59,7 +58,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                             .query(
                                 boolQuery()
                                     .must(matchQuery("title", "quick").boost(2.0f))
-                                    .must(matchQuery("title","brown"))
+                                    .must(matchQuery("title", "brown"))
                             )
                     )
                 }

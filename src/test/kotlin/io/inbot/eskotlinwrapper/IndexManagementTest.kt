@@ -50,12 +50,10 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
         }
     }
 
-
     @Test
     fun `create custom mapping`() {
 
         val s = SettingsModule(Settings.EMPTY)
-
 
         repository.createIndex {
             source(
@@ -63,7 +61,7 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
                     mapOf(
                         "mappings" to mapOf(
                             "properties" to mapOf(
-                                "title" to xContentBuilder (
+                                "title" to xContentBuilder(
                                     mapOf(
                                         "type" to "long"
                                     )
@@ -79,7 +77,5 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
                     println(f)
                     println(m.get().source().string())
                 }
-
-
     }
 }

@@ -243,10 +243,12 @@ fun RestHighLevelClient.clearScroll(
     return this.clearScroll(clearScrollRequest, requestOptions)
 }
 
-fun CreateIndexRequest.source(json:String): CreateIndexRequest = source(json,XContentType.JSON)
+fun CreateIndexRequest.source(json: String): CreateIndexRequest = source(json, XContentType.JSON)
 
-fun CreateIndexRequest.configure(generateMetaFields: Boolean = true,
-                                 pretty: Boolean = false,
-                                 block: IndexSettingsAndMappingsDSL.() -> Unit) {
+fun CreateIndexRequest.configure(
+    generateMetaFields: Boolean = true,
+    pretty: Boolean = false,
+    block: IndexSettingsAndMappingsDSL.() -> Unit
+) {
     source(IndexSettingsAndMappingsDSL.indexSettingsAndMappings(generateMetaFields = generateMetaFields, pretty = pretty, block = block))
 }

@@ -67,7 +67,6 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
                 repository.index(id, TestModel("bar"), create = false, seqNo = 666, primaryTerm = 666)
                 fail { "expected a version conflict" }
             } catch (e: Exception) {
-
             }
             // you can do manual optimistic locking
             repository.index(id, TestModel("bar"), create = false, seqNo = 0, primaryTerm = 1)

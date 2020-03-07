@@ -3,6 +3,7 @@ package recipesearch
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.inbot.eskotlinwrapper.AsyncIndexRepository
+import java.io.File
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
 import org.elasticsearch.client.configure
@@ -10,7 +11,6 @@ import org.elasticsearch.client.healthAsync
 import org.elasticsearch.cluster.health.ClusterHealthStatus
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import java.io.File
 
 class RecipeSearch(
     private val recipeRepository: AsyncIndexRepository<Recipe>,
@@ -36,7 +36,7 @@ class RecipeSearch(
                         put("type", "edge_ngram")
                         put("min_gram", 2)
                         put("max_gram", 10)
-                        put("token_chars",listOf("letter"))
+                        put("token_chars", listOf("letter"))
                     }
                     addAnalyzer("autocomplete") {
                         put("tokenizer", "autocomplete")
@@ -56,7 +56,6 @@ class RecipeSearch(
                                 searchAnalyzer = "autocomplete_search"
                             }
                         }
-
                     }
                     text("description") {
                         copyTo = listOf("allfields")
@@ -104,7 +103,7 @@ class RecipeSearch(
                 from(from)
                 size(size)
                 query(
-                    if(query.isBlank()) {
+                    if (query.isBlank()) {
                         QueryBuilders.matchAllQuery()
                     } else {
                         QueryBuilders.boolQuery().apply {
@@ -136,5 +135,3 @@ class RecipeSearch(
     }
     // END autocomplete_recipes
 }
-
-

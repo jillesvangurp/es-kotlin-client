@@ -15,15 +15,15 @@ class SearchDSLTest {
     fun `should construct matchAll query`() {
         val s = SearchDSL()
         s.apply {
-            resultSize=10
-            from=0
+            resultSize = 10
+            from = 0
             query(ESQuery.matchAll())
         }
         println(s.stringify(true))
 
         assertThat(s["from"]).isEqualTo(0)
-        assertThat(s["query"] as Map<String,Any>).hasSize(1)
-        assertThat((s["query"] as Map<String,Any>).keys).contains("match_all")
+        assertThat(s["query"] as Map<String, Any>).hasSize(1)
+        assertThat((s["query"] as Map<String, Any>).keys).contains("match_all")
     }
 
     @Test
@@ -34,7 +34,7 @@ class SearchDSLTest {
             query(bool {
                 should(
                     term("title", "foo"),
-                    match("title","quick brown fox") {
+                    match("title", "quick brown fox") {
                         // ESQuery is a MutableMap that modifies the underlying queryDetails
                         this["value"] = "bar"
                     }

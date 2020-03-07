@@ -2,8 +2,6 @@ package io.inbot.eskotlinwrapper
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import org.elasticsearch.common.settings.Settings
-import org.elasticsearch.common.settings.SettingsModule
 import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.common.xcontent.xContentBuilder
 import org.junit.jupiter.api.Test

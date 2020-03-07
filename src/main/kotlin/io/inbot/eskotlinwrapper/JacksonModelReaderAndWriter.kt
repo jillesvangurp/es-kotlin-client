@@ -24,7 +24,7 @@ class JacksonModelReaderAndWriter<T : Any>(
 
     companion object {
         inline fun <reified T : Any> create(objectMapper: ObjectMapper? = null): JacksonModelReaderAndWriter<T> {
-            return if(objectMapper == null) {
+            return if (objectMapper == null) {
                 val om = ObjectMapper().findAndRegisterModules()
                 // sane default, if you want camelcase, override the objectmapper
                 om.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE

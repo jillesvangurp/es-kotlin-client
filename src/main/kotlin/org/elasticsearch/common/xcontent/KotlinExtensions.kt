@@ -1,11 +1,10 @@
 package org.elasticsearch.common.xcontent
 
-import org.elasticsearch.common.xcontent.json.JsonXContent
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 import kotlin.IllegalStateException
-
+import org.elasticsearch.common.xcontent.json.JsonXContent
 
 // Misc helpers to make dealing with XContent a bit less painful. There seems to be no way around this low level stuff
 // in the Java client as lots of endpoints lack suitable type safe builders or schemas. Use with caution.
@@ -45,8 +44,8 @@ fun ToXContent.stringify(out: OutputStream, pretty: Boolean = false) {
  * that on the builder before you start building. Also, this only works if the underlying
  * outputstream is a ByteArrayOutputStream.
  */
-fun XContentBuilder.stringify():String {
-    if(this.outputStream is ByteArrayOutputStream) {
+fun XContentBuilder.stringify(): String {
+    if (this.outputStream is ByteArrayOutputStream) {
         this.flush()
         this.outputStream.flush()
         return (this.outputStream as ByteArrayOutputStream).toByteArray().toString(StandardCharsets.UTF_8)
@@ -60,14 +59,14 @@ fun XContentBuilder.stringify():String {
  * can even have another XContentBuilder nested. Note you can always inject raw json via writeRaw.
  */
 fun XContentBuilder.writeAny(obj: Any?) {
-    if(obj == null) {
+    if (obj == null) {
         this.nullValue()
-    } else when(obj) {
+    } else when (obj) {
         is XContentBuilder -> {
-            if(obj.outputStream is ByteArrayOutputStream) {
+            if (obj.outputStream is ByteArrayOutputStream) {
                 obj.flush()
                 obj.outputStream.flush()
-                this.rawValue((obj.outputStream as ByteArrayOutputStream).toByteArray().inputStream(),XContentType.JSON)
+                this.rawValue((obj.outputStream as ByteArrayOutputStream).toByteArray().inputStream(), XContentType.JSON)
             } else {
                 // this only works with XContentBuilder implementations that use a ByteArrayOutputStream, like the one create by xContentBuilder
                 throw IllegalStateException("Cannot grab content from underlying OutputStream because it is not a ByteArrayOutputStream")
@@ -84,7 +83,7 @@ fun XContentBuilder.writeAny(obj: Any?) {
         }
         is Map<*, *> -> {
             this.startObject()
-            obj.entries.forEach { (k,v) ->
+            obj.entries.forEach { (k, v) ->
                 field(k.toString())
                 writeAny(v)
             }
@@ -158,4 +157,3 @@ fun xContentBuilder(obj: Any): XContentBuilder {
         this.writeAny(obj)
     }
 }
-

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
 @Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
-class CoRoutinesManualTest: AbstractElasticSearchTest(indexPrefix = "asyncthings") {
+class CoRoutinesManualTest : AbstractElasticSearchTest(indexPrefix = "asyncthings") {
     private data class Thing(val title: String)
 
     @Test
@@ -153,12 +153,12 @@ class CoRoutinesManualTest: AbstractElasticSearchTest(indexPrefix = "asyncthings
                         // this uses the `AsyncBulkIndexingSession`, which uses the new
                         // `Flow` API underneath.
                         asyncRepo.bulk {
-                            for( i in 2.rangeTo(10)) {
+                            for (i in 2.rangeTo(10)) {
                                 index("thing_$i", Thing("thing $i"))
                             }
                         }
                         asyncRepo.refresh()
-                        val count = asyncRepo.count {  }
+                        val count = asyncRepo.count { }
                         println("indexed $count items")
                     }
                 }

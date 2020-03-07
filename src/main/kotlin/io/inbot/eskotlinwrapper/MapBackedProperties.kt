@@ -1,10 +1,10 @@
 package io.inbot.eskotlinwrapper
 
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.writeAny
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  * Use this to create XContent friendly classes where you mix type safe fields with allowing the user to add
@@ -55,9 +55,9 @@ open class MapBackedProperties internal constructor(
 
     fun getOrCreateMutableList(key: String): MutableList<Any> {
         val list = this[key] as MutableList<Any>?
-        if(list == null) {
+        if (list == null) {
             this[key] = mutableListOf<Any>()
         }
-        return  this[key] as MutableList<Any>
+        return this[key] as MutableList<Any>
     }
 }

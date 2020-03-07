@@ -7,11 +7,9 @@ import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
-import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
-
-class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
+class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
     private data class Thing(val title: String)
     @Test
     fun `search manual`() {
@@ -84,7 +82,7 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
 
                 // or we can get both as a `Pair`
                 results.hits.first().apply {
-                    val (searchHit,deserialized) = this
+                    val (searchHit, deserialized) = this
                     println("Hit: ${searchHit.id}:\n$deserialized")
                 }
             }
@@ -145,12 +143,12 @@ class SearchManualTest: AbstractElasticSearchTest(indexPrefix = "manual") {
                             }
                         """.trimIndent())
                     }
-                    results.hits.forEach { (hit,thing) ->
-                        if(thing!=null) {
+                    results.hits.forEach { (hit, thing) ->
+                        if (thing != null) {
                             // we dig out the meta data we need for optimistic locking
                             // from the search response
-                            update(hit.id, hit.seqNo,hit.primaryTerm, thing) { currentThing ->
-                                currentThing.copy(title="updated thing")
+                            update(hit.id, hit.seqNo, hit.primaryTerm, thing) { currentThing ->
+                                currentThing.copy(title = "updated thing")
                             }
                         }
                     }

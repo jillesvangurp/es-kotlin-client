@@ -41,7 +41,6 @@ open class ESQuery(val name: String, val queryDetails: MapBackedProperties = Map
             return q
         }
     }
-
 }
 
 @SearchDSLMarker

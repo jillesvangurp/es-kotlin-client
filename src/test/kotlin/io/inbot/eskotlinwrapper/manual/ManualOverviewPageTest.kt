@@ -1,7 +1,7 @@
 package io.inbot.eskotlinwrapper.manual
 
-import org.junit.jupiter.api.Test
 import java.io.File
+import org.junit.jupiter.api.Test
 
 val readmeMd = "README.md"
 val indexMd = "index.md"
@@ -17,21 +17,21 @@ val readmePage = Page("Es Kotlin Wrapper Client", readmeMd, outputDir = ".")
 val indexPage = Page("Es Kotlin Wrapper Client Manual", indexMd)
 val createClientPage = Page("How to create the client", createClientMd, parent = indexMd, emitBookPage = true)
 val crudPage =
-    Page("Working with objects", crudSupportMd, parent = indexMd,emitBookPage = true)
-val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd,emitBookPage = true)
-val searchPage = Page("Search", searchMd, parent = indexMd,emitBookPage = true)
-val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd,emitBookPage = true)
-val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd,emitBookPage = true)
-val recipeSearchEnginePage = Page("Building a Recipe Search Engine",recipeSearchEngineMd, parent = indexMd, emitBookPage = true)
+    Page("Working with objects", crudSupportMd, parent = indexMd, emitBookPage = true)
+val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd, emitBookPage = true)
+val searchPage = Page("Search", searchMd, parent = indexMd, emitBookPage = true)
+val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd, emitBookPage = true)
+val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd, emitBookPage = true)
+val recipeSearchEnginePage = Page("Building a Recipe Search Engine", recipeSearchEngineMd, parent = indexMd, emitBookPage = true)
 
-val pages=listOf(createClientPage,crudPage,bulkPage,searchPage,queryDslPage,coroutinesPage,recipeSearchEnginePage)
+val pages = listOf(createClientPage, crudPage, bulkPage, searchPage, queryDslPage, coroutinesPage, recipeSearchEnginePage)
 
 class ManualOverviewPageTest {
 
     @Test
     fun `create ebook create script`() {
         File("epub").mkdirs()
-        File("epub","styles.css").writeText("""
+        File("epub", "styles.css").writeText("""
             /* This defines styles and classes used in the book */
             body { margin: 0; text-align: justify; font-size: medium; font-family: Athelas, Georgia, serif; }
             h1 { text-align: left; }
@@ -59,7 +59,7 @@ class ManualOverviewPageTest {
             div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
         """.trimIndent())
-        File("epub","metadata.yml").writeText("""
+        File("epub", "metadata.yml").writeText("""
             ---
             title: Searching Elasticsearch using Kotlin
             author: Jilles van Gurp
@@ -68,7 +68,7 @@ class ManualOverviewPageTest {
             ...
             
         """.trimIndent())
-        File("epub","preface.md").writeText("""
+        File("epub", "preface.md").writeText("""
             # Preface
             
             This Ebook is a work in progress. It may eventually be something I put up on e.g. Amazon for a low fee. 
@@ -79,9 +79,9 @@ class ManualOverviewPageTest {
             layout/formatting issues, or anything that you would like clarified in more detail.
             
         """.trimIndent())
-        File("epub","create_ebook.sh").writeText("""
+        File("epub", "create_ebook.sh").writeText("""
             #!/bin/bash
-            pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${pages.joinToString (" ") {it.fileName}}
+            pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${pages.joinToString(" ") {it.fileName}}
         """.trimIndent())
     }
 

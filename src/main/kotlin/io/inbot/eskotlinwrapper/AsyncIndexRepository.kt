@@ -270,7 +270,7 @@ class AsyncIndexRepository<T : Any>(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation,itemResponse ->
+        itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation, itemResponse ->
             if (itemResponse.isFailed) {
                 if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
                     update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
@@ -305,12 +305,11 @@ class AsyncIndexRepository<T : Any>(
     suspend fun refresh() {
         if (refreshAllowed) {
             // calling this is not safe in production settings but highly useful in tests
-            client.indices().refreshAsync(RefreshRequest(),defaultRequestOptions)
+            client.indices().refreshAsync(RefreshRequest(), defaultRequestOptions)
         } else {
             throw UnsupportedOperationException("refresh is not allowed; you need to opt in by setting refreshAllowed to true")
         }
     }
-
 
     /**
      * Perform an asynchronous search against your index. Works similar to [search] but does not support scrolling
@@ -330,10 +329,10 @@ class AsyncIndexRepository<T : Any>(
         return PagedSearchResults(searchResponse, modelReaderAndWriter)
     }
 
-    suspend fun count(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
+    suspend fun count(requestOptions: RequestOptions = this.defaultRequestOptions, block: CountRequest.() -> Unit = {}): Long {
         val request = CountRequest(indexReadAlias)
         block.invoke(request)
-        val resp = client.countAsync(request,requestOptions)
+        val resp = client.countAsync(request, requestOptions)
         return resp.count
     }
 }

@@ -11,7 +11,5 @@ data class SearchResponse<T : Any>(val totalHits: Int, val items: List<T>) {
             )
 }
 
-fun <T : Any> SearchResults<T>.toSearchResponse() =  SearchResponse(this)
+fun <T : Any> SearchResults<T>.toSearchResponse() = SearchResponse(this)
 // END search_response
-
-

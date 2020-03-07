@@ -1,7 +1,7 @@
 package io.inbot.eskotlinwrapper.manual
 
-import org.junit.jupiter.api.Test
 import java.io.File
+import org.junit.jupiter.api.Test
 
 class RecipeSearchEngineTest {
 
@@ -59,7 +59,6 @@ class RecipeSearchEngineTest {
             """
             snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "mapping_dsl")
 
-
             +"""
                 This somewhat elaborate mapping example shows how you can mix our DSL with simple put
                 calls on the underlying `MutableMap`. The DSL provides some support for commonly used things
@@ -112,7 +111,6 @@ class RecipeSearchEngineTest {
             """
             snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "autocomplete_recipes")
 
-
             +"""                
                 ## Creating a Ktor server
                 
@@ -143,7 +141,6 @@ class RecipeSearchEngineTest {
                 {"total_hits":1,"items":[{"title":"Banana Oatmeal Cookie","description":"This recipe has been handed down in my family for generations. It's a good way to use overripe bananas. It's also a moist cookie that travels well either in the mail or car.","ingredients":["1 1/2 cups sifted all-purpose flour","1/2 teaspoon baking soda","1 teaspoon salt","1/4 teaspoon ground nutmeg","3/4 teaspoon ground cinnamon","3/4 cup shortening","1 cup white sugar","1 egg","1 cup mashed bananas","1 3/4 cups quick cooking oats","1/2 cup chopped nuts"],"directions":["Preheat oven to 400 degrees F (200 degrees C).","Sift together the flour, baking soda, salt, nutmeg and cinnamon.","Cream together the shortening and sugar; beat until light and fluffy. Add egg, banana, oatmeal and nuts. Mix well.","Add dry ingredients, mix well and drop by the teaspoon on ungreased cookie sheet.","Bake at 400 degrees F (200 degrees C) for 15 minutes or until edges turn lightly brown. Cool on wire rack. Store in a closed container."],"prep_time_min":0,"cook_time_min":0,"servings":24,"tags":["dessert","fruit"],"author":{"name":"Blair Bunny","url":"http://allrecipes.com/cook/10179/profile.aspx"},"source_url":"http://allrecipes.com/Recipe/Banana-Oatmeal-Cookie/Detail.aspx"}]}
                 ```
             """
-
         }
     }
 }

@@ -110,9 +110,9 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                 }
                             }
                         """.trimIndent())
-                    }.hits.forEach {(esResult,deserialized) ->
+                    }.hits.forEach { (esResult, deserialized) ->
                         // we get a lazy sequence that fetches results using the scroll api in es
-                        if(deserialized != null) {
+                        if (deserialized != null) {
                             // deserialized may be null if we disable source on the mapping
                             // use the BulkIndexingSession to index a transformed version
                             // of the original
@@ -216,4 +216,3 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
         }
     }
 }
-

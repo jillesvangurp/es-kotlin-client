@@ -5,6 +5,7 @@ package io.inbot.eskotlinwrapper
 @DslMarker
 annotation class SearchDSLMarker
 
+@SearchDSLMarker
 open class ESQuery(val name: String, val queryDetails: MapBackedProperties = MapBackedProperties()) :
     MutableMap<String, Any> by queryDetails {
 
@@ -16,37 +17,33 @@ open class ESQuery(val name: String, val queryDetails: MapBackedProperties = Map
     companion object {
         fun matchAll() = ESQuery("match_all")
 
-        @SearchDSLMarker
         fun bool(block: BoolQuery.() -> Unit): ESQuery {
             val bq = BoolQuery()
             block.invoke(bq)
             return bq
         }
 
-        @SearchDSLMarker
-        fun term(field: String, value: String, block: (TermQuery.() -> Unit)? = null): ESQuery {
+        fun term(field: String, value: String, block: (MapBackedProperties.() -> Unit)? = null): ESQuery {
             val tq = TermQuery(field, value)
-            block?.invoke(tq)
+            block?.invoke(tq.termProps)
             return tq
         }
 
-        @SearchDSLMarker
         fun match(field: String, value: String, block: TermQuery.() -> Unit): ESQuery {
             val tq = TermQuery(field, value)
             block.invoke(tq)
             return tq
         }
 
-        @SearchDSLMarker
         fun custom(name: String, block: MapBackedProperties.() -> Unit): ESQuery {
             val q = ESQuery(name)
             block.invoke(q.queryDetails)
             return q
         }
     }
-
 }
 
+@SearchDSLMarker
 class BoolQuery() : ESQuery(name = "bool") {
     fun should(vararg q: ESQuery) = queryDetails.getOrCreateMutableList("should").addAll(q.map { it.toMap() })
     fun must(vararg q: ESQuery) = queryDetails.getOrCreateMutableList("must").addAll(q.map { it.toMap() })
@@ -54,13 +51,18 @@ class BoolQuery() : ESQuery(name = "bool") {
     fun filter(vararg q: ESQuery) = queryDetails.getOrCreateMutableList("filter").addAll(q.map { it.toMap() })
 }
 
+@SearchDSLMarker
 class TermQuery(field: String, value: String) : ESQuery(name = "term") {
+    internal val termProps = MapBackedProperties()
+    var value by termProps.property<String>()
+
     init {
-        this["field"] = field
-        this["value"] = value
+        this[field] = field
+        this.value = value
     }
 }
 
+@SearchDSLMarker
 class MatchQuery(field: String, value: String) : ESQuery(name = "match") {
     init {
         this["field"] = field

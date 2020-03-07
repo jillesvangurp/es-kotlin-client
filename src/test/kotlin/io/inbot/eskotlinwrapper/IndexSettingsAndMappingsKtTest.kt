@@ -11,7 +11,7 @@ class IndexSettingsAndMappingsKtTest {
 
     @Test
     fun `should convert property names`() {
-        Assertions.assertEquals("fooBarFooBar".snakeCaseToUnderscore(),"foo_bar_foo_bar")
+        Assertions.assertEquals("fooBarFooBar".snakeCaseToUnderscore(), "foo_bar_foo_bar")
     }
 
     @Test
@@ -40,6 +40,5 @@ class IndexSettingsAndMappingsKtTest {
         println(json)
         assertThat(json).contains("index.number_of_replicas")
         assertThat(json).contains("index.number_of_shards")
-
     }
 }

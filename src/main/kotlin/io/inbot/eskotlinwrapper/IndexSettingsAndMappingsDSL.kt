@@ -2,16 +2,16 @@
 
 package io.inbot.eskotlinwrapper
 
+import java.security.MessageDigest
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.util.Base64
 import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.obj
 import org.elasticsearch.common.xcontent.objField
 import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.common.xcontent.writeAny
 import org.elasticsearch.common.xcontent.xContentBuilder
-import java.security.MessageDigest
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-import java.util.Base64
 
 fun String.snakeCaseToUnderscore(): String {
     val re = "(?<=[a-z])[A-Z]".toRegex()
@@ -26,7 +26,7 @@ class IndexSettings : MapBackedProperties() {
     var replicas: Int by property("index.number_of_replicas")
     var shards: Int by property("index.number_of_shards")
 
-    fun addAnalyzer(name: String, block: MapBackedProperties.()-> Unit) {
+    fun addAnalyzer(name: String, block: MapBackedProperties.() -> Unit) {
         val analysis = _properties["analysis"] as MapBackedProperties? ?: MapBackedProperties()
         val analyzers = analysis["analyzer"] as MapBackedProperties? ?: MapBackedProperties()
         val analyzer = MapBackedProperties()
@@ -36,7 +36,7 @@ class IndexSettings : MapBackedProperties() {
         _properties["analysis"] = analysis
     }
 
-    fun addTokenizer(name: String, block: MapBackedProperties.()-> Unit) {
+    fun addTokenizer(name: String, block: MapBackedProperties.() -> Unit) {
         val analysis = _properties["analysis"] as MapBackedProperties? ?: MapBackedProperties()
         val tokenizers = analysis["tokenizer"] as MapBackedProperties? ?: MapBackedProperties()
         val tokenizer = MapBackedProperties()
@@ -46,7 +46,7 @@ class IndexSettings : MapBackedProperties() {
         _properties["analysis"] = analysis
     }
 
-    fun addCharFilter(name: String, block: MapBackedProperties.()-> Unit) {
+    fun addCharFilter(name: String, block: MapBackedProperties.() -> Unit) {
         val analysis = _properties["analysis"] as MapBackedProperties? ?: MapBackedProperties()
         val charFilters = analysis["char_filter"] as MapBackedProperties? ?: MapBackedProperties()
         val charFilter = MapBackedProperties()
@@ -99,27 +99,27 @@ class FieldMappings : MapBackedProperties() {
         field(name, type, block)
     }
 
-    fun objField(name:String, block: FieldMappings.() -> Unit) {
+    fun objField(name: String, block: FieldMappings.() -> Unit) {
         field(name, "object") {
             val fieldMappings = FieldMappings()
             block.invoke(fieldMappings)
-            if(fieldMappings.size > 0) {
+            if (fieldMappings.size > 0) {
                 this["properties"] = fieldMappings
             }
         }
     }
 
-    fun nestedField(name:String, block: FieldMappings.() -> Unit) {
+    fun nestedField(name: String, block: FieldMappings.() -> Unit) {
         field(name, "nested") {
             val fieldMappings = FieldMappings()
             block.invoke(fieldMappings)
-            if(fieldMappings.size > 0) {
+            if (fieldMappings.size > 0) {
                 this["properties"] = fieldMappings
             }
         }
     }
 
-    fun field(name: String, type: String) = field(name,type) {}
+    fun field(name: String, type: String) = field(name, type) {}
 
     fun field(name: String, type: String, block: FieldMapping.() -> Unit) {
         val mapping = FieldMapping(type)
@@ -129,7 +129,7 @@ class FieldMappings : MapBackedProperties() {
 
     fun stringify(pretty: Boolean = false) {
         xContentBuilder {
-            if(pretty) {
+            if (pretty) {
                 this.prettyPrint()
             }
             writeAny(_properties)
@@ -150,32 +150,32 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
     }
 
     fun meta(block: MapBackedProperties.() -> Unit) {
-        if(meta == null) meta = MapBackedProperties()
+        if (meta == null) meta = MapBackedProperties()
         block.invoke(meta!!)
     }
 
     fun mappings(block: FieldMappings.() -> Unit) {
-        if(mappings == null) mappings = FieldMappings()
+        if (mappings == null) mappings = FieldMappings()
         block.invoke(mappings!!)
     }
 
     internal fun build(pretty: Boolean = false): XContentBuilder {
-        if(generateMetaFields) {
+        if (generateMetaFields) {
             // if it did not exist, create it.
-            if(meta == null) meta = object : MapBackedProperties() {}
+            if (meta == null) meta = object : MapBackedProperties() {}
             val mappingJson = xContentBuilder { writeAny(mappings) }.stringify()
             meta!!["content_hash"] = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(mappingJson.toByteArray()))
             meta!!["timestamp"] = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
         }
 
         return xContentBuilder {
-            if(pretty) prettyPrint()
+            if (pretty) prettyPrint()
             obj {
-                if(settings != null) {
+                if (settings != null) {
                     field("settings")
                     writeAny(settings)
                 }
-                if(mappings != null || meta != null) {
+                if (mappings != null || meta != null) {
                     objField("mappings") {
                         if (meta != null) {
                             field("_meta")

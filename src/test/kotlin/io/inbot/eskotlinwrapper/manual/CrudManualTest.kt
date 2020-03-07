@@ -8,8 +8,6 @@ import io.inbot.eskotlinwrapper.IndexRepository
 import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.ModelReaderAndWriter
 import org.elasticsearch.ElasticsearchStatusException
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest
-import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
 import org.elasticsearch.client.source
@@ -122,10 +120,10 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
                 thingRepository.getMappings().mappings()
                     .forEach { (name, meta) ->
-                    print("$name -> ${meta.source().string()}")
-                }
+                        print("$name -> ${meta.source().string()}")
+                    }
             }
-             +"""   
+            +"""   
                 Of course you can also simply set the settings json using source. This is 
                 useful if you maintain your mappings as separate json files.
             """
@@ -135,7 +133,8 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 thingRepository.deleteIndex()
                 // create a new one using json source
                 thingRepository.createIndex {
-                    source("""
+                    source(
+                        """
                         {
                           "settings": {
                             "index": {
@@ -157,7 +156,8 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                             }
                           }
                         }
-                    """)
+                    """
+                    )
                 }
             }
 
@@ -214,9 +214,11 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 val (obj, rawGetResponse) = thingRepository.getWithGetResponse("2")
                     ?: throw IllegalStateException("We just created this?!")
 
-                println("obj with id '${obj.title}' has id: ${rawGetResponse.id}, " +
-                        "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
-                        "seqNo: ${rawGetResponse.seqNo}")
+                println(
+                    "obj with id '${obj.title}' has id: ${rawGetResponse.id}, " +
+                            "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
+                            "seqNo: ${rawGetResponse.seqNo}"
+                )
                 // This works
                 thingRepository.index(
                     "2",
@@ -319,7 +321,8 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 )
 
                 val thingRepository = esClient.indexRepository<Thing>(
-                    index = "things", modelReaderAndWriter = modelReaderAndWriter)
+                    index = "things", modelReaderAndWriter = modelReaderAndWriter
+                )
             }
 
             +"""

@@ -19,7 +19,6 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.client.indices.CreateIndexRequest
-import org.elasticsearch.client.indices.GetFieldMappingsRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.client.indices.GetMappingsRequest
 import org.elasticsearch.client.search
@@ -84,7 +83,7 @@ class IndexRepository<T : Any>(
 
     fun getSettings() = client.indices().getSettings(GetSettingsRequest().indices(indexName), defaultRequestOptions)
     fun getMappings() = client.indices().getMapping(GetMappingsRequest().indices(indexName), defaultRequestOptions)
-    fun getMappingsAndSettings() = client.indices().get(GetIndexRequest(indexName),defaultRequestOptions)
+    fun getMappingsAndSettings() = client.indices().get(GetIndexRequest(indexName), defaultRequestOptions)
 
     /**
      * Delete the index associated with the repository. Returns true if successful or false if the index did not exist
@@ -354,7 +353,7 @@ class IndexRepository<T : Any>(
         }
     }
 
-    fun count(requestOptions: RequestOptions = this.defaultRequestOptions,block: CountRequest.() -> Unit = {}): Long {
+    fun count(requestOptions: RequestOptions = this.defaultRequestOptions, block: CountRequest.() -> Unit = {}): Long {
         val request = CountRequest(indexReadAlias)
         block.invoke(request)
         val response = client.count(request, requestOptions)

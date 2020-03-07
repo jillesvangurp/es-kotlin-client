@@ -1,7 +1,9 @@
 package org.elasticsearch.action.search
 
-import io.inbot.eskotlinwrapper.MapBackedProperties
 import io.inbot.eskotlinwrapper.SearchDSL
+import java.io.InputStream
+import java.io.Reader
+import java.util.Collections
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest
@@ -13,9 +15,6 @@ import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import java.io.InputStream
-import java.io.Reader
-import java.util.Collections
 
 private val logger: KLogger = KotlinLogging.logger { }
 
@@ -74,7 +73,7 @@ fun SearchRequest.source(reader: Reader, deprecationHandler: DeprecationHandler 
     }
 }
 
-fun SearchRequest.dsl(pretty: Boolean=false,block: SearchDSL.()->Unit) {
+fun SearchRequest.dsl(pretty: Boolean = false, block: SearchDSL.() -> Unit) {
     val searchDSL = SearchDSL()
     block.invoke(searchDSL)
     source(searchDSL.stringify(pretty))
@@ -110,7 +109,7 @@ fun SearchRequest.source(
     }
 }
 
-fun SearchRequest.source(block: SearchSourceBuilder.()->Unit) {
+fun SearchRequest.source(block: SearchSourceBuilder.() -> Unit) {
     val builder = SearchSourceBuilder()
     block.invoke(builder)
     source(builder)
@@ -132,9 +131,8 @@ fun CountRequest.source(
     }
 }
 
-fun CountRequest.source(block: SearchSourceBuilder.()->Unit) {
+fun CountRequest.source(block: SearchSourceBuilder.() -> Unit) {
     val builder = SearchSourceBuilder()
     block.invoke(builder)
     query(builder.query())
 }
-

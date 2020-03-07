@@ -5,22 +5,18 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-// import com.diffplug.gradle.spotless.SpotlessExtension
-
-// intellij has some bug that causes it to somehow be unable to acknowledge this import exists
-// build actually works fine inside and outside intellij
-//import de.thetaphi.forbiddenapis.gradle.CheckForbiddenApisExtension
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 buildscript {
     repositories {
+        mavenCentral()
         maven(url = "https://jitpack.io")
     }
     dependencies {
         classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-2-7.6.0")
+        classpath("org.jlleitschuh.gradle:ktlint-gradle:9.2.1")
     }
 }
-
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.61"
@@ -30,12 +26,12 @@ plugins {
 
     java
 
-
     id("com.avast.gradle.docker-compose") version "0.10.7"
     `maven-publish`
 }
 
 apply(plugin = "com.github.jillesvangurp.codegen")
+apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
 repositories {
     jcenter()
@@ -45,7 +41,6 @@ repositories {
 sourceSets {
     main {
         kotlin {
-
         }
     }
     // create a new source dir for our examples, ensure the main output is added to the classpath.
@@ -53,7 +48,6 @@ sourceSets {
         compileClasspath += sourceSets.main.get().output
         runtimeClasspath += sourceSets.main.get().output
         kotlin {
-
         }
     }
 }
@@ -71,7 +65,6 @@ tasks.withType<KotlinCompile> {
     dependsOn("codegen")
     kotlinOptions.jvmTarget = "1.8"
     this.sourceFilesExtensions
-
 }
 
 val dokka by tasks.getting(DokkaTask::class) {
@@ -98,6 +91,12 @@ configure<ComposeExtension> {
     forceRecreate = true
 }
 
+configure<KtlintExtension> {
+    ignoreFailures.set(true)
+    filter {
+        exclude("**/generatedcode/**/*")
+    }
+}
 // configure<SpotlessExtension> {
 //     java {
 //         removeUnusedImports()
@@ -115,7 +114,7 @@ configure<ComposeExtension> {
 // }
 
 tasks.withType<Test> {
-    dependsOn("examplesClasses","composeUp")
+    dependsOn("examplesClasses", "composeUp")
     useJUnitPlatform()
     testLogging.exceptionFormat = TestExceptionFormat.FULL
     testLogging.events = setOf(
@@ -135,13 +134,12 @@ publishing {
             groupId = artifactGroup
             artifactId = artifactName
             from(components["java"])
-
         }
     }
     repositories {
         maven {
             name = "myRepo"
-            url = uri("file://${buildDir}/repo")
+            url = uri("file://$buildDir/repo")
         }
     }
 }
@@ -153,8 +151,6 @@ val slf4jVersion = "1.7.26"
 val junitVersion = "5.6.0"
 val jacksonVersion = "2.10.2"
 val ktorVersion = "1.3.0"
-
-
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")

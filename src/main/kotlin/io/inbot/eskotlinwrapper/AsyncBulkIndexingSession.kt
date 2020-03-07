@@ -34,7 +34,7 @@ private val logger = KotlinLogging.logger {}
 data class AsyncBulkOperation<T : Any>(
     val operation: DocWriteRequest<*>,
     val id: String,
-    val updateFunction: suspend ((T) -> T) = {it},
+    val updateFunction: suspend ((T) -> T) = { it },
     val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit
 )
 
@@ -89,7 +89,7 @@ class AsyncBulkIndexingSession<T : Any> constructor(
             bulkSize: Int = 100,
             retryConflictingUpdates: Int = 0,
             refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-            itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation,itemResponse ->
+            itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation, itemResponse ->
                 if (itemResponse.isFailed) {
                     if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
                         repository.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)

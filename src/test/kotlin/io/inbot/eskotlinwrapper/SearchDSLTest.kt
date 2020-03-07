@@ -8,6 +8,7 @@ import org.elasticsearch.common.xcontent.stringify
 import org.junit.jupiter.api.Test
 
 class SearchDSLTest {
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `should construct matchAll query`() {
         val s = SearchDSL()
@@ -33,12 +34,15 @@ class SearchDSLTest {
                     match("title", "foo"),
                     match("title", "quick brown fox") {
                         // ESQuery is a MutableMap that modifies the underlying queryDetails
-                        this["value"] = "bar"
+                        this["boost"] = 0.6
                     }
                 )
             })
         }
         println(s.stringify(true))
-        assertThat(s.stringify()).contains("bar")
+        assertThat(s.stringify()).run {
+            contains("boost")
+            contains("0.6")
+        }
     }
 }

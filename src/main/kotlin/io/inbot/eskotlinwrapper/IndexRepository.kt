@@ -25,6 +25,7 @@ import org.elasticsearch.client.search
 import org.elasticsearch.cluster.metadata.AliasMetaData
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext
 
 private val logger = KotlinLogging.logger {}
 
@@ -43,6 +44,7 @@ private val logger = KotlinLogging.logger {}
  * @param modelReaderAndWriter serialization of your model class.
  * @param refreshAllowed if false, the refresh will throw an exception. Defaults to false.
  * @param defaultRequestOptions passed on all API calls. Defaults to `RequestOptions.DEFAULT`. Use this to set custom headers or override on each call on the repository.
+ * @param fetchSourceContext if not null, will be passed to Get and Search requests.
  *
  */
 class IndexRepository<T : Any>(
@@ -53,7 +55,8 @@ class IndexRepository<T : Any>(
     @Deprecated("Types are deprecated in ES 7.x and will be removed in v8") val type: String? = null,
     val indexWriteAlias: String = indexName,
     val indexReadAlias: String = indexWriteAlias,
-    internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+    internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT,
+    private val fetchSourceContext: FetchSourceContext? = null
 ) {
     /**
      * Create the index.
@@ -234,6 +237,9 @@ class IndexRepository<T : Any>(
         requestOptions: RequestOptions = this.defaultRequestOptions
     ): Pair<T, GetResponse>? {
         val getRequest = GetRequest().index(indexReadAlias).id(id)
+        if (fetchSourceContext != null) {
+            getRequest.fetchSourceContext(fetchSourceContext)
+        }
         if (!type.isNullOrBlank()) {
             getRequest.type(type)
         }
@@ -337,6 +343,10 @@ class IndexRepository<T : Any>(
             }
 
             block.invoke(this)
+
+            if (fetchSourceContext != null && source()?.fetchSource() == null) {
+                source()?.fetchSource(fetchSourceContext)
+            }
         }
 
         val searchResponse = client.search(requestOptions, wrappedBlock)

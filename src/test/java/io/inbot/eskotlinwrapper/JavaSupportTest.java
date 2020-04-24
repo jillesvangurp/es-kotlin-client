@@ -13,6 +13,7 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ public class JavaSupportTest {
         );
         // no extension functions but they can still be used
         String index = "test-" + randomId();
-        dao = KotlinExtensionsKt.createIndexRepository(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, RequestOptions.DEFAULT);
+        dao = KotlinExtensionsKt.createIndexRepository(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, RequestOptions.DEFAULT, FetchSourceContext.FETCH_SOURCE);
     }
 
     @Test

@@ -20,6 +20,7 @@ import org.elasticsearch.client.sniff.SniffOnFailureListener
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext
 
 /**
  * Factory method that gives you sane defaults that will allow you to quickly connect to your cluster whether it is in
@@ -127,7 +128,8 @@ inline fun <reified T : Any> RestHighLevelClient.indexRepository(
     readAlias: String = index,
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
-    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT,
+    fetchSourceContext: FetchSourceContext? = null
 ): IndexRepository<T> {
     return IndexRepository(
         indexName = index,
@@ -137,7 +139,8 @@ inline fun <reified T : Any> RestHighLevelClient.indexRepository(
         type = type,
         indexReadAlias = readAlias,
         indexWriteAlias = writeAlias,
-        defaultRequestOptions = defaultRequestOptions
+        defaultRequestOptions = defaultRequestOptions,
+        fetchSourceContext = fetchSourceContext
 
     )
 }
@@ -149,7 +152,8 @@ inline fun <reified T : Any> RestHighLevelClient.asyncIndexRepository(
     readAlias: String = index,
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
-    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT,
+    fetchSourceContext: FetchSourceContext? = null
 ): AsyncIndexRepository<T> {
     return AsyncIndexRepository(
         indexName = index,
@@ -159,7 +163,8 @@ inline fun <reified T : Any> RestHighLevelClient.asyncIndexRepository(
         type = type,
         indexReadAlias = readAlias,
         indexWriteAlias = writeAlias,
-        defaultRequestOptions = defaultRequestOptions
+        defaultRequestOptions = defaultRequestOptions,
+        fetchSourceContext = fetchSourceContext
 
     )
 }
@@ -172,7 +177,8 @@ fun <T : Any> RestHighLevelClient.createIndexRepository(
     readAlias: String = index,
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
-    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT,
+    fetchSourceContext: FetchSourceContext? = null
 ): IndexRepository<T> {
     return IndexRepository(
         indexName = index,
@@ -182,7 +188,8 @@ fun <T : Any> RestHighLevelClient.createIndexRepository(
         type = type,
         indexReadAlias = readAlias,
         indexWriteAlias = writeAlias,
-        defaultRequestOptions = defaultRequestOptions
+        defaultRequestOptions = defaultRequestOptions,
+        fetchSourceContext = fetchSourceContext
 
     )
 }

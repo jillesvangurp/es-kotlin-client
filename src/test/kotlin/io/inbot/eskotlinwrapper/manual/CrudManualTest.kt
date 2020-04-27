@@ -41,7 +41,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 as Spring, Ruby on Rails, etc. In such frameworks a  Repository 
                 provides primitives for interacting with objects in a particular database table.
                 
-                Wee provide a similar abstraction the ${mdLink(IndexRepository::class)}. You create one for each 
+                We provide a similar abstraction the ${mdLink(IndexRepository::class)}. You create one for each 
                 index that you have and it allows you to do Create, Read, Update, and Delete (CRUD) operations as well as 
                 a few other things.
                 
@@ -168,11 +168,12 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             blockWithOutput {
-                println("Object does not exist: ${thingRepository.get("first")}")
+                val id = "first"
+                println("Object does not exist: ${thingRepository.get(id)}")
                 // so lets store something
-                thingRepository.index("first", Thing("A thing", 42))
+                thingRepository.index(id, Thing("A thing", 42))
 
-                println("Now we get back our object: ${thingRepository.get("first")}")
+                println("Now we get back our object: ${thingRepository.get(id)}")
             }
 
             +"""
@@ -180,14 +181,15 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             blockWithOutput {
+                val id = "first"
                 try {
-                    thingRepository.index("first", Thing("A thing", 42))
+                    thingRepository.index(id, Thing("A thing", 42))
                 } catch (e: ElasticsearchStatusException) {
                     println("we already had one of those and es returned ${e.status().status}")
                 }
                 // this how you do upserts
-                thingRepository.index("first", Thing("Another thing", 666), create = false)
-                println("It was changed: ${thingRepository.get("1")}")
+                thingRepository.index(id, Thing("Another thing", 666), create = false)
+                println("It was changed: ${thingRepository.get(id)}")
             }
 
             +"""
@@ -215,7 +217,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     ?: throw IllegalStateException("We just created this?!")
 
                 println(
-                    "obj with id '${obj.title}' has id: ${rawGetResponse.id}, " +
+                    "obj with title '${obj.title}' has id: ${rawGetResponse.id}, " +
                             "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
                             "seqNo: ${rawGetResponse.seqNo}"
                 )

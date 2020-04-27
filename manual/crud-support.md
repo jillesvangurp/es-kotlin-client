@@ -12,7 +12,7 @@ should be familiar if you've ever written a database application using modern fr
 as Spring, Ruby on Rails, etc. In such frameworks a  Repository 
 provides primitives for interacting with objects in a particular database table.
 
-Wee provide a similar abstraction the [`IndexRepository`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/io/inbot/eskotlinwrapper/IndexRepository.kt). You create one for each 
+We provide a similar abstraction the [`IndexRepository`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/io/inbot/eskotlinwrapper/IndexRepository.kt). You create one for each 
 index that you have and it allows you to do Create, Read, Update, and Delete (CRUD) operations as well as 
 a few other things.
 
@@ -96,10 +96,10 @@ Output:
   "things" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1588010673142",
+    "creation_date" : "1588011556306",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "Toxta7RoTHSl3Mqa5miBAg",
+    "uuid" : "LZTl4zOsQ7WS7m4p1Ex8bQ",
     "version" : {
       "created" : "7060099"
     },
@@ -109,7 +109,7 @@ Output:
   }
 }
 things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-04-27T18:04:33.109569Z"},"properties":{"amount":{"type":"long","fields":{"abette
+04-27T18:19:16.290533Z"},"properties":{"amount":{"type":"long","fields":{"abette
 rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
 yword"}}},"title":{"type":"text"}}}
 ```
@@ -155,11 +155,12 @@ thingRepository.createIndex {
 Now that we have an index, we can use the CRUD operations.
 
 ```kotlin
-println("Object does not exist: ${thingRepository.get("first")}")
+val id = "first"
+println("Object does not exist: ${thingRepository.get(id)}")
 // so lets store something
-thingRepository.index("first", Thing("A thing", 42))
+thingRepository.index(id, Thing("A thing", 42))
 
-println("Now we get back our object: ${thingRepository.get("first")}")
+println("Now we get back our object: ${thingRepository.get(id)}")
 ```
 
 Output:
@@ -173,21 +174,22 @@ Now we get back our object: Thing(title=A thing, amount=42)
 You can't index an object twice unless you opt in to it being overwritten.
 
 ```kotlin
+val id = "first"
 try {
-  thingRepository.index("first", Thing("A thing", 42))
+  thingRepository.index(id, Thing("A thing", 42))
 } catch (e: ElasticsearchStatusException) {
   println("we already had one of those and es returned ${e.status().status}")
 }
 // this how you do upserts
-thingRepository.index("first", Thing("Another thing", 666), create = false)
-println("It was changed: ${thingRepository.get("1")}")
+thingRepository.index(id, Thing("Another thing", 666), create = false)
+println("It was changed: ${thingRepository.get(id)}")
 ```
 
 Output:
 
 ```
 we already had one of those and es returned 409
-It was changed: null
+It was changed: Thing(title=Another thing, amount=666)
 
 ```
 
@@ -221,7 +223,7 @@ val (obj, rawGetResponse) = thingRepository.getWithGetResponse("2")
   ?: throw IllegalStateException("We just created this?!")
 
 println(
-  "obj with id '${obj.title}' has id: ${rawGetResponse.id}, " +
+  "obj with title '${obj.title}' has id: ${rawGetResponse.id}, " +
       "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
       "seqNo: ${rawGetResponse.seqNo}"
 )
@@ -250,7 +252,7 @@ try {
 Output:
 
 ```
-obj with id 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 3
+obj with title 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 3
 Version conflict! Es returned 409
 
 ```

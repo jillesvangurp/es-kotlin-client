@@ -62,7 +62,7 @@ open class MapBackedProperties internal constructor(
     }
 }
 
-fun mapProps(block: MapBackedProperties.()->Unit): MapBackedProperties {
+fun mapProps(block: MapBackedProperties.() -> Unit): MapBackedProperties {
     val mapBackedProperties = MapBackedProperties()
     block.invoke(mapBackedProperties)
     return mapBackedProperties

@@ -139,14 +139,14 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                 // it also has filter, should, and mustNot
                                 must(
                                     // it has a vararg list of ESQuery
-                                    match("title","quick") {
+                                    match("title", "quick") {
                                         // match always needs a field and query
                                         // but boost is optional
                                         boost = 2.0
                                     },
                                     // but the block param is nullable and
                                     // defaults to null
-                                    match("title","brown")
+                                    match("title", "brown")
                                 )
                             }
                         )
@@ -164,8 +164,8 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 val results = thingRepository.search {
                     // SearchRequest.dsl is the extension function that allows us to use the dsl.
                     dsl {
-                        this["from"]= 0
-                        this["size"]=10
+                        this["from"] = 0
+                        this["size"] = 10
                         query(
                             // custom query constructs an object with an object inside
                             // as elasticsearch expects.
@@ -206,7 +206,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 this is the implementation of the match we use above. 
             """
 
-            snippetFromSourceFile("src/main/kotlin/io/inbot/eskotlinwrapper/SearchDSL.kt","MATCH_QUERY",wrap = true)
+            snippetFromSourceFile("src/main/kotlin/io/inbot/eskotlinwrapper/SearchDSL.kt", "MATCH_QUERY", wrap = true)
 
             +"""
                 Writing your own EsQuery subclass should be straight-forward. Just extend `EsQuery` and write a function 

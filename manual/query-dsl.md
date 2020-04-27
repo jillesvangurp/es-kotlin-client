@@ -107,14 +107,14 @@ val results = thingRepository.search {
         // it also has filter, should, and mustNot
         must(
           // it has a vararg list of ESQuery
-          match("title","quick") {
+          match("title", "quick") {
             // match always needs a field and query
             // but boost is optional
             boost = 2.0
           },
           // but the block param is nullable and
           // defaults to null
-          match("title","brown")
+          match("title", "brown")
         )
       }
     )
@@ -138,8 +138,8 @@ this is easy too.
 val results = thingRepository.search {
   // SearchRequest.dsl is the extension function that allows us to use the dsl.
   dsl {
-    this["from"]= 0
-    this["size"]=10
+    this["from"] = 0
+    this["size"] = 10
     query(
       // custom query constructs an object with an object inside
       // as elasticsearch expects.

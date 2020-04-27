@@ -75,4 +75,3 @@ fun customQuery(name: String, block: MapBackedProperties.() -> Unit): ESQuery {
     block.invoke(q.queryDetails)
     return q
 }
-

@@ -20,7 +20,6 @@ buildscript {
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.72"
-    // id("com.diffplug.gradle.spotless") version "3.25.0"
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.github.ben-manes.versions") version "0.28.0" // gradle dependencyUpdates -Drevision=release
 
@@ -94,7 +93,7 @@ configure<ComposeExtension> {
 configure<KtlintExtension> {
     ignoreFailures.set(true)
     filter {
-        exclude("**/generatedcode/**/*")
+        exclude("build/**/*")
     }
 }
 

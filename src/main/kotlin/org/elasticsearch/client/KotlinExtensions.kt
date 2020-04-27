@@ -128,8 +128,8 @@ inline fun <reified T : Any> RestHighLevelClient.indexRepository(
     readAlias: String = index,
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
-    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT,
-    fetchSourceContext: FetchSourceContext? = null
+    fetchSourceContext: FetchSourceContext? = null,
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ): IndexRepository<T> {
     return IndexRepository(
         indexName = index,
@@ -139,8 +139,8 @@ inline fun <reified T : Any> RestHighLevelClient.indexRepository(
         type = type,
         indexReadAlias = readAlias,
         indexWriteAlias = writeAlias,
-        defaultRequestOptions = defaultRequestOptions,
-        fetchSourceContext = fetchSourceContext
+        fetchSourceContext = fetchSourceContext,
+        defaultRequestOptions = defaultRequestOptions
 
     )
 }
@@ -152,8 +152,8 @@ inline fun <reified T : Any> RestHighLevelClient.asyncIndexRepository(
     readAlias: String = index,
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
-    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT,
-    fetchSourceContext: FetchSourceContext? = null
+    fetchSourceContext: FetchSourceContext? = null,
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ): AsyncIndexRepository<T> {
     return AsyncIndexRepository(
         indexName = index,
@@ -163,8 +163,8 @@ inline fun <reified T : Any> RestHighLevelClient.asyncIndexRepository(
         type = type,
         indexReadAlias = readAlias,
         indexWriteAlias = writeAlias,
-        defaultRequestOptions = defaultRequestOptions,
-        fetchSourceContext = fetchSourceContext
+        fetchSourceContext = fetchSourceContext,
+        defaultRequestOptions = defaultRequestOptions
 
     )
 }
@@ -177,8 +177,8 @@ fun <T : Any> RestHighLevelClient.createIndexRepository(
     readAlias: String = index,
     writeAlias: String = index,
     refreshAllowed: Boolean = false,
-    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT,
-    fetchSourceContext: FetchSourceContext? = null
+    fetchSourceContext: FetchSourceContext? = null,
+    defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ): IndexRepository<T> {
     return IndexRepository(
         indexName = index,
@@ -188,8 +188,8 @@ fun <T : Any> RestHighLevelClient.createIndexRepository(
         type = type,
         indexReadAlias = readAlias,
         indexWriteAlias = writeAlias,
-        defaultRequestOptions = defaultRequestOptions,
-        fetchSourceContext = fetchSourceContext
+        fetchSourceContext = fetchSourceContext,
+        defaultRequestOptions = defaultRequestOptions
 
     )
 }

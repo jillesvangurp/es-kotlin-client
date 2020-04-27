@@ -38,7 +38,7 @@ public class JavaSupportTest {
         );
         // no extension functions but they can still be used
         String index = "test-" + randomId();
-        dao = KotlinExtensionsKt.createIndexRepository(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, RequestOptions.DEFAULT, FetchSourceContext.FETCH_SOURCE);
+        dao = KotlinExtensionsKt.createIndexRepository(restHighLevelClient, index,jacksonModelReaderAndWriter,"_doc",index,index,true, FetchSourceContext.FETCH_SOURCE, RequestOptions.DEFAULT);
     }
 
     @Test

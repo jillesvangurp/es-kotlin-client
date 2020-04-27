@@ -1,9 +1,11 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
-import org.elasticsearch.action.search.source
+import io.inbot.eskotlinwrapper.bool
+import io.inbot.eskotlinwrapper.match
+import org.elasticsearch.action.search.dsl
+import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
-import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
 class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
@@ -29,6 +31,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             - Extension functions, default argument values, and other kotlin features add convenience and get rid of 
             Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
             friendly API over the underlying client functionality. 
+            - Extensible Kotlin DSLs for settings & mappings and for queries. This is a recent addition and a work in progress. Both use a `Map` internally. So for anything that is missing you can fall back to assigning map properties. 
             - A repository abstraction that allows you to: 
                 - Manage indices with a flexible DSL for mappings
                 - Do crud on index items with safe updates that retry in case of a version conflict
@@ -62,30 +65,46 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 // use the default jackson model reader and writer (you can customize)
                 // opt in to refreshes (we don't want this in production code) so we can test
                 val thingRepository = esClient.indexRepository<Thing>(
-                    "things", refreshAllowed = true)
+                    "things", refreshAllowed = true
+                )
 
                 // let the Repository create the index
                 thingRepository.createIndex {
-                    source(
-                        """
-                            {
-                              "settings": {
-                                "index": {
-                                  "number_of_replicas": 0,
-                                }
-                              },
-                              "mappings": {
-                                "properties": {
-                                  "name": {
-                                    "type": "text"
-                                  },
-                                  "amount": {
-                                    "type": "long"
-                                  }
-                                }
-                              }
+                    // as of 1.0-Beta-3, we have a new Mapping DSL
+                    configure {
+                        settings {
+                            replicas = 0
+                            shards = 2
+
+                            addTokenizer("autocomplete") {
+                                // the DSL does not cover everything but it's a proper
+                                // map so you can fall back to adding things directly
+                                this["type"] = "edge_ngram"
+                                this["min_gram"] = 2
+                                this["max_gram"] = 10
+                                this["token_chars"] = listOf("letter")
                             }
-                        """, XContentType.JSON)
+                            addAnalyzer("autocomplete") {
+                                this["tokenizer"] = "autocomplete"
+                                this["filter"] = listOf("lowercase")
+                            }
+                            addAnalyzer("autocomplete_search") {
+                                this["tokenizer"] = "lowercase"
+                            }
+                        }
+                        mappings {
+                            // most common field types are supported
+                            text("name") {
+                                fields {
+                                    text("autocomplete") {
+                                        analyzer = "autocomplete"
+                                        searchAnalyzer = "autocomplete_search"
+                                    }
+                                }
+                            }
+                            number<Int>("amount")
+                        }
+                    }
                 }
 
                 // put some things in our new index
@@ -97,27 +116,37 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 thingRepository.refresh()
 
                 // now lets do a little bit of reindexing logic that
-                // shows off scrolling searches using plain json and bulk indexing
+                // shows off scrolling searches using our DSL and bulk indexing
                 thingRepository.bulk {
                     // we are passed a BulkIndexingSession<Thing> in the block
 
                     thingRepository.search(scrolling = true) {
-                        // we are given a SearchRequest in the block
-                        source("""
-                            {
-                                "query": {
-                                    "match_all": {}
+                        // our new DSL; very much a work in progress
+                        // you can also use a source block with multi line
+                        // strings containing json
+                        dsl {
+                            from = 0
+                            resultSize = 10
+                            query(
+                                bool {
+                                    should(
+                                        match("name", "foo"),
+                                        match("name", "bar"),
+                                        match("name", "foobar")
+                                    )
                                 }
-                            }
-                        """.trimIndent())
+                            )
+                        }
                     }.hits.forEach { (esResult, deserialized) ->
                         // we get a lazy sequence that fetches results using the scroll api in es
+                        // de-serialized may be null if we disable source on the mapping
                         if (deserialized != null) {
-                            // deserialized may be null if we disable source on the mapping
                             // use the BulkIndexingSession to index a transformed version
                             // of the original
-                            index(esResult.id, deserialized.copy(amount = deserialized.amount + 1),
-                                create = false)
+                            index(
+                                esResult.id, deserialized.copy(amount = deserialized.amount + 1),
+                                create = false
+                            )
                         }
                     }
                 }

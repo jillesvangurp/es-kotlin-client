@@ -65,8 +65,8 @@ class AsyncIndexRepository<T : Any>(
     @Deprecated("Types are deprecated in ES 7.x and will be removed in v8") val type: String? = null,
     val indexWriteAlias: String = indexName,
     val indexReadAlias: String = indexWriteAlias,
-    internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT,
-    private val fetchSourceContext: FetchSourceContext? = null
+    private val fetchSourceContext: FetchSourceContext? = null,
+    internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ) {
     /**
      * Create the index.

@@ -13,20 +13,20 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-3-7.6.1")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-4-7.6.2")
         classpath("org.jlleitschuh.gradle:ktlint-gradle:9.2.1")
     }
 }
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.61"
+    id("org.jetbrains.kotlin.jvm") version "1.3.72"
     // id("com.diffplug.gradle.spotless") version "3.25.0"
     id("org.jetbrains.dokka") version "0.10.1"
-    id("com.github.ben-manes.versions") version "0.27.0" // gradle dependencyUpdates -Drevision=release
+    id("com.github.ben-manes.versions") version "0.28.0" // gradle dependencyUpdates -Drevision=release
 
     java
 
-    id("com.avast.gradle.docker-compose") version "0.10.7"
+    id("com.avast.gradle.docker-compose") version "0.10.10"
     `maven-publish`
 }
 
@@ -97,21 +97,6 @@ configure<KtlintExtension> {
         exclude("**/generatedcode/**/*")
     }
 }
-// configure<SpotlessExtension> {
-//     java {
-//         removeUnusedImports()
-//     }
-//     kotlin {
-//         ktlint()
-//     }
-
-// }
-
-// tasks {
-//     "spotlessCheck" {
-//         dependsOn("spotlessApply")
-//     }
-// }
 
 tasks.withType<Test> {
     dependsOn("examplesClasses", "composeUp")
@@ -144,21 +129,21 @@ publishing {
     }
 }
 
-val kotlinVersion = "1.3.61"
+val kotlinVersion = "1.3.72"
 // match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.6.0"
+val elasticVersion = "7.6.2"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.6.0"
-val jacksonVersion = "2.10.2"
-val ktorVersion = "1.3.0"
+val jacksonVersion = "2.11.0"
+val ktorVersion = "1.3.2"
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.3")
-    api("io.github.microutils:kotlin-logging:1.7.8")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.5")
+    api("io.github.microutils:kotlin-logging:1.7.9")
 
-    api("org.apache.commons:commons-lang3:3.9")
+    api("org.apache.commons:commons-lang3:3.10")
 
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
@@ -172,13 +157,13 @@ dependencies {
     testImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
     testImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
     testImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.13.0") // es seems to insist on log4j2
+    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.13.2") // es seems to insist on log4j2
     testImplementation("ch.qos.logback:logback-classic:1.2.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
-    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("io.mockk:mockk:1.10.0")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.20")
 
     examplesImplementation("io.ktor:ktor-server-netty:$ktorVersion")
@@ -189,6 +174,6 @@ dependencies {
     examplesImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
     examplesImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
     examplesImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    examplesImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.13.0") // es seems to insist on log4j2
+    examplesImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.13.2") // es seems to insist on log4j2
     examplesImplementation("ch.qos.logback:logback-classic:1.2.3")
 }

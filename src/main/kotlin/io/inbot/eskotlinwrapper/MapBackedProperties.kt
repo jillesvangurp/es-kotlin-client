@@ -7,9 +7,12 @@ import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.writeAny
 
 /**
- * Use this to create XContent friendly classes where you mix type safe fields with allowing the user to add
- * whatever to the underlying map. This way we don't have to map the full DSL and still get some benefits from
- * using Kotlin.
+ * Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
+ * implementing DSLs for querying, mappings, and other things in Elasticsearch. You may also use this to extend the
+ * DSL. Either extend directly or use this via e.g. interface delegation.
+ *
+ * Implements ToXContent so you can use this anywhere the Elasticsearch Java API expects an XContent object.
+ * This works together with the xcontent extension functions this library adds.
  */
 @Suppress("UNCHECKED_CAST")
 @MapPropertiesDSLMarker
@@ -22,6 +25,10 @@ open class MapBackedProperties internal constructor(
         _properties[key.snakeCaseToUnderscore()] = value
     }
 
+    /**
+     * Property delegate that stores the value in the MapBackedProperties. Use this to create type safe
+     * properties.
+     */
     internal fun <T : Any?> property(): ReadWriteProperty<Any, T> {
         return object :
             ReadWriteProperty<Any, T> {
@@ -35,6 +42,12 @@ open class MapBackedProperties internal constructor(
         }
     }
 
+    /**
+     * Property delegate that stores the value in the MapBackedProperties; uses the customPropertyName instead of the
+     * kotlin property name. Use this to create type safe properties in case the property name you need overlaps clashes
+     * with a kotlin keyword or super class property or method. For example, "size" is also a method on
+     * MapBackedProperties and thus cannot be used as a kotlin property name in sub class.
+     */
     internal fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T> {
         return object :
             ReadWriteProperty<MapBackedProperties, T> {
@@ -53,6 +66,9 @@ open class MapBackedProperties internal constructor(
         return builder
     }
 
+    /**
+     * Helper to manipulate list value objects.
+     */
     fun getOrCreateMutableList(key: String): MutableList<Any> {
         val list = this[key] as MutableList<Any>?
         if (list == null) {
@@ -62,6 +78,9 @@ open class MapBackedProperties internal constructor(
     }
 }
 
+/**
+ * Helper function to construct a MapBackedProperties with some content.
+ */
 fun mapProps(block: MapBackedProperties.() -> Unit): MapBackedProperties {
     val mapBackedProperties = MapBackedProperties()
     block.invoke(mapBackedProperties)

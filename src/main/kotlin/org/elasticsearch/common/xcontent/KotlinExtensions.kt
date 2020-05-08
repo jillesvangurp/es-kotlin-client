@@ -56,7 +56,7 @@ fun XContentBuilder.stringify(): String {
 
 /**
  * Write any of the supported types as a value. Supports primitive and null values, Map, List, Sequence, Array, etc. You
- * can even have another XContentBuilder nested. Note you can always inject raw json via writeRaw.
+ * can even have another XContentBuilder nested.
  */
 fun XContentBuilder.writeAny(obj: Any?) {
     if (obj == null) {
@@ -68,7 +68,7 @@ fun XContentBuilder.writeAny(obj: Any?) {
                 obj.outputStream.flush()
                 this.rawValue((obj.outputStream as ByteArrayOutputStream).toByteArray().inputStream(), XContentType.JSON)
             } else {
-                // this only works with XContentBuilder implementations that use a ByteArrayOutputStream, like the one create by xContentBuilder
+                // this only works with XContentBuilder implementations that use a ByteArrayOutputStream, like the one created by xContentBuilder
                 throw IllegalStateException("Cannot grab content from underlying OutputStream because it is not a ByteArrayOutputStream")
             }
         }
@@ -109,6 +109,9 @@ fun XContentBuilder.writeAny(obj: Any?) {
                 this.writeAny(it)
             }
             this.endArray()
+        }
+        is Enum<*> -> {
+            this.value(obj.name)
         }
         else -> {
             throw IllegalArgumentException("Unsupported type: ${obj::class}")

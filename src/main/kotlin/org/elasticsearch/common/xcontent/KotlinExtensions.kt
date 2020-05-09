@@ -89,21 +89,7 @@ fun XContentBuilder.writeAny(obj: Any?) {
             }
             this.endObject()
         }
-        is List<*> -> {
-            this.startArray()
-            obj.forEach {
-                this.writeAny(it)
-            }
-            this.endArray()
-        }
-        is Sequence<*> -> {
-            this.startArray()
-            obj.forEach {
-                this.writeAny(it)
-            }
-            this.endArray()
-        }
-        is Array<*> -> {
+        is Iterable<*> -> {
             this.startArray()
             obj.forEach {
                 this.writeAny(it)

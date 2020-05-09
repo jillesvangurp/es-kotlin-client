@@ -15,8 +15,12 @@ import io.inbot.eskotlinwrapper.dsl.MatchQuery
 import io.inbot.eskotlinwrapper.dsl.MultiMatchQuery
 import io.inbot.eskotlinwrapper.dsl.MultiMatchType
 import io.inbot.eskotlinwrapper.dsl.QueryStringQuery
+import io.inbot.eskotlinwrapper.dsl.RangeQuery
+import io.inbot.eskotlinwrapper.dsl.RegExpQuery
 import io.inbot.eskotlinwrapper.dsl.SearchDSL
 import io.inbot.eskotlinwrapper.dsl.SimpleQueryStringQuery
+import io.inbot.eskotlinwrapper.dsl.TermQuery
+import io.inbot.eskotlinwrapper.dsl.TermsQuery
 import io.inbot.eskotlinwrapper.dsl.ZeroTermsQuery
 import io.inbot.eskotlinwrapper.dsl.bool
 import io.inbot.eskotlinwrapper.dsl.boosting
@@ -144,6 +148,36 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     fun `ids query`() {
         testQuery {
             query = IdsQuery("1","2")
+        }
+    }
+
+    @Test
+    fun `range query`() {
+        testQuery {
+            query =  RangeQuery("Title") {
+                gt = 42
+            }
+        }
+    }
+
+    @Test
+    fun `regexp query`(){
+        testQuery {
+            query = RegExpQuery("title","f.*")
+        }
+    }
+
+    @Test
+    fun `term query`() {
+        testQuery {
+            query = TermQuery("_id","42")
+        }
+    }
+
+    @Test
+    fun `terms query`() {
+        testQuery {
+            query = TermsQuery("_id", "42","43")
         }
     }
 

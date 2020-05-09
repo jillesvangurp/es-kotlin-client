@@ -31,7 +31,7 @@ class MatchQueryConfig : MapBackedProperties() {
 class MatchQuery(
     field: String,
     query: String,
-    internal val matchQueryConfig: MatchQueryConfig = MatchQueryConfig(),
+    matchQueryConfig: MatchQueryConfig = MatchQueryConfig(),
     block: (MatchQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match") {
     // The map is empty until we assign something
@@ -59,7 +59,7 @@ class MatchBoolPrefixQueryConfig : MapBackedProperties() {
 class MatchBoolPrefixQuery(
     field: String,
     query: String,
-    internal val matchBoolPrefixQueryConfig: MatchBoolPrefixQueryConfig = MatchBoolPrefixQueryConfig(),
+    matchBoolPrefixQueryConfig: MatchBoolPrefixQueryConfig = MatchBoolPrefixQueryConfig(),
     block: (MatchBoolPrefixQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match_bool_prefix") {
     init {
@@ -81,7 +81,7 @@ class MatchPhrasePrefixQueryConfig : MapBackedProperties() {
 class MatchPhrasePrefixQuery(
     field: String,
     query: String,
-    internal val matchPhrasePrefixQueryConfig: MatchPhrasePrefixQueryConfig = MatchPhrasePrefixQueryConfig(),
+    matchPhrasePrefixQueryConfig: MatchPhrasePrefixQueryConfig = MatchPhrasePrefixQueryConfig(),
     block: (MatchPhrasePrefixQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match_phrase_prefix") {
     init {

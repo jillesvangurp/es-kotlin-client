@@ -21,6 +21,7 @@ fun customQuery(name: String, block: MapBackedProperties.() -> Unit): ESQuery {
     return q
 }
 
+@Suppress("UNCHECKED_CAST")
 class SearchDSL : MapBackedProperties() {
     var from: Int by property()
 

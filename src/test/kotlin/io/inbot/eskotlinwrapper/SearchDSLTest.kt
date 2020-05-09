@@ -5,18 +5,22 @@ import assertk.assertions.contains
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.inbot.eskotlinwrapper.dsl.ExistsQuery
+import io.inbot.eskotlinwrapper.dsl.FuzzyQuery
+import io.inbot.eskotlinwrapper.dsl.IdsQuery
+import io.inbot.eskotlinwrapper.dsl.MatchBoolPrefixQuery
 import io.inbot.eskotlinwrapper.dsl.MatchOperator
+import io.inbot.eskotlinwrapper.dsl.MatchPhrasePrefixQuery
+import io.inbot.eskotlinwrapper.dsl.MatchQuery
+import io.inbot.eskotlinwrapper.dsl.MultiMatchQuery
 import io.inbot.eskotlinwrapper.dsl.MultiMatchType
+import io.inbot.eskotlinwrapper.dsl.QueryStringQuery
 import io.inbot.eskotlinwrapper.dsl.SearchDSL
+import io.inbot.eskotlinwrapper.dsl.SimpleQueryStringQuery
 import io.inbot.eskotlinwrapper.dsl.ZeroTermsQuery
 import io.inbot.eskotlinwrapper.dsl.bool
 import io.inbot.eskotlinwrapper.dsl.boosting
-import io.inbot.eskotlinwrapper.dsl.match
 import io.inbot.eskotlinwrapper.dsl.matchAll
-import io.inbot.eskotlinwrapper.dsl.matchBoolPrefix
-import io.inbot.eskotlinwrapper.dsl.matchPhrasePrefix
-import io.inbot.eskotlinwrapper.dsl.multiMatch
-import io.inbot.eskotlinwrapper.dsl.queryString
 import org.elasticsearch.action.search.dsl
 import org.junit.jupiter.api.Test
 
@@ -42,8 +46,8 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
         testQuery {
             query = bool {
                 should(
-                    match("title", "foo"),
-                    match("title", "quick brown fox") {
+                    MatchQuery("title", "foo"),
+                    MatchQuery("title", "quick brown fox") {
                         // ESQuery is a MutableMap that modifies the underlying queryDetails
                         this["boost"] = 0.6
                     }
@@ -57,7 +61,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
         testQuery {
             query = boosting {
                 positive = matchAll()
-                negative = match("title", "nooo")
+                negative = MatchQuery("title", "nooo")
                 negativeBoost = 0.1
             }
         }
@@ -66,7 +70,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `match query`() {
         testQuery {
-            query = match("title", "foo bar") {
+            query = MatchQuery("title", "foo bar") {
                 operator = MatchOperator.AND
                 zeroTermsQuery = ZeroTermsQuery.none
             }
@@ -76,7 +80,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `match bool prefix query`() {
         testQuery {
-            query = matchBoolPrefix("title", "foo bar") {
+            query = MatchBoolPrefixQuery("title", "foo bar") {
                 operator = MatchOperator.OR
             }
         }
@@ -85,7 +89,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `match phrase prefix query` () {
         testQuery {
-            query = matchPhrasePrefix("title", "foo ba") {
+            query = MatchPhrasePrefixQuery("title", "foo ba") {
                 slop = 3
             }
         }
@@ -94,7 +98,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `multi match query`() {
         testQuery {
-            query = multiMatch("foo bar","title","description") {
+            query = MultiMatchQuery("foo bar","title","description") {
                 type = MultiMatchType.best_fields
                 fuzziness = "AUTO"
             }
@@ -104,7 +108,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `query string query`() {
         testQuery {
-            query = queryString("foo bar") {
+            query = QueryStringQuery("foo bar") {
                 defaultField = "title"
                 fuzziness = "AUTO"
             }
@@ -114,9 +118,32 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `simple query string query`() {
         testQuery {
-            query = queryString("foo AND bar", "title", "description") {
+            query = SimpleQueryStringQuery("foo AND bra", "title", "description") {
+                fuzzyTranspositions = true
+            }
+        }
+    }
+
+    @Test
+    fun `exists query`() {
+        testQuery {
+            query = ExistsQuery("title")
+        }
+    }
+
+    @Test
+    fun `fuzzy query`() {
+        testQuery {
+            query = FuzzyQuery("title","ofo bra") {
                 fuzziness = "AUTO"
             }
+        }
+    }
+
+    @Test
+    fun `ids query`() {
+        testQuery {
+            query = IdsQuery("1","2")
         }
     }
 
@@ -129,13 +156,3 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
         }
     }
 }
-
-
-//private fun testQuery(q: ESQuery, assertBlock: Assert<String>.() -> Unit) {
-//    val dsl = SearchDSL()
-//    dsl.query = q
-//    val serialized = dsl.stringify(true)
-//    println(serialized)
-//
-//    assertThat(serialized).run(assertBlock)
-//}

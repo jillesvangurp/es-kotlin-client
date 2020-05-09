@@ -1,8 +1,8 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
+import io.inbot.eskotlinwrapper.dsl.MatchQuery
 import io.inbot.eskotlinwrapper.dsl.bool
-import io.inbot.eskotlinwrapper.dsl.match
 import org.elasticsearch.action.search.dsl
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
@@ -129,9 +129,9 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                             resultSize = 10
                             query = bool {
                                 should(
-                                    match("name", "foo"),
-                                    match("name", "bar"),
-                                    match("name", "foobar")
+                                    MatchQuery("name", "foo"),
+                                    MatchQuery("name", "bar"),
+                                    MatchQuery("name", "foobar")
                                 )
                             }
 

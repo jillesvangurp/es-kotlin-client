@@ -1,10 +1,10 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
+import io.inbot.eskotlinwrapper.dsl.MatchQuery
 import io.inbot.eskotlinwrapper.dsl.bool
 import io.inbot.eskotlinwrapper.dsl.customQuery
 import io.inbot.eskotlinwrapper.mapProps
-import io.inbot.eskotlinwrapper.dsl.match
 import org.elasticsearch.action.search.dsl
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.configure
@@ -139,14 +139,14 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                 // it also has filter, should, and mustNot
                                 must(
                                     // it has a vararg list of ESQuery
-                                    match("title", "quick") {
+                                    MatchQuery("title", "quick") {
                                         // match always needs a field and query
                                         // but boost is optional
                                         boost = 2.0
                                     },
                                     // but the block param is nullable and
                                     // defaults to null
-                                    match("title", "brown")
+                                    MatchQuery("title", "brown")
                                 )
                             }
 

@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "UNCHECKED_CAST")
 
 package io.inbot.eskotlinwrapper.dsl
 
@@ -6,6 +6,7 @@ import io.inbot.eskotlinwrapper.MapBackedProperties
 
 // Begin MATCH_QUERY
 enum class MatchOperator { AND, OR }
+
 @Suppress("EnumEntryName")
 enum class ZeroTermsQuery { all, none }
 
@@ -30,23 +31,15 @@ class MatchQueryConfig : MapBackedProperties() {
 class MatchQuery(
     field: String,
     query: String,
-    internal val matchQueryConfig: MatchQueryConfig = MatchQueryConfig()
+    internal val matchQueryConfig: MatchQueryConfig = MatchQueryConfig(),
+    block: (MatchQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match") {
     // The map is empty until we assign something
     init {
         this[field] = matchQueryConfig
         matchQueryConfig.query = query
+        block?.invoke(matchQueryConfig)
     }
-}
-
-fun match(
-    field: String,
-    value: String,
-    block: (MatchQueryConfig.() -> Unit)? = null
-): MatchQuery {
-    val q = MatchQuery(field, value)
-    block?.invoke(q.matchQueryConfig)
-    return q
 }
 // END MATCH_QUERY
 
@@ -66,22 +59,14 @@ class MatchBoolPrefixQueryConfig : MapBackedProperties() {
 class MatchBoolPrefixQuery(
     field: String,
     query: String,
-    internal val matchBoolPrefixQueryConfig: MatchBoolPrefixQueryConfig = MatchBoolPrefixQueryConfig()
+    internal val matchBoolPrefixQueryConfig: MatchBoolPrefixQueryConfig = MatchBoolPrefixQueryConfig(),
+    block: (MatchBoolPrefixQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match_bool_prefix") {
     init {
         this[field] = matchBoolPrefixQueryConfig
         matchBoolPrefixQueryConfig.query = query
+        block?.invoke(matchBoolPrefixQueryConfig)
     }
-}
-
-fun matchBoolPrefix(
-    field: String,
-    value: String,
-    block: (MatchBoolPrefixQueryConfig.() -> Unit)? = null
-): MatchBoolPrefixQuery {
-    val q = MatchBoolPrefixQuery(field, value)
-    block?.invoke(q.matchBoolPrefixQueryConfig)
-    return q
 }
 
 class MatchPhrasePrefixQueryConfig : MapBackedProperties() {
@@ -96,38 +81,31 @@ class MatchPhrasePrefixQueryConfig : MapBackedProperties() {
 class MatchPhrasePrefixQuery(
     field: String,
     query: String,
-    internal val matchPhrasePrefixQueryConfig: MatchPhrasePrefixQueryConfig = MatchPhrasePrefixQueryConfig()
+    internal val matchPhrasePrefixQueryConfig: MatchPhrasePrefixQueryConfig = MatchPhrasePrefixQueryConfig(),
+    block: (MatchPhrasePrefixQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match_phrase_prefix") {
     init {
         this[field] = matchPhrasePrefixQueryConfig
         matchPhrasePrefixQueryConfig.query = query
+        block?.invoke(matchPhrasePrefixQueryConfig)
     }
-}
-
-fun matchPhrasePrefix(
-    field: String,
-    value: String,
-    block: (MatchPhrasePrefixQueryConfig.() -> Unit)? = null
-): MatchPhrasePrefixQuery {
-    val q = MatchPhrasePrefixQuery(field, value)
-    block?.invoke(q.matchPhrasePrefixQueryConfig)
-    return q
 }
 
 @Suppress("EnumEntryName")
 enum class MultiMatchType {
-    best_fields,most_fields,cross_fields,phrase,phrase_prefix,bool_prefix
+    best_fields, most_fields, cross_fields, phrase, phrase_prefix, bool_prefix
 }
-class MultiMatchQuery(query: String, vararg fields: String) : ESQuery("multi_match") {
-    init {
-        this["query"] = query
-        this["fields"] = fields
-    }
+
+class MultiMatchQuery(
+    query: String,
+    vararg fields: String,
+    block: (MultiMatchQuery.() -> Unit)? = null
+) : ESQuery("multi_match") {
     val query: String get() = this["query"] as String
     val fields: Array<String> get() = this["fields"] as Array<String>
 
-
     var type by queryDetails.property<MultiMatchType>()
+
     // note not all of these are usable with all types; check documentation
     var tieBreaker by queryDetails.property<Double>()
     var analyzer by queryDetails.property<String>()
@@ -142,23 +120,19 @@ class MultiMatchQuery(query: String, vararg fields: String) : ESQuery("multi_mat
     var minimumShouldMatch by queryDetails.property<String>()
     var zeroTermsQuery by queryDetails.property<ZeroTermsQuery>()
     var slop by queryDetails.property<Int>()
-}
 
-fun multiMatch(
-    query: String,
-    vararg fields: String,
-    block: (MultiMatchQuery.() -> Unit)? = null
-): MultiMatchQuery {
-    val q = MultiMatchQuery(query, *fields)
-    block?.invoke(q)
-    return q
-}
-
-class QueryStringQuery(query: String, vararg fields: String) : ESQuery("query_string") {
     init {
         this["query"] = query
         this["fields"] = fields
+        block?.invoke(this)
     }
+}
+
+class QueryStringQuery(
+    query: String,
+    vararg fields: String,
+    block: (QueryStringQuery.() -> Unit)? = null
+) : ESQuery("query_string") {
 
     val query: String get() = this["query"] as String
     val fields: Array<String> get() = this["fields"] as Array<String>
@@ -183,24 +157,20 @@ class QueryStringQuery(query: String, vararg fields: String) : ESQuery("query_st
     var quoteFieldSuffix by queryDetails.property<String>()
     var rewrite by queryDetails.property<String>()
     var timeZone by queryDetails.property<String>()
-}
 
-fun queryString(
-    query: String,
-    vararg fields: String,
-    block: (QueryStringQuery.() -> Unit)? = null
-): QueryStringQuery {
-    val q = QueryStringQuery(query, *fields)
-    block?.invoke(q)
-    return q
-}
-
-class SimpleQueryStringQuery(query: String, vararg fields: String) : ESQuery("simple_query_string") {
     init {
         this["query"] = query
         this["fields"] = fields
+        block?.invoke(this)
     }
+}
 
+class SimpleQueryStringQuery(
+    query: String,
+    vararg fields: String,
+    block: (SimpleQueryStringQuery.() -> Unit)? = null
+) :
+    ESQuery("simple_query_string") {
     val query: String get() = this["query"] as String
     val fields: Array<String> get() = this["fields"] as Array<String>
 
@@ -219,4 +189,10 @@ class SimpleQueryStringQuery(query: String, vararg fields: String) : ESQuery("si
     var defaultOperator by queryDetails.property<MatchOperator>()
     var minimumShouldMatch by queryDetails.property<String>()
     var quoteFieldSuffix by queryDetails.property<String>()
+
+    init {
+        this["query"] = query
+        this["fields"] = fields
+        block?.invoke(this)
+    }
 }

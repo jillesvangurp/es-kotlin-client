@@ -149,7 +149,6 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                     MatchQuery("title", "brown")
                                 )
                             }
-
                     }
                 }
                 println("We found ${results.totalHits} results.")

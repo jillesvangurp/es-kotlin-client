@@ -20,7 +20,6 @@ class FuzzyQueryConfig : MapBackedProperties() {
     var prefixLength by property<Int>()
     var transpositions by property<Boolean>()
     var rewrite by property<String>()
-
 }
 
 @SearchDSLMarker
@@ -111,7 +110,6 @@ class RegExpQuery(
 class TermQueryConfig : MapBackedProperties() {
     var value by property<String>()
     var boost by property<Double>()
-
 }
 
 @SearchDSLMarker
@@ -171,4 +169,3 @@ class WildCardQuery(
         block?.invoke(wildCardQueryConfig)
     }
 }
-

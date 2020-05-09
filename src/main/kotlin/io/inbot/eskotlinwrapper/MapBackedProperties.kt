@@ -1,11 +1,11 @@
 package io.inbot.eskotlinwrapper
 
 import io.inbot.eskotlinwrapper.dsl.ESQuery
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.writeAny
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  * Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
@@ -29,9 +29,9 @@ open class MapBackedProperties internal constructor(
     fun esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
         return object : ReadWriteProperty<Any, ESQuery> {
             override fun getValue(thisRef: Any, property: KProperty<*>): ESQuery {
-                val map = _properties[property.name] as Map<String,MapBackedProperties>
-                val (name,queryDetails) = map.entries.first()
-                return ESQuery(name,queryDetails)            }
+                val map = _properties[property.name] as Map<String, MapBackedProperties>
+                val (name, queryDetails) = map.entries.first()
+                return ESQuery(name, queryDetails) }
 
             override fun setValue(thisRef: Any, property: KProperty<*>, value: ESQuery) {
                 _properties[property.name] = value.toMap()

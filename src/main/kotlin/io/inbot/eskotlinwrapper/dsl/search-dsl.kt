@@ -30,15 +30,14 @@ class SearchDSL : MapBackedProperties() {
     // Elasticsearch has this object in a object kind of thing that we need to compensate for.
     var query: ESQuery
         get() {
-            val map = this["query"] as Map<String,MapBackedProperties>
-            val (name,queryDetails) = map.entries.first()
-            return ESQuery(name,queryDetails)
+            val map = this["query"] as Map<String, MapBackedProperties>
+            val (name, queryDetails) = map.entries.first()
+            return ESQuery(name, queryDetails)
         }
         set(value) {
             this["query"] = value.toMap()
         }
 }
-
 
 fun matchAll() = ESQuery("match_all")
 

@@ -91,7 +91,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     }
 
     @Test
-    fun `match phrase prefix query` () {
+    fun `match phrase prefix query`() {
         testQuery {
             query = MatchPhrasePrefixQuery("title", "foo ba") {
                 slop = 3
@@ -102,7 +102,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `multi match query`() {
         testQuery {
-            query = MultiMatchQuery("foo bar","title","description") {
+            query = MultiMatchQuery("foo bar", "title", "description") {
                 type = MultiMatchType.best_fields
                 fuzziness = "AUTO"
             }
@@ -138,7 +138,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `fuzzy query`() {
         testQuery {
-            query = FuzzyQuery("title","ofo bra") {
+            query = FuzzyQuery("title", "ofo bra") {
                 fuzziness = "AUTO"
             }
         }
@@ -147,37 +147,37 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     @Test
     fun `ids query`() {
         testQuery {
-            query = IdsQuery("1","2")
+            query = IdsQuery("1", "2")
         }
     }
 
     @Test
     fun `range query`() {
         testQuery {
-            query =  RangeQuery("Title") {
+            query = RangeQuery("Title") {
                 gt = 42
             }
         }
     }
 
     @Test
-    fun `regexp query`(){
+    fun `regexp query`() {
         testQuery {
-            query = RegExpQuery("title","f.*")
+            query = RegExpQuery("title", "f.*")
         }
     }
 
     @Test
     fun `term query`() {
         testQuery {
-            query = TermQuery("_id","42")
+            query = TermQuery("_id", "42")
         }
     }
 
     @Test
     fun `terms query`() {
         testQuery {
-            query = TermsQuery("_id", "42","43")
+            query = TermsQuery("_id", "42", "43")
         }
     }
 

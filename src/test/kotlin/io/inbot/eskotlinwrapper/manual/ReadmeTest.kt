@@ -134,7 +134,6 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                     MatchQuery("name", "foobar")
                                 )
                             }
-
                         }
                     }.hits.forEach { (esResult, deserialized) ->
                         // we get a lazy sequence that fetches results using the scroll api in es

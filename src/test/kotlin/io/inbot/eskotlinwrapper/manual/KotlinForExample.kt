@@ -1,11 +1,11 @@
 package io.inbot.eskotlinwrapper.manual
 
+import mu.KLogger
+import mu.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintWriter
 import kotlin.reflect.KClass
-import mu.KLogger
-import mu.KotlinLogging
 
 private val logger: KLogger = KotlinLogging.logger { }
 
@@ -160,14 +160,25 @@ class KotlinForExample private constructor(
             if (callerSourceBlock == null) {
                 logger.warn { "Could not find code block from stack trace and sourcePath" }
             } else {
-                mdCodeBlock(code = callerSourceBlock, allowLongLines = allowLongLines, lineLength = lineLength, wrap = wrap)
+                mdCodeBlock(
+                    code = callerSourceBlock,
+                    allowLongLines = allowLongLines,
+                    lineLength = lineLength,
+                    wrap = wrap
+                )
             }
             writer.flush()
         }
         val output = outputBuffer.toString()
         if (output.isNotEmpty()) {
             buf.appendln("Output:\n")
-            mdCodeBlock(code = output, allowLongLines = allowLongLinesInOutput, wrap = wrapOutput, lineLength = lineLength, type = "")
+            mdCodeBlock(
+                code = output,
+                allowLongLines = allowLongLinesInOutput,
+                wrap = wrapOutput,
+                lineLength = lineLength,
+                type = ""
+            )
         }
     }
 
@@ -194,6 +205,7 @@ class KotlinForExample private constructor(
                 return source.substring(start + 1, index - 1).trimIndent()
             }
         }
+        logger.warn("no suitable file found for ${ste.fileName} ${ste.lineNumber}")
         return null
     }
 
@@ -208,10 +220,15 @@ class KotlinForExample private constructor(
     internal fun getCallerStackTraceElement(): StackTraceElement {
         return Thread.currentThread()
             .stackTrace.first {
-            it.className != javaClass.name && it.className != "java.lang.Thread" && !it.className.contains(
-                "KotlinForExample"
-            )
-        }
+                !it.className.startsWith("java") &&
+                        !it.className.startsWith("jdk.internal") &&
+                        it.className != javaClass.name &&
+                        it.className != "java.lang.Thread" &&
+                        it.className != "io.inbot.eskotlinwrapper.manual.KotlinForExample" &&
+                        it.className != "io.inbot.eskotlinwrapper.manual.KotlinForExample\$Companion" // edge case
+
+
+            }
     }
 
     override fun close() {

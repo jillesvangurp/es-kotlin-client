@@ -89,6 +89,13 @@ fun XContentBuilder.writeAny(obj: Any?) {
             }
             this.endObject()
         }
+        is Array<*> -> {
+            this.startArray()
+            obj.forEach {
+                this.writeAny(it)
+            }
+            this.endArray()
+        }
         is Iterable<*> -> {
             this.startArray()
             obj.forEach {

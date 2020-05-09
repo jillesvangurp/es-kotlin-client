@@ -1,13 +1,12 @@
 package io.inbot.eskotlinwrapper
 
-import assertk.Assert
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.inbot.eskotlinwrapper.dsl.ESQuery
 import io.inbot.eskotlinwrapper.dsl.MatchOperator
+import io.inbot.eskotlinwrapper.dsl.MultiMatchType
 import io.inbot.eskotlinwrapper.dsl.SearchDSL
 import io.inbot.eskotlinwrapper.dsl.ZeroTermsQuery
 import io.inbot.eskotlinwrapper.dsl.bool
@@ -15,8 +14,10 @@ import io.inbot.eskotlinwrapper.dsl.boosting
 import io.inbot.eskotlinwrapper.dsl.match
 import io.inbot.eskotlinwrapper.dsl.matchAll
 import io.inbot.eskotlinwrapper.dsl.matchBoolPrefix
+import io.inbot.eskotlinwrapper.dsl.matchPhrasePrefix
+import io.inbot.eskotlinwrapper.dsl.multiMatch
+import io.inbot.eskotlinwrapper.dsl.queryString
 import org.elasticsearch.action.search.dsl
-import org.elasticsearch.common.xcontent.stringify
 import org.junit.jupiter.api.Test
 
 class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIndex = true) {
@@ -38,73 +39,103 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
 
     @Test
     fun `should construct bool`() {
-        testQuery(bool {
-            should(
-                match("title", "foo"),
-                match("title", "quick brown fox") {
-                    // ESQuery is a MutableMap that modifies the underlying queryDetails
-                    this["boost"] = 0.6
-                }
-            )
-        }) {
-            contains("should")
-            contains("boost")
-            contains("0.6")
+        testQuery {
+            query = bool {
+                should(
+                    match("title", "foo"),
+                    match("title", "quick brown fox") {
+                        // ESQuery is a MutableMap that modifies the underlying queryDetails
+                        this["boost"] = 0.6
+                    }
+                )
+            }
         }
     }
 
     @Test
     fun `boosting query`() {
-        testQuery(boosting {
-            positive = matchAll()
-            negative = match("title", "nooo")
-        }) {
-            contains("positive")
-            contains("negative")
-            contains("title")
-            contains("nooo")
+        testQuery {
+            query = boosting {
+                positive = matchAll()
+                negative = match("title", "nooo")
+                negativeBoost = 0.1
+            }
         }
     }
 
-
     @Test
     fun `match query`() {
-        testQuery(match("title", "foo bar") {
-            operator = MatchOperator.AND
-            zeroTermsQuery = ZeroTermsQuery.none
-        }) {
-            contains("match")
-            contains("title")
-            contains("foo bar")
-            contains("AND")
-            contains("none")
+        testQuery {
+            query = match("title", "foo bar") {
+                operator = MatchOperator.AND
+                zeroTermsQuery = ZeroTermsQuery.none
+            }
         }
     }
 
     @Test
     fun `match bool prefix query`() {
-        testQuery(matchBoolPrefix("title", "foo bar") {
-            operator = MatchOperator.OR
-        }) {
-            contains("match_bool_prefix")
-            contains("title")
-            contains("foo bar")
-            contains("OR")
+        testQuery {
+            query = matchBoolPrefix("title", "foo bar") {
+                operator = MatchOperator.OR
+            }
         }
     }
-    private fun testQuery(block: SearchDSL.()->Unit): SearchResults<TestModel> {
+
+    @Test
+    fun `match phrase prefix query` () {
+        testQuery {
+            query = matchPhrasePrefix("title", "foo ba") {
+                slop = 3
+            }
+        }
+    }
+
+    @Test
+    fun `multi match query`() {
+        testQuery {
+            query = multiMatch("foo bar","title","description") {
+                type = MultiMatchType.best_fields
+                fuzziness = "AUTO"
+            }
+        }
+    }
+
+    @Test
+    fun `query string query`() {
+        testQuery {
+            query = queryString("foo bar") {
+                defaultField = "title"
+                fuzziness = "AUTO"
+            }
+        }
+    }
+
+    @Test
+    fun `simple query string query`() {
+        testQuery {
+            query = queryString("foo AND bar", "title", "description") {
+                fuzziness = "AUTO"
+            }
+        }
+    }
+
+    private fun testQuery(block: SearchDSL.() -> Unit): SearchResults<TestModel> {
+        // we test here that ES does not throw some kind of error and accepts the query without validation problems
+        // we don't care about the results in this case
+        // note we also don't test all parameters
         return repository.search {
-            this.dsl(true, block)
+            dsl(true, block)
         }
     }
 }
 
 
-private fun testQuery(q: ESQuery, assertBlock: Assert<String>.() -> Unit) {
-    val dsl = SearchDSL()
-    dsl.query = q
-    val serialized = dsl.stringify(true)
-    println(serialized)
-
-    assertThat(serialized).run(assertBlock)
-}
+//private fun testQuery(q: ESQuery, assertBlock: Assert<String>.() -> Unit) {
+//    val dsl = SearchDSL()
+//    dsl.query = q
+//    val serialized = dsl.stringify(true)
+//    println(serialized)
+//
+//    assertThat(serialized).run(assertBlock)
+//}

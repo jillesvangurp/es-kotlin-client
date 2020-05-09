@@ -6,10 +6,11 @@ import assertk.assertions.contains
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.elasticsearch.action.search.dsl
 import org.elasticsearch.common.xcontent.stringify
 import org.junit.jupiter.api.Test
 
-class SearchDSLTest {
+class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIndex = true) {
     val objectMapper = ObjectMapper()
 
     @Suppress("UNCHECKED_CAST")
@@ -19,7 +20,7 @@ class SearchDSLTest {
         s.apply {
             resultSize = 10
             from = 0
-            query(matchAll())
+            query = matchAll()
         }
         assertThat(s["from"]).isEqualTo(0)
         assertThat(s["query"] as Map<String, Any>).hasSize(1)
@@ -82,12 +83,19 @@ class SearchDSLTest {
             contains("OR")
         }
     }
+    private fun testQuery(block: SearchDSL.()->Unit): SearchResults<TestModel> {
+        return repository.search {
+            this.dsl(true, block)
+        }
+    }
 }
+
 
 private fun testQuery(q:ESQuery, assertBlock: Assert<String>.() -> Unit) {
     val dsl = SearchDSL()
-    dsl.query(q)
+    dsl.query = q
     val serialized = dsl.stringify(true)
     println(serialized)
+
     assertThat(serialized).run(assertBlock)
 }

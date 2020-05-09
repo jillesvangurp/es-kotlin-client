@@ -77,7 +77,6 @@ fun SearchRequest.dsl(pretty: Boolean = false, block: SearchDSL.() -> Unit) {
     val searchDSL = SearchDSL()
     block.invoke(searchDSL)
     val query = searchDSL.stringify(pretty)
-    println(query)
     source(query)
 }
 

@@ -131,7 +131,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         // this actually puts a key "size" in the map
 
                         // query is a function that takes an ESQuery instance
-                        query(
+                        query =
                             // bool is a function that create a BoolQuery,
                             // which extends ESQuery, that is injected into the block
                             bool {
@@ -149,7 +149,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                     match("title", "brown")
                                 )
                             }
-                        )
+
                     }
                 }
                 println("We found ${results.totalHits} results.")
@@ -166,7 +166,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     dsl {
                         this["from"] = 0
                         this["size"] = 10
-                        query(
+                        query =
                             // custom query constructs an object with an object inside
                             // as elasticsearch expects.
                             customQuery("bool") {
@@ -190,7 +190,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                         }
                                     }.toMap()
                                 )
-                        })
+                        }
                     }
                 }
                 println("We found ${results.totalHits} results.")

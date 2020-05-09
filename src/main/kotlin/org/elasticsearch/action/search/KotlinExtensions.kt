@@ -1,6 +1,6 @@
 package org.elasticsearch.action.search
 
-import io.inbot.eskotlinwrapper.SearchDSL
+import io.inbot.eskotlinwrapper.dsl.SearchDSL
 import java.io.InputStream
 import java.io.Reader
 import java.util.Collections

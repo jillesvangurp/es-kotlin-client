@@ -1,8 +1,8 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
-import io.inbot.eskotlinwrapper.bool
-import io.inbot.eskotlinwrapper.match
+import io.inbot.eskotlinwrapper.dsl.bool
+import io.inbot.eskotlinwrapper.dsl.match
 import org.elasticsearch.action.search.dsl
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository

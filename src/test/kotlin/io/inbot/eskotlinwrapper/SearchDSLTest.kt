@@ -6,6 +6,15 @@ import assertk.assertions.contains
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.inbot.eskotlinwrapper.dsl.ESQuery
+import io.inbot.eskotlinwrapper.dsl.MatchOperator
+import io.inbot.eskotlinwrapper.dsl.SearchDSL
+import io.inbot.eskotlinwrapper.dsl.ZeroTermsQuery
+import io.inbot.eskotlinwrapper.dsl.bool
+import io.inbot.eskotlinwrapper.dsl.boosting
+import io.inbot.eskotlinwrapper.dsl.match
+import io.inbot.eskotlinwrapper.dsl.matchAll
+import io.inbot.eskotlinwrapper.dsl.matchBoolPrefix
 import org.elasticsearch.action.search.dsl
 import org.elasticsearch.common.xcontent.stringify
 import org.junit.jupiter.api.Test
@@ -62,7 +71,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     fun `match query`() {
         testQuery(match("title", "foo bar") {
             operator = MatchOperator.AND
-            zero_terms_query = ZeroTermsQuery.none
+            zeroTermsQuery = ZeroTermsQuery.none
         }) {
             contains("match")
             contains("title")
@@ -91,7 +100,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
 }
 
 
-private fun testQuery(q:ESQuery, assertBlock: Assert<String>.() -> Unit) {
+private fun testQuery(q: ESQuery, assertBlock: Assert<String>.() -> Unit) {
     val dsl = SearchDSL()
     dsl.query = q
     val serialized = dsl.stringify(true)

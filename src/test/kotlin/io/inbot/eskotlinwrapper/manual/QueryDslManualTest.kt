@@ -1,10 +1,10 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
-import io.inbot.eskotlinwrapper.bool
-import io.inbot.eskotlinwrapper.customQuery
+import io.inbot.eskotlinwrapper.dsl.bool
+import io.inbot.eskotlinwrapper.dsl.customQuery
 import io.inbot.eskotlinwrapper.mapProps
-import io.inbot.eskotlinwrapper.match
+import io.inbot.eskotlinwrapper.dsl.match
 import org.elasticsearch.action.search.dsl
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.configure
@@ -190,7 +190,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                         }
                                     }.toMap()
                                 )
-                        }
+                            }
                     }
                 }
                 println("We found ${results.totalHits} results.")
@@ -206,7 +206,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 this is the implementation of the match we use above. 
             """
 
-            snippetFromSourceFile("src/main/kotlin/io/inbot/eskotlinwrapper/SearchDSL.kt", "MATCH_QUERY", wrap = true)
+            snippetFromSourceFile("src/main/kotlin/io/inbot/eskotlinwrapper/dsl/full-text-queries.kt", "MATCH_QUERY", wrap = true)
 
             +"""
                 Writing your own EsQuery subclass should be straight-forward. Just extend `EsQuery` and write a function 

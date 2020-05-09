@@ -1,10 +1,11 @@
 package io.inbot.eskotlinwrapper
 
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
+import io.inbot.eskotlinwrapper.dsl.ESQuery
 import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.writeAny
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
@@ -25,13 +26,25 @@ open class MapBackedProperties internal constructor(
         _properties[key.snakeCaseToUnderscore()] = value
     }
 
+    fun esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
+        return object : ReadWriteProperty<Any, ESQuery> {
+            override fun getValue(thisRef: Any, property: KProperty<*>): ESQuery {
+                val map = _properties[property.name] as Map<String,MapBackedProperties>
+                val (name,queryDetails) = map.entries.first()
+                return ESQuery(name,queryDetails)            }
+
+            override fun setValue(thisRef: Any, property: KProperty<*>, value: ESQuery) {
+                _properties[property.name] = value.toMap()
+            }
+        }
+    }
+
     /**
      * Property delegate that stores the value in the MapBackedProperties. Use this to create type safe
      * properties.
      */
-    internal fun <T : Any?> property(): ReadWriteProperty<Any, T> {
-        return object :
-            ReadWriteProperty<Any, T> {
+    fun <T : Any?> property(): ReadWriteProperty<Any, T> {
+        return object : ReadWriteProperty<Any, T> {
             override fun getValue(thisRef: Any, property: KProperty<*>): T {
                 return _properties[property.name.snakeCaseToUnderscore()] as T
             }
@@ -48,9 +61,8 @@ open class MapBackedProperties internal constructor(
      * with a kotlin keyword or super class property or method. For example, "size" is also a method on
      * MapBackedProperties and thus cannot be used as a kotlin property name in sub class.
      */
-    internal fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T> {
-        return object :
-            ReadWriteProperty<MapBackedProperties, T> {
+    fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T> {
+        return object : ReadWriteProperty<MapBackedProperties, T> {
             override fun getValue(thisRef: MapBackedProperties, property: KProperty<*>): T {
                 return _properties[customPropertyName] as T
             }

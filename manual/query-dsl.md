@@ -117,7 +117,6 @@ val results = thingRepository.search {
           MatchQuery("title", "brown")
         )
       }
-
   }
 }
 println("We found ${results.totalHits} results.")

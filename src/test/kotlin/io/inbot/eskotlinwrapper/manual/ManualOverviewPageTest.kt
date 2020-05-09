@@ -71,7 +71,7 @@ class ManualOverviewPageTest {
         File("epub", "preface.md").writeText("""
             # Preface
             
-            This Ebook is a work in progress. It may eventually be something I put up on e.g. Amazon for a low fee. 
+            This Ebook is a work in progress. It may eventually become something I put up on e.g. Amazon for a low fee. 
             Regardless of that, I intend to keep this manual bundled with the source under the MIT License in Markdown
             version.
             
@@ -113,8 +113,10 @@ class ManualOverviewPageTest {
                  - Put that code in normal tests so that running the tests generates Github flavored markdown that I commit
                  along with the rest of the code and make sure my tests break when any of the examples no 
                 longer compiles/works. Win Win!
+                 - Also capture output of blocks and show that in the documentation.
                  
-                In short, that's what ${mdLink(KotlinForExample::class)} does.
+                In short, that's what ${mdLink(KotlinForExample::class)} does. This grew out of my frustration with 
+                keeping the documentation in sync with the rapidly changing implementation.
                 
                 This will probably move to a separate library when I'm happy enough 
                 with how it works. Currently, I'm using this to generate the manual for this project and experimenting

@@ -96,10 +96,10 @@ Output:
   "things" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1589016651832",
+    "creation_date" : "1589017970016",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "4cO-5WqoTIqxTzkHhUelCg",
+    "uuid" : "1jxpyqykQcmasEh0f5pvjw",
     "version" : {
       "created" : "7060099"
     },
@@ -109,7 +109,7 @@ Output:
   }
 }
 things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-05-09T09:30:51.793266Z"},"properties":{"amount":{"type":"long","fields":{"abette
+05-09T09:52:49.981296Z"},"properties":{"amount":{"type":"long","fields":{"abette
 rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
 yword"}}},"title":{"type":"text"}}}
 ```

@@ -9,12 +9,21 @@
 <br/>
 <h1>MapBackedProperties</h1>
 <code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">ToXContent</span></code>
-<p>Use this to create XContent friendly classes where you mix type safe fields with allowing the user to add
-whatever to the underlying map. This way we don't have to map the full DSL and still get some benefits from
-using Kotlin.</p>
+<p>Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
+implementing DSLs for querying, mappings, and other things in Elasticsearch. You may also use this to extend the
+DSL. Either extend directly or use this via e.g. interface delegation.</p>
+<p>Implements ToXContent so you can use this anywhere the Elasticsearch Java API expects an XContent object.
+This works together with the xcontent extension functions this library adds.</p>
 <h3>Functions</h3>
 <table>
 <tbody>
+<tr>
+<td>
+<h4><a href="es-query-property.html">esQueryProperty</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">esQueryProperty</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">,</span>&nbsp;<a href="../../io.inbot.eskotlinwrapper.dsl/-e-s-query/index.html"><span class="identifier">ESQuery</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
 <tr>
 <td>
 <h4><a href="get.html">get</a></h4>
@@ -27,7 +36,22 @@ using Kotlin.</p>
 <h4><a href="get-or-create-mutable-list.html">getOrCreateMutableList</a></h4>
 </td>
 <td>
+<p>Helper to manipulate list value objects.</p>
 <code><span class="keyword">fun </span><span class="identifier">getOrCreateMutableList</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.MapBackedProperties$getOrCreateMutableList(kotlin.String)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="property.html">property</a></h4>
+</td>
+<td>
+<p>Property delegate that stores the value in the MapBackedProperties. Use this to create type safe
+properties.</p>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">property</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span></code>
+<p>Property delegate that stores the value in the MapBackedProperties; uses the customPropertyName instead of the
+kotlin property name. Use this to create type safe properties in case the property name you need overlaps clashes
+with a kotlin keyword or super class property or method. For example, "size" is also a method on
+MapBackedProperties and thus cannot be used as a kotlin property name in sub class.</p>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">property</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.MapBackedProperties$property(kotlin.String)/customPropertyName">customPropertyName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">MapBackedProperties</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -79,6 +103,13 @@ using Kotlin.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-fuzzy-query-config/index.html">FuzzyQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">FuzzyQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="../-index-settings/index.html">IndexSettings</a></h4>
 </td>
 <td>
@@ -86,17 +117,66 @@ using Kotlin.</p>
 </tr>
 <tr>
 <td>
-<h4><a href="../-match-query-config/index.html">MatchQueryConfig</a></h4>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-match-bool-prefix-query-config/index.html">MatchBoolPrefixQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MatchBoolPrefixQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-match-phrase-prefix-query-config/index.html">MatchPhrasePrefixQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">MatchPhrasePrefixQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-match-query-config/index.html">MatchQueryConfig</a></h4>
 </td>
 <td>
 <code><span class="keyword">class </span><span class="identifier">MatchQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
 </tr>
 <tr>
 <td>
-<h4><a href="../-search-d-s-l/index.html">SearchDSL</a></h4>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-prefix-query-config/index.html">PrefixQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">PrefixQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-range-query-config/index.html">RangeQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RangeQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-reg-exp-query-config/index.html">RegExpQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RegExpQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-search-d-s-l/index.html">SearchDSL</a></h4>
 </td>
 <td>
 <code><span class="keyword">class </span><span class="identifier">SearchDSL</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-term-query-config/index.html">TermQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TermQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-wild-card-query-config/index.html">WildCardQueryConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">WildCardQueryConfig</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">MapBackedProperties</span></a></code></td>
 </tr>
 </tbody>
 </table>

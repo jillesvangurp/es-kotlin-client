@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>MapBackedProperties.property - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="index.html">MapBackedProperties</a>&nbsp;/&nbsp;<a href="./property.html">property</a><br/>
+<br/>
+<h1>property</h1>
+<a name="io.inbot.eskotlinwrapper.MapBackedProperties$property()"></a>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">property</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span></code>
+<p>Property delegate that stores the value in the MapBackedProperties. Use this to create type safe
+properties.</p>
+<a name="io.inbot.eskotlinwrapper.MapBackedProperties$property(kotlin.String)"></a>
+<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span> <span class="identifier">property</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.MapBackedProperties$property(kotlin.String)/customPropertyName">customPropertyName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/-read-write-property/index.html"><span class="identifier">ReadWriteProperty</span></a><span class="symbol">&lt;</span><a href="index.html"><span class="identifier">MapBackedProperties</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span></code>
+<p>Property delegate that stores the value in the MapBackedProperties; uses the customPropertyName instead of the
+kotlin property name. Use this to create type safe properties in case the property name you need overlaps clashes
+with a kotlin keyword or super class property or method. For example, "size" is also a method on
+MapBackedProperties and thus cannot be used as a kotlin property name in sub class.</p>
+</BODY>
+</HTML>

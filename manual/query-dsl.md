@@ -99,7 +99,7 @@ val results = thingRepository.search {
     // this actually puts a key "size" in the map
 
     // query is a function that takes an ESQuery instance
-    query(
+    query =
       // bool is a function that create a BoolQuery,
       // which extends ESQuery, that is injected into the block
       bool {
@@ -107,17 +107,17 @@ val results = thingRepository.search {
         // it also has filter, should, and mustNot
         must(
           // it has a vararg list of ESQuery
-          match("title", "quick") {
+          MatchQuery("title", "quick") {
             // match always needs a field and query
             // but boost is optional
             boost = 2.0
           },
           // but the block param is nullable and
           // defaults to null
-          match("title", "brown")
+          MatchQuery("title", "brown")
         )
       }
-    )
+
   }
 }
 println("We found ${results.totalHits} results.")
@@ -140,7 +140,7 @@ val results = thingRepository.search {
   dsl {
     this["from"] = 0
     this["size"] = 10
-    query(
+    query =
       // custom query constructs an object with an object inside
       // as elasticsearch expects.
       customQuery("bool") {
@@ -164,7 +164,7 @@ val results = thingRepository.search {
             }
           }.toMap()
         )
-    })
+      }
   }
 }
 println("We found ${results.totalHits} results.")
@@ -186,36 +186,41 @@ However, if you need something added to the DSL it is really easy to do this you
 this is the implementation of the match we use above. 
 
 ```kotlin
+enum class MatchOperator { AND, OR }
+
+@Suppress("EnumEntryName")
+enum class ZeroTermsQuery { all, none }
+
 @SearchDSLMarker
 class MatchQueryConfig : MapBackedProperties() {
   var query by property<String>()
   var boost by property<Double>()
-  // TODO support more of the different options in match
+  var analyzer by property<String>()
+  var autoGenerateSynonymsPhraseQuery by property<Boolean>()
+  var fuzziness by property<String>()
+  var maxExpansions by property<Int>()
+  var prefixLength by property<Int>()
+  var transpositions by property<Boolean>()
+  var fuzzyRewrite by property<String>()
+  var lenient by property<Boolean>()
+  var operator by property<MatchOperator>()
+  var minimumShouldMatch by property<String>()
+  var zeroTermsQuery by property<ZeroTermsQuery>()
 }
 
 @SearchDSLMarker
 class MatchQuery(
   field: String,
   query: String,
-  val matchQueryConfig: MatchQueryConfig = MatchQueryConfig()
+  matchQueryConfig: MatchQueryConfig = MatchQueryConfig(),
+  block: (MatchQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match") {
   // The map is empty until we assign something
   init {
     this[field] = matchQueryConfig
     matchQueryConfig.query = query
+    block?.invoke(matchQueryConfig)
   }
-
-  var boost: Double by queryDetails.property()
-}
-
-fun match(
-  field: String,
-  value: String,
-  block: (MatchQueryConfig.() -> Unit)? = null
-): ESQuery {
-  val q = MatchQuery(field, value)
-  block?.invoke(q.matchQueryConfig)
-  return q
 }
 ```
 

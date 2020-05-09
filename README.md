@@ -112,15 +112,14 @@ thingRepository.bulk {
     dsl {
       from = 0
       resultSize = 10
-      query(
-        bool {
-          should(
-            match("name", "foo"),
-            match("name", "bar"),
-            match("name", "foobar")
-          )
-        }
-      )
+      query = bool {
+        should(
+          MatchQuery("name", "foo"),
+          MatchQuery("name", "bar"),
+          MatchQuery("name", "foobar")
+        )
+      }
+
     }
   }.hits.forEach { (esResult, deserialized) ->
     // we get a lazy sequence that fetches results using the scroll api in es

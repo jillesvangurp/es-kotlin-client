@@ -1,5 +1,6 @@
-[previous](creating-client.md) | [parent](index.md) | [next](bulk-indexing.md)
----
+[previous](creating-client.md) | [index](index.md) | [next](bulk-indexing.md)
+
+___
 
 # Working with objects
 
@@ -96,10 +97,10 @@ Output:
   "things" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1589019624602",
+    "creation_date" : "1590053887821",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "7MpdXY4ySn-KQ_8sdhoOsA",
+    "uuid" : "_0nGtINyQMWpbdphl66ypg",
     "version" : {
       "created" : "7060099"
     },
@@ -109,7 +110,7 @@ Output:
   }
 }
 things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-05-09T10:20:24.594074Z"},"properties":{"amount":{"type":"long","fields":{"abette
+05-21T09:38:07.783890Z"},"properties":{"amount":{"type":"long","fields":{"abette
 rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
 yword"}}},"title":{"type":"text"}}}
 ```
@@ -371,8 +372,8 @@ suspend on the `AsyncIndexRepository` class. To call these, you will need to cal
 For more details on how to use co-routines, see [Co-routines](coroutines.md)
 
 
----
+___
 
-[previous](creating-client.md) | [parent](index.md) | [next](bulk-indexing.md)
+[previous](creating-client.md) | [index](index.md) | [next](bulk-indexing.md)
 
 This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/CrudManualTest.kt) from which this page is generated.

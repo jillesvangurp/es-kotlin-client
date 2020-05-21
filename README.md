@@ -1,9 +1,9 @@
-# Es Kotlin Wrapper Client
+# Elasticsearch Kotlin Client
 
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
-The ES Kotlin Wrapper client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that 
+The ES Kotlin client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that 
 adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) with some Kotlin specific goodness, support for Kotlin DSLs, and co-routines. 
 
 
@@ -30,7 +30,7 @@ friendly API over the underlying client functionality.
 
 ## Documentation
 
-- [manual](manual/index.md) A growing collection of executable examples. This manual is 
+- [manual](https://www.jillesvangurp.com/es-kotlin-manual/) A growing collection of executable examples. This manual is 
 actually generated using kotlin code and all the examples in it are actually run as part of the test suite. This is the best
 place to get started.
 - The same manual as an **[epub](book.epub)**. Very much a work in progress. Please give me feedback on this.

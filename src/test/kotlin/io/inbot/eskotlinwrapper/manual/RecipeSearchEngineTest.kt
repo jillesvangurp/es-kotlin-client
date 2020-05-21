@@ -10,7 +10,7 @@ class RecipeSearchEngineTest {
         KotlinForExample.markdownPageWithNavigation(recipeSearchEnginePage) {
             sourcePaths += "src/examples/kotlin"
             +"""
-                    The Elastic Search Kotlin Wrapper is designed to simplify writing code that
+                    The Elasticsearch Kotlin Client is designed to simplify writing code that
                     interacts with Elasticsearch.
                     
                     The easiest way to demonstrate how it works is just showing it with a simple 

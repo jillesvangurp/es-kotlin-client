@@ -1,9 +1,10 @@
-[previous](coroutines.md) | [parent](index.md)
----
+[previous](coroutines.md) | [index](index.md) | [next](about.md)
+
+___
 
 # Building a Recipe Search Engine
 
-The Elastic Search Kotlin Wrapper is designed to simplify writing code that
+The Elasticsearch Kotlin Client is designed to simplify writing code that
 interacts with Elasticsearch.
 
 The easiest way to demonstrate how it works is just showing it with a simple 
@@ -406,8 +407,8 @@ $ curl 'localhost:8080/search?q=banana'
 ```
 
 
----
+___
 
-[previous](coroutines.md) | [parent](index.md)
+[previous](coroutines.md) | [index](index.md) | [next](about.md)
 
 This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/RecipeSearchEngineTest.kt) from which this page is generated.

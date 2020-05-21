@@ -249,7 +249,7 @@ class KotlinForExample private constructor(
             val next = if (index < 0) null else if (index == pages.size - 1) null else pages[index + 1].fileName
             val nav = listOfNotNull(
                 if (!previous.isNullOrBlank()) mdLink("previous", previous) else null,
-                if (!page.parent.isNullOrBlank()) mdLink("parent", page.parent) else null,
+                if (!page.parent.isNullOrBlank()) mdLink("index", page.parent) else null,
                 if (!next.isNullOrBlank()) mdLink("next", next) else null
             )
 
@@ -258,12 +258,13 @@ class KotlinForExample private constructor(
             example.use(block)
             val md = """
                 # ${page.title}
+                
             """.trimIndent().trimMargin() + "\n\n" + example.buf.toString()
 
             val pageWithNavigationMd =
-                (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n---\n\n" else "") +
+                (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n\n___\n\n" else "") +
                         md + "\n" +
-                        (if (nav.isNotEmpty()) "---\n\n" + nav.joinToString(" | ") + "\n\n" else "") +
+                        (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "") +
                         """
                             This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the ${example.mdLinkToSelf(
                             "source file"

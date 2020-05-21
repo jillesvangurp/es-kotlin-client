@@ -14,7 +14,7 @@ class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual
     fun `explain client creation`() {
         KotlinForExample.markdownPageWithNavigation(createClientPage) {
             +"""
-                To use the ES Kotlin Wrapper Client, you simply have to create an instance
+                To use the ES Kotlin Client, you simply have to create an instance
                 of the Java High Level Restclient (and have this library on the classpath). 
                 There are several ways to do this.
                                 

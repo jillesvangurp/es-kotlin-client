@@ -1,5 +1,6 @@
-[previous](query-dsl.md) | [parent](index.md) | [next](recipe-search-engine.md)
----
+[previous](query-dsl.md) | [index](index.md) | [next](recipe-search-engine.md)
+
+___
 
 # Co-routines
 
@@ -140,8 +141,8 @@ Finally, this library has relatively few users and co-routines and asynchronous 
 be a can of worms in terms of bugs and other issues. If you find any weirdness, please file bugs.
 
 
----
+___
 
-[previous](query-dsl.md) | [parent](index.md) | [next](recipe-search-engine.md)
+[previous](query-dsl.md) | [index](index.md) | [next](recipe-search-engine.md)
 
 This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/CoRoutinesManualTest.kt) from which this page is generated.

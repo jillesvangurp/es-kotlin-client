@@ -1,9 +1,10 @@
-[parent](index.md) | [next](crud-support.md)
----
+[index](index.md) | [next](crud-support.md)
+
+___
 
 # How to create the client
 
-To use the ES Kotlin Wrapper Client, you simply have to create an instance
+To use the ES Kotlin Client, you simply have to create an instance
 of the Java High Level Restclient (and have this library on the classpath). 
 There are several ways to do this.
                 
@@ -67,8 +68,8 @@ val restHighLevelClient = create(
 ```
 
 
----
+___
 
-[parent](index.md) | [next](crud-support.md)
+[index](index.md) | [next](crud-support.md)
 
 This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/ClientCreationManualTest.kt) from which this page is generated.

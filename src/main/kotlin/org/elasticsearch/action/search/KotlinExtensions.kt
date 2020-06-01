@@ -4,6 +4,7 @@ import io.inbot.eskotlinwrapper.dsl.SearchDSL
 import java.io.InputStream
 import java.io.Reader
 import java.util.Collections
+import java.util.function.Supplier
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest
@@ -11,6 +12,7 @@ import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.xcontent.DeprecationHandler
 import org.elasticsearch.common.xcontent.NamedXContentRegistry
 import org.elasticsearch.common.xcontent.XContentFactory
+import org.elasticsearch.common.xcontent.XContentLocation
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.search.SearchModule
@@ -19,13 +21,25 @@ import org.elasticsearch.search.builder.SearchSourceBuilder
 private val logger: KLogger = KotlinLogging.logger { }
 
 private val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : DeprecationHandler {
+    override fun usedDeprecatedName(
+        parserName: String?,
+        location: Supplier<XContentLocation>?,
+        usedName: String?,
+        modernName: String?
+    ) {
+        logger.warn { "You are using a deprecated name $usedName. You should use $modernName at ${location?.get()?.javaClass?.name}:${location?.get()?.lineNumber}" } }
 
-    override fun usedDeprecatedField(usedName: String, replacedWith: String) {
-        logger.warn { "You are using a deprecated field $usedName. You should use $replacedWith" }
+    override fun usedDeprecatedField(
+        parserName: String?,
+        location: Supplier<XContentLocation>?,
+        usedName: String?,
+        replacedWith: String?
+    ) {
+        logger.warn { "You are using a deprecated field $usedName. You should use $replacedWith at ${location?.get()?.javaClass?.name}:${location?.get()?.lineNumber}" }
     }
 
-    override fun usedDeprecatedName(usedName: String, modernName: String) {
-        logger.warn { "You are using a deprecated name $usedName. You should use $modernName" }
+    override fun usedDeprecatedField(parserName: String?, location: Supplier<XContentLocation>?, usedName: String?) {
+        logger.warn { "You are using a deprecated field $usedName at ${location?.get()?.javaClass?.name}:${location?.get()?.lineNumber}" }
     }
 }
 

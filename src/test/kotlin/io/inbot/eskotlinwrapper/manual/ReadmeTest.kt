@@ -18,18 +18,18 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
             The ES Kotlin client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that 
-            adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) with some Kotlin specific goodness, support for Kotlin DSLs, and co-routines. 
-            
+            adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) with some Kotlin specific goodness, support for Kotlin DSLs, and co-routines.
 
             ## Highlights
             
             Elastic's `HighLevelRestClient` is written in Java and provides access to essentially everything in the 
-            REST API that Elasticsearch exposes. It reuses a lot of classes that Elasticsearch uses internally that used to be part
-            of their embedded Java client, which literally ran an Elasticsearch node inside your application. It's a very powerful API
-            but maybe not the most easy thing to work with directly. **The kotlin wrapper takes away none of that but it adds a lot of power and convenience.**
+            REST API that Elasticsearch exposes. It's a very powerful API
+            but maybe not the most easy thing to work with directly. 
 
-            - Extensible **Kotlin Query and Mapping DSLs**. These provide type safe support for commonly used things such as match and bool queries. Things that are not supported, are easy to configure via Kotlin's Map DSL or by using indexed map properties. Additionally it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
-            - Extension functions, default argument values, delegate properties, and many other **kotlin features** that add convenience and get rid of 
+            **The kotlin wrapper takes away none of that but it adds a lot of power and convenience.**
+
+            - Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries. Things that are not supported, are easy to configure via Kotlin's Map DSL or by using indexed map properties. Additionally, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
+            - Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** that add convenience and get rid of 
             Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
             friendly API over the underlying client functionality.
             - A **repository** abstraction that allows you to: 
@@ -45,17 +45,19 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             ## Documentation
             
             - [manual](https://www.jillesvangurp.com/es-kotlin-manual/) A growing collection of executable examples. This manual is 
-            actually generated using kotlin code and all the examples in it are actually run as part of the test suite. This is the best
+            generated from kotlin code and all the examples in it are run as part of the test suite. This is the best
             place to get started.
             - The same manual as an **[epub](book.epub)**. Very much a work in progress. Please give me feedback on this.
             - [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
             - Some stand alone examples are included in the examples source folder.
             - The tests test most of the important features and should be fairly readable and provide a good overview of
-             how to use things. I like keeping the tests somewhat readable.
+             how to use things.
             - [Elasticsearch java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff. Elasticsearch has awesome documentation for this.
             - [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Note, this is outdated and has largely been replaced by the manual mentioned above.
             
             ## Example
+            
+            
             """
 
             block {
@@ -63,16 +65,18 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 data class Thing(val name: String, val amount: Long = 42)
 
                 // create a Repository
-                // use the default jackson model reader and writer (you can customize)
-                // opt in to refreshes (we don't want this in production code) so we can test
+                // uses the default jackson model reader and writer (you can customize)
                 val thingRepository = esClient.indexRepository<Thing>(
-                    "things", refreshAllowed = true
+                    "things",
+                    // you have to opt in, bad idea to refresh in production code
+                    refreshAllowed = true
                 )
 
                 // let the Repository create the index
                 thingRepository.createIndex {
-                    // as of 1.0-Beta-3, we have a new Mapping DSL
                     configure {
+                        // settings DSL, you can also use multi line strings with JSON in
+                        // a source block
                         settings {
                             replicas = 0
                             shards = 2
@@ -94,7 +98,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                             }
                         }
                         mappings {
-                            // most common field types are supported
+                            // mappings DSL, most common field types are supported
                             text("name") {
                                 fields {
                                     text("autocomplete") {
@@ -108,12 +112,12 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     }
                 }
 
-                // put some things in our new index
+                // lets put some things in our new index
                 thingRepository.index("1", Thing("foo", 42))
                 thingRepository.index("2", Thing("bar", 42))
                 thingRepository.index("3", Thing("foobar", 42))
 
-                // make sure ES commits this so we can search
+                // make sure ES commits the changes so we can search
                 thingRepository.refresh()
 
                 // now lets do a little bit of reindexing logic that
@@ -121,12 +125,14 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 thingRepository.bulk {
                     // we are passed a BulkIndexingSession<Thing> in the block
 
+                    // for scrolling searches, all you need is scrolling = true
+                    // this allows you to iterate large result sets
                     thingRepository.search(scrolling = true) {
-                        // our new DSL; very much a work in progress
-                        // you can also use a source block with multi line
-                        // strings containing json
+                        // Query DSL: you can also use a source block with
+                        // multi line JSON
                         dsl {
                             from = 0
+                            // when scrolling, this is the scroll page size
                             resultSize = 10
                             query = bool {
                                 should(
@@ -137,13 +143,14 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                             }
                         }
                     }.hits.forEach { (esResult, deserialized) ->
-                        // we get a lazy sequence that fetches results using the scroll api in es
+                        // we get a lazy sequence with deserialized Things
                         // de-serialized may be null if we disable source on the mapping
                         if (deserialized != null) {
                             // use the BulkIndexingSession to index a transformed version
                             // of the original
                             index(
                                 esResult.id, deserialized.copy(amount = deserialized.amount + 1),
+                                // to allow updates
                                 create = false
                             )
                         }
@@ -151,6 +158,8 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 }
             }
             +"""
+                
+            For more examples, check the manual or the examples source folder.
             
             ## Code generation
             
@@ -165,7 +174,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             
             This client requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the Kotlin functionality 
             is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin.
-            Android is currently not supported as the minimum requirements for the highlevel client are Java 8. Besides, embedding
+            Android is currently not supported as the minimum requirements for Elastic's highlevel client are Java 8. Besides, embedding
             a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch 
             directly from a mobile phone in any case.
             # Get it

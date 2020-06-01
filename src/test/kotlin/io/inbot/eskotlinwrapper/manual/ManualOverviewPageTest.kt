@@ -121,8 +121,7 @@ class ManualOverviewPageTest {
                 library written in Kotlin that 
                 adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) provided by Elasticsearch.
                 
-            ## Chapters
-            
+                ## Chapters
             """
             +pages.joinToString("\n") { "- ${io.inbot.eskotlinwrapper.manual.mdLink(it)}" }
             +"""

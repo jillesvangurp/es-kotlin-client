@@ -4,17 +4,7 @@ The [Elasticsearch Kotlin Client](https://github.com/jillesvangurp/es-kotlin-wra
 library written in Kotlin that 
 adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) provided by Elasticsearch.
 
-## Introduction
-
-The official Java client provides client functionality for essentially everything exposed by their REST
-API. The Elasticsearch Kotlin Client makes using this functionality more Kotlin friendly. It does this
-through extension functions that add many useful features and shortcuts. It adds Kotlinn DSLs for
-querying, defining mappings, and bulk indexing. 
-
-Additionally, it provides co-routine friendly versions of the asynchronous clients in the Java library.
-This enables the user to write fully reactive code in e.g. Ktor or Spring Boot.
-
-## Manual
+## Chapters
 
 - [How to create the client](creating-client.md)
 - [Working with objects](crud-support.md)
@@ -24,6 +14,21 @@ This enables the user to write fully reactive code in e.g. Ktor or Spring Boot.
 - [Co-routines](coroutines.md)
 - [Building a Recipe Search Engine](recipe-search-engine.md)
 - [About this manual](about.md)
+
+## Introduction
+
+The official Java client provides client functionality for essentially everything exposed by their REST
+API. The Elasticsearch Kotlin Client makes using this functionality more Kotlin friendly. 
+
+It does this
+through extension functions that add many useful features and shortcuts. It adds Kotlin DSLs for
+querying, defining mappings, and bulk indexing. To facilitate the most common use cases, this library
+also provides a Repository abstraction that enables the user to interact with an index in a way that
+is less boilerplate heavy.
+
+Additionally, it provides co-routine friendly versions of the asynchronous clients in the Java library.
+This enables the user to write fully reactive code in e.g. Ktor or Spring Boot. This makes this
+library the easiest way to do this currently.
 
 
 This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/ManualOverviewPageTest.kt) from which this page is generated.

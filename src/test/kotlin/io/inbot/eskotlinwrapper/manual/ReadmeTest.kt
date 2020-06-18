@@ -36,7 +36,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 - Manage indices with a flexible DSL for mappings
                 - Do crud on index items with safe updates that retry in case of a version conflict
                 - Bulk indexing DSL to do bulk operations without boiler plate and with fine-grained error handling (via callbacks)
-                - Search & count objects in the index using a Kotlin friendly version of their query DSL or simply use raw json from either a file or a templated multiline kotlin string.
+                - Search & count objects in the index using a Kotlin Query DSL or simply use raw json from either a file or a templated multiline kotlin string. Or if you really want, you can use the Java builders that come with the RestHighLevelClient.
                 - Much more
             - **Co-routine friendly** & ready for reactive usage. We use generated extension functions that we add with a source generation plugin to add cancellable suspend functions for almost all client functions. Additionally, the before mentioned `IndexRepository` has an `AsyncIndexRepository` variant with suspending variants of the same functionality. 
                 - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
@@ -57,7 +57,8 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             
             ## Example
             
-            
+            This example is a bit more complicated than a typical hello world but more instructive 
+            than just putting some objects in a schema less index. Which of course is something you should not do.
             """
 
             block {
@@ -65,18 +66,18 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 data class Thing(val name: String, val amount: Long = 42)
 
                 // create a Repository
-                // uses the default jackson model reader and writer (you can customize)
+                // with the default jackson model reader and writer (you can customize)
                 val thingRepository = esClient.indexRepository<Thing>(
-                    "things",
-                    // you have to opt in, bad idea to refresh in production code
+                    index="things",
+                    // you have to opt in to refreshes, bad idea to refresh in production code
                     refreshAllowed = true
                 )
 
-                // let the Repository create the index
+                // let the Repository create the index with the specified mappings & settings
                 thingRepository.createIndex {
                     configure {
-                        // settings DSL, you can also use multi line strings with JSON in
-                        // a source block
+                        // we use our settings DSL here
+                        // you can also use multi line strings with JSON in a source block
                         settings {
                             replicas = 0
                             shards = 2
@@ -100,6 +101,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         mappings {
                             // mappings DSL, most common field types are supported
                             text("name") {
+                                // use a sub field name.autocomplete for auto complete
                                 fields {
                                     text("autocomplete") {
                                         analyzer = "autocomplete"
@@ -107,6 +109,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                     }
                                 }
                             }
+                            // floats, longs, doubles, etc. should just work
                             number<Int>("amount")
                         }
                     }
@@ -120,16 +123,18 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 // make sure ES commits the changes so we can search
                 thingRepository.refresh()
 
-                // now lets do a little bit of reindexing logic that
-                // shows off scrolling searches using our DSL and bulk indexing
+                // putting things into an index 1 by 1 is not scalable
+                // lets do some bulk inserts with the Bulk DSL
                 thingRepository.bulk {
-                    // we are passed a BulkIndexingSession<Thing> in the block
+                    // we are passed a BulkIndexingSession<Thing> in the block as 'this'
 
-                    // for scrolling searches, all you need is scrolling = true
-                    // this allows you to iterate large result sets
+                    // we will bulk re-index the objects we already added with
+                    // a scrolling search. Scrolling searches work just
+                    // like normal searches (except they are not ranked)
+                    // all you do is set scrolling to true
                     thingRepository.search(scrolling = true) {
-                        // Query DSL: you can also use a source block with
-                        // multi line JSON
+                        // A simple example of using the Kotlin Query DSL
+                        // you can also use a source block with multi line JSON
                         dsl {
                             from = 0
                             // when scrolling, this is the scroll page size
@@ -143,14 +148,16 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                             }
                         }
                     }.hits.forEach { (esResult, deserialized) ->
-                        // we get a lazy sequence with deserialized Things
-                        // de-serialized may be null if we disable source on the mapping
+                        // we get a lazy sequence with deserialized Thing objects back
+                        // because it's a scrolling search, we fetch pages with results
+                        // as you consume the sequence.
                         if (deserialized != null) {
-                            // use the BulkIndexingSession to index a transformed version
-                            // of the original
+                            // de-serialized may be null if we disable source on the mapping
+                            // uses the BulkIndexingSession to add a transformed version
+                            // of the original thing
                             index(
                                 esResult.id, deserialized.copy(amount = deserialized.amount + 1),
-                                // to allow updates
+                                // to allow updates of existing things
                                 create = false
                             )
                         }
@@ -164,11 +171,9 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             ## Code generation
             
             This library makes use of code generated by a 
-            [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin). This plugin uses 
-            reflection to generate extension functions for a lot of the Java SDK. E.g. all asynchronous functions gain a 
-            co-routine friendly variant this way.  
-            
-            Ideas/PRs welcome ...
+            [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin). This mainly 
+            used to generate co-routine friendly suspendable extension functions for all asynchronous methods in the 
+            RestHighLevelClient.
             
             ## Platform support
             
@@ -222,10 +227,11 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             
             Currently the main blockers for a 1.0 are:
 
-            - We recently added reflection based code generation that scans the sdk and adds some useful extension functions.
-            More feature work here is coming. Particularly, I want to auto generate a kotlin query dsl from the Java builders.
-            - I'm planning to combine the 1.0 release with an epub version of the manual that I am currently considering to self publish. The idea with this is that I want the library and manual to cover all of what I consider the core use cases for someone building search functionality with Elasticsearch. 
-            - There are still a few missing features that I want to work on mainly related to index management and the query DSL.
+            - I'm planning to combine the 1.0 release with an epub version of the manual that I am currently 
+            considering to self publish. The idea with this is that I want the library and manual to cover all of what 
+            I consider the core use cases for someone building search functionality with Elasticsearch. 
+            - There are still a few missing features that I want to work on mainly related to index management and 
+            the query DSL.
             - My time is limited. I work on this in my spare time and when I feel like it.
             
             If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
@@ -233,8 +239,10 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             
             ## Compatibility
             
-            The general goal is to keep this client in sync with the current stable version of Elasticsearch. We rely on the most 
-            recent 7.x version. From experience, this mostly works fine against any 6.x cluster with the exception of some changes in 
+            The general goal is to keep this client in sync with the current stable version of Elasticsearch. 
+            We rely on the most recent 7.x version and only test with that.
+
+            From experience, this mostly works fine against any 6.x and 7.x cluster with the exception of some changes in 
             APIs or query DSL; and possibly some older versions. Likewise, forward compatibility is generally not a big deal 
             barring major changes such as the removal of types in v7. The upcoming v8 release is currently not tested but should 
             be fine. Expect a release shortly after 8.0 stabilizes. With recent release tags, I've started adding the 

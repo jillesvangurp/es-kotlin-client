@@ -108,6 +108,7 @@ class ScrollingSearchResults<T : Any>(
                     restHighLevelClient.clearScroll(clearScrollRequest, defaultRequestOptions)
                     null
                 }
-            })
+            }
+        )
     }
 }

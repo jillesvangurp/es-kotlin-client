@@ -1,10 +1,5 @@
 package io.inbot.eskotlinwrapper
 
-import java.util.concurrent.ConcurrentLinkedDeque
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
@@ -17,6 +12,11 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 private val logger = KotlinLogging.logger {}
 
@@ -97,13 +97,15 @@ class BulkIndexingSession<T : Any>(
         if (!repository.type.isNullOrBlank()) {
             indexRequest.type(repository.type)
         }
-        rwLock.read { page.add(
-            BulkOperation(
-                indexRequest,
-                id,
-                itemCallback = itemCallback
+        rwLock.read {
+            page.add(
+                BulkOperation(
+                    indexRequest,
+                    id,
+                    itemCallback = itemCallback
+                )
             )
-        ) }
+        }
         flushIfNeeded()
     }
 
@@ -134,14 +136,16 @@ class BulkIndexingSession<T : Any>(
         if (!repository.type.isNullOrBlank()) {
             updateRequest.type(repository.type)
         }
-        rwLock.read { page.add(
-            BulkOperation(
-                updateRequest,
-                id,
-                updateFunction = updateFunction,
-                itemCallback = itemCallback
+        rwLock.read {
+            page.add(
+                BulkOperation(
+                    updateRequest,
+                    id,
+                    updateFunction = updateFunction,
+                    itemCallback = itemCallback
+                )
             )
-        ) }
+        }
         flushIfNeeded()
     }
 
@@ -165,13 +169,15 @@ class BulkIndexingSession<T : Any>(
                 deleteRequest.setIfPrimaryTerm(term)
             }
         }
-        rwLock.read { page.add(
-            BulkOperation(
-                deleteRequest,
-                id,
-                itemCallback = itemCallback
+        rwLock.read {
+            page.add(
+                BulkOperation(
+                    deleteRequest,
+                    id,
+                    itemCallback = itemCallback
+                )
             )
-        ) }
+        }
         flushIfNeeded()
     }
 

@@ -2,16 +2,16 @@
 
 package io.inbot.eskotlinwrapper
 
-import java.security.MessageDigest
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-import java.util.Base64
 import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.obj
 import org.elasticsearch.common.xcontent.objField
 import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.common.xcontent.writeAny
 import org.elasticsearch.common.xcontent.xContentBuilder
+import java.security.MessageDigest
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.util.Base64
 
 fun String.snakeCaseToUnderscore(): String {
     val re = "(?<=[a-z])[A-Z]".toRegex()

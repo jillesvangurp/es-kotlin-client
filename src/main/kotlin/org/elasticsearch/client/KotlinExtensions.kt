@@ -234,7 +234,8 @@ fun RestHighLevelClient.scroll(
             TimeValue.timeValueMinutes(
                 ttl
             )
-        ), requestOptions
+        ),
+        requestOptions
     )
 }
 

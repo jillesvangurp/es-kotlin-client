@@ -271,6 +271,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="delete-component-template-async.html">deleteComponentTemplateAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">ClusterClient</span><span class="symbol">.</span><span class="identifier">deleteComponentTemplateAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$deleteComponentTemplateAsync(org.elasticsearch.client.ClusterClient, org.elasticsearch.client.indices.DeleteComponentTemplateRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeleteComponentTemplateRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$deleteComponentTemplateAsync(org.elasticsearch.client.ClusterClient, org.elasticsearch.client.indices.DeleteComponentTemplateRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="delete-datafeed-async.html">deleteDatafeedAsync</a></h4>
 </td>
 <td>
@@ -303,6 +310,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">deleteForecastAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$deleteForecastAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.DeleteForecastRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeleteForecastRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$deleteForecastAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.DeleteForecastRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="delete-index-template-async.html">deleteIndexTemplateAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">deleteIndexTemplateAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$deleteIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.DeleteComposableIndexTemplateRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeleteComposableIndexTemplateRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$deleteIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.DeleteComposableIndexTemplateRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -632,6 +646,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="get-component-template-async.html">getComponentTemplateAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">ClusterClient</span><span class="symbol">.</span><span class="identifier">getComponentTemplateAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$getComponentTemplateAsync(org.elasticsearch.client.ClusterClient, org.elasticsearch.client.indices.GetComponentTemplatesRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">GetComponentTemplatesRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$getComponentTemplateAsync(org.elasticsearch.client.ClusterClient, org.elasticsearch.client.indices.GetComponentTemplatesRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">GetComponentTemplatesResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="get-datafeed-async.html">getDatafeedAsync</a></h4>
 </td>
 <td>
@@ -698,6 +719,7 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 <h4><a href="get-index-template-async.html">getIndexTemplateAsync</a></h4>
 </td>
 <td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">getIndexTemplateAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$getIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.GetComposableIndexTemplateRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">GetComposableIndexTemplateRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$getIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.GetComposableIndexTemplateRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">GetComposableIndexTemplatesResponse</span></code><br/>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">getIndexTemplateAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$getIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.GetIndexTemplatesRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">GetIndexTemplatesRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$getIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.GetIndexTemplatesRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">GetIndexTemplatesResponse</span></code></td>
 </tr>
 <tr>
@@ -1103,6 +1125,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="put-component-template-async.html">putComponentTemplateAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">ClusterClient</span><span class="symbol">.</span><span class="identifier">putComponentTemplateAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$putComponentTemplateAsync(org.elasticsearch.client.ClusterClient, org.elasticsearch.client.indices.PutComponentTemplateRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">PutComponentTemplateRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$putComponentTemplateAsync(org.elasticsearch.client.ClusterClient, org.elasticsearch.client.indices.PutComponentTemplateRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="put-datafeed-async.html">putDatafeedAsync</a></h4>
 </td>
 <td>
@@ -1128,6 +1157,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">CcrClient</span><span class="symbol">.</span><span class="identifier">putFollowAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$putFollowAsync(org.elasticsearch.client.CcrClient, org.elasticsearch.client.ccr.PutFollowRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">PutFollowRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$putFollowAsync(org.elasticsearch.client.CcrClient, org.elasticsearch.client.ccr.PutFollowRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">PutFollowResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="put-index-template-async.html">putIndexTemplateAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">putIndexTemplateAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$putIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.PutComposableIndexTemplateRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">PutComposableIndexTemplateRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$putIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.PutComposableIndexTemplateRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -1419,6 +1455,13 @@ The search request already has your index. Also see extension functions added in
 </tr>
 <tr>
 <td>
+<h4><a href="simulate-index-template-async.html">simulateIndexTemplateAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">simulateIndexTemplateAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$simulateIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.SimulateIndexTemplateRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">SimulateIndexTemplateRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$simulateIndexTemplateAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.SimulateIndexTemplateRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">SimulateIndexTemplateResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="split-async.html">splitAsync</a></h4>
 </td>
 <td>
@@ -1443,7 +1486,7 @@ The search request already has your index. Also see extension functions added in
 <h4><a href="start-data-frame-analytics-async.html">startDataFrameAnalyticsAsync</a></h4>
 </td>
 <td>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">startDataFrameAnalyticsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$startDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.StartDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">StartDataFrameAnalyticsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$startDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.StartDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">startDataFrameAnalyticsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$startDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.StartDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">StartDataFrameAnalyticsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$startDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.StartDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">StartDataFrameAnalyticsResponse</span></code></td>
 </tr>
 <tr>
 <td>

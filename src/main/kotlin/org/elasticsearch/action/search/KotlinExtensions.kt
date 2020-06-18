@@ -1,10 +1,6 @@
 package org.elasticsearch.action.search
 
 import io.inbot.eskotlinwrapper.dsl.SearchDSL
-import java.io.InputStream
-import java.io.Reader
-import java.util.Collections
-import java.util.function.Supplier
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest
@@ -17,6 +13,10 @@ import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
+import java.io.InputStream
+import java.io.Reader
+import java.util.Collections
+import java.util.function.Supplier
 
 private val logger: KLogger = KotlinLogging.logger { }
 
@@ -27,7 +27,8 @@ private val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : Deprecati
         usedName: String?,
         modernName: String?
     ) {
-        logger.warn { "You are using a deprecated name $usedName. You should use $modernName at ${location?.get()?.javaClass?.name}:${location?.get()?.lineNumber}" } }
+        logger.warn { "You are using a deprecated name $usedName. You should use $modernName at ${location?.get()?.javaClass?.name}:${location?.get()?.lineNumber}" }
+    }
 
     override fun usedDeprecatedField(
         parserName: String?,

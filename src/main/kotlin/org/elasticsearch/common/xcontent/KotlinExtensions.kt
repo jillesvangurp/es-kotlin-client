@@ -1,10 +1,10 @@
 package org.elasticsearch.common.xcontent
 
+import org.elasticsearch.common.xcontent.json.JsonXContent
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 import kotlin.IllegalStateException
-import org.elasticsearch.common.xcontent.json.JsonXContent
 
 // Misc helpers to make dealing with XContent a bit less painful. There seems to be no way around this low level stuff
 // in the Java client as lots of endpoints lack suitable type safe builders or schemas. Use with caution.

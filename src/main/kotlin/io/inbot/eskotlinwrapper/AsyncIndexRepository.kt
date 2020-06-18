@@ -31,7 +31,7 @@ import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.refreshAsync
 import org.elasticsearch.client.search
 import org.elasticsearch.client.searchAsync
-import org.elasticsearch.cluster.metadata.AliasMetaData
+import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
@@ -114,7 +114,7 @@ class AsyncIndexRepository<T : Any>(
     /**
      * Returns a set of the current `AliasMetaData` associated with the `indexName`.
      */
-    suspend fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetaData> {
+    suspend fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetadata> {
         return client.indices().getAliasAsync(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName]
             ?: throw IllegalStateException("Inde $indexName does not exist")
     }

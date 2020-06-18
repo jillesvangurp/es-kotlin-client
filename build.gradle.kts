@@ -13,7 +13,7 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-5-7.7.0")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-6-7.8.0")
         classpath("org.jlleitschuh.gradle:ktlint-gradle:9.2.1")
     }
 }
@@ -25,7 +25,7 @@ plugins {
 
     java
 
-    id("com.avast.gradle.docker-compose") version "0.10.10"
+    id("com.avast.gradle.docker-compose") version "0.12.1"
     `maven-publish`
 }
 
@@ -130,7 +130,7 @@ publishing {
 
 val kotlinVersion = "1.3.72"
 // match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.7.0"
+val elasticVersion = "7.8.0"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.6.0"
 val jacksonVersion = "2.11.0"
@@ -140,7 +140,7 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.7")
-    api("io.github.microutils:kotlin-logging:1.7.9")
+    api("io.github.microutils:kotlin-logging:1.7.10")
 
     api("org.apache.commons:commons-lang3:3.10")
 

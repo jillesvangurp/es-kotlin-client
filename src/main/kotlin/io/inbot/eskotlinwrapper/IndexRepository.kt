@@ -22,7 +22,7 @@ import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.client.indices.GetMappingsRequest
 import org.elasticsearch.client.search
-import org.elasticsearch.cluster.metadata.AliasMetaData
+import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
@@ -109,7 +109,7 @@ class IndexRepository<T : Any>(
     /**
      * Returns a set of the current `AliasMetaData` associated with the `indexName`.
      */
-    fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetaData> {
+    fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetadata> {
         return client.indices().getAlias(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName]
             ?: throw IllegalStateException("Inde $indexName does not exist")
     }

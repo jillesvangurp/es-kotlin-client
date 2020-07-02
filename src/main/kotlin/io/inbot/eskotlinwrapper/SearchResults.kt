@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.inbot.eskotlinwrapper
 
 import kotlinx.coroutines.FlowPreview
@@ -10,6 +12,7 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.clearScrollAsync
 import org.elasticsearch.client.scroll
 import org.elasticsearch.client.scrollAsync
 import org.elasticsearch.common.unit.TimeValue
@@ -107,7 +110,6 @@ class ScrollingSearchResults<T : Any>(
         totalHits?.relation ?: TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO
     }
 
-
     private fun responses(): Sequence<SearchResponse> {
         return generateSequence(
             // FIXME it currently seems impossible to do a suspending version of this
@@ -117,9 +119,11 @@ class ScrollingSearchResults<T : Any>(
                 if (currentScrollId != null && it?.hits?.hits?.isNotEmpty() == true) {
                     restHighLevelClient.scroll(currentScrollId, scrollTtlInMinutes, defaultRequestOptions)
                 } else {
-                    val clearScrollRequest = ClearScrollRequest()
-                    clearScrollRequest.addScrollId(currentScrollId)
-                    restHighLevelClient.clearScroll(clearScrollRequest, defaultRequestOptions)
+                    if(currentScrollId != null) {
+                        val clearScrollRequest = ClearScrollRequest()
+                        clearScrollRequest.addScrollId(currentScrollId)
+                        restHighLevelClient.clearScroll(clearScrollRequest, defaultRequestOptions)
+                    }
                     null
                 }
             }
@@ -162,17 +166,17 @@ class AsyncSearchResults<T : Any>(
         val currentScrollId = it.scrollId
         println(currentScrollId)
         return if (currentScrollId != null && it.hits?.hits?.isNotEmpty() == true) {
-            println("page!")
-
             client.scrollAsync(SearchScrollRequest(currentScrollId).scroll(
                 TimeValue.timeValueMinutes(
                     ttl
                 )
             ), defaultRequestOptions)
         } else {
-            val clearScrollRequest = ClearScrollRequest()
-            clearScrollRequest.addScrollId(currentScrollId)
-//            client.clearScrollAsync(clearScrollRequest, defaultRequestOptions)
+            if(currentScrollId != null) {
+                val clearScrollRequest = ClearScrollRequest()
+                clearScrollRequest.addScrollId(currentScrollId)
+                client.clearScrollAsync(clearScrollRequest, defaultRequestOptions)
+            }
             null
         }
     }

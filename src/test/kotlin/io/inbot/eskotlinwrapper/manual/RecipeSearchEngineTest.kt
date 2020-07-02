@@ -1,7 +1,7 @@
 package io.inbot.eskotlinwrapper.manual
 
-import java.io.File
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class RecipeSearchEngineTest {
 

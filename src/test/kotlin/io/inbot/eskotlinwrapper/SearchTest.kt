@@ -31,8 +31,10 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
             source(
                 SearchSourceBuilder.searchSource()
                     .size(20)
-                    .query(BoolQueryBuilder()
-                        .must(MatchQueryBuilder("message", "quick")))
+                    .query(
+                        BoolQueryBuilder()
+                            .must(MatchQueryBuilder("message", "quick"))
+                    )
             )
         }
 

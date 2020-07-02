@@ -3,13 +3,13 @@ package recipesearch
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.inbot.eskotlinwrapper.AsyncIndexRepository
-import java.io.File
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.healthAsync
 import org.elasticsearch.cluster.health.ClusterHealthStatus
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
+import java.io.File
 
 class RecipeSearch(
     private val recipeRepository: AsyncIndexRepository<Recipe>,
@@ -84,52 +84,56 @@ class RecipeSearch(
         recipeRepository.bulk(bulkSize = 3) {
             File("src/examples/resources/recipes")
                 .listFiles { f -> f.extension == "json" }?.forEach {
-                    val parsed = objectMapper.readValue<Recipe>(it.readText())
-                    // lets use the sourceUrl as an id
-                    // use create=false to allow updates
-                    index(parsed.sourceUrl, parsed, create = false)
-                }
+                val parsed = objectMapper.readValue<Recipe>(it.readText())
+                // lets use the sourceUrl as an id
+                // use create=false to allow updates
+                index(parsed.sourceUrl, parsed, create = false)
+            }
         }
     }
     // END index_recipes
 
     // BEGIN search_recipes
     suspend fun search(query: String, from: Int, size: Int):
-            SearchResponse<Recipe> {
-        return recipeRepository.search {
-            source(SearchSourceBuilder.searchSource().apply {
-                from(from)
-                size(size)
-                query(
-                    if (query.isBlank()) {
-                        QueryBuilders.matchAllQuery()
-                    } else {
-                        QueryBuilders.boolQuery().apply {
-                            should().apply {
-                                add(QueryBuilders.matchPhraseQuery("title", query).boost(2.0f))
-                                add(QueryBuilders.matchQuery("title", query).boost(2.0f))
-                                add(QueryBuilders.matchQuery("description", query))
+        SearchResponse<Recipe> {
+            return recipeRepository.search {
+                source(
+                    SearchSourceBuilder.searchSource().apply {
+                        from(from)
+                        size(size)
+                        query(
+                            if (query.isBlank()) {
+                                QueryBuilders.matchAllQuery()
+                            } else {
+                                QueryBuilders.boolQuery().apply {
+                                    should().apply {
+                                        add(QueryBuilders.matchPhraseQuery("title", query).boost(2.0f))
+                                        add(QueryBuilders.matchQuery("title", query).boost(2.0f))
+                                        add(QueryBuilders.matchQuery("description", query))
+                                    }
+                                }
                             }
-                        }
+                        )
                     }
                 )
-            })
-        }.toSearchResponse()
-    }
+            }.toSearchResponse()
+        }
     // END search_recipes
 
     // BEGIN autocomplete_recipes
     suspend fun autocomplete(query: String, from: Int, size: Int):
-            SearchResponse<Recipe> {
-        return recipeRepository.search {
-            source(SearchSourceBuilder.searchSource().apply {
-                from(from)
-                size(size)
-                query(
-                    QueryBuilders.matchQuery("title.autocomplete", query)
+        SearchResponse<Recipe> {
+            return recipeRepository.search {
+                source(
+                    SearchSourceBuilder.searchSource().apply {
+                        from(from)
+                        size(size)
+                        query(
+                            QueryBuilders.matchQuery("title.autocomplete", query)
+                        )
+                    }
                 )
-            })
-        }.toSearchResponse()
-    }
+            }.toSearchResponse()
+        }
     // END autocomplete_recipes
 }

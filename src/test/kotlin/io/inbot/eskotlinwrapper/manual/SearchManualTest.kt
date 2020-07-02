@@ -54,7 +54,8 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 val results = thingRepository.search {
                     // we can use Kotlin's string templating
                     val text = "brown"
-                    source("""
+                    source(
+                        """
                         {
                             "query": {
                                 "match": {
@@ -64,7 +65,8 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                 }
                             }
                         }
-                    """.trimIndent())
+                        """.trimIndent()
+                    )
                 }
                 println("Found ${results.totalHits}")
 
@@ -102,7 +104,8 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 // like with search, we can pass in a JSON query
                 val query = "quick"
                 val count = thingRepository.count {
-                    source("""
+                    source(
+                        """
                         {
                             "query": {
                                 "match": {
@@ -112,7 +115,8 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                 }
                             }
                         }                        
-                    """.trimIndent())
+                        """.trimIndent()
+                    )
                 }
                 println("We found $count results matching $query")
             }
@@ -136,16 +140,20 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     // simply set scrolling to true will allow us to scroll over the entire index
                     // this will scale no matter what the size of your index is. If you use
                     // scrolling, you can also set the ttl for the scroll (default is 1m)
-                    val results = thingRepository.search(scrolling = true,
-                        scrollTtlInMinutes = 10) {
-                        source("""
+                    val results = thingRepository.search(
+                        scrolling = true,
+                        scrollTtlInMinutes = 10
+                    ) {
+                        source(
+                            """
                             {
                                 "size": 10,
                                 "query": {
                                     "match_all": {}
                                 }
                             }
-                        """.trimIndent())
+                            """.trimIndent()
+                        )
                     }
                     results.hits.forEach { (hit, thing) ->
                         if (thing != null) {

@@ -221,13 +221,11 @@ class KotlinForExample private constructor(
         return Thread.currentThread()
             .stackTrace.first {
                 !it.className.startsWith("java") &&
-                        !it.className.startsWith("jdk.internal") &&
-                        it.className != javaClass.name &&
-                        it.className != "java.lang.Thread" &&
-                        it.className != "io.inbot.eskotlinwrapper.manual.KotlinForExample" &&
-                        it.className != "io.inbot.eskotlinwrapper.manual.KotlinForExample\$Companion" // edge case
-
-
+                    !it.className.startsWith("jdk.internal") &&
+                    it.className != javaClass.name &&
+                    it.className != "java.lang.Thread" &&
+                    it.className != "io.inbot.eskotlinwrapper.manual.KotlinForExample" &&
+                    it.className != "io.inbot.eskotlinwrapper.manual.KotlinForExample\$Companion" // edge case
             }
     }
 
@@ -256,20 +254,21 @@ class KotlinForExample private constructor(
             val example = KotlinForExample()
 
             example.use(block)
-            val md = """
+            val md =
+                """
                 # ${page.title}
                 
-            """.trimIndent().trimMargin() + "\n\n" + example.buf.toString()
+                """.trimIndent().trimMargin() + "\n\n" + example.buf.toString()
 
             val pageWithNavigationMd =
                 (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n\n___\n\n" else "") +
-                        md + "\n" +
-                        (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "") +
-                        """
+                    md + "\n" +
+                    (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "") +
+                    """
                             This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the ${example.mdLinkToSelf(
-                            "source file"
-                        )} from which this page is generated.
-                        """.trimIndent()
+                        "source file"
+                    )} from which this page is generated.
+                    """.trimIndent()
 
             File(page.outputDir).mkdirs()
             File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)

@@ -51,7 +51,9 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                 }
                               }
                             }
-                        """, XContentType.JSON)
+                        """,
+                XContentType.JSON
+            )
         }
 
         KotlinForExample.markdownPageWithNavigation(bulkPage) {
@@ -157,8 +159,10 @@ class BulkManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                         // and you can implement this callback to do something custom
                         override fun invoke(op: BulkOperation<Thing>, response: BulkItemResponse) {
                             if (response.isFailed) {
-                                println("${op.id}: ${op.operation.opType().name} failed, " +
-                                        "code: ${response.failure.status}")
+                                println(
+                                    "${op.id}: ${op.operation.opType().name} failed, " +
+                                        "code: ${response.failure.status}"
+                                )
                             } else {
                                 println("${op.id}: ${op.operation.opType().name} succeeded!")
                             }

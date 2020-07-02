@@ -48,9 +48,11 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
             // do some concurrent updates; without retries this will fail
             for (n in 0.rangeTo(10)) {
                 // this requires using multiple threads otherwise the failures will pile up
-                jobs.add(async(Dispatchers.Unconfined) {
-                    repository.update(id, 10) { TestModel("nr_$n") }
-                })
+                jobs.add(
+                    async(Dispatchers.Unconfined) {
+                        repository.update(id, 10) { TestModel("nr_$n") }
+                    }
+                )
             }
             awaitAll(*jobs.toTypedArray())
         }
@@ -81,7 +83,7 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
         runBlocking {
             repository.bulk {
                 (1..100).forEach {
-                    index("$it",TestModel("m-$it"))
+                    index("$it", TestModel("m-$it"))
                 }
             }
             repository.refresh()

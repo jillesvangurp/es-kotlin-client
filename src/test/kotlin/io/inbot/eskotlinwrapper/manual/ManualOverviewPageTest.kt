@@ -1,7 +1,7 @@
 package io.inbot.eskotlinwrapper.manual
 
-import java.io.File
 import org.junit.jupiter.api.Test
+import java.io.File
 
 val readmeMd = "README.md"
 val indexMd = "index.md"
@@ -33,7 +33,8 @@ class ManualOverviewPageTest {
     @Test
     fun `create ebook create script`() {
         File("epub").mkdirs()
-        File("epub", "styles.css").writeText("""
+        File("epub", "styles.css").writeText(
+            """
             /* This defines styles and classes used in the book */
             body { margin: 0; text-align: justify; font-size: medium; font-family: Athelas, Georgia, serif; }
             h1 { text-align: left; }
@@ -86,8 +87,10 @@ class ManualOverviewPageTest {
             code span.vs { color: #008080; } /* VerbatimString */
             code span.wa { color: #008000; font-weight: bold; } /* Warning */
 
-        """.trimIndent())
-        File("epub", "metadata.yml").writeText("""
+            """.trimIndent()
+        )
+        File("epub", "metadata.yml").writeText(
+            """
             ---
             title: Searching Elasticsearch using Kotlin
             author: Jilles van Gurp
@@ -95,8 +98,10 @@ class ManualOverviewPageTest {
             language: en-US
             ...
             
-        """.trimIndent())
-        File("epub", "preface.md").writeText("""
+            """.trimIndent()
+        )
+        File("epub", "preface.md").writeText(
+            """
             # Preface
             
             This Ebook is a work in progress. It may eventually become something I put up on e.g. Amazon for a low fee. 
@@ -106,11 +111,14 @@ class ManualOverviewPageTest {
             Meanwhile, I would appreciate any feedback you have on this manual, any grammar/text issues,
             layout/formatting issues, or anything that you would like clarified in more detail.
             
-        """.trimIndent())
-        File("epub", "create_ebook.sh").writeText("""
+            """.trimIndent()
+        )
+        File("epub", "create_ebook.sh").writeText(
+            """
             #!/bin/bash
             pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${pages.joinToString(" ") {it.fileName}}
-        """.trimIndent())
+            """.trimIndent()
+        )
     }
 
     @Test
@@ -141,7 +149,6 @@ class ManualOverviewPageTest {
                 This enables the user to write fully reactive code in e.g. Ktor or Spring Boot. This makes this
                 library the easiest way to do this currently.
             """
-
         }
     }
 }

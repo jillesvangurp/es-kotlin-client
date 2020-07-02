@@ -218,8 +218,8 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
                 println(
                     "obj with title '${obj.title}' has id: ${rawGetResponse.id}, " +
-                            "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
-                            "seqNo: ${rawGetResponse.seqNo}"
+                        "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
+                        "seqNo: ${rawGetResponse.seqNo}"
                 )
                 // This works
                 thingRepository.index(

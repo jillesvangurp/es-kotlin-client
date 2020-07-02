@@ -105,14 +105,16 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
             // retries and logging are done via callbacks; if you want, you can override these and do something custom
             this.index(
                 randomId(),
-                TestModel("another object"), itemCallback = { operation, response ->
+                TestModel("another object"),
+                itemCallback = { operation, response ->
                     if (response.isFailed) {
                         // do something custom
                     } else {
                         // lets just add the operation to a list
                         successes.add(operation)
                     }
-                })
+                }
+            )
         }
         assertThat(successes).hasSize(1)
     }
@@ -121,13 +123,15 @@ class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") 
     fun `Instead of per operation callbacks you can also just use the same one for all operations`() {
         val successes = mutableListOf<Any>()
         // instead of haveing a per operation callback, you can also tell the bulkIndexer to always use the same lambda
-        repository.bulk(itemCallback = { operation, response ->
-            if (response.isFailed) {
-                // do something custom
-            } else {
-                successes.add(operation)
+        repository.bulk(
+            itemCallback = { operation, response ->
+                if (response.isFailed) {
+                    // do something custom
+                } else {
+                    successes.add(operation)
+                }
             }
-        }) {
+        ) {
             this.index(randomId(), TestModel("another object"))
             this.index(randomId(), TestModel("and another object"))
         }

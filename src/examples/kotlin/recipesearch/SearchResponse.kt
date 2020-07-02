@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.collect
 data class SearchResponse<T : Any>(val totalHits: Long, val items: List<T>)
 
 suspend fun <T : Any> AsyncSearchResults<T>
-        .toSearchResponse(): SearchResponse<T> {
+.toSearchResponse(): SearchResponse<T> {
     val collectedHits = mutableListOf<T>()
     this.hits().collect {
         collectedHits.add(it)

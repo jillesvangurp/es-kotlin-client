@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.RepeatedTest
@@ -114,11 +113,13 @@ class AsyncBulkIndexingSessionTest : AbstractAsyncElasticSearchTest(indexPrefix 
         runBlocking {
             val successes = mutableListOf<Any>()
             // instead of haveing a per operation callback, you can also tell the bulkIndexer to always use the same lambda
-            repository.bulk(itemCallback = { operation, response ->
-                if (!response.isFailed) {
-                    successes.add(operation)
+            repository.bulk(
+                itemCallback = { operation, response ->
+                    if (!response.isFailed) {
+                        successes.add(operation)
+                    }
                 }
-            }) {
+            ) {
                 this.index(randomId(), TestModel("another object"))
                 this.index(randomId(), TestModel("and another object"))
             }

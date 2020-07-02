@@ -68,7 +68,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 // create a Repository
                 // with the default jackson model reader and writer (you can customize)
                 val thingRepository = esClient.indexRepository<Thing>(
-                    index="things",
+                    index = "things",
                     // you have to opt in to refreshes, bad idea to refresh in production code
                     refreshAllowed = true
                 )

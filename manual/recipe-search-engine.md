@@ -273,7 +273,7 @@ data class SearchResponse<T : Any>(val totalHits: Long, val items: List<T>)
 suspend fun <T : Any> AsyncSearchResults<T>
 .toSearchResponse(): SearchResponse<T> {
   val collectedHits = mutableListOf<T>()
-  this.hits().collect {
+  this.mappedHits.collect {
     collectedHits.add(it)
   }
   return SearchResponse(this.total, collectedHits)

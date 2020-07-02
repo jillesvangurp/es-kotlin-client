@@ -150,15 +150,27 @@ class AsyncSearchResults<T : Any>(
         }
     }
 
-    fun rawHits(): Flow<SearchHit> {
-        return rawResponses().transform {
-            it.hits.forEach { hit ->
-                emit(hit)
+    /**
+     * Returns just the `SearchHit`s as a `Flow`. This does not attempt to deserialize anything.
+     */
+    val searchHits: Flow<SearchHit>
+        get() {
+            return rawResponses().transform {
+                it.hits.forEach { hit ->
+                    emit(hit)
+                }
             }
         }
-    }
 
-    fun hits() = rawHits().map { modelReaderAndWriter.deserialize(it) }
+    /**
+     * A Flow of pairs of `SearchHit`s and the deserialized `T` as a `Flow`. Use this if you need both.
+     */
+    val hits = searchHits.map { it to modelReaderAndWriter.deserialize(it) }
+
+    /**
+     * A `Flow` of `T`. Use this if you don't need the underlying `SearchHit`.
+     */
+    val mappedHits = searchHits.map { modelReaderAndWriter.deserialize(it) }
 
     private suspend fun fetchNext(it: SearchResponse, ttl: Long): SearchResponse? {
         val currentScrollId = it.scrollId

@@ -26,6 +26,30 @@
 <tbody>
 <tr>
 <td>
+<h4><a href="hits.html">hits</a></h4>
+</td>
+<td>
+<p>A Flow of pairs of <code>SearchHit</code>s and the deserialized <code>T</code> as a <code>Flow</code>. Use this if you need both.</p>
+<code><span class="keyword">val </span><span class="identifier">hits</span><span class="symbol">: </span><span class="identifier">Flow</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html"><span class="identifier">Pair</span></a><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">,</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="mapped-hits.html">mappedHits</a></h4>
+</td>
+<td>
+<p>A <code>Flow</code> of <code>T</code>. Use this if you don't need the underlying <code>SearchHit</code>.</p>
+<code><span class="keyword">val </span><span class="identifier">mappedHits</span><span class="symbol">: </span><span class="identifier">Flow</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="search-hits.html">searchHits</a></h4>
+</td>
+<td>
+<p>Returns just the <code>SearchHit</code>s as a <code>Flow</code>. This does not attempt to deserialize anything.</p>
+<code><span class="keyword">val </span><span class="identifier">searchHits</span><span class="symbol">: </span><span class="identifier">Flow</span><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="total.html">total</a></h4>
 </td>
 <td>
@@ -50,20 +74,6 @@
 <h3>Functions</h3>
 <table>
 <tbody>
-<tr>
-<td>
-<h4><a href="hits.html">hits</a></h4>
-</td>
-<td>
-<code><span class="keyword">fun </span><span class="identifier">hits</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Flow</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="raw-hits.html">rawHits</a></h4>
-</td>
-<td>
-<code><span class="keyword">fun </span><span class="identifier">rawHits</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Flow</span><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">&gt;</span></code></td>
-</tr>
 <tr>
 <td>
 <h4><a href="raw-responses.html">rawResponses</a></h4>

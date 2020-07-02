@@ -91,7 +91,7 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
                 dsl {
                     resultSize = 5
                 }
-            }.hits().count()
+            }.mappedHits.count()
             assertThat(count).isEqualTo(100)
         }
     }

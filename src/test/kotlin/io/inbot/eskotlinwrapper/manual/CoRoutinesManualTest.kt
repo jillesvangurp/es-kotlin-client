@@ -184,8 +184,8 @@ class CoRoutinesManualTest : AbstractElasticSearchTest(indexPrefix = "asyncthing
                             }
                         }
 
-                        // hits returns a Flow<Thing>
-                        println("Hits: ${results.hits().count()}")
+                        // hits is a Flow<Thing>
+                        println("Hits: ${results.mappedHits.count()}")
                     }
                 }
             }

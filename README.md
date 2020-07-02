@@ -187,7 +187,7 @@ runBlocking {
     dsl {
       TermQuery("name.keyword", "thing #666")
     }
-  }.hits().collect {
+  }.mappedHits.collect {
     // collect is part of the kotlin Flow API
     // this is one of the few parts where the API is different
     println("we've found an evil thing with: ${it.amount}")

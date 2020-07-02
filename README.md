@@ -3,28 +3,25 @@
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
-The ES Kotlin client for the Elasticsearch Highlevel REST client is a client library written in Kotlin that 
-adapts the official [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) with some Kotlin specific goodness, support for Kotlin DSLs, and co-routines.
-
-## Highlights
-
 Elastic's `HighLevelRestClient` is written in Java and provides access to essentially everything in the 
-REST API that Elasticsearch exposes. It's a very powerful API
-but maybe not the most easy thing to work with directly. 
+REST API that Elasticsearch exposes. It's a very powerful Java API
+but maybe not the easiest thing to work with directly. 
 
-**The kotlin wrapper takes away none of that but it adds a lot of power and convenience.**
+**The kotlin client takes away none of that but adds a lot of power and convenience.**
 
-- Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries. Things that are not supported, are easy to configure via Kotlin's Map DSL or by using indexed map properties. Additionally, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
-- Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** that add convenience and get rid of 
+- Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
+- Things that are not supported, are easy to configure via Kotlin's Map DSL or by using indexed map properties. Additionally, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
+- Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** add convenience and get rid of 
 Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
 friendly API over the underlying client functionality.
 - A **repository** abstraction that allows you to: 
-    - Manage indices with a flexible DSL for mappings
-    - Do crud on index items with safe updates that retry in case of a version conflict
+    - Manage indices with a flexible DSL for mappings.
+    - Serialize/deserialize JSON objects using your favorite serialization framework. A Jackson implementation comes with the client but you can trivially add support for other frameworks. Deserialization support is also available on search results and the bulk API.
+    - Do CRUD on json documents with safe updates that retry in case of a version conflict.
     - Bulk indexing DSL to do bulk operations without boiler plate and with fine-grained error handling (via callbacks)
     - Search & count objects in the index using a Kotlin Query DSL or simply use raw json from either a file or a templated multiline kotlin string. Or if you really want, you can use the Java builders that come with the RestHighLevelClient.
     - Much more
-- **Co-routine friendly** & ready for reactive usage. We use generated extension functions that we add with a source generation plugin to add cancellable suspend functions for almost all client functions. Additionally, the before mentioned `IndexRepository` has an `AsyncIndexRepository` variant with suspending variants of the same functionality. 
+    - **Co-routine friendly** & ready for reactive usage. We use generated extension functions that we add with a source generation plugin to add cancellable suspend functions for almost all client functions. Additionally, the before mentioned `IndexRepository` has an `AsyncIndexRepository` variant with suspending variants of the same functionality. Where appropriate, Kotlin's new `Flow` API is used.
     - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
     asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
 
@@ -33,7 +30,7 @@ friendly API over the underlying client functionality.
 - [manual](https://www.jillesvangurp.com/es-kotlin-manual/) A growing collection of executable examples. This manual is 
 generated from kotlin code and all the examples in it are run as part of the test suite. This is the best
 place to get started.
-- The same manual as an **[epub](book.epub)**. Very much a work in progress. Please give me feedback on this.
+- The same manual as an **[epub](book.epub)**. Very much a work in progress. Please give me feedback on this. I may end up self publishing this at some point.
 - [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
 - Some stand alone examples are included in the examples source folder.
 - The tests test most of the important features and should be fairly readable and provide a good overview of
@@ -44,14 +41,20 @@ place to get started.
 ## Example
 
 This example is a bit more complicated than a typical hello world but more instructive 
-than just putting some objects in a schema less index. Which of course is something you should not do.
+than just putting some objects in a schema less index. Which of course is something you should not do. The idea here
+is to touch on most topics a software engineer would need to deal with when creating a new project using Elasticsearch:
+
+- figuring out how to create an index and define a mapping
+- populating the index with content using the bulk API
+- querying data 
 
 ```kotlin
 // given some model class
 data class Thing(val name: String, val amount: Long = 42)
 
 // create a Repository
-// with the default jackson model reader and writer (you can customize)
+// with the default jackson model reader and writer
+// (you can use something else)
 val thingRepository = esClient.indexRepository<Thing>(
   index = "things",
   // you have to opt in to refreshes, bad idea to refresh in production code
@@ -83,11 +86,14 @@ thingRepository.createIndex {
         this["tokenizer"] = "lowercase"
       }
     }
+    // the mapping DSL is a bit more fully featured
     mappings {
       // mappings DSL, most common field types are supported
       text("name") {
-        // use a sub field name.autocomplete for auto complete
         fields {
+          // lets also add name.raw field
+          keyword("raw")
+          // and a name.autocomplete field for auto complete
           text("autocomplete") {
             analyzer = "autocomplete"
             searchAnalyzer = "autocomplete_search"
@@ -116,7 +122,8 @@ thingRepository.bulk {
   // we will bulk re-index the objects we already added with
   // a scrolling search. Scrolling searches work just
   // like normal searches (except they are not ranked)
-  // all you do is set scrolling to true
+  // all you do is set scrolling to true and you can
+  // scroll through billions of results.
   thingRepository.search(scrolling = true) {
     // A simple example of using the Kotlin Query DSL
     // you can also use a source block with multi line JSON
@@ -146,6 +153,44 @@ thingRepository.bulk {
         create = false
       )
     }
+  }
+}
+```
+
+## Co-routines
+
+Using co-routines is easy in Kotlin. Mostly things work the same way. Except everything is non blocking
+and asynchronous. In other languages this creates all sorts of complications that Kotlin largely avoids.
+
+The Java client in Elasticsearch has support for non blocking IO. We leverage this to add our own suspending
+calls using extension functions. Mostly these have very similar signatures as their blocking variants. But 
+of course we also added a suspending version of the Index Repository. 
+
+```kotlin
+// we reuse the index we created already
+val repo = esClient.asyncIndexRepository<Thing>(
+  index = "things",
+  refreshAllowed = true
+)
+// co routines require a CoroutineScope, so let create one
+runBlocking {
+  repo.bulk {
+    // create some more things
+    (1..1000).forEach {
+      index("$it", Thing("thing #$it", it.toLong()))
+    }
+  }
+  repo.refresh()
+  // if you are wondering, yes this is almost identical
+  // as the synchronous version above.
+  repo.search {
+    dsl {
+      TermQuery("name.keyword", "thing #666")
+    }
+  }.hits().collect {
+    // collect is part of the kotlin Flow API
+    // this is one of the few parts where the API is different
+    println("we've found an evil thing with: ${it.amount}")
   }
 }
 ```

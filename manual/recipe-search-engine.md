@@ -90,7 +90,6 @@ to create a simple ktor server that can index and search through recipes.
 Lets start with our `main` function:
 
 ```kotlin
-@ExperimentalCoroutinesApi
 suspend fun main(vararg args: String) {
   val objectMapper = ObjectMapper()
   // enable Kotlin integration and whatever else is on the classpath

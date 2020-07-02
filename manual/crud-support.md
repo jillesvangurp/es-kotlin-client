@@ -97,10 +97,10 @@ Output:
   "things" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1593683849396",
+    "creation_date" : "1593690008469",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "pEL_HsCTT_uwiEngaa1KKA",
+    "uuid" : "fp2QtwdKSE-p_s2tqUo8qw",
     "version" : {
       "created" : "7060099"
     },
@@ -110,7 +110,7 @@ Output:
   }
 }
 things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-07-02T09:57:29.393279Z"},"properties":{"amount":{"type":"long","fields":{"abette
+07-02T11:40:08.459114Z"},"properties":{"amount":{"type":"long","fields":{"abette
 rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
 yword"}}},"title":{"type":"text"}}}
 ```
@@ -366,8 +366,8 @@ As with most of this library, the same functionality is also available in a co-r
 variant `AsyncIndexRepository`. To use that, you need to use `esClient.asyncIndexRepository`. 
 
 This works almost the same as the synchronous version except all of the functions are marked as 
-suspend on the `AsyncIndexRepository` class. To call these, you will need to call these from a
-`CoRoutineScope`.
+suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
+is different and makes use of teh Flow API. 
 
 For more details on how to use co-routines, see [Co-routines](coroutines.md)
 

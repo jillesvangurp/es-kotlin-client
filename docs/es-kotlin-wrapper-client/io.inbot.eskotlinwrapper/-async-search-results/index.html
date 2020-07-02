@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>AsyncSearchResults - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="./index.html">AsyncSearchResults</a><br/>
+<br/>
+<h1>AsyncSearchResults</h1>
+<code><span class="keyword">class </span><span class="identifier">AsyncSearchResults</span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<code><span class="identifier">AsyncSearchResults</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncSearchResults$<init>(org.elasticsearch.client.RestHighLevelClient, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.AsyncSearchResults.T)), kotlin.Long, org.elasticsearch.action.search.SearchResponse, org.elasticsearch.client.RequestOptions)/client">client</span><span class="symbol">:</span>&nbsp;<span class="identifier">RestHighLevelClient</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncSearchResults$<init>(org.elasticsearch.client.RestHighLevelClient, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.AsyncSearchResults.T)), kotlin.Long, org.elasticsearch.action.search.SearchResponse, org.elasticsearch.client.RequestOptions)/modelReaderAndWriter">modelReaderAndWriter</span><span class="symbol">:</span>&nbsp;<a href="../-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncSearchResults$<init>(org.elasticsearch.client.RestHighLevelClient, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.AsyncSearchResults.T)), kotlin.Long, org.elasticsearch.action.search.SearchResponse, org.elasticsearch.client.RequestOptions)/scrollTtlInMinutes">scrollTtlInMinutes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncSearchResults$<init>(org.elasticsearch.client.RestHighLevelClient, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.AsyncSearchResults.T)), kotlin.Long, org.elasticsearch.action.search.SearchResponse, org.elasticsearch.client.RequestOptions)/firstResponse">firstResponse</span><span class="symbol">:</span>&nbsp;<span class="identifier">SearchResponse</span><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncSearchResults$<init>(org.elasticsearch.client.RestHighLevelClient, io.inbot.eskotlinwrapper.ModelReaderAndWriter((io.inbot.eskotlinwrapper.AsyncSearchResults.T)), kotlin.Long, org.elasticsearch.action.search.SearchResponse, org.elasticsearch.client.RequestOptions)/defaultRequestOptions">defaultRequestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="total.html">total</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">total</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html"><span class="identifier">Long</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="total-hits.html">totalHits</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">totalHits</span><span class="symbol">: </span><span class="identifier">TotalHits</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="total-relation.html">totalRelation</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">totalRelation</span><span class="symbol">: </span><span class="identifier">Relation</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="hits.html">hits</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">hits</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Flow</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="raw-hits.html">rawHits</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rawHits</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Flow</span><span class="symbol">&lt;</span><span class="identifier">SearchHit</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="raw-responses.html">rawResponses</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">rawResponses</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Flow</span><span class="symbol">&lt;</span><span class="identifier">SearchResponse</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

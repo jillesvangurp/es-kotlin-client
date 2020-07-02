@@ -185,7 +185,7 @@ runBlocking {
   // as the synchronous version above.
   repo.search {
     dsl {
-      TermQuery("name.keyword", "thing #666")
+      query = TermQuery("name.keyword", "thing #666")
     }
   }.mappedHits.collect {
     // collect is part of the kotlin Flow API

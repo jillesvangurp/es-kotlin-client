@@ -67,7 +67,7 @@ results.hits.first().apply {
 Output:
 
 ```
-Found 3
+Found 3 hits
 Thing(title=The quick brown fox)
 Thing(title=The quick brown emu)
 Thing(title=The quick brown gnu)

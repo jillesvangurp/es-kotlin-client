@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.inbot.eskotlinwrapper.AsyncIndexRepository
 import java.io.File
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.healthAsync
@@ -78,7 +77,6 @@ class RecipeSearch(
         recipeRepository.deleteIndex()
     }
 
-    @ExperimentalCoroutinesApi // will hopefully stabilize with next version
     // BEGIN index_recipes
     suspend fun indexExamples() {
         // use a small bulk size to illustrate how this can

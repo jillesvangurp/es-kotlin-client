@@ -24,7 +24,7 @@ fun customQuery(name: String, block: MapBackedProperties.() -> Unit): ESQuery {
 @Suppress("UNCHECKED_CAST")
 class SearchDSL : MapBackedProperties() {
     var from: Int by property()
-
+    var trackTotalHits: Boolean by property()
     /** Same as the size property on Elasticsearch. But as kotlin's map already has a size property, we can't use that name. */
     var resultSize: Int by property("size") // clashes with Map.size
     // Elasticsearch has this object in a object kind of thing that we need to compensate for.

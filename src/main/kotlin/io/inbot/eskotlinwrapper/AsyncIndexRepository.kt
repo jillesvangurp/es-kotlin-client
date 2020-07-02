@@ -32,6 +32,7 @@ import org.elasticsearch.client.refreshAsync
 import org.elasticsearch.client.search
 import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetadata
+import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
@@ -318,25 +319,33 @@ class AsyncIndexRepository<T : Any>(
     }
 
     /**
-     * Perform an asynchronous search against your index. Works similar to [search] but does not support scrolling
-     * searches currently.
+     * Perform an asynchronous search against your index. Works similar to the synchronous version, except it
+     * returns `AsyncSearchResults` with a flow of responses that get mapped to `T`.
+     *
+     * Similar to the synchronous version, it supports scrolling.
      */
     suspend fun search(
+        scrolling: Boolean = false,
+        scrollTtlInMinutes: Long = 1,
         requestOptions: RequestOptions = this.defaultRequestOptions,
         block: SearchRequest.() -> Unit
-    ): SearchResults<T> {
-        // FIXME figure out how to return a scrolling of this with scrolling search and a suspending sequence
+    ): AsyncSearchResults<T> {
 
         val searchResponse = client.searchAsync(requestOptions) {
             indices(indexReadAlias)
+            if(scrolling) {
+                scroll(TimeValue.timeValueMinutes(scrollTtlInMinutes))
+            }
 
             block.invoke(this)
 
             if (fetchSourceContext != null && source()?.fetchSource() == null) {
                 source()?.fetchSource(fetchSourceContext)
             }
+
         }
-        return PagedSearchResults(searchResponse, modelReaderAndWriter)
+
+        return AsyncSearchResults(client, modelReaderAndWriter, scrollTtlInMinutes, searchResponse, defaultRequestOptions)
     }
 
     suspend fun count(requestOptions: RequestOptions = this.defaultRequestOptions, block: CountRequest.() -> Unit = {}): Long {

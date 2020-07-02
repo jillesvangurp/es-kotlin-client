@@ -1,10 +1,18 @@
 package io.inbot.eskotlinwrapper
 
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import org.apache.lucene.search.TotalHits
 import org.elasticsearch.action.search.ClearScrollRequest
 import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.scroll
+import org.elasticsearch.client.scrollAsync
+import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.search.SearchHit
 
 /**
@@ -35,9 +43,12 @@ interface SearchResults<T : Any> {
         }
 
     /**
-     * The total number of hits for the query.
+     * The total hits for the query.
      */
-    val totalHits: Long
+    val totalHits: TotalHits?
+    val total: Long
+    val totalRelation: TotalHits.Relation
+
 
     /**
      * the original search response.
@@ -63,10 +74,11 @@ class PagedSearchResults<T : Any>(
             return searchResponse.hits?.hits?.asSequence() ?: emptySequence()
         }
 
-    override val totalHits: Long
-        get() {
-            return searchResponse.hits?.totalHits?.value ?: 0
-        }
+    override val totalHits: TotalHits? by lazy { searchResponse.hits?.totalHits }
+    override val total by lazy { totalHits?.value ?: 0 }
+    override val totalRelation: TotalHits.Relation by lazy {
+        totalHits?.relation ?: TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO
+    }
 }
 
 /**
@@ -89,10 +101,12 @@ class ScrollingSearchResults<T : Any>(
             }
         }
 
-    override val totalHits: Long
-        get() {
-            return searchResponse.hits?.totalHits?.value ?: 0
-        }
+    override val totalHits: TotalHits? by lazy { searchResponse.hits?.totalHits }
+    override val total by lazy { totalHits?.value ?: 0 }
+    override val totalRelation: TotalHits.Relation by lazy {
+        totalHits?.relation ?: TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO
+    }
+
 
     private fun responses(): Sequence<SearchResponse> {
         return generateSequence(
@@ -100,7 +114,7 @@ class ScrollingSearchResults<T : Any>(
             seed = searchResponse,
             nextFunction = {
                 val currentScrollId = it.scrollId
-                if (currentScrollId != null && it.hits.hits != null && it.hits.hits.size > 0) {
+                if (currentScrollId != null && it?.hits?.hits?.isNotEmpty() == true) {
                     restHighLevelClient.scroll(currentScrollId, scrollTtlInMinutes, defaultRequestOptions)
                 } else {
                     val clearScrollRequest = ClearScrollRequest()
@@ -112,3 +126,55 @@ class ScrollingSearchResults<T : Any>(
         )
     }
 }
+
+class AsyncSearchResults<T : Any>(
+    private val client: RestHighLevelClient,
+    private val modelReaderAndWriter: ModelReaderAndWriter<T>,
+    private val scrollTtlInMinutes: Long,
+    private val firstResponse: SearchResponse,
+    private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+) {
+    val totalHits: TotalHits? by lazy { firstResponse.hits?.totalHits }
+    val total by lazy { totalHits?.value ?: 0 }
+    val totalRelation: TotalHits.Relation by lazy { totalHits?.relation ?: TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO }
+
+    fun rawResponses() = flow<SearchResponse> {
+        emit(firstResponse)
+        var next = fetchNext(firstResponse,scrollTtlInMinutes)
+        while (next != null) {
+            emit(next)
+            next = fetchNext(next,scrollTtlInMinutes)
+        }
+    }
+
+    @FlowPreview
+    fun rawHits() = rawResponses().flatMapConcat {
+        val hits = it.hits.hits
+        flow<SearchHit> {
+            hits.forEach { hit -> emit(hit) }
+        }
+    }
+
+    @FlowPreview
+    fun hits() = rawHits().map { modelReaderAndWriter.deserialize(it) }
+
+    private suspend fun fetchNext(it: SearchResponse, ttl: Long): SearchResponse? {
+        val currentScrollId = it.scrollId
+        println(currentScrollId)
+        return if (currentScrollId != null && it.hits?.hits?.isNotEmpty() == true) {
+            println("page!")
+
+            client.scrollAsync(SearchScrollRequest(currentScrollId).scroll(
+                TimeValue.timeValueMinutes(
+                    ttl
+                )
+            ), defaultRequestOptions)
+        } else {
+            val clearScrollRequest = ClearScrollRequest()
+            clearScrollRequest.addScrollId(currentScrollId)
+//            client.clearScrollAsync(clearScrollRequest, defaultRequestOptions)
+            null
+        }
+    }
+}
+

@@ -267,15 +267,16 @@ Since returning the raw Elasticsearch Response is not very nice, we use our own 
 convert object that Elasticsearch returns using an extension function.
 
 ```kotlin
-data class SearchResponse<T : Any>(val totalHits: Int, val items: List<T>) {
-  constructor(searchResponse: SearchResults<T>) :
-      this(
-        searchResponse.totalHits.toInt(),
-        searchResponse.mappedHits.toList()
-      )
-}
+data class SearchResponse<T : Any>(val totalHits: Long, val items: List<T>)
 
-fun <T : Any> SearchResults<T>.toSearchResponse() = SearchResponse(this)
+suspend fun <T : Any> AsyncSearchResults<T>
+    .toSearchResponse(): SearchResponse<T> {
+  val collectedHits = mutableListOf<T>()
+  this.hits().collect {
+    collectedHits.add(it)
+  }
+  return SearchResponse(this.total, collectedHits)
+}
 ```
 
 ## Simple Autocomplete

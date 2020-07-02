@@ -1,15 +1,17 @@
 package recipesearch
 
-import io.inbot.eskotlinwrapper.SearchResults
+import io.inbot.eskotlinwrapper.AsyncSearchResults
+import kotlinx.coroutines.flow.collect
 
 // BEGIN search_response
-data class SearchResponse<T : Any>(val totalHits: Int, val items: List<T>) {
-    constructor(searchResponse: SearchResults<T>) :
-            this(
-                searchResponse.totalHits.toInt(),
-                searchResponse.mappedHits.toList()
-            )
-}
+data class SearchResponse<T : Any>(val totalHits: Long, val items: List<T>)
 
-fun <T : Any> SearchResults<T>.toSearchResponse() = SearchResponse(this)
+suspend fun <T : Any> AsyncSearchResults<T>
+        .toSearchResponse(): SearchResponse<T> {
+    val collectedHits = mutableListOf<T>()
+    this.hits().collect {
+        collectedHits.add(it)
+    }
+    return SearchResponse(this.total, collectedHits)
+}
 // END search_response

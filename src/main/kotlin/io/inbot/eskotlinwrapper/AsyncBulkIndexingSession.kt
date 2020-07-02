@@ -104,7 +104,7 @@ class AsyncBulkIndexingSession<T : Any> constructor(
             bulkDispatcher: CoroutineDispatcher?
         ) {
             val flow = chunkFLow<AsyncBulkOperation<T>>(chunkSize = bulkSize) { channel ->
-                val session = AsyncBulkIndexingSession<T>(
+                val session = AsyncBulkIndexingSession(
                     repository,
                     modelReaderAndWriter,
                     retryConflictingUpdates,
@@ -129,9 +129,6 @@ class AsyncBulkIndexingSession<T : Any> constructor(
                     bulkOperation.itemCallback.invoke(bulkOperation, it)
                 }
             }
-            // FIXME: figure out how to actually get this called in parallel. Currently it seems to do this sequentially
-            // loads of confusing suggestions in the issue tracker for this with a lot of intentions and uncertainty around this and without a good way to do this NOW.
-            // https://github.com/Kotlin/kotlinx.coroutines/issues/1147
             if (bulkDispatcher != null) {
                 flow.flowOn(bulkDispatcher).collect {}
             } else {

@@ -9,8 +9,6 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasA
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.indexRepository
 import org.elasticsearch.client.indices.GetMappingsRequest
-import org.elasticsearch.common.settings.Settings
-import org.elasticsearch.common.settings.SettingsModule
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.common.xcontent.xContentBuilder
 import org.junit.jupiter.api.Test
@@ -52,9 +50,6 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
 
     @Test
     fun `create custom mapping`() {
-
-        val s = SettingsModule(Settings.EMPTY)
-
         repository.createIndex {
             source(
                 xContentBuilder(
@@ -65,17 +60,17 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
                                     mapOf(
                                         "type" to "long"
                                     )
-                                ))
+                                )
+                            )
                         )
                     )
                 )
             )
         }
-        val mappings =
-            esClient.indices().getMapping(GetMappingsRequest().indices(repository.indexName), RequestOptions.DEFAULT)
-                .mappings().forEach { (f, m) ->
-                    println(f)
-                    println(m.get().source().string())
-                }
+        esClient.indices().getMapping(GetMappingsRequest().indices(repository.indexName), RequestOptions.DEFAULT)
+            .mappings().forEach { (f, m) ->
+                println(f)
+                println(m.get().source().string())
+            }
     }
 }

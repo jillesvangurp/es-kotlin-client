@@ -37,7 +37,7 @@ println("We found ${results.totalHits} results.")
 Output:
 
 ```
-We found 3 results.
+We found 3 hits results.
 
 ```
 
@@ -64,7 +64,7 @@ println("We found ${results.totalHits} results.")
 Output:
 
 ```
-We found 3 results.
+We found 3 hits results.
 
 ```
 
@@ -126,7 +126,7 @@ println("We found ${results.totalHits} results.")
 Output:
 
 ```
-We found 3 results.
+We found 3 hits results.
 
 ```
 
@@ -173,7 +173,7 @@ println("We found ${results.totalHits} results.")
 Output:
 
 ```
-We found 3 results.
+We found 3 hits results.
 
 ```
 

@@ -7,7 +7,9 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.runBlocking
+import org.elasticsearch.action.search.dsl
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
@@ -71,6 +73,24 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
             // you can do manual optimistic locking
             repository.index(id, TestModel("bar"), create = false, seqNo = 0, primaryTerm = 1)
             assertThat(repository.get(id)!!.message).isEqualTo("bar")
+        }
+    }
+
+    @Test
+    fun `async scrolling search`() {
+        runBlocking {
+            repository.bulk {
+                (1..100).forEach {
+                    index("$it",TestModel("m-$it"))
+                }
+            }
+            repository.refresh()
+            val count = repository.search(scrolling = true) {
+                dsl {
+                    resultSize = 5
+                }
+            }.hits().count()
+            assertThat(count).isEqualTo(100)
         }
     }
 }

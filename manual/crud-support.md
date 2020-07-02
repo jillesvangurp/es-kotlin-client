@@ -97,10 +97,10 @@ Output:
   "things" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1593690008469",
+    "creation_date" : "1593692277571",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "fp2QtwdKSE-p_s2tqUo8qw",
+    "uuid" : "e3pko80zRfioS_YDcMj47Q",
     "version" : {
       "created" : "7060099"
     },
@@ -110,7 +110,7 @@ Output:
   }
 }
 things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-07-02T11:40:08.459114Z"},"properties":{"amount":{"type":"long","fields":{"abette
+07-02T12:17:57.537895Z"},"properties":{"amount":{"type":"long","fields":{"abette
 rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
 yword"}}},"title":{"type":"text"}}}
 ```
@@ -225,8 +225,8 @@ val (obj, rawGetResponse) = thingRepository.getWithGetResponse("2")
 
 println(
   "obj with title '${obj.title}' has id: ${rawGetResponse.id}, " +
-      "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
-      "seqNo: ${rawGetResponse.seqNo}"
+    "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
+    "seqNo: ${rawGetResponse.seqNo}"
 )
 // This works
 thingRepository.index(

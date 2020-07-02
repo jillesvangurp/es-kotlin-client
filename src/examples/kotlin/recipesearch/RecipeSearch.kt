@@ -7,22 +7,25 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.healthAsync
 import org.elasticsearch.cluster.health.ClusterHealthStatus
-import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.search.builder.SearchSourceBuilder
+import org.elasticsearch.index.query.QueryBuilders.boolQuery
+import org.elasticsearch.index.query.QueryBuilders.matchAllQuery
+import org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery
+import org.elasticsearch.index.query.QueryBuilders.matchQuery
+import org.elasticsearch.search.builder.SearchSourceBuilder.searchSource
 import java.io.File
 
 class RecipeSearch(
-    private val recipeRepository: AsyncIndexRepository<Recipe>,
+    private val repository: AsyncIndexRepository<Recipe>,
     private val objectMapper: ObjectMapper
 ) {
 
     suspend fun healthStatus(): ClusterHealthStatus {
-        return recipeRepository.client.cluster().healthAsync(ClusterHealthRequest()).status
+        return repository.client.cluster().healthAsync(ClusterHealthRequest()).status
     }
 
     suspend fun createNewIndex() {
         // BEGIN mapping_dsl
-        recipeRepository.createIndex {
+        repository.createIndex {
             configure {
                 settings {
                     replicas = 0
@@ -74,14 +77,14 @@ class RecipeSearch(
     }
 
     suspend fun deleteIndex() {
-        recipeRepository.deleteIndex()
+        repository.deleteIndex()
     }
 
     // BEGIN index_recipes
     suspend fun indexExamples() {
         // use a small bulk size to illustrate how this can
         // work with potentially large amounts of files.
-        recipeRepository.bulk(bulkSize = 3) {
+        repository.bulk(bulkSize = 3) {
             File("src/examples/resources/recipes")
                 .listFiles { f -> f.extension == "json" }?.forEach {
                 val parsed = objectMapper.readValue<Recipe>(it.readText())
@@ -96,20 +99,20 @@ class RecipeSearch(
     // BEGIN search_recipes
     suspend fun search(query: String, from: Int, size: Int):
         SearchResponse<Recipe> {
-            return recipeRepository.search {
+            return repository.search {
                 source(
-                    SearchSourceBuilder.searchSource().apply {
+                    searchSource().apply {
                         from(from)
                         size(size)
                         query(
                             if (query.isBlank()) {
-                                QueryBuilders.matchAllQuery()
+                                matchAllQuery()
                             } else {
-                                QueryBuilders.boolQuery().apply {
+                                boolQuery().apply {
                                     should().apply {
-                                        add(QueryBuilders.matchPhraseQuery("title", query).boost(2.0f))
-                                        add(QueryBuilders.matchQuery("title", query).boost(2.0f))
-                                        add(QueryBuilders.matchQuery("description", query))
+                                        add(matchPhraseQuery("title", query).boost(2.0f))
+                                        add(matchQuery("title", query).boost(2.0f))
+                                        add(matchQuery("description", query))
                                     }
                                 }
                             }
@@ -123,13 +126,13 @@ class RecipeSearch(
     // BEGIN autocomplete_recipes
     suspend fun autocomplete(query: String, from: Int, size: Int):
         SearchResponse<Recipe> {
-            return recipeRepository.search {
+            return repository.search {
                 source(
-                    SearchSourceBuilder.searchSource().apply {
+                    searchSource().apply {
                         from(from)
                         size(size)
                         query(
-                            QueryBuilders.matchQuery("title.autocomplete", query)
+                            matchQuery("title.autocomplete", query)
                         )
                     }
                 )

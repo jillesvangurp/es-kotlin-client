@@ -31,7 +31,8 @@ thingRepository.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
 val results = thingRepository.search {
   // we can use Kotlin's string templating
   val text = "brown"
-  source("""
+  source(
+    """
     {
       "query": {
         "match": {
@@ -41,7 +42,8 @@ val results = thingRepository.search {
         }
       }
     }
-  """.trimIndent())
+    """.trimIndent()
+  )
 }
 println("Found ${results.totalHits}")
 
@@ -90,7 +92,8 @@ println("The total number of documents is ${thingRepository.count()}")
 // like with search, we can pass in a JSON query
 val query = "quick"
 val count = thingRepository.count {
-  source("""
+  source(
+    """
     {
       "query": {
         "match": {
@@ -100,7 +103,8 @@ val count = thingRepository.count {
         }
       }
     }            
-  """.trimIndent())
+    """.trimIndent()
+  )
 }
 println("We found $count results matching $query")
 ```
@@ -130,16 +134,20 @@ thingRepository.bulk {
   // simply set scrolling to true will allow us to scroll over the entire index
   // this will scale no matter what the size of your index is. If you use
   // scrolling, you can also set the ttl for the scroll (default is 1m)
-  val results = thingRepository.search(scrolling = true,
-    scrollTtlInMinutes = 10) {
-    source("""
+  val results = thingRepository.search(
+    scrolling = true,
+    scrollTtlInMinutes = 10
+  ) {
+    source(
+      """
       {
         "size": 10,
         "query": {
           "match_all": {}
         }
       }
-    """.trimIndent())
+      """.trimIndent()
+    )
   }
   results.hits.forEach { (hit, thing) ->
     if (thing != null) {

@@ -139,7 +139,7 @@ KTor server (see code at the end of this article) to implement a simple REST api
 We create a custom index with the custom mapping DSL that is part of the Kotlin client.
 
 ```kotlin
-recipeRepository.createIndex {
+repository.createIndex {
   configure {
     settings {
       replicas = 0
@@ -207,14 +207,14 @@ allows Elasticsearch to process batches of documents efficiently.
 suspend fun indexExamples() {
   // use a small bulk size to illustrate how this can
   // work with potentially large amounts of files.
-  recipeRepository.bulk(bulkSize = 3) {
+  repository.bulk(bulkSize = 3) {
     File("src/examples/resources/recipes")
       .listFiles { f -> f.extension == "json" }?.forEach {
-        val parsed = objectMapper.readValue<Recipe>(it.readText())
-        // lets use the sourceUrl as an id
-        // use create=false to allow updates
-        index(parsed.sourceUrl, parsed, create = false)
-      }
+      val parsed = objectMapper.readValue<Recipe>(it.readText())
+      // lets use the sourceUrl as an id
+      // use create=false to allow updates
+      index(parsed.sourceUrl, parsed, create = false)
+    }
   }
 }
 ```
@@ -230,27 +230,29 @@ Once we have documents in our index, we can search through them as follows:
 
 ```kotlin
 suspend fun search(query: String, from: Int, size: Int):
-    SearchResponse<Recipe> {
-  return recipeRepository.search {
-    source(SearchSourceBuilder.searchSource().apply {
-      from(from)
-      size(size)
-      query(
-        if (query.isBlank()) {
-          QueryBuilders.matchAllQuery()
-        } else {
-          QueryBuilders.boolQuery().apply {
-            should().apply {
-              add(QueryBuilders.matchPhraseQuery("title", query).boost(2.0f))
-              add(QueryBuilders.matchQuery("title", query).boost(2.0f))
-              add(QueryBuilders.matchQuery("description", query))
+  SearchResponse<Recipe> {
+    return repository.search {
+      source(
+        searchSource().apply {
+          from(from)
+          size(size)
+          query(
+            if (query.isBlank()) {
+              matchAllQuery()
+            } else {
+              boolQuery().apply {
+                should().apply {
+                  add(matchPhraseQuery("title", query).boost(2.0f))
+                  add(matchQuery("title", query).boost(2.0f))
+                  add(matchQuery("description", query))
+                }
+              }
             }
-          }
+          )
         }
       )
-    })
-  }.toSearchResponse()
-}
+    }.toSearchResponse()
+  }
 ```
 
 As you can see, searching is similarly simple. The `search` extension function takes a block that
@@ -269,7 +271,7 @@ convert object that Elasticsearch returns using an extension function.
 data class SearchResponse<T : Any>(val totalHits: Long, val items: List<T>)
 
 suspend fun <T : Any> AsyncSearchResults<T>
-    .toSearchResponse(): SearchResponse<T> {
+.toSearchResponse(): SearchResponse<T> {
   val collectedHits = mutableListOf<T>()
   this.hits().collect {
     collectedHits.add(it)
@@ -285,17 +287,19 @@ format for that is the same. Our mapping uses a simple edge ngram analyzer.
 
 ```kotlin
 suspend fun autocomplete(query: String, from: Int, size: Int):
-    SearchResponse<Recipe> {
-  return recipeRepository.search {
-    source(SearchSourceBuilder.searchSource().apply {
-      from(from)
-      size(size)
-      query(
-        QueryBuilders.matchQuery("title.autocomplete", query)
+  SearchResponse<Recipe> {
+    return repository.search {
+      source(
+        searchSource().apply {
+          from(from)
+          size(size)
+          query(
+            matchQuery("title.autocomplete", query)
+          )
+        }
       )
-    })
-  }.toSearchResponse()
-}
+    }.toSearchResponse()
+  }
 ```
 
 ## Creating a Ktor server

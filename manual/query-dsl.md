@@ -47,16 +47,18 @@ This is unfortunately quite ugly from a Kotlin point of view. Lets see if we can
 
 // more idomatic Kotlin using apply { ... }
 val results = thingRepository.search {
-  source(searchSource().apply {
-    query(
-      boolQuery().apply {
-        must().apply {
-          add(matchQuery("title", "quick").boost(2.0f))
-          add(matchQuery("title", "brown"))
+  source(
+    searchSource().apply {
+      query(
+        boolQuery().apply {
+          must().apply {
+            add(matchQuery("title", "quick").boost(2.0f))
+            add(matchQuery("title", "brown"))
+          }
         }
-      }
-    )
-  })
+      )
+    }
+  )
 }
 println("We found ${results.totalHits} results.")
 ```

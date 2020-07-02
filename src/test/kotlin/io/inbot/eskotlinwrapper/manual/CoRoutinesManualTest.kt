@@ -1,9 +1,14 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
+import io.inbot.eskotlinwrapper.AsyncSearchResults
+import io.inbot.eskotlinwrapper.dsl.matchAll
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.ActionListener
+import org.elasticsearch.action.search.dsl
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.asyncIndexRepository
 import org.elasticsearch.client.indices.ReloadAnalyzersRequest
@@ -12,7 +17,6 @@ import org.elasticsearch.client.reloadAnalyzersAsync
 import org.elasticsearch.common.xcontent.XContentType
 import org.junit.jupiter.api.Test
 
-@ExperimentalCoroutinesApi
 @Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 class CoRoutinesManualTest : AbstractElasticSearchTest(indexPrefix = "asyncthings") {
     private data class Thing(val title: String)
@@ -108,7 +112,7 @@ class CoRoutinesManualTest : AbstractElasticSearchTest(indexPrefix = "asyncthing
                     ## AsyncIndexRepository
                     
                     In addition to having suspend versions of most functions in the `RestHighLevelClient`, the 
-                    `IndexRepository` also has an `AsyncIndexRepository` variant. The API of this is
+                    `IndexRepository` also has an `AsyncIndexRepository` counter part. The API of this is
                     similar to the regular repository. 
                 """
                 block {
@@ -146,7 +150,7 @@ class CoRoutinesManualTest : AbstractElasticSearchTest(indexPrefix = "asyncthing
                 }
                 blockWithOutput {
                     // all functions on the asyncRepo are of course suspend so we
-                    // need to run them in a co-routine
+                    // need to run them in a co-routine scope
                     runBlocking {
                         // all of these use suspend functions
                         asyncRepo.index("thing1", Thing("The first thing"))
@@ -164,23 +168,23 @@ class CoRoutinesManualTest : AbstractElasticSearchTest(indexPrefix = "asyncthing
                 }
 
                 +"""
-                ## Development status
+                ## Asynchronous search
                 
-                Co-routine support is still somewhat in flux in this library and there may be more changes
-                related to this in future versions as our code generator evolves. 
-
-                Additionally `Flow` seems like it  could be useful in more places. For example, when
-                dealing with (scrolling) searches. 
-
-                We currently use `Flow` for asynchronous bulk indexing.  However, the co-routines
-                API  has a few things that we depend on  marked as experimental. This is still subject to 
-                change and the design for asynchronous bulk indexing may still be changed. We expect
-                the upcoming 1.4 release of `kotlinx.coroutines` to allow us to address this.
-                
-                Finally, this library has relatively few users and co-routines and asynchronous behavior can
-                be a can of worms in terms of bugs and other issues. If you find any weirdness, please file bugs.
-                
+                The search API is very similar; except for the returned ${AsyncSearchResults::class.simpleName}. The 
+                results make use of the `Flow` api in the Kotlin Co-Routines library.
             """
+                blockWithOutput {
+                    runBlocking {
+                        val results = asyncRepo.search(scrolling = true) {
+                            dsl {
+                                query = matchAll()
+                            }
+                        }
+
+                        // hits returns a Flow<Thing>
+                        println("Hits: ${results.hits().count()}")
+                    }
+                }
             }
         }
     }

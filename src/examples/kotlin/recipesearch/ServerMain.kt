@@ -27,7 +27,6 @@ import org.elasticsearch.client.create
 import org.elasticsearch.cluster.health.ClusterHealthStatus
 
 // BEGIN main_function
-@ExperimentalCoroutinesApi
 suspend fun main(vararg args: String) {
     val objectMapper = ObjectMapper()
     // enable Kotlin integration and whatever else is on the classpath
@@ -65,7 +64,6 @@ suspend fun main(vararg args: String) {
 }
 // END main_function
 
-@ExperimentalCoroutinesApi
 // BEGIN ktor_setup
 private fun createServer(
     objectMapper: ObjectMapper,

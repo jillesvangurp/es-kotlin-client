@@ -334,8 +334,8 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 variant `AsyncIndexRepository`. To use that, you need to use `esClient.asyncIndexRepository`. 
                 
                 This works almost the same as the synchronous version except all of the functions are marked as 
-                suspend on the `AsyncIndexRepository` class. To call these, you will need to call these from a
-                `CoRoutineScope`.
+                suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
+                is different and makes use of teh Flow API. 
 
                 For more details on how to use co-routines, see ${mdLink(coroutinesPage)}
             """.trimIndent()

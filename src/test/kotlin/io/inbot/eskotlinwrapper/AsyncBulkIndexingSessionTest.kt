@@ -11,7 +11,6 @@ import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
-@ExperimentalCoroutinesApi
 class AsyncBulkIndexingSessionTest : AbstractAsyncElasticSearchTest(indexPrefix = "bulk") {
     @Test
     fun `This is how you bulk index some documents`() {

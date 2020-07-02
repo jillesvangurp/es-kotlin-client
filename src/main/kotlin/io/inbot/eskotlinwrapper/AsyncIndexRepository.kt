@@ -1,7 +1,6 @@
 package io.inbot.eskotlinwrapper
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
@@ -29,7 +28,6 @@ import org.elasticsearch.client.getAsync
 import org.elasticsearch.client.indexAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.refreshAsync
-import org.elasticsearch.client.search
 import org.elasticsearch.client.searchAsync
 import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.common.unit.TimeValue
@@ -272,7 +270,6 @@ class AsyncIndexRepository<T : Any>(
      * See [BulkIndexingSession] for the meaning of the other parameters.
      *
      */
-    @ExperimentalCoroutinesApi
     suspend fun bulk(
         bulkSize: Int = 100,
         retryConflictingUpdates: Int = 0,
@@ -333,7 +330,7 @@ class AsyncIndexRepository<T : Any>(
 
         val searchResponse = client.searchAsync(requestOptions) {
             indices(indexReadAlias)
-            if(scrolling) {
+            if (scrolling) {
                 scroll(TimeValue.timeValueMinutes(scrollTtlInMinutes))
             }
 
@@ -342,7 +339,6 @@ class AsyncIndexRepository<T : Any>(
             if (fetchSourceContext != null && source()?.fetchSource() == null) {
                 source()?.fetchSource(fetchSourceContext)
             }
-
         }
 
         return AsyncSearchResults(client, modelReaderAndWriter, scrollTtlInMinutes, searchResponse, defaultRequestOptions)

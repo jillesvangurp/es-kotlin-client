@@ -2,15 +2,14 @@ package io.inbot.eskotlinwrapper
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -56,7 +55,6 @@ class AsyncBulkIndexingSession<T : Any> constructor(
     private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
 ) {
     companion object {
-        @ExperimentalCoroutinesApi
         private fun <T> chunkFLow(
             chunkSize: Int = 20,
             producerBlock: CoroutineScope.(channel: SendChannel<T>) -> Unit
@@ -68,7 +66,7 @@ class AsyncBulkIndexingSession<T : Any> constructor(
                         producerBlock(channel)
                     }
                     var page = mutableListOf<T>()
-                    channel.consumeEach { value ->
+                    channel.consumeAsFlow().collect { value ->
                         page.add(value)
                         if (page.size > chunkSize) {
                             emit(page)
@@ -81,7 +79,6 @@ class AsyncBulkIndexingSession<T : Any> constructor(
                 }
             }
 
-        @ExperimentalCoroutinesApi
         suspend fun <T : Any> asyncBulk(
             client: RestHighLevelClient,
             repository: AsyncIndexRepository<T>,

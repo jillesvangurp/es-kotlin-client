@@ -111,7 +111,7 @@ class KotlinForExample private constructor(
     }
 
     private fun sourcePathForClass(clazz: KClass<*>) =
-        sourcePaths.map { File(it, fileName(clazz)) }.first { it.exists() }.path
+        sourcePaths.map { File(it, fileName(clazz)) }.firstOrNull() { it.exists() }?.path ?: throw IllegalArgumentException("source not found for ${clazz.qualifiedName}")
 
     private fun fileName(clazz: KClass<*>) =
         clazz.qualifiedName!!.replace("\\$.*?$".toRegex(), "").replace('.', File.separatorChar) + ".kt"

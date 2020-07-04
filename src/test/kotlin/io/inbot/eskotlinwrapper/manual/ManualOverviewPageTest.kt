@@ -124,7 +124,7 @@ class ManualOverviewPageTest {
 
     @Test
     fun `generate index md`() {
-        val markdown = sourceRepository.md {
+        val markdown by sourceRepository.md {
             +"""
                 The [Elasticsearch Kotlin Client](https://github.com/jillesvangurp/es-kotlin-wrapper-client) is a client 
                 library written in Kotlin that 
@@ -151,6 +151,6 @@ class ManualOverviewPageTest {
                 library the easiest way to do this currently.
             """
         }
-        markdownPageWithNavigation(indexPage, markdown.value)
+        markdownPageWithNavigation(indexPage, markdown)
     }
 }

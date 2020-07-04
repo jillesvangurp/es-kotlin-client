@@ -22,7 +22,7 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             configure { mappings { text("title") } }
         }
 
-        val markdown = sourceRepository.md {
+        val markdown by sourceRepository.md {
 
             block(true) {
                 // lets use a slightly different model class this time
@@ -172,6 +172,6 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 }
             }
         }
-        markdownPageWithNavigation(searchPage, markdown.value)
+        markdownPageWithNavigation(searchPage, markdown)
     }
 }

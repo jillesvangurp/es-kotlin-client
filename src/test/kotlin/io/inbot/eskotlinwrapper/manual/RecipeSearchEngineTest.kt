@@ -8,7 +8,7 @@ class RecipeSearchEngineTest {
 
     @Test
     fun `article markdown`() {
-        val markdown = sourceRepository.md {
+        val markdown by sourceRepository.md {
             +"""
                     The Elasticsearch Kotlin Client is designed to simplify writing code that
                     interacts with Elasticsearch.
@@ -145,6 +145,6 @@ class RecipeSearchEngineTest {
                 ```
             """
         }
-        markdownPageWithNavigation(recipeSearchEnginePage, markdown.value)
+        markdownPageWithNavigation(recipeSearchEnginePage, markdown)
     }
 }

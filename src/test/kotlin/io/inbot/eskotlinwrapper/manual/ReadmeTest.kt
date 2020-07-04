@@ -16,10 +16,8 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
     data class Thing(val name: String, val amount: Long = 42)
 
-    @Test
-    fun `generate readme`() {
-        val markdown = sourceRepository.md {
-            +"""
+    val markdown by sourceRepository.md {
+        +"""
             [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
             [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
@@ -69,115 +67,115 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             - querying data 
             """
 
-            block {
-                // given some model class
-                data class Thing(val name: String, val amount: Long = 42)
+        block {
+            // given some model class
+            data class Thing(val name: String, val amount: Long = 42)
 
-                // create a Repository
-                // with the default jackson model reader and writer
-                // (you can use something else)
-                val thingRepository = esClient.indexRepository<Thing>(
-                    index = "things",
-                    // you have to opt in to refreshes, bad idea to refresh in production code
-                    refreshAllowed = true
-                )
+            // create a Repository
+            // with the default jackson model reader and writer
+            // (you can use something else)
+            val thingRepository = esClient.indexRepository<Thing>(
+                index = "things",
+                // you have to opt in to refreshes, bad idea to refresh in production code
+                refreshAllowed = true
+            )
 
-                // let the Repository create the index with the specified mappings & settings
-                thingRepository.createIndex {
-                    configure {
-                        // we use our settings DSL here
-                        // you can also use multi line strings with JSON in a source block
-                        settings {
-                            replicas = 0
-                            shards = 2
+            // let the Repository create the index with the specified mappings & settings
+            thingRepository.createIndex {
+                configure {
+                    // we use our settings DSL here
+                    // you can also use multi line strings with JSON in a source block
+                    settings {
+                        replicas = 0
+                        shards = 2
 
-                            addTokenizer("autocomplete") {
-                                // the DSL does not cover everything but it's a proper
-                                // map so you can fall back to adding things directly
-                                this["type"] = "edge_ngram"
-                                this["min_gram"] = 2
-                                this["max_gram"] = 10
-                                this["token_chars"] = listOf("letter")
-                            }
-                            addAnalyzer("autocomplete") {
-                                this["tokenizer"] = "autocomplete"
-                                this["filter"] = listOf("lowercase")
-                            }
-                            addAnalyzer("autocomplete_search") {
-                                this["tokenizer"] = "lowercase"
-                            }
+                        addTokenizer("autocomplete") {
+                            // the DSL does not cover everything but it's a proper
+                            // map so you can fall back to adding things directly
+                            this["type"] = "edge_ngram"
+                            this["min_gram"] = 2
+                            this["max_gram"] = 10
+                            this["token_chars"] = listOf("letter")
                         }
-                        // the mapping DSL is a bit more fully featured
-                        mappings {
-                            // mappings DSL, most common field types are supported
-                            text("name") {
-                                fields {
-                                    // lets also add name.raw field
-                                    keyword("raw")
-                                    // and a name.autocomplete field for auto complete
-                                    text("autocomplete") {
-                                        analyzer = "autocomplete"
-                                        searchAnalyzer = "autocomplete_search"
-                                    }
-                                }
-                            }
-                            // floats, longs, doubles, etc. should just work
-                            number<Int>("amount")
+                        addAnalyzer("autocomplete") {
+                            this["tokenizer"] = "autocomplete"
+                            this["filter"] = listOf("lowercase")
+                        }
+                        addAnalyzer("autocomplete_search") {
+                            this["tokenizer"] = "lowercase"
                         }
                     }
-                }
-
-                // lets put some things in our new index
-                thingRepository.index("1", Thing("foo", 42))
-                thingRepository.index("2", Thing("bar", 42))
-                thingRepository.index("3", Thing("foobar", 42))
-
-                // make sure ES commits the changes so we can search
-                thingRepository.refresh()
-
-                // putting things into an index 1 by 1 is not scalable
-                // lets do some bulk inserts with the Bulk DSL
-                thingRepository.bulk {
-                    // we are passed a BulkIndexingSession<Thing> in the block as 'this'
-
-                    // we will bulk re-index the objects we already added with
-                    // a scrolling search. Scrolling searches work just
-                    // like normal searches (except they are not ranked)
-                    // all you do is set scrolling to true and you can
-                    // scroll through billions of results.
-                    thingRepository.search(scrolling = true) {
-                        // A simple example of using the Kotlin Query DSL
-                        // you can also use a source block with multi line JSON
-                        dsl {
-                            from = 0
-                            // when scrolling, this is the scroll page size
-                            resultSize = 10
-                            query = bool {
-                                should(
-                                    MatchQuery("name", "foo"),
-                                    MatchQuery("name", "bar"),
-                                    MatchQuery("name", "foobar")
-                                )
+                    // the mapping DSL is a bit more fully featured
+                    mappings {
+                        // mappings DSL, most common field types are supported
+                        text("name") {
+                            fields {
+                                // lets also add name.raw field
+                                keyword("raw")
+                                // and a name.autocomplete field for auto complete
+                                text("autocomplete") {
+                                    analyzer = "autocomplete"
+                                    searchAnalyzer = "autocomplete_search"
+                                }
                             }
                         }
-                    }.hits.forEach { (esResult, deserialized) ->
-                        // we get a lazy sequence with deserialized Thing objects back
-                        // because it's a scrolling search, we fetch pages with results
-                        // as you consume the sequence.
-                        if (deserialized != null) {
-                            // de-serialized may be null if we disable source on the mapping
-                            // uses the BulkIndexingSession to add a transformed version
-                            // of the original thing
-                            index(
-                                esResult.id, deserialized.copy(amount = deserialized.amount + 1),
-                                // to allow updates of existing things
-                                create = false
-                            )
-                        }
+                        // floats, longs, doubles, etc. should just work
+                        number<Int>("amount")
                     }
                 }
             }
-            +"""
+
+            // lets put some things in our new index
+            thingRepository.index("1", Thing("foo", 42))
+            thingRepository.index("2", Thing("bar", 42))
+            thingRepository.index("3", Thing("foobar", 42))
+
+            // make sure ES commits the changes so we can search
+            thingRepository.refresh()
+
+            // putting things into an index 1 by 1 is not scalable
+            // lets do some bulk inserts with the Bulk DSL
+            thingRepository.bulk {
+                // we are passed a BulkIndexingSession<Thing> in the block as 'this'
+
+                // we will bulk re-index the objects we already added with
+                // a scrolling search. Scrolling searches work just
+                // like normal searches (except they are not ranked)
+                // all you do is set scrolling to true and you can
+                // scroll through billions of results.
+                thingRepository.search(scrolling = true) {
+                    // A simple example of using the Kotlin Query DSL
+                    // you can also use a source block with multi line JSON
+                    dsl {
+                        from = 0
+                        // when scrolling, this is the scroll page size
+                        resultSize = 10
+                        query = bool {
+                            should(
+                                MatchQuery("name", "foo"),
+                                MatchQuery("name", "bar"),
+                                MatchQuery("name", "foobar")
+                            )
+                        }
+                    }
+                }.hits.forEach { (esResult, deserialized) ->
+                    // we get a lazy sequence with deserialized Thing objects back
+                    // because it's a scrolling search, we fetch pages with results
+                    // as you consume the sequence.
+                    if (deserialized != null) {
+                        // de-serialized may be null if we disable source on the mapping
+                        // uses the BulkIndexingSession to add a transformed version
+                        // of the original thing
+                        index(
+                            esResult.id, deserialized.copy(amount = deserialized.amount + 1),
+                            // to allow updates of existing things
+                            create = false
+                        )
+                    }
+                }
+            }
+        }
+        +"""
                 
             ## Co-routines
             
@@ -189,36 +187,36 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             of course we also added a suspending version of the Index Repository. 
             """
 
-            block {
-                // we reuse the index we created already
-                val repo = esClient.asyncIndexRepository<Thing>(
-                    index = "things",
-                    refreshAllowed = true
-                )
-                // co routines require a CoroutineScope, so let create one
-                runBlocking {
-                    repo.bulk {
-                        // create some more things
-                        (1..1000).forEach {
-                            index("$it", Thing("thing #$it", it.toLong()))
-                        }
-                    }
-                    repo.refresh()
-                    // if you are wondering, yes this is almost identical
-                    // as the synchronous version above.
-                    repo.search {
-                        dsl {
-                            query = TermQuery("name.keyword", "thing #666")
-                        }
-                    }.mappedHits.collect {
-                        // collect is part of the kotlin Flow API
-                        // this is one of the few parts where the API is different
-                        println("we've found an evil thing with: ${it.amount}")
+        block {
+            // we reuse the index we created already
+            val repo = esClient.asyncIndexRepository<Thing>(
+                index = "things",
+                refreshAllowed = true
+            )
+            // co routines require a CoroutineScope, so let create one
+            runBlocking {
+                repo.bulk {
+                    // create some more things
+                    (1..1000).forEach {
+                        index("$it", Thing("thing #$it", it.toLong()))
                     }
                 }
+                repo.refresh()
+                // if you are wondering, yes this is almost identical
+                // as the synchronous version above.
+                repo.search {
+                    dsl {
+                        query = TermQuery("name.keyword", "thing #666")
+                    }
+                }.mappedHits.collect {
+                    // collect is part of the kotlin Flow API
+                    // this is one of the few parts where the API is different
+                    println("we've found an evil thing with: ${it.amount}")
+                }
             }
+        }
 
-            +"""    
+        +"""    
             For more examples, check the manual or the examples source folder.
             
             ## Code generation
@@ -310,8 +308,10 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             Please exercise your rights under this license in any way you feel is appropriate. Forking is allowed and encouraged. 
             I do appreciate attribution and pull requests ...
             """
-        }
+    }
 
-        markdownPageWithNavigation(readmePage, markdown.value)
+    @Test
+    fun `generate readme`() {
+        markdownPageWithNavigation(readmePage, markdown)
     }
 }

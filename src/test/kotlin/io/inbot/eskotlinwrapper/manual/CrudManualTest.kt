@@ -31,7 +31,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
         // make sure we get rid of the things index before running the rest of this
         thingRepository.deleteIndex()
 
-        val markdown = sourceRepository.md {
+        val markdown by sourceRepository.md {
             +""" 
                 To do anything with Elasticsearch we have to store documents in some index. The Java client
                 provides everything you need to do this but using it the right way requires quite a bit of boiler plate 
@@ -341,6 +341,6 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 For more details on how to use co-routines, see ${mdLink(coroutinesPage.title,coroutinesPage.fileName)}
             """.trimIndent()
         }
-        markdownPageWithNavigation(crudPage, markdown.value)
+        markdownPageWithNavigation(crudPage, markdown)
     }
 }

@@ -51,7 +51,7 @@ class CoRoutinesManualTest : AbstractElasticSearchTest(indexPrefix = "asyncthing
                     XContentType.JSON
                 )
             }
-            val markdown = sourceRepository.md {
+            val markdown by sourceRepository.md {
                 +"""
                 The RestHighLevelClient exposes asynchronous versions of most APIs that take a call back to process
                 the response when it comes back. Using this is kind of boiler plate heavy. 
@@ -189,7 +189,7 @@ class CoRoutinesManualTest : AbstractElasticSearchTest(indexPrefix = "asyncthing
                     }
                 }
             }
-            markdownPageWithNavigation(coroutinesPage, markdown.value)
+            markdownPageWithNavigation(coroutinesPage, markdown)
         }
     }
 }

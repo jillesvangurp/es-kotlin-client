@@ -1,5 +1,6 @@
 package io.inbot.eskotlinwrapper.manual
 
+import com.jillesvangurp.kotlin4example.mdLink
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -7,8 +8,7 @@ class RecipeSearchEngineTest {
 
     @Test
     fun `article markdown`() {
-        KotlinForExample.markdownPageWithNavigation(recipeSearchEnginePage) {
-            sourcePaths += "src/examples/kotlin"
+        val markdown = sourceRepository.md {
             +"""
                     The Elasticsearch Kotlin Client is designed to simplify writing code that
                     interacts with Elasticsearch.
@@ -37,7 +37,10 @@ class RecipeSearchEngineTest {
             snippetFromSourceFile("src/examples/kotlin/recipesearch/Recipe.kt", "model classes")
 
             +"""
-                    Given this model, we can create simple `AsyncIndexRepository` and use it (see ${mdLink(crudPage)}) 
+                    Given this model, we can create simple `AsyncIndexRepository` and use it (see ${mdLink(
+                crudPage.title,
+                crudPage.fileName
+            )}) 
                     to create a simple ktor server that can index and search through recipes. 
 
                     Lets start with our `main` function:
@@ -142,5 +145,6 @@ class RecipeSearchEngineTest {
                 ```
             """
         }
+        markdownPageWithNavigation(recipeSearchEnginePage, markdown.value)
     }
 }

@@ -1,5 +1,6 @@
 package io.inbot.eskotlinwrapper.manual
 
+import com.jillesvangurp.kotlin4example.mdLink
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -123,7 +124,7 @@ class ManualOverviewPageTest {
 
     @Test
     fun `generate index md`() {
-        KotlinForExample.markdownPageWithNavigation(indexPage) {
+        val markdown = sourceRepository.md {
             +"""
                 The [Elasticsearch Kotlin Client](https://github.com/jillesvangurp/es-kotlin-wrapper-client) is a client 
                 library written in Kotlin that 
@@ -131,7 +132,7 @@ class ManualOverviewPageTest {
                 
                 ## Chapters
             """
-            +pages.joinToString("\n") { "- ${io.inbot.eskotlinwrapper.manual.mdLink(it)}" }
+            +pages.joinToString("\n") { "- ${mdLink(it.title, it.fileName)}" }
             +"""
                 
                 ## Introduction
@@ -150,5 +151,6 @@ class ManualOverviewPageTest {
                 library the easiest way to do this currently.
             """
         }
+        markdownPageWithNavigation(indexPage, markdown.value)
     }
 }

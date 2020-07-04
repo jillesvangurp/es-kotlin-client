@@ -236,4 +236,3 @@ ___
 
 [previous](search.md) | [index](index.md) | [next](coroutines.md)
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/QueryDslManualTest.kt) from which this page is generated.

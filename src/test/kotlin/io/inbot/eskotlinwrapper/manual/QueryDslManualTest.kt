@@ -1,5 +1,6 @@
 package io.inbot.eskotlinwrapper.manual
 
+import com.jillesvangurp.kotlin4example.mdLink
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import io.inbot.eskotlinwrapper.dsl.MatchQuery
 import io.inbot.eskotlinwrapper.dsl.bool
@@ -40,7 +41,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             }
         }
 
-        KotlinForExample.markdownPageWithNavigation(queryDslPage) {
+        val markdown = sourceRepository.md {
 
             +"""
                 Elasticsearch has a Query DSL and the Java Rest High Level Client comes with a very expansive
@@ -50,7 +51,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 On this page we outline a few ways in which you can build queries both programmatically using the builders
                 that come with the Java client, using json strings, and using our Kotlin DSL.
                 
-                We will use the same example as before in ${mdLink(searchPage)}. 
+                We will use the same example as before in ${mdLink(searchPage.title, searchPage.fileName)}. 
                 
                 ## Java Builders
                 
@@ -216,5 +217,6 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 The DSL is currently kind of experimental and very incomplete. I will add more to this over time.
             """
         }
+        markdownPageWithNavigation(queryDslPage, markdown.value)
     }
 }

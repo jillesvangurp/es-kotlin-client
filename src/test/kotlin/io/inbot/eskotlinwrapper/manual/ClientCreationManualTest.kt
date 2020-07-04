@@ -12,7 +12,7 @@ class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual
 
     @Test
     fun `explain client creation`() {
-        KotlinForExample.markdownPageWithNavigation(createClientPage) {
+        val markdown = sourceRepository.md {
             +"""
                 To use the ES Kotlin Client, you simply have to create an instance
                 of the Java High Level Restclient (and have this library on the classpath). 
@@ -83,5 +83,6 @@ class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual
                 )
             }
         }
+        markdownPageWithNavigation(createClientPage, markdown.value)
     }
 }

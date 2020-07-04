@@ -167,4 +167,3 @@ ___
 
 [previous](bulk-indexing.md) | [index](index.md) | [next](query-dsl.md)
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/SearchManualTest.kt) from which this page is generated.

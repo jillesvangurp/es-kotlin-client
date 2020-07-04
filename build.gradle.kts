@@ -32,7 +32,7 @@ apply(plugin = "com.github.jillesvangurp.codegen")
 
 repositories {
     jcenter()
-    mavenCentral()
+    maven(url = "https://jitpack.io")
 }
 
 sourceSets {
@@ -159,6 +159,7 @@ dependencies {
 
     testImplementation("io.mockk:mockk:1.10.0")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.20")
+    testImplementation("com.github.jillesvangurp:kotlin4example:0.1.1")
 
     examplesImplementation("io.ktor:ktor-server-netty:$ktorVersion")
     examplesImplementation("io.ktor:ktor-server-core:$ktorVersion")

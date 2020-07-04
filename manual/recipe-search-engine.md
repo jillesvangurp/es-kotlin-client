@@ -17,7 +17,7 @@ implements a simple Rest service for indexing and searching recipes. Since both 
 support co-routines, we'll do the extra bit of work to fully utilize that.
 
 You can find the source code for this example 
-[here](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/examples/kotlin/recipesearch).
+[here](https://github.com/jillesvangurp/es-kotlin-wrapper-client).
 
 ## Our data model
 
@@ -415,4 +415,3 @@ ___
 
 [previous](coroutines.md) | [index](index.md) | [next](about.md)
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/RecipeSearchEngineTest.kt) from which this page is generated.

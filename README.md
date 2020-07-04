@@ -287,4 +287,3 @@ Please exercise your rights under this license in any way you feel is appropriat
 I do appreciate attribution and pull requests ...
 
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/ReadmeTest.kt) from which this page is generated.

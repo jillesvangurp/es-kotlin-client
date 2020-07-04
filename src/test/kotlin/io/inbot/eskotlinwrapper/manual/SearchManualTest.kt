@@ -2,6 +2,7 @@
 
 package io.inbot.eskotlinwrapper.manual
 
+import com.jillesvangurp.kotlin4example.mdLink
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
@@ -21,7 +22,7 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             configure { mappings { text("title") } }
         }
 
-        KotlinForExample.markdownPageWithNavigation(searchPage) {
+        val markdown = sourceRepository.md {
 
             block(true) {
                 // lets use a slightly different model class this time
@@ -90,7 +91,10 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             }
 
             +"""
-                We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see ${mdLink(queryDslPage)}
+                We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see ${mdLink(
+                queryDslPage.title,
+                queryDslPage.fileName
+            )}
             """
 
             +"""
@@ -168,5 +172,6 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 }
             }
         }
+        markdownPageWithNavigation(searchPage, markdown.value)
     }
 }

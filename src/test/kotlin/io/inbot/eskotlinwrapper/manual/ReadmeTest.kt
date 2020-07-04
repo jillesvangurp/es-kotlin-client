@@ -18,7 +18,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
     @Test
     fun `generate readme`() {
-        KotlinForExample.markdownPageWithNavigation(readmePage) {
+        val markdown = sourceRepository.md {
             +"""
             [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
             [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
@@ -311,5 +311,7 @@ class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             I do appreciate attribution and pull requests ...
             """
         }
+
+        markdownPageWithNavigation(readmePage, markdown.value)
     }
 }

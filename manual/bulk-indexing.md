@@ -215,4 +215,3 @@ ___
 
 [previous](crud-support.md) | [index](index.md) | [next](search.md)
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/BulkManualTest.kt) from which this page is generated.

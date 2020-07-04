@@ -97,10 +97,10 @@ Output:
   "things" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1593698450866",
+    "creation_date" : "1593837790473",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "IcOWaeq0QSOR9VtS56nKlg",
+    "uuid" : "TbvTvWiKTom_w6mah_BIKw",
     "version" : {
       "created" : "7080099"
     },
@@ -110,7 +110,7 @@ Output:
   }
 }
 things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-07-02T14:00:50.832307Z"},"properties":{"amount":{"type":"long","fields":{"abette
+07-04T04:43:10.445691Z"},"properties":{"amount":{"type":"long","fields":{"abette
 rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
 yword"}}},"title":{"type":"text"}}}
 ```
@@ -376,4 +376,3 @@ ___
 
 [previous](creating-client.md) | [index](index.md) | [next](bulk-indexing.md)
 
-This Markdown is Generated from Kotlin code. Please don't edit this file and instead edit the [source file](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/test/kotlin/io/inbot/eskotlinwrapper/manual/CrudManualTest.kt) from which this page is generated.

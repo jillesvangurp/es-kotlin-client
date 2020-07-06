@@ -2,7 +2,7 @@
 
 ___
 
-# How to create the client
+# How to create the client 
 
 To use the ES Kotlin Client, you simply have to create an instance
 of the Java High Level Restclient (and have this library on the classpath). 

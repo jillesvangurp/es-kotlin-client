@@ -4,30 +4,22 @@ import com.jillesvangurp.kotlin4example.mdLink
 import org.junit.jupiter.api.Test
 import java.io.File
 
-val readmeMd = "README.md"
 val indexMd = "index.md"
-val createClientMd = "creating-client.md"
-val crudSupportMd = "crud-support.md"
-val bulkIndexingMd = "bulk-indexing.md"
-val searchMd = "search.md"
-val queryDslMd = "query-dsl.md"
-val coroutinesMd = "coroutines.md"
-val recipeSearchEngineMd = "recipe-search-engine.md"
-val aboutThisManualMd = "about.md"
 
-val readmePage = Page("Elasticsearch Kotlin Client", readmeMd, outputDir = ".")
-val indexPage = Page("Elasticsearch Kotlin Client Manual", indexMd)
-val createClientPage = Page("How to create the client", createClientMd, parent = indexMd, emitBookPage = true)
-val crudPage =
-    Page("Working with objects", crudSupportMd, parent = indexMd, emitBookPage = true)
-val bulkPage = Page("Bulk Indexing", bulkIndexingMd, parent = indexMd, emitBookPage = true)
-val searchPage = Page("Search", searchMd, parent = indexMd, emitBookPage = true)
-val queryDslPage = Page("Query DSL", queryDslMd, parent = indexMd, emitBookPage = true)
-val coroutinesPage = Page("Co-routines", coroutinesMd, parent = indexMd, emitBookPage = true)
-val recipeSearchEnginePage = Page("Building a Recipe Search Engine", recipeSearchEngineMd, parent = indexMd, emitBookPage = true)
-val aboutThisManualPage = Page("About this manual", aboutThisManualMd, parent = indexMd, emitBookPage = true)
+val readmePage = Page("Elasticsearch Kotlin Client", "README.md", outputDir = ".")
+val manualIndexPage = Page("Elasticsearch Kotlin Client Manual", indexMd)
+val createClientPage = Page("How to create the client", "creating-client.md", parent = indexMd, emitBookPage = true)
+val indexRepositoryPage =
+    Page("Working with objects", "crud-support.md", parent = indexMd, emitBookPage = true)
+val bulkPage = Page("Bulk Indexing", "bulk-indexing.md", parent = indexMd, emitBookPage = true)
+val searchPage = Page("Search", "search.md", parent = indexMd, emitBookPage = true)
+val queryDslPage = Page("Query DSL", "query-dsl.md", parent = indexMd, emitBookPage = true)
+val coroutinesPage = Page("Co-routines", "coroutines.md", parent = indexMd, emitBookPage = true)
+val recipeSearchEnginePage = Page("Building a Recipe Search Engine",
+    "recipe-search-engine.md", parent = indexMd, emitBookPage = true)
+val aboutThisManualPage = Page("About this manual", "about.md", parent = indexMd, emitBookPage = true)
 
-val pages = listOf(createClientPage, crudPage, bulkPage, searchPage, queryDslPage, coroutinesPage, recipeSearchEnginePage, aboutThisManualPage)
+val manualPages = listOf(createClientPage, indexRepositoryPage, bulkPage, searchPage, queryDslPage, coroutinesPage, recipeSearchEnginePage, aboutThisManualPage)
 
 class ManualOverviewPageTest {
 
@@ -117,7 +109,7 @@ class ManualOverviewPageTest {
         File("epub", "create_ebook.sh").writeText(
             """
             #!/bin/bash
-            pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${pages.joinToString(" ") {it.fileName}}
+            pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${manualPages.joinToString(" ") {it.fileName}}
             """.trimIndent()
         )
     }
@@ -132,7 +124,7 @@ class ManualOverviewPageTest {
                 
                 ## Chapters
             """
-            +pages.joinToString("\n") { "- ${mdLink(it.title, it.fileName)}" }
+            +manualPages.joinToString("\n") { "- ${mdLink(it.title, it.fileName)}" }
             +"""
                 
                 ## Introduction
@@ -151,6 +143,6 @@ class ManualOverviewPageTest {
                 library the easiest way to do this currently.
             """
         }
-        markdownPageWithNavigation(indexPage, markdown)
+        markdownPageWithNavigation(manualIndexPage, markdown)
     }
 }

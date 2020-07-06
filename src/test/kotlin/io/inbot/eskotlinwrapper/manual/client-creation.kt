@@ -1,16 +1,16 @@
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
+import io.inbot.eskotlinwrapper.withTestIndex
 import org.apache.http.HttpHost
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.create
 import org.junit.jupiter.api.Test
 
-@Suppress("UNUSED_VARIABLE")
-class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
 
-    val markdown by sourceRepository.md {
+val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
+    sourceRepository.md {
         +"""
             To use the ES Kotlin Client, you simply have to create an instance
             of the Java High Level Restclient (and have this library on the classpath). 
@@ -80,6 +80,13 @@ class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual
                 sniffIntervalMillis = 30000
             )
         }
+    }
+}
+
+@Suppress("UNUSED_VARIABLE")
+class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
+
+    val markdown by sourceRepository.md {
     }
 
     @Test

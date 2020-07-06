@@ -1,4 +1,4 @@
-# Elasticsearch Kotlin Client
+# Elasticsearch Kotlin Client 
 
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
@@ -50,8 +50,12 @@ is to touch on most topics a software engineer would need to deal with when crea
 
 ```kotlin
 // given some model class
-data class Thing(val name: String, val amount: Long = 42)
+data class Thing(
+  val name: String,
+  val amount: Long = 42)
+```
 
+```kotlin
 // create a Repository
 // with the default jackson model reader and writer
 // (you can use something else)
@@ -177,7 +181,10 @@ runBlocking {
   repo.bulk {
     // create some more things
     (1..1000).forEach {
-      index("$it", Thing("thing #$it", it.toLong()))
+      index(
+        "$it",
+        Thing("thing #$it", it.toLong())
+      )
     }
   }
   repo.refresh()

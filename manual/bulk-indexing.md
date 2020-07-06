@@ -2,7 +2,7 @@
 
 ___
 
-# Bulk Indexing
+# Bulk Indexing 
 
 An important part of working with Elasticsearch is adding content. While the CRUD support is useful
 for manipulating individual objects in an index, it is not suitable for sending large amounts of data.
@@ -25,13 +25,13 @@ simple `bulk` method that creates a session for you:
 
 ```kotlin
 // creates a BulkIndexingSession<Thing> and passes it to the block
-thingRepository.bulk {
+repo.bulk {
   1.rangeTo(500).forEach {
     index("doc-$it", Thing("indexed $it", 666))
   }
 }
 
-println("Lets get one of them " + thingRepository.get("doc-100"))
+println("Lets get one of them " + repo.get("doc-100"))
 ```
 
 Output:
@@ -50,7 +50,7 @@ course.
 In addition to `index` we have a few more operations.
 
 ```kotlin
-thingRepository.bulk(bulkSize = 50) {
+repo.bulk(bulkSize = 50) {
   // setting create=false overwrites and is the appropriate thing
   // to do if you are replacing documents in bulk
   index("doc-1", Thing("upserted 1", 666), create = false)
@@ -80,11 +80,11 @@ thingRepository.bulk(bulkSize = 50) {
   delete("doc-4")
 }
 
-println(thingRepository.get("doc-1"))
-println(thingRepository.get("doc-2"))
-println(thingRepository.get("doc-3"))
+println(repo.get("doc-1"))
+println(repo.get("doc-2"))
+println(repo.get("doc-3"))
 // should print null
-println(thingRepository.get("doc-4"))
+println(repo.get("doc-4"))
 ```
 
 Output:
@@ -113,7 +113,7 @@ For most users this should be OK but if you want, you can do something custom:
 There are a few more parameters that you can override.
 
 ```kotlin
-thingRepository.bulk(
+repo.bulk(
   // controls the number of items to send to Elasticsearch
   // what is optimal depends on the size of your documents and
   // your cluster setup.
@@ -140,7 +140,7 @@ thingRepository.bulk(
 ```
 
 ```kotlin
-thingRepository.bulk(
+repo.bulk(
   itemCallback = object : (BulkOperation<Thing>, BulkItemResponse) -> Unit {
     // Elasticsearch confirms what it did for each item in a bulk request
     // and you can implement this callback to do something custom
@@ -148,7 +148,7 @@ thingRepository.bulk(
       if (response.isFailed) {
         println(
           "${op.id}: ${op.operation.opType().name} failed, " +
-            "code: ${response.failure.status}"
+              "code: ${response.failure.status}"
         )
       } else {
         println("${op.id}: ${op.operation.opType().name} succeeded!")
@@ -167,15 +167,15 @@ thingRepository.bulk(
     currentVersion.copy(name = "safely updated 3")
   }
 }
-println("" + thingRepository.get("doc-2"))
+println("" + repo.get("doc-2"))
 
 +"""
-  # Other parameters
-  
-  There are a few more parameters that you can override.
-"""
+    # Other parameters
+    
+    There are a few more parameters that you can override.
+  """
 blockWithOutput {
-  thingRepository.bulk(
+  repo.bulk(
     // controls the number of items to send to Elasticsearch
     // what is optimal depends on the size of your documents and
     // your cluster setup.

@@ -2,11 +2,24 @@ package io.inbot.eskotlinwrapper.manual
 
 import com.jillesvangurp.kotlin4example.SourceRepository
 import com.jillesvangurp.kotlin4example.mdLink
-import mu.KLogger
-import mu.KotlinLogging
+import org.junit.jupiter.api.Test
 import java.io.File
 
-private val logger: KLogger = KotlinLogging.logger { }
+class ManualCreationTest {
+    @Test
+    fun `generate manual`() {
+        mapOf(
+            readmePage to readme,
+            aboutThisManualPage to about,
+            createClientPage to clientCreation,
+            indexRepositoryPage to indexRepository,
+            coroutinesPage to coRoutines,
+            bulkPage to bulk
+        ).forEach { (page, md) ->
+            markdownPageWithNavigation(page, md)
+        }
+    }
+}
 
 val sourceRepository = SourceRepository(
     repoUrl = "https://github.com/jillesvangurp/es-kotlin-wrapper-client",
@@ -14,9 +27,9 @@ val sourceRepository = SourceRepository(
 )
 
 fun markdownPageWithNavigation(page: Page, markdown: String) {
-    val index = pages.indexOf(page)
-    val previous = if (index < 0) null else if (index == 0) null else pages[index - 1].fileName
-    val next = if (index < 0) null else if (index == pages.size - 1) null else pages[index + 1].fileName
+    val index = manualPages.indexOf(page)
+    val previous = if (index < 0) null else if (index == 0) null else manualPages[index - 1].fileName
+    val next = if (index < 0) null else if (index == manualPages.size - 1) null else manualPages[index + 1].fileName
     val nav = listOfNotNull(
         if (!previous.isNullOrBlank()) mdLink("previous", previous) else null,
         if (!page.parent.isNullOrBlank()) mdLink("index", page.parent) else null,
@@ -25,14 +38,14 @@ fun markdownPageWithNavigation(page: Page, markdown: String) {
 
     val md =
         """
-                # ${page.title}
-                
+            # ${page.title} 
+            
         """.trimIndent().trimMargin() + "\n\n" + markdown
 
     val pageWithNavigationMd =
         (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n\n___\n\n" else "") +
-            md + "\n" +
-            (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "")
+                md + "\n" +
+                (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "")
 
     File(page.outputDir).mkdirs()
     File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)

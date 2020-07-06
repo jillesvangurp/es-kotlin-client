@@ -38,8 +38,8 @@ class RecipeSearchEngineTest {
 
             +"""
                     Given this model, we can create simple `AsyncIndexRepository` and use it (see ${mdLink(
-                crudPage.title,
-                crudPage.fileName
+                indexRepositoryPage.title,
+                indexRepositoryPage.fileName
             )}) 
                     to create a simple ktor server that can index and search through recipes. 
 

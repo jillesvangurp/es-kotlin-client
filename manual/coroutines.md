@@ -2,7 +2,7 @@
 
 ___
 
-# Co-routines
+# Co-routines 
 
 The RestHighLevelClient exposes asynchronous versions of most APIs that take a call back to process
 the response when it comes back. Using this is kind of boiler plate heavy. 
@@ -77,25 +77,25 @@ runBlocking {
   asyncRepo.createIndex {
     source(
       """
-    {
-      "settings": {
-      "index": {
-        "number_of_shards": 3,
-        "number_of_replicas": 0,
-        "blocks": {
-        "read_only_allow_delete": "false"
+        {
+          "settings": {
+          "index": {
+            "number_of_shards": 3,
+            "number_of_replicas": 0,
+            "blocks": {
+            "read_only_allow_delete": "false"
+            }
+          }
+          },
+          "mappings": {
+          "properties": {
+            "title": {
+            "type": "text"
+            }
+          }
+          }
         }
-      }
-      },
-      "mappings": {
-      "properties": {
-        "title": {
-        "type": "text"
-        }
-      }
-      }
-    }
-  """,
+      """,
       XContentType.JSON
     )
   }

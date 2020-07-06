@@ -17,9 +17,7 @@ import org.junit.jupiter.api.Test
 
 @Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
-
-    private data class Thing(val title: String, val amount: Long = 42)
-
+    
     @Test
     fun `explain crud repository`() {
         // we have to do this twice once for printing and once for using :-)
@@ -55,7 +53,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             """
 
             block {
-                data class Thing(val title: String, val amount: Long = 42)
+                data class Thing(val name: String, val amount: Long = 42)
             }
 
             +"""
@@ -218,7 +216,7 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                     ?: throw IllegalStateException("We just created this?!")
 
                 println(
-                    "obj with title '${obj.title}' has id: ${rawGetResponse.id}, " +
+                    "obj with title '${obj.name}' has id: ${rawGetResponse.id}, " +
                         "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
                         "seqNo: ${rawGetResponse.seqNo}"
                 )
@@ -252,13 +250,13 @@ class CrudManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                 thingRepository.index("3", Thing("Yet another thing"))
 
                 thingRepository.update("3") { currentThing ->
-                    currentThing.copy(title = "an updated thing", amount = 666)
+                    currentThing.copy(name = "an updated thing", amount = 666)
                 }
 
                 println("It was updated: ${thingRepository.get("3")}")
 
                 thingRepository.update("3") { currentThing ->
-                    currentThing.copy(title = "we can do this again and again", amount = 666)
+                    currentThing.copy(name = "we can do this again and again", amount = 666)
                 }
 
                 println("It was updated again ${thingRepository.get("3")}")

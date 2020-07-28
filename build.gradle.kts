@@ -139,9 +139,9 @@ dependencies {
 
     api("org.apache.commons:commons-lang3:3.10")
 
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
     api("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticVersion")
     api("org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticVersion")

@@ -1,10 +1,26 @@
 package io.inbot.eskotlinwrapper.manual
 
+import com.jillesvangurp.kotlin4example.SourceRepository
 import com.jillesvangurp.kotlin4example.mdLink
 import org.junit.jupiter.api.Test
 import java.io.File
 
-val indexMd = "index.md"
+const val indexMd = "index.md"
+
+/**
+ * Simple abstraction for a page. Pages go in some output directory, have a title, and may or may not be part of a book.
+ */
+data class Page(
+    val title: String,
+    val fileName: String,
+    val outputDir: String = "manual",
+    val parent: String? = null,
+    val emitBookPage: Boolean = false
+)
+val sourceGitRepository = SourceRepository(
+    repoUrl = "https://github.com/jillesvangurp/es-kotlin-wrapper-client",
+    sourcePaths = setOf("src/main/kotlin", "src/test/kotlin", "src/examples/kotlin")
+)
 
 val readmePage = Page("Elasticsearch Kotlin Client", "README.md", outputDir = ".")
 val manualIndexPage = Page("Elasticsearch Kotlin Client Manual", indexMd)
@@ -22,6 +38,51 @@ val aboutThisManualPage = Page("About this manual", "about.md", parent = indexMd
 val manualPages = listOf(createClientPage, indexRepositoryPage, bulkPage, searchPage, queryDslPage, coroutinesPage, recipeSearchEnginePage, aboutThisManualPage)
 
 class ManualOverviewPageTest {
+    @Test
+    fun `generate index md`() {
+        val markdown by sourceGitRepository.md {
+            +"""
+                The [Elasticsearch Kotlin Client](https://github.com/jillesvangurp/es-kotlin-wrapper-client) is a client 
+                library written in Kotlin that 
+                adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) provided by Elasticsearch.
+                
+                ## Chapters
+            """
+            +manualPages.joinToString("\n") { "- ${mdLink(it.title, it.fileName)}" }
+            +"""
+                
+                ## Introduction
+                
+                The official Java client provides client functionality for essentially everything exposed by their REST
+                API. The Elasticsearch Kotlin Client makes using this functionality more Kotlin friendly. 
+
+                It does this
+                through extension functions that add many useful features and shortcuts. It adds Kotlin DSLs for
+                querying, defining mappings, and bulk indexing. To facilitate the most common use cases, this library
+                also provides a Repository abstraction that enables the user to interact with an index in a way that
+                is less boilerplate heavy.
+                
+                Additionally, it provides co-routine friendly versions of the asynchronous clients in the Java library.
+                This enables the user to write fully reactive code in e.g. Ktor or Spring Boot. This makes this
+                library the easiest way to do this currently.
+            """
+        }
+        markdownPageWithNavigation(manualIndexPage, markdown)
+    }
+
+    @Test
+    fun `generate manual`() {
+        mapOf(
+            readmePage to readme,
+            aboutThisManualPage to about,
+            createClientPage to clientCreation,
+            indexRepositoryPage to indexRepository,
+            coroutinesPage to coRoutines,
+            bulkPage to bulk
+        ).forEach { (page, md) ->
+            markdownPageWithNavigation(page, md)
+        }
+    }
 
     @Test
     fun `create ebook create script`() {
@@ -113,36 +174,36 @@ class ManualOverviewPageTest {
             """.trimIndent()
         )
     }
+}
 
-    @Test
-    fun `generate index md`() {
-        val markdown by sourceRepository.md {
-            +"""
-                The [Elasticsearch Kotlin Client](https://github.com/jillesvangurp/es-kotlin-wrapper-client) is a client 
-                library written in Kotlin that 
-                adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) provided by Elasticsearch.
-                
-                ## Chapters
-            """
-            +manualPages.joinToString("\n") { "- ${mdLink(it.title, it.fileName)}" }
-            +"""
-                
-                ## Introduction
-                
-                The official Java client provides client functionality for essentially everything exposed by their REST
-                API. The Elasticsearch Kotlin Client makes using this functionality more Kotlin friendly. 
 
-                It does this
-                through extension functions that add many useful features and shortcuts. It adds Kotlin DSLs for
-                querying, defining mappings, and bulk indexing. To facilitate the most common use cases, this library
-                also provides a Repository abstraction that enables the user to interact with an index in a way that
-                is less boilerplate heavy.
-                
-                Additionally, it provides co-routine friendly versions of the asynchronous clients in the Java library.
-                This enables the user to write fully reactive code in e.g. Ktor or Spring Boot. This makes this
-                library the easiest way to do this currently.
-            """
-        }
-        markdownPageWithNavigation(manualIndexPage, markdown)
+fun markdownPageWithNavigation(page: Page, markdown: String) {
+    val index = manualPages.indexOf(page)
+    val previous = if (index < 0) null else if (index == 0) null else manualPages[index - 1].fileName
+    val next = if (index < 0) null else if (index == manualPages.size - 1) null else manualPages[index + 1].fileName
+    val nav = listOfNotNull(
+        if (!previous.isNullOrBlank()) mdLink("previous", previous) else null,
+        if (!page.parent.isNullOrBlank()) mdLink("index", page.parent) else null,
+        if (!next.isNullOrBlank()) mdLink("next", next) else null
+    )
+
+    val md =
+        """
+            # ${page.title} 
+            
+        """.trimIndent().trimMargin() + "\n\n" + markdown
+
+    val pageWithNavigationMd =
+        (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n\n___\n\n" else "") +
+                md + "\n" +
+                (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "")
+
+    File(page.outputDir).mkdirs()
+    File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)
+    if (page.emitBookPage) {
+        File("epub").mkdirs()
+        File("epub", page.fileName).writeText(md)
     }
 }
+
+

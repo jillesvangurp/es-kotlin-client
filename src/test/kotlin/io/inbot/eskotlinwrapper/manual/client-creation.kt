@@ -8,7 +8,7 @@ import org.elasticsearch.client.create
 
 
 val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
-    sourceRepository.md {
+    sourceGitRepository.md {
         +"""
             To use the ES Kotlin Client, you simply have to create an instance
             of the Java High Level Restclient (and have this library on the classpath). 

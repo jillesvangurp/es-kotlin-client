@@ -15,7 +15,7 @@ import org.elasticsearch.client.reloadAnalyzersAsync
 import org.elasticsearch.common.xcontent.XContentType
 
 val coRoutines by withTestIndex<Thing, Lazy<String>> {
-    sourceRepository.md {
+    sourceGitRepository.md {
         +"""
                 The RestHighLevelClient exposes asynchronous versions of most APIs that take a call back to process
                 the response when it comes back. Using this is kind of boiler plate heavy. 

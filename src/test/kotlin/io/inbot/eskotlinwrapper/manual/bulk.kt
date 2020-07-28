@@ -10,7 +10,7 @@ import org.elasticsearch.action.support.WriteRequest
 
 
 val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
-    sourceRepository.md {
+    sourceGitRepository.md {
         +"""
                 An important part of working with Elasticsearch is adding content. While the CRUD support is useful
                 for manipulating individual objects in an index, it is not suitable for sending large amounts of data.

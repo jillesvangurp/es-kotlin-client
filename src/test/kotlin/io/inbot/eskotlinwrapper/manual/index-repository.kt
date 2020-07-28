@@ -15,8 +15,8 @@ import org.elasticsearch.client.source
 import org.elasticsearch.common.xcontent.stringify
 
 
-val indexRepository by withTestIndex<Thing, Lazy<String>> {
-    sourceRepository.md {
+val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
+    sourceGitRepository.md {
         +""" 
                 To do anything with Elasticsearch we have to store documents in some index. The Java client
                 provides everything you need to do this but using it the right way requires quite a bit of boiler plate 
@@ -58,6 +58,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>> {
                 Before we store any objects, we should create the index. Note this is optional but using
                 Elasticsearch in schema-less mode is probably not what you want. We use a simple mapping here.
             """
+
 
         block(true) {
             repo.createIndex {

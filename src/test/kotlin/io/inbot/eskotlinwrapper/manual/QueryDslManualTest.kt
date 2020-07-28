@@ -40,7 +40,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             }
         }
 
-        val markdown by sourceRepository.md {
+        val markdown by sourceGitRepository.md {
 
             +"""
                 Elasticsearch has a Query DSL and the Java Rest High Level Client comes with a very expansive

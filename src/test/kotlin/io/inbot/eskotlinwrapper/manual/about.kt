@@ -4,7 +4,7 @@ import com.jillesvangurp.kotlin4example.mdLink
 import io.inbot.eskotlinwrapper.withTestIndex
 
 val about by withTestIndex<Thing, Lazy<String>> {
-    sourceRepository.md {
+    sourceGitRepository.md {
 
         +"""
         ## About this manual

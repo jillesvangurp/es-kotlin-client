@@ -22,7 +22,7 @@ class SearchManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
             configure { mappings { text("title") } }
         }
 
-        val markdown by sourceRepository.md {
+        val markdown by sourceGitRepository.md {
 
             block(true) {
                 // lets use a slightly different model class this time

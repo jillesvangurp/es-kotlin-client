@@ -137,6 +137,7 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
     private var settings: IndexSettings? = null
     private var meta: MapBackedProperties? = null
     private var mappings: FieldMappings? = null
+    private var dynamicEnabled: Boolean? = null
 
     fun settings(block: IndexSettings.() -> Unit) {
         val settingsMap = IndexSettings()
@@ -150,7 +151,8 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
         block.invoke(meta!!)
     }
 
-    fun mappings(block: FieldMappings.() -> Unit) {
+    fun mappings(dynamicEnabled: Boolean?=null, block: FieldMappings.() -> Unit) {
+        this.dynamicEnabled = dynamicEnabled
         if (mappings == null) mappings = FieldMappings()
         block.invoke(mappings!!)
     }
@@ -176,6 +178,10 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
                         if (meta != null) {
                             field("_meta")
                             writeAny(meta)
+                        }
+                        if(dynamicEnabled != null) {
+                            field("dynamic")
+                            writeAny(dynamicEnabled)
                         }
                         if (mappings != null) {
                             field("properties")

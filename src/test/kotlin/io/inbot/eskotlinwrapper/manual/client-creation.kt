@@ -1,12 +1,10 @@
 package io.inbot.eskotlinwrapper.manual
 
-import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import io.inbot.eskotlinwrapper.withTestIndex
 import org.apache.http.HttpHost
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.create
-import org.junit.jupiter.api.Test
 
 
 val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
@@ -80,17 +78,5 @@ val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refre
                 sniffIntervalMillis = 30000
             )
         }
-    }
-}
-
-@Suppress("UNUSED_VARIABLE")
-class ClientCreationManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
-
-    val markdown by sourceRepository.md {
-    }
-
-    @Test
-    fun `explain client creation`() {
-        markdownPageWithNavigation(createClientPage, markdown)
     }
 }

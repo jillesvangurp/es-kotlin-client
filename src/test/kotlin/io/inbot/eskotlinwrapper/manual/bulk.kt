@@ -2,17 +2,11 @@
 
 package io.inbot.eskotlinwrapper.manual
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import io.inbot.eskotlinwrapper.BulkIndexingSession
 import io.inbot.eskotlinwrapper.BulkOperation
-import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.inbot.eskotlinwrapper.withTestIndex
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.support.WriteRequest
-import org.elasticsearch.client.indexRepository
-import org.elasticsearch.common.xcontent.XContentType
-import org.junit.jupiter.api.Test
 
 
 val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
@@ -42,13 +36,13 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
 
         blockWithOutput {
             // creates a BulkIndexingSession<Thing> and passes it to the block
-            indexRepository.bulk {
+            repo.bulk {
                 1.rangeTo(500).forEach {
                     index("doc-$it", Thing("indexed $it", 666))
                 }
             }
 
-            println("Lets get one of them " + indexRepository.get("doc-100"))
+            println("Lets get one of them " + repo.get("doc-100"))
         }
 
         +"""
@@ -62,7 +56,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
             """
 
         blockWithOutput {
-            indexRepository.bulk(bulkSize = 50) {
+            repo.bulk(bulkSize = 50) {
                 // setting create=false overwrites and is the appropriate thing
                 // to do if you are replacing documents in bulk
                 index("doc-1", Thing("upserted 1", 666), create = false)
@@ -92,11 +86,11 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
                 delete("doc-4")
             }
 
-            println(indexRepository.get("doc-1"))
-            println(indexRepository.get("doc-2"))
-            println(indexRepository.get("doc-3"))
+            println(repo.get("doc-1"))
+            println(repo.get("doc-2"))
+            println(repo.get("doc-3"))
             // should print null
-            println(indexRepository.get("doc-4"))
+            println(repo.get("doc-4"))
         }
 
         +"""
@@ -113,7 +107,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
             """
 
         blockWithOutput {
-            indexRepository.bulk(
+            repo.bulk(
                 itemCallback = object : (BulkOperation<Thing>, BulkItemResponse) -> Unit {
                     // Elasticsearch confirms what it did for each item in a bulk request
                     // and you can implement this callback to do something custom
@@ -140,7 +134,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
                     currentVersion.copy(name = "safely updated 3")
                 }
             }
-            println("" + indexRepository.get("doc-2"))
+            println("" + repo.get("doc-2"))
 
             +"""
                     # Other parameters
@@ -148,7 +142,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
                     There are a few more parameters that you can override.
                 """
             blockWithOutput {
-                indexRepository.bulk(
+                repo.bulk(
                     // controls the number of items to send to Elasticsearch
                     // what is optimal depends on the size of your documents and
                     // your cluster setup.

@@ -1,6 +1,5 @@
 package io.inbot.eskotlinwrapper.manual
 
-import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import io.inbot.eskotlinwrapper.dsl.MatchQuery
 import io.inbot.eskotlinwrapper.dsl.TermQuery
 import io.inbot.eskotlinwrapper.dsl.bool
@@ -12,7 +11,7 @@ import org.elasticsearch.client.asyncIndexRepository
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
 
-val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true) {
+val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceRepository.md {
         +"""
             [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
@@ -305,15 +304,5 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
         Please exercise your rights under this license in any way you feel is appropriate. Forking is allowed and encouraged. 
         I do appreciate attribution and pull requests ...
     """
-}}
-
-//class ReadmeTest : AbstractElasticSearchTest(indexPrefix = "manual") {
-//
-//    val markdown by sourceRepository.md {
-//    }
-//
-//    @Test
-//    fun `generate readme`() {
-//        markdownPageWithNavigation(readmePage, markdown)
-//    }
-//}
+    }
+}

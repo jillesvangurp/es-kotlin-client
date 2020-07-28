@@ -2,9 +2,8 @@ package io.inbot.eskotlinwrapper.manual
 
 import com.jillesvangurp.kotlin4example.mdLink
 import io.inbot.eskotlinwrapper.withTestIndex
-import org.junit.jupiter.api.Test
 
-val about by withTestIndex<ReadmeTest.Thing, Lazy<String>> {
+val about by withTestIndex<Thing, Lazy<String>> {
     sourceRepository.md {
 
         +"""
@@ -33,11 +32,3 @@ val about by withTestIndex<ReadmeTest.Thing, Lazy<String>> {
     }
 }
 
-class AboutThisManualTest {
-
-    @Test
-    fun `about this manual`() {
-
-        markdownPageWithNavigation(aboutThisManualPage, about)
-    }
-}

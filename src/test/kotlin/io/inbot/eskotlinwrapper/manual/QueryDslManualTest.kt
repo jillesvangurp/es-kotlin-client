@@ -16,7 +16,6 @@ import org.elasticsearch.search.builder.SearchSourceBuilder.searchSource
 import org.junit.jupiter.api.Test
 
 class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
-    private data class Thing(val title: String)
 
     @Test
     fun `query dsl manual`() {
@@ -27,7 +26,7 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
         thingRepository.createIndex {
             configure {
                 mappings {
-                    text("title")
+                    text("name")
                 }
             }
         }
@@ -68,8 +67,8 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                             .size(20)
                             .query(
                                 boolQuery()
-                                    .must(matchQuery("title", "quick").boost(2.0f))
-                                    .must(matchQuery("title", "brown"))
+                                    .must(matchQuery("name", "quick").boost(2.0f))
+                                    .must(matchQuery("name", "brown"))
                             )
                     )
                 }
@@ -88,8 +87,8 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                             query(
                                 boolQuery().apply {
                                     must().apply {
-                                        add(matchQuery("title", "quick").boost(2.0f))
-                                        add(matchQuery("title", "brown"))
+                                        add(matchQuery("name", "quick").boost(2.0f))
+                                        add(matchQuery("name", "brown"))
                                     }
                                 }
                             )
@@ -142,14 +141,14 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                 // it also has filter, should, and mustNot
                                 must(
                                     // it has a vararg list of ESQuery
-                                    MatchQuery("title", "quick") {
+                                    MatchQuery("name", "quick") {
                                         // match always needs a field and query
                                         // but boost is optional
                                         boost = 2.0
                                     },
                                     // but the block param is nullable and
                                     // defaults to null
-                                    MatchQuery("title", "brown")
+                                    MatchQuery("name", "brown")
                                 )
                             }
                     }
@@ -181,13 +180,13 @@ class QueryDslManualTest : AbstractElasticSearchTest(indexPrefix = "manual") {
                                         // elasticsearch expects fieldName: object
                                         // so we use mapProps to construct and use
                                         // another MapBackedProperties
-                                        this["title"] = mapProps {
+                                        this["name"] = mapProps {
                                             this["query"] = "quick"
                                             this["boost"] = 2.0
                                         }
                                     }.toMap(),
                                     customQuery("match") {
-                                        this["title"] = mapProps {
+                                        this["name"] = mapProps {
                                             this["query"] = "brown"
                                         }
                                     }.toMap()

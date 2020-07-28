@@ -20,7 +20,14 @@ class JacksonModelReaderAndWriter<T : Any>(
     override fun deserializer(): (ByteArray?) -> T = { bytes ->
         objectMapper.readValue(bytes, clazz.java)!!
     }
-    override fun serializer(): (T) -> ByteArray = { value -> objectMapper.writeValueAsBytes(value) }
+    override fun serializer(): (T) -> ByteArray = { value ->
+        if(value is String) {
+            // assume it is already json
+            value.toByteArray()
+        } else {
+            objectMapper.writeValueAsBytes(value)
+        }
+    }
 
     companion object {
         inline fun <reified T : Any> create(objectMapper: ObjectMapper? = null): JacksonModelReaderAndWriter<T> {

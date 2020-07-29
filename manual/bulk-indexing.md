@@ -148,7 +148,7 @@ repo.bulk(
       if (response.isFailed) {
         println(
           "${op.id}: ${op.operation.opType().name} failed, " +
-              "code: ${response.failure.status}"
+            "code: ${response.failure.status}"
         )
       } else {
         println("${op.id}: ${op.operation.opType().name} succeeded!")
@@ -170,10 +170,10 @@ repo.bulk(
 println("" + repo.get("doc-2"))
 
 +"""
-    # Other parameters
-    
-    There are a few more parameters that you can override.
-  """
+  # Other parameters
+  
+  There are a few more parameters that you can override.
+"""
 blockWithOutput {
   repo.bulk(
     // controls the number of items to send to Elasticsearch

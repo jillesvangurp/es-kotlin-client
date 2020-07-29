@@ -14,51 +14,49 @@ import org.elasticsearch.client.indexRepository
 import org.elasticsearch.client.source
 import org.elasticsearch.common.xcontent.stringify
 
-
 val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
     sourceGitRepository.md {
         +""" 
-                To do anything with Elasticsearch we have to store documents in some index. The Java client
-                provides everything you need to do this but using it the right way requires quite a bit of boiler plate 
-                as well as a deep understanding of what needs doing.
-                
-                An important part of this library is providing a user friendly abstraction for this that 
-                should be familiar if you've ever written a database application using modern frameworks such
-                as Spring, Ruby on Rails, etc. In such frameworks a  Repository 
-                provides primitives for interacting with objects in a particular database table.
-                
-                We provide a similar abstraction the ${mdLink(IndexRepository::class)}. You create one for each 
-                index that you have and it allows you to do Create, Read, Update, and Delete (CRUD) operations as well as 
-                a few other things.
-                
-                Since Elasticsearch stores Json documents, we'll want to use a data class to represent on the 
-                Kotlin side and let the `IndexRepository` take care of serializing/deserializing.
-                
-                ## Creating an `IndexRepository`
-                
-                Lets use a simple data class with a few fields.
-            """
+            To do anything with Elasticsearch we have to store documents in some index. The Java client
+            provides everything you need to do this but using it the right way requires quite a bit of boiler plate 
+            as well as a deep understanding of what needs doing.
+            
+            An important part of this library is providing a user friendly abstraction for this that 
+            should be familiar if you've ever written a database application using modern frameworks such
+            as Spring, Ruby on Rails, etc. In such frameworks a  Repository 
+            provides primitives for interacting with objects in a particular database table.
+            
+            We provide a similar abstraction the ${mdLink(IndexRepository::class)}. You create one for each 
+            index that you have and it allows you to do Create, Read, Update, and Delete (CRUD) operations as well as 
+            a few other things.
+            
+            Since Elasticsearch stores Json documents, we'll want to use a data class to represent on the 
+            Kotlin side and let the `IndexRepository` take care of serializing/deserializing.
+            
+            ## Creating an `IndexRepository`
+            
+            Lets use a simple data class with a few fields.
+        """
 
         block {
             data class Thing(val name: String, val amount: Long = 42)
         }
 
         +"""
-                Now we can create an `IndexRepository` for our `Thing` using the `indexRepository` extension function:
-            """
+            Now we can create an `IndexRepository` for our `Thing` using the `indexRepository` extension function:
+        """
 
         block() {
             // we pass in the index name
-            val thingRepository = esClient.indexRepository<Thing>("things")
+            val repo = esClient.indexRepository<Thing>("things")
         }
 
         +"""
-                ## Creating the index
-                
-                Before we store any objects, we should create the index. Note this is optional but using
-                Elasticsearch in schema-less mode is probably not what you want. We use a simple mapping here.
-            """
-
+            ## Creating the index
+            
+            Before we store any objects, we should create the index. Note this is optional but using
+            Elasticsearch in schema-less mode is probably not what you want. We use a simple mapping here.
+        """
 
         block(true) {
             repo.createIndex {
@@ -95,12 +93,12 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         }
 
         +"""
-                Note. The mapping DSL is a work in progress. The goal is not to support everything as you
-                can simply fall back to Kotlin's Map DSL with `mapOf("myfield" to someValue)`. Both `FieldMapping`
-                and `FieldMappings` extend a `MapBackedProperties` class that delegates to a `MutableMap`. This allows 
-                us to have type safe properties and helper methods and mix that with raw map access where our DSL misses
-                features.
-            """
+            Note. The mapping DSL is a work in progress. The goal is not to support everything as you
+            can simply fall back to Kotlin's Map DSL with `mapOf("myfield" to someValue)`. Both `FieldMapping`
+            and `FieldMappings` extend a `MapBackedProperties` class that delegates to a `MutableMap`. This allows 
+            us to have type safe properties and helper methods and mix that with raw map access where our DSL misses
+            features.
+        """
         blockWithOutput(wrapOutput = true) {
             // stringify is a useful extension function we added to the response
             println(repo.getSettings().stringify(true))
@@ -111,9 +109,9 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
                 }
         }
         +"""   
-                Of course you can also simply set the settings json using source. This is 
-                useful if you maintain your mappings as separate json files.
-            """
+            Of course you can also simply set the settings json using source. This is 
+            useful if you maintain your mappings as separate json files.
+        """
 
         block {
             // delete the previous version of our index
@@ -149,10 +147,10 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         }
 
         +"""
-                ## CRUD operations
-                
-                Now that we have an index, we can use the CRUD operations.
-            """
+            ## CRUD operations
+            
+            Now that we have an index, we can use the CRUD operations.
+        """
 
         blockWithOutput {
             val id = "first"
@@ -164,8 +162,8 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         }
 
         +"""
-                You can't index an object twice unless you opt in to it being overwritten.
-            """
+            You can't index an object twice unless you opt in to it being overwritten.
+        """
 
         blockWithOutput {
             val id = "first"
@@ -180,23 +178,23 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         }
 
         +"""
-                Of course deleting an object is also possible.
-            """
+            Of course deleting an object is also possible.
+        """
         blockWithOutput {
             repo.delete("1")
             println(repo.get("1"))
         }
 
         +"""
-                ## Updates with optimistic locking
-                
-                One useful feature in Elasticsearch is that it can do optimistic locking. The way this works is
-                that it keeps track of a `sequenceNumber` and `primaryTerm` for each document. 
-                If you provide both in index, it will check that what you provide matches what it has and only
-                overwrite the document if that lines up.
-                
-                This works as follows.
-            """
+            ## Updates with optimistic locking
+            
+            One useful feature in Elasticsearch is that it can do optimistic locking. The way this works is
+            that it keeps track of a `sequenceNumber` and `primaryTerm` for each document. 
+            If you provide both in index, it will check that what you provide matches what it has and only
+            overwrite the document if that lines up.
+            
+            This works as follows.
+        """
         blockWithOutput {
             repo.index("2", Thing("Another thing"))
 
@@ -205,8 +203,8 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
 
             println(
                 "obj with name '${obj.name}' has id: ${rawGetResponse.id}, " +
-                        "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
-                        "seqNo: ${rawGetResponse.seqNo}"
+                    "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
+                    "seqNo: ${rawGetResponse.seqNo}"
             )
             // This works
             repo.index(
@@ -231,9 +229,9 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         }
 
         +"""     
-                While you can do this manually, the Kotlin client makes optimistic locking a bit easier by 
-                providing a robust update method instead.
-            """
+            While you can do this manually, the Kotlin client makes optimistic locking a bit easier by 
+            providing a robust update method instead.
+        """
         blockWithOutput {
             repo.index("3", Thing("Yet another thing"))
 
@@ -251,18 +249,18 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         }
 
         +"""
-                Update simply does the same as we did manually earlier: it gets the current version of the object
-                along with the metadata. It then passes the current version to the update lambda function where
-                you can do with it what you want. In this case we simply use Kotlin's copy to create a copy and 
-                modify one of the fields and then we return it as the new value. 
-                
-                The `update` method  traps the version conflict and retries a configurable number of times. 
-                Conflicts can happen if you have concurrent writes to the same object. The retry gets the latest 
-                version and applies the update lambda again and then attempts to store that.
-                
-                To simulate what happens without retries, we can throw some threads at this and configure 0
-                retries:
-            """
+            Update simply does the same as we did manually earlier: it gets the current version of the object
+            along with the metadata. It then passes the current version to the update lambda function where
+            you can do with it what you want. In this case we simply use Kotlin's copy to create a copy and 
+            modify one of the fields and then we return it as the new value. 
+            
+            The `update` method  traps the version conflict and retries a configurable number of times. 
+            Conflicts can happen if you have concurrent writes to the same object. The retry gets the latest 
+            version and applies the update lambda again and then attempts to store that.
+            
+            To simulate what happens without retries, we can throw some threads at this and configure 0
+            retries:
+        """
 
         blockWithOutput {
             repo.index("4", Thing("First version of the thing", amount = 0))
@@ -291,17 +289,17 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         }
 
         +"""
-               ## Custom serialization 
-               
-               If you want to customize how serialization and deserialization works, you can pass in a
-               ${mdLink(ModelReaderAndWriter::class)} implementation.
-               
-               The default value of this is an instance of the included JacksonModelReaderAndWriter, which
-               uses Jackson to serialize and deserialize our `Thing` objects. 
-               
-               If you don't want the default Jackson based serialization, or if you want to customize the jackson 
-               object mapper, you simply create your own instance and pass it to the `IndexRepository`.
-            """
+           ## Custom serialization 
+           
+           If you want to customize how serialization and deserialization works, you can pass in a
+           ${mdLink(ModelReaderAndWriter::class)} implementation.
+           
+           The default value of this is an instance of the included JacksonModelReaderAndWriter, which
+           uses Jackson to serialize and deserialize our `Thing` objects. 
+           
+           If you don't want the default Jackson based serialization, or if you want to customize the jackson 
+           object mapper, you simply create your own instance and pass it to the `IndexRepository`.
+        """
         block() {
             // this is what is used by default but you can use your own implementation
             val modelReaderAndWriter = JacksonModelReaderAndWriter(
@@ -315,16 +313,16 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         }
 
         +"""
-                ## Co-routine support
-                
-                As with most of this library, the same functionality is also available in a co-routine friendly
-                variant `AsyncIndexRepository`. To use that, you need to use `esClient.asyncIndexRepository`. 
-                
-                This works almost the same as the synchronous version except all of the functions are marked as 
-                suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
-                is different and makes use of teh Flow API. 
+            ## Co-routine support
+            
+            As with most of this library, the same functionality is also available in a co-routine friendly
+            variant `AsyncIndexRepository`. To use that, you need to use `esClient.asyncIndexRepository`. 
+            
+            This works almost the same as the synchronous version except all of the functions are marked as 
+            suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
+            is different and makes use of teh Flow API. 
 
-                For more details on how to use co-routines, see ${mdLink(coroutinesPage.title, coroutinesPage.fileName)}
-            """.trimIndent()
+            For more details on how to use co-routines, see ${mdLink(coroutinesPage.title, coroutinesPage.fileName)}
+        """.trimIndent()
     }
 }

@@ -1,4 +1,4 @@
-# Elasticsearch Kotlin Client Manual
+# Elasticsearch Kotlin Client Manual 
 
 The [Elasticsearch Kotlin Client](https://github.com/jillesvangurp/es-kotlin-wrapper-client) is a client 
 library written in Kotlin that 

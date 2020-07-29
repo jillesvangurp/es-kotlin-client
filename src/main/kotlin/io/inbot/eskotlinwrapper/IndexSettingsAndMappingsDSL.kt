@@ -151,7 +151,7 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
         block.invoke(meta!!)
     }
 
-    fun mappings(dynamicEnabled: Boolean?=null, block: FieldMappings.() -> Unit) {
+    fun mappings(dynamicEnabled: Boolean? = null, block: FieldMappings.() -> Unit) {
         this.dynamicEnabled = dynamicEnabled
         if (mappings == null) mappings = FieldMappings()
         block.invoke(mappings!!)
@@ -179,7 +179,7 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
                             field("_meta")
                             writeAny(meta)
                         }
-                        if(dynamicEnabled != null) {
+                        if (dynamicEnabled != null) {
                             field("dynamic")
                             writeAny(dynamicEnabled)
                         }

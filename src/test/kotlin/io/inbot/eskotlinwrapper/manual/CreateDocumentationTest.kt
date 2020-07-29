@@ -31,8 +31,10 @@ val bulkPage = Page("Bulk Indexing", "bulk-indexing.md", parent = indexMd, emitB
 val searchPage = Page("Search", "search.md", parent = indexMd, emitBookPage = true)
 val queryDslPage = Page("Query DSL", "query-dsl.md", parent = indexMd, emitBookPage = true)
 val coroutinesPage = Page("Co-routines", "coroutines.md", parent = indexMd, emitBookPage = true)
-val recipeSearchEnginePage = Page("Building a Recipe Search Engine",
-    "recipe-search-engine.md", parent = indexMd, emitBookPage = true)
+val recipeSearchEnginePage = Page(
+    "Building a Recipe Search Engine",
+    "recipe-search-engine.md", parent = indexMd, emitBookPage = true
+)
 val aboutThisManualPage = Page("About this manual", "about.md", parent = indexMd, emitBookPage = true)
 
 val manualPages = listOf(createClientPage, indexRepositoryPage, bulkPage, searchPage, queryDslPage, coroutinesPage, recipeSearchEnginePage, aboutThisManualPage)
@@ -77,8 +79,11 @@ class ManualOverviewPageTest {
             aboutThisManualPage to about,
             createClientPage to clientCreation,
             indexRepositoryPage to indexRepository,
+            bulkPage to bulk,
+            searchPage to search,
             coroutinesPage to coRoutines,
-            bulkPage to bulk
+            queryDslPage to queryDsl,
+            recipeSearchEnginePage to recipeSearch
         ).forEach { (page, md) ->
             markdownPageWithNavigation(page, md)
         }
@@ -176,7 +181,6 @@ class ManualOverviewPageTest {
     }
 }
 
-
 fun markdownPageWithNavigation(page: Page, markdown: String) {
     val index = manualPages.indexOf(page)
     val previous = if (index < 0) null else if (index == 0) null else manualPages[index - 1].fileName
@@ -195,8 +199,8 @@ fun markdownPageWithNavigation(page: Page, markdown: String) {
 
     val pageWithNavigationMd =
         (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n\n___\n\n" else "") +
-                md + "\n" +
-                (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "")
+            md + "\n" +
+            (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "")
 
     File(page.outputDir).mkdirs()
     File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)
@@ -205,5 +209,3 @@ fun markdownPageWithNavigation(page: Page, markdown: String) {
         File("epub", page.fileName).writeText(md)
     }
 }
-
-

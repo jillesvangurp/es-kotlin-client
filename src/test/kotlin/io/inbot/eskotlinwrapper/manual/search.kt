@@ -3,13 +3,9 @@
 package io.inbot.eskotlinwrapper.manual
 
 import com.jillesvangurp.kotlin4example.mdLink
-import io.inbot.eskotlinwrapper.AbstractElasticSearchTest
 import io.inbot.eskotlinwrapper.withTestIndex
 import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
-import org.elasticsearch.client.configure
-import org.elasticsearch.client.indexRepository
-import org.junit.jupiter.api.Test
 
 val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
@@ -19,8 +15,8 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
         }
 
         +"""
-                Lets index some documents to look for ...
-            """
+            Lets index some documents to look for ...
+        """
 
         block(true) {
             // force ES to commit everything to disk so search works right away
@@ -36,9 +32,9 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
         }
 
         +"""
-                ## Searching
+            ## Searching
 
-            """
+        """
         blockWithOutput {
             // a SearchRequest is created and passed into the block
             val results = repo.search {
@@ -55,7 +51,7 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
                                 }
                             }
                         }
-                        """.trimIndent()
+                    """.trimIndent()
                 )
             }
             println("Found ${results.totalHits}")
@@ -80,17 +76,17 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
         }
 
         +"""
-                We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see ${mdLink(
+            We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see ${mdLink(
             queryDslPage.title,
             queryDslPage.fileName
         )}
-            """
+        """
 
         +"""
-                ## Count
-                
-                We can also query just to get a document count.
-            """
+            ## Count
+            
+            We can also query just to get a document count.
+        """
         blockWithOutput {
             println("The total number of documents is ${repo.count()}")
 
@@ -108,25 +104,25 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
                                 }
                             }
                         }                        
-                        """.trimIndent()
+                    """.trimIndent()
                 )
             }
             println("We found $count results matching $query")
         }
 
         +"""
-                ## Scrolling searches
-                
-                Elasticsearch has a notion of scrolling searches for retrieving large amounts of 
-                documents from an index. Normally this works by keeping track of a scroll token and
-                passing that to Elasticsearch to fetch subsequent pages of results. Scrolling is useful if
-                you want to process large amounts of results.
-                
-                To make scrolling easier and less tedious, the search method on the repository 
-                has a simpler solution: simply set `scrolling` to `true`.
-                 
-                A classic use case for using scrolls is to bulk update your documents. You can do this as follows. 
-            """
+            ## Scrolling searches
+            
+            Elasticsearch has a notion of scrolling searches for retrieving large amounts of 
+            documents from an index. Normally this works by keeping track of a scroll token and
+            passing that to Elasticsearch to fetch subsequent pages of results. Scrolling is useful if
+            you want to process large amounts of results.
+            
+            To make scrolling easier and less tedious, the search method on the repository 
+            has a simpler solution: simply set `scrolling` to `true`.
+             
+            A classic use case for using scrolls is to bulk update your documents. You can do this as follows. 
+        """
 
         blockWithOutput {
             repo.bulk {
@@ -145,7 +141,7 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
                                     "match_all": {}
                                 }
                             }
-                            """.trimIndent()
+                        """.trimIndent()
                     )
                 }
                 results.hits.forEach { (hit, thing) ->
@@ -162,4 +158,3 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
         }
     }
 }
-

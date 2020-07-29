@@ -2,7 +2,7 @@
 
 ___
 
-# Working with objects
+# Working with objects 
 
 To do anything with Elasticsearch we have to store documents in some index. The Java client
 provides everything you need to do this but using it the right way requires quite a bit of boiler plate 
@@ -25,14 +25,14 @@ Kotlin side and let the `IndexRepository` take care of serializing/deserializing
 Lets use a simple data class with a few fields.
 
 ```kotlin
-data class Thing(val title: String, val amount: Long = 42)
+data class Thing(val name: String, val amount: Long = 42)
 ```
 
 Now we can create an `IndexRepository` for our `Thing` using the `indexRepository` extension function:
 
 ```kotlin
 // we pass in the index name
-val thingRepository = esClient.indexRepository<Thing>("things")
+val repo = esClient.indexRepository<Thing>("things")
 ```
 
 ## Creating the index
@@ -41,7 +41,7 @@ Before we store any objects, we should create the index. Note this is optional b
 Elasticsearch in schema-less mode is probably not what you want. We use a simple mapping here.
 
 ```kotlin
-thingRepository.createIndex {
+repo.createIndex {
   // use our friendly DSL to configure the index
   configure {
     settings {
@@ -51,7 +51,7 @@ thingRepository.createIndex {
     mappings {
       // in the block you receive FieldMappings as this
       // a simple text field "title": {"type":"text"}
-      text("title")
+      text("name")
       // a numeric field with sub fields, use generics
       // to indicate what kind of number
       number<Long>("amount") {
@@ -82,9 +82,9 @@ features.
 
 ```kotlin
 // stringify is a useful extension function we added to the response
-println(thingRepository.getSettings().stringify(true))
+println(repo.getSettings().stringify(true))
 
-thingRepository.getMappings().mappings()
+repo.getMappings().mappings()
   .forEach { (name, meta) ->
     print("$name -> ${meta.source().string()}")
   }
@@ -94,25 +94,25 @@ Output:
 
 ```
 {
-  "things" : {
+  "test-e4d068fb-8d80-4d19-acda-bb11ad08b307" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1593838476215",
+    "creation_date" : "1596008735093",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "1VfMSfcpSaasi9yAxcAdGg",
+    "uuid" : "krNz94LqToaPkJwhzDVPew",
     "version" : {
       "created" : "7080099"
     },
-    "provided_name" : "things"
+    "provided_name" : "test-e4d068fb-8d80-4d19-acda-bb11ad08b307"
     }
   }
   }
 }
-things -> {"_meta":{"content_hash":"VFD04UkOGUHI+2GGDIJ8PQ==","timestamp":"2020-
-07-04T04:54:36.191966Z"},"properties":{"amount":{"type":"long","fields":{"abette
-rway":{"type":"double"},"imadouble":{"type":"double"},"somesubfield":{"type":"ke
-yword"}}},"title":{"type":"text"}}}
+test-e4d068fb-8d80-4d19-acda-bb11ad08b307 -> {"_meta":{"content_hash":"ZLExK0PCG
+9+CpgXySXotIQ==","timestamp":"2020-07-29T07:45:35.032153Z"},"properties":{"amoun
+t":{"type":"long","fields":{"abetterway":{"type":"double"},"imadouble":{"type":"
+double"},"somesubfield":{"type":"keyword"}}},"name":{"type":"text"}}}
 ```
 
 Of course you can also simply set the settings json using source. This is 
@@ -120,33 +120,33 @@ useful if you maintain your mappings as separate json files.
 
 ```kotlin
 // delete the previous version of our index
-thingRepository.deleteIndex()
+repo.deleteIndex()
 // create a new one using json source
-thingRepository.createIndex {
+repo.createIndex {
   source(
     """
-    {
-      "settings": {
-      "index": {
-        "number_of_shards": 3,
-        "number_of_replicas": 0,
-        "blocks": {
-        "read_only_allow_delete": "false"
+      {
+        "settings": {
+        "index": {
+          "number_of_shards": 3,
+          "number_of_replicas": 0,
+          "blocks": {
+          "read_only_allow_delete": "false"
+          }
         }
-      }
-      },
-      "mappings": {
-      "properties": {
-        "title": {
-        "type": "text"
         },
-        "amount": {
-        "type": "long"
+        "mappings": {
+        "properties": {
+          "name": {
+          "type": "text"
+          },
+          "amount": {
+          "type": "long"
+          }
+        }
         }
       }
-      }
-    }
-  """
+    """
   )
 }
 ```
@@ -157,18 +157,18 @@ Now that we have an index, we can use the CRUD operations.
 
 ```kotlin
 val id = "first"
-println("Object does not exist: ${thingRepository.get(id)}")
+println("Object does not exist: ${repo.get(id)}")
 // so lets store something
-thingRepository.index(id, Thing("A thing", 42))
+repo.index(id, Thing("A thing", 42))
 
-println("Now we get back our object: ${thingRepository.get(id)}")
+println("Now we get back our object: ${repo.get(id)}")
 ```
 
 Output:
 
 ```
 Object does not exist: null
-Now we get back our object: Thing(title=A thing, amount=42)
+Now we get back our object: Thing(name=A thing, amount=42)
 
 ```
 
@@ -177,28 +177,28 @@ You can't index an object twice unless you opt in to it being overwritten.
 ```kotlin
 val id = "first"
 try {
-  thingRepository.index(id, Thing("A thing", 42))
+  repo.index(id, Thing("A thing", 42))
 } catch (e: ElasticsearchStatusException) {
   println("we already had one of those and es returned ${e.status().status}")
 }
 // this how you do upserts
-thingRepository.index(id, Thing("Another thing", 666), create = false)
-println("It was changed: ${thingRepository.get(id)}")
+repo.index(id, Thing("Another thing", 666), create = false)
+println("It was changed: ${repo.get(id)}")
 ```
 
 Output:
 
 ```
 we already had one of those and es returned 409
-It was changed: Thing(title=Another thing, amount=666)
+It was changed: Thing(name=Another thing, amount=666)
 
 ```
 
 Of course deleting an object is also possible.
 
 ```kotlin
-thingRepository.delete("1")
-println(thingRepository.get("1"))
+repo.delete("1")
+println(repo.get("1"))
 ```
 
 Output:
@@ -218,18 +218,18 @@ overwrite the document if that lines up.
 This works as follows.
 
 ```kotlin
-thingRepository.index("2", Thing("Another thing"))
+repo.index("2", Thing("Another thing"))
 
-val (obj, rawGetResponse) = thingRepository.getWithGetResponse("2")
+val (obj, rawGetResponse) = repo.getWithGetResponse("2")
   ?: throw IllegalStateException("We just created this?!")
 
 println(
-  "obj with title '${obj.title}' has id: ${rawGetResponse.id}, " +
+  "obj with name '${obj.name}' has id: ${rawGetResponse.id}, " +
     "primaryTerm: ${rawGetResponse.primaryTerm}, and " +
     "seqNo: ${rawGetResponse.seqNo}"
 )
 // This works
-thingRepository.index(
+repo.index(
   "2",
   Thing("Another Thing"),
   seqNo = rawGetResponse.seqNo,
@@ -238,7 +238,7 @@ thingRepository.index(
 )
 try {
   // ... but if we use these values again it fails
-  thingRepository.index(
+  repo.index(
     "2",
     Thing("Another Thing"),
     seqNo = rawGetResponse.seqNo,
@@ -253,7 +253,7 @@ try {
 Output:
 
 ```
-obj with title 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 3
+obj with name 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 3
 Version conflict! Es returned 409
 
 ```
@@ -262,26 +262,26 @@ While you can do this manually, the Kotlin client makes optimistic locking a bit
 providing a robust update method instead.
 
 ```kotlin
-thingRepository.index("3", Thing("Yet another thing"))
+repo.index("3", Thing("Yet another thing"))
 
-thingRepository.update("3") { currentThing ->
-  currentThing.copy(title = "an updated thing", amount = 666)
+repo.update("3") { currentThing ->
+  currentThing.copy(name = "an updated thing", amount = 666)
 }
 
-println("It was updated: ${thingRepository.get("3")}")
+println("It was updated: ${repo.get("3")}")
 
-thingRepository.update("3") { currentThing ->
-  currentThing.copy(title = "we can do this again and again", amount = 666)
+repo.update("3") { currentThing ->
+  currentThing.copy(name = "we can do this again and again", amount = 666)
 }
 
-println("It was updated again ${thingRepository.get("3")}")
+println("It was updated again ${repo.get("3")}")
 ```
 
 Output:
 
 ```
-It was updated: Thing(title=an updated thing, amount=666)
-It was updated again Thing(title=we can do this again and again, amount=666)
+It was updated: Thing(name=an updated thing, amount=666)
+It was updated again Thing(name=we can do this again and again, amount=666)
 
 ```
 
@@ -298,13 +298,13 @@ To simulate what happens without retries, we can throw some threads at this and 
 retries:
 
 ```kotlin
-thingRepository.index("4", Thing("First version of the thing", amount = 0))
+repo.index("4", Thing("First version of the thing", amount = 0))
 
 try {
   1.rangeTo(30).toList().parallelStream().forEach { n ->
     // the maxUpdateTries parameter is optional and has a default value of 2
     // so setting this to 0 and doing concurrent updates is going to fail
-    thingRepository.update("4", 0) { Thing("nr_$n") }
+    repo.update("4", 0) { Thing("nr_$n") }
   }
 } catch (e: Exception) {
   println("It failed because we disabled retries and we got a conflict")
@@ -321,13 +321,13 @@ It failed because we disabled retries and we got a conflict
 Doing the same with 10 retries, fixes the problem.
 
 ```kotlin
-thingRepository.index("5", Thing("First version of the thing", amount = 0))
+repo.index("5", Thing("First version of the thing", amount = 0))
 
 1.rangeTo(30).toList().parallelStream().forEach { n ->
   // but if we let it retry a few times, it will be eventually consistent
-  thingRepository.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
+  repo.update("5", 10) { Thing("nr_$n", amount = it.amount + 1) }
 }
-println("All updates succeeded! amount = ${thingRepository.get("5")?.amount}.")
+println("All updates succeeded! amount = ${repo.get("5")?.amount}.")
 ```
 
 Output:

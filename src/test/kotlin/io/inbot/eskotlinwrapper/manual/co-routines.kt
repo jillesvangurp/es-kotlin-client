@@ -17,29 +17,29 @@ import org.elasticsearch.common.xcontent.XContentType
 val coRoutines by withTestIndex<Thing, Lazy<String>> {
     sourceGitRepository.md {
         +"""
-                The RestHighLevelClient exposes asynchronous versions of most APIs that take a call back to process
-                the response when it comes back. Using this is kind of boiler plate heavy. 
-                
-                Luckily, Kotlin has co-routines for asynchronous programming and this library provides co-routine 
-                friendly versions of these functions. These `suspend` functions work pretty much the same way as their 
-                synchronous version except they are marked as suspend and use a `SuspendingActionListener` that uses
-                Kotlin's `suspendCancellableCoroutine` to wrap the callback that the rest high level client expects.
-                
-                As of Elasticsearch 7.5.0, all asynchronous calls return a `Cancellable` object that allows you to cancel
-                the task. Using `suspendCancellableCoRoutine` uses this and this means that if you have some failure
-                or abort a coroutine scope, all the running tasks are cancelled. 
-                
-                If you use an asynchronous server framework such as Ktor or Spring Boot 2.x (in reactive mode), you'll
-                want to use the asynchronous functions.
+            The RestHighLevelClient exposes asynchronous versions of most APIs that take a call back to process
+            the response when it comes back. Using this is kind of boiler plate heavy. 
+            
+            Luckily, Kotlin has co-routines for asynchronous programming and this library provides co-routine 
+            friendly versions of these functions. These `suspend` functions work pretty much the same way as their 
+            synchronous version except they are marked as suspend and use a `SuspendingActionListener` that uses
+            Kotlin's `suspendCancellableCoroutine` to wrap the callback that the rest high level client expects.
+            
+            As of Elasticsearch 7.5.0, all asynchronous calls return a `Cancellable` object that allows you to cancel
+            the task. Using `suspendCancellableCoRoutine` uses this and this means that if you have some failure
+            or abort a coroutine scope, all the running tasks are cancelled. 
+            
+            If you use an asynchronous server framework such as Ktor or Spring Boot 2.x (in reactive mode), you'll
+            want to use the asynchronous functions.
 
-                To support co-routines, this project is using a 
-                [code generation plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) 
-                to generate the co-routine friendly versions of each of the
-                Rest High Level async functions. At this point most of them are covered. There are more than a hundred 
-                of these. 
-                
-                As an example, here are three ways to use the reloadAnalyzers API:
-            """
+            To support co-routines, this project is using a 
+            [code generation plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) 
+            to generate the co-routine friendly versions of each of the
+            Rest High Level async functions. At this point most of them are covered. There are more than a hundred 
+            of these. 
+            
+            As an example, here are three ways to use the reloadAnalyzers API:
+        """
 
         block(false) {
             // the synchronous version as provided by the RestHighLevel client
@@ -135,11 +135,11 @@ val coRoutines by withTestIndex<Thing, Lazy<String>> {
         }
 
         +"""
-                ## Asynchronous search
-                
-                The search API is very similar; except for the returned ${AsyncSearchResults::class.simpleName}. The 
-                results make use of the `Flow` api in the Kotlin Co-Routines library.
-            """
+            ## Asynchronous search
+            
+            The search API is very similar; except for the returned ${AsyncSearchResults::class.simpleName}. The 
+            results make use of the `Flow` api in the Kotlin Co-Routines library.
+        """
         blockWithOutput {
             runBlocking {
                 val results = asyncRepo.search(scrolling = true) {
@@ -154,5 +154,3 @@ val coRoutines by withTestIndex<Thing, Lazy<String>> {
         }
     }
 }
-
-

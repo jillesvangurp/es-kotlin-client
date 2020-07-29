@@ -2,7 +2,7 @@
 
 ___
 
-# Query DSL
+# Query DSL 
 
 Elasticsearch has a Query DSL and the Java Rest High Level Client comes with a very expansive
 set of builders that you can use to programmatically construct queries. Of course builders are 
@@ -20,14 +20,14 @@ to create builders for the various queries. This covers most but probably not al
 but should cover most commonly used things.
 
 ```kotlin
-val results = thingRepository.search {
+val results = repo.search {
   source(
     searchSource()
       .size(20)
       .query(
         boolQuery()
-          .must(matchQuery("title", "quick").boost(2.0f))
-          .must(matchQuery("title", "brown"))
+          .must(matchQuery("name", "quick").boost(2.0f))
+          .must(matchQuery("name", "brown"))
       )
   )
 }
@@ -46,14 +46,14 @@ This is unfortunately quite ugly from a Kotlin point of view. Lets see if we can
 ```kotlin
 
 // more idomatic Kotlin using apply { ... }
-val results = thingRepository.search {
+val results = repo.search {
   source(
     searchSource().apply {
       query(
         boolQuery().apply {
           must().apply {
-            add(matchQuery("title", "quick").boost(2.0f))
-            add(matchQuery("title", "brown"))
+            add(matchQuery("name", "quick").boost(2.0f))
+            add(matchQuery("name", "brown"))
           }
         }
       )
@@ -82,7 +82,7 @@ The example below uses the type safe way to set up the same query as before.
 
 ```kotlin
 // more idomatic Kotlin using apply { ... }
-val results = thingRepository.search {
+val results = repo.search {
   // SearchRequest.dsl is the extension function that allows us to use the dsl.
   dsl {
     // SearchDSL is passed to the block as this
@@ -110,14 +110,14 @@ val results = thingRepository.search {
         // it also has filter, should, and mustNot
         must(
           // it has a vararg list of ESQuery
-          MatchQuery("title", "quick") {
+          MatchQuery("name", "quick") {
             // match always needs a field and query
             // but boost is optional
             boost = 2.0
           },
           // but the block param is nullable and
           // defaults to null
-          MatchQuery("title", "brown")
+          MatchQuery("name", "brown")
         )
       }
   }
@@ -137,7 +137,7 @@ this is easy too.
 
 ```kotlin
 // more idomatic Kotlin using apply { ... }
-val results = thingRepository.search {
+val results = repo.search {
   // SearchRequest.dsl is the extension function that allows us to use the dsl.
   dsl {
     this["from"] = 0
@@ -155,13 +155,13 @@ val results = thingRepository.search {
             // elasticsearch expects fieldName: object
             // so we use mapProps to construct and use
             // another MapBackedProperties
-            this["title"] = mapProps {
+            this["name"] = mapProps {
               this["query"] = "quick"
               this["boost"] = 2.0
             }
           }.toMap(),
           customQuery("match") {
-            this["title"] = mapProps {
+            this["name"] = mapProps {
               this["query"] = "brown"
             }
           }.toMap()

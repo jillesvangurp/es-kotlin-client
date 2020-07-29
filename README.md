@@ -49,10 +49,11 @@ is to touch on most topics a software engineer would need to deal with when crea
 - querying data 
 
 ```kotlin
-// given some model class
+// given some model class with two fields
 data class Thing(
   val name: String,
-  val amount: Long = 42)
+  val amount: Long = 42
+)
 ```
 
 ```kotlin

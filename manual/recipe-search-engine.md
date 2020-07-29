@@ -2,7 +2,7 @@
 
 ___
 
-# Building a Recipe Search Engine
+# Building a Recipe Search Engine 
 
 The Elasticsearch Kotlin Client is designed to simplify writing code that
 interacts with Elasticsearch.

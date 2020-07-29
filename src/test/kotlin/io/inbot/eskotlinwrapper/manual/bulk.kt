@@ -8,31 +8,30 @@ import io.inbot.eskotlinwrapper.withTestIndex
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.support.WriteRequest
 
-
 val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
         +"""
-                An important part of working with Elasticsearch is adding content. While the CRUD support is useful
-                for manipulating individual objects in an index, it is not suitable for sending large amounts of data.
-                
-                For that, bulk indexing should be used. The bulk API in Elasticsearch is one of the more complex APIs
-                in ES. The Kotlin client provides a few key abstractions to make bulk indexing easy, robust, 
-                and straightforward.
-                
-                ## Using the Repository to bulk index
-                
-                Again we use our `Thing` class and `thingRepository`
-            """
+            An important part of working with Elasticsearch is adding content. While the CRUD support is useful
+            for manipulating individual objects in an index, it is not suitable for sending large amounts of data.
+            
+            For that, bulk indexing should be used. The bulk API in Elasticsearch is one of the more complex APIs
+            in ES. The Kotlin client provides a few key abstractions to make bulk indexing easy, robust, 
+            and straightforward.
+            
+            ## Using the Repository to bulk index
+            
+            Again we use our `Thing` class and `thingRepository`
+        """
 
         block {
             data class Thing(val name: String, val amount: Long = 42)
         }
 
         +"""
-                To make this easy, the library comes with a ${mdLink(BulkIndexingSession::class)}. This takes care
-                of all the boiler plate of constructing and sending bulk requests. Of course, our `IndexRepository` provides a
-                simple `bulk` method that creates a session for you:
-            """
+            To make this easy, the library comes with a ${mdLink(BulkIndexingSession::class)}. This takes care
+            of all the boiler plate of constructing and sending bulk requests. Of course, our `IndexRepository` provides a
+            simple `bulk` method that creates a session for you:
+        """
 
         blockWithOutput {
             // creates a BulkIndexingSession<Thing> and passes it to the block
@@ -46,14 +45,14 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
         }
 
         +"""
-                The `BulkIndexingSession` aggregates our `index` operations into `BulkRequest` 
-                requests and sends them to Elasticsearch for us. You can control how many operations are sent 
-                with each request by setting the `bulkSize` parameter. BulkIndexingSession implements `AutoClosable`
-                and will send the last request when it is closed. All this is taken care off by the `bulk` method of
-                course.
-                
-                In addition to `index` we have a few more operations.
-            """
+            The `BulkIndexingSession` aggregates our `index` operations into `BulkRequest` 
+            requests and sends them to Elasticsearch for us. You can control how many operations are sent 
+            with each request by setting the `bulkSize` parameter. BulkIndexingSession implements `AutoClosable`
+            and will send the last request when it is closed. All this is taken care off by the `bulk` method of
+            course.
+            
+            In addition to `index` we have a few more operations.
+        """
 
         blockWithOutput {
             repo.bulk(bulkSize = 50) {
@@ -94,17 +93,17 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
         }
 
         +"""
-                ## Item Callbacks
-                
-                An important aspect of bulk indexing is actually inspecting the response. The `BulkIndexingSession`
-                uses a callback mechanism that allows you to respond to do something. The default implementation for
-                this does two things: 
-                
-                - it logs failures
-                - it retries conflicting updates
-                
-                For most users this should be OK but if you want, you can do something custom:
-            """
+            ## Item Callbacks
+            
+            An important aspect of bulk indexing is actually inspecting the response. The `BulkIndexingSession`
+            uses a callback mechanism that allows you to respond to do something. The default implementation for
+            this does two things: 
+            
+            - it logs failures
+            - it retries conflicting updates
+            
+            For most users this should be OK but if you want, you can do something custom:
+        """
 
         blockWithOutput {
             repo.bulk(
@@ -115,7 +114,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
                         if (response.isFailed) {
                             println(
                                 "${op.id}: ${op.operation.opType().name} failed, " +
-                                        "code: ${response.failure.status}"
+                                    "code: ${response.failure.status}"
                             )
                         } else {
                             println("${op.id}: ${op.operation.opType().name} succeeded!")
@@ -137,10 +136,10 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
             println("" + repo.get("doc-2"))
 
             +"""
-                    # Other parameters
-                    
-                    There are a few more parameters that you can override.
-                """
+                # Other parameters
+                
+                There are a few more parameters that you can override.
+            """
             blockWithOutput {
                 repo.bulk(
                     // controls the number of items to send to Elasticsearch

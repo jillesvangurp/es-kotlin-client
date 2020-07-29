@@ -12,19 +12,19 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-6-7.8.0")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-7-7.8.1")
     }
 }
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.72"
     id("org.jetbrains.dokka") version "0.10.1"
-    id("com.github.ben-manes.versions") version "0.28.0" // gradle dependencyUpdates -Drevision=release
+    id("com.github.ben-manes.versions") version "0.29.0" // gradle dependencyUpdates -Drevision=release
     id("org.jmailen.kotlinter") version "2.4.1"
 
     java
 
-    id("com.avast.gradle.docker-compose") version "0.12.1"
+    id("com.avast.gradle.docker-compose") version "0.13.0"
     `maven-publish`
 }
 
@@ -125,7 +125,7 @@ publishing {
 
 val kotlinVersion = "1.3.72"
 // match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.8.0"
+val elasticVersion = "7.8.1"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.6.0"
 val jacksonVersion = "2.11.1"
@@ -134,10 +134,10 @@ val ktorVersion = "1.3.2"
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.7")
-    api("io.github.microutils:kotlin-logging:1.8.0.1")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.8")
+    api("io.github.microutils:kotlin-logging:1.8.3")
 
-    api("org.apache.commons:commons-lang3:3.10")
+    api("org.apache.commons:commons-lang3:3.11")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")

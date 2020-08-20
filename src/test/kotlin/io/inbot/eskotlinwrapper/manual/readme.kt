@@ -142,9 +142,10 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
                     }
                 }.hits
                 // hits is a Sequence<Pair<SearchHit,Thing?>> so we get both the hit and
-                // the deserialized value. Sequences are of course lazy and we fetch more results
-                // as you process them.
-                // Thing is nullable because Elasticsearch allows source to be disabled on some indices.
+                // the deserialized value. Sequences are of course lazy and we fetch
+                // more results as you process them.
+                // Thing is nullable because Elasticsearch allows source to be
+                // disabled on indices.
                 sequence.forEach { (esResult, deserialized) ->
                     if (deserialized != null) {
                         // Use the BulkIndexingSession to index a transformed version

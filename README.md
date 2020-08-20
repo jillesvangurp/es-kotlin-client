@@ -3,7 +3,7 @@
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
-Elastic's `HighLevelRestClient` is written in Java and provides access to essentially everything in the 
+Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) is written in Java and provides access to essentially everything in the 
 REST API that Elasticsearch exposes. It's a very powerful Java API
 but maybe not the easiest thing to work with directly. 
 
@@ -68,56 +68,46 @@ val thingRepository = esClient.indexRepository<Thing>(
 
 // let the Repository create the index with the specified mappings & settings
 thingRepository.createIndex {
+  // we use our settings DSL here
+  // you can also choose to use a source block with e.g. multiline strings
+  // containing json
   configure {
-    // we use our settings DSL here
-    // you can also use multi line strings with JSON in a source block
+
     settings {
       replicas = 0
       shards = 2
-
-      addTokenizer("autocomplete") {
-        // the DSL does not cover everything but it's a proper
-        // map so you can fall back to adding things directly
-        this["type"] = "edge_ngram"
-        this["min_gram"] = 2
-        this["max_gram"] = 10
-        this["token_chars"] = listOf("letter")
-      }
-      addAnalyzer("autocomplete") {
-        this["tokenizer"] = "autocomplete"
-        this["filter"] = listOf("lowercase")
-      }
-      addAnalyzer("autocomplete_search") {
-        this["tokenizer"] = "lowercase"
-      }
     }
-    // the mapping DSL is a bit more fully featured
     mappings {
       // mappings DSL, most common field types are supported
-      text("name") {
-        fields {
-          // lets also add name.raw field
-          keyword("raw")
-          // and a name.autocomplete field for auto complete
-          text("autocomplete") {
-            analyzer = "autocomplete"
-            searchAnalyzer = "autocomplete_search"
-          }
-        }
-      }
+      text("name")
       // floats, longs, doubles, etc. should just work
       number<Int>("amount")
     }
   }
 }
 
-// lets put some things in our new index
+// lets create a few Things
 thingRepository.index("1", Thing("foo", 42))
 thingRepository.index("2", Thing("bar", 42))
 thingRepository.index("3", Thing("foobar", 42))
 
 // make sure ES commits the changes so we can search
 thingRepository.refresh()
+
+val results = thingRepository.search {
+  dsl {
+    // added names to the args for clarity here, but optional of course
+    query = MatchQuery(field = "name", query = "nar")
+  }
+}
+// results know hot deserialize Things
+results.mappedHits.forEach {
+  println(it.name)
+}
+// but you can also access the raw hits of course
+results.searchHits.forEach {
+  println("hit with id ${it.id} and score ${it.score}")
+}
 
 // putting things into an index 1 by 1 is not scalable
 // lets do some bulk inserts with the Bulk DSL
@@ -129,9 +119,7 @@ thingRepository.bulk {
   // like normal searches (except they are not ranked)
   // all you do is set scrolling to true and you can
   // scroll through billions of results.
-  thingRepository.search(scrolling = true) {
-    // A simple example of using the Kotlin Query DSL
-    // you can also use a source block with multi line JSON
+  val sequence = thingRepository.search(scrolling = true) {
     dsl {
       from = 0
       // when scrolling, this is the scroll page size
@@ -144,17 +132,19 @@ thingRepository.bulk {
         )
       }
     }
-  }.hits.forEach { (esResult, deserialized) ->
-    // we get a lazy sequence with deserialized Thing objects back
-    // because it's a scrolling search, we fetch pages with results
-    // as you consume the sequence.
+  }.hits
+  // hits is a Sequence<Pair<SearchHit,Thing?>> so we get both the hit and
+  // the deserialized value. Sequences are of course lazy and we fetch
+  // more results as you process them.
+  // Thing is nullable because Elasticsearch allows source to be
+  // disabled on indices.
+  sequence.forEach { (esResult, deserialized) ->
     if (deserialized != null) {
-      // de-serialized may be null if we disable source on the mapping
-      // uses the BulkIndexingSession to add a transformed version
+      // Use the BulkIndexingSession to index a transformed version
       // of the original thing
       index(
         esResult.id, deserialized.copy(amount = deserialized.amount + 1),
-        // to allow updates of existing things
+        // allow updates of existing things
         create = false
       )
     }
@@ -179,8 +169,8 @@ val repo = esClient.asyncIndexRepository<Thing>(
 )
 // co routines require a CoroutineScope, so let create one
 runBlocking {
+  // lets create some more things
   repo.bulk {
-    // create some more things
     (1..1000).forEach {
       index(
         "$it",
@@ -188,17 +178,20 @@ runBlocking {
       )
     }
   }
+  // refresh so we can search
   repo.refresh()
   // if you are wondering, yes this is almost identical
   // as the synchronous version above.
-  repo.search {
+  val results = repo.search {
     dsl {
       query = TermQuery("name.keyword", "thing #666")
     }
-  }.mappedHits.collect {
+  }
+  // However, results is a Flow instead of a Sequence
+  results.mappedHits.collect {
     // collect is part of the kotlin Flow API
     // this is one of the few parts where the API is different
-    println("we've found an evil thing with: ${it.amount}")
+    println("we've found a thing with: ${it.amount}")
   }
 }
 ```
@@ -210,31 +203,32 @@ For more examples, check the manual or the examples source folder.
 This library makes use of code generated by a 
 [code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin). This mainly 
 used to generate co-routine friendly suspendable extension functions for all asynchronous methods in the 
-RestHighLevelClient.
+RestHighLevelClient. We may add more features in the future.
 
-## Platform support
+## Platform support & compatibility
 
 This client requires Java 8 or higher (same JVM requirements as Elasticsearch). Some of the Kotlin functionality 
 is also usable by Java developers (with some restrictions). However, you will probably want to use this from Kotlin.
 Android is currently not supported as the minimum requirements for Elastic's highlevel client are Java 8. Besides, embedding
 a fat library like that on Android is probably a bad idea and you should probably not be talking to Elasticsearch 
 directly from a mobile phone in any case.
+
+This library is tested with Elasticsearch 7.x. Usually we update to the latest version within days after 
+Elasticsearch releases. Barring REST API changes, most of this client should work with recent 7.x releases, 
+any future releases and probably also 6.x.
+
+For version 6.x, check the es-6.7.x branch.
+
 # Get it
 
-We are using jitpack for releases currently; the nice thing is all I need to do is tag the release in Git and 
-they do the rest. They have nice instructions for setting up your gradle or pom file:
+We are using jitpack for releases currently; the nice thing is that all I need to do is tag the release on Github and 
+they do the rest. Jitpack has nice instructions for setting up your gradle or pom file:
 
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
 
 See [release notes](https://github.com/jillesvangurp/es-kotlin-wrapper-client/releases) with each github release 
 tag for an overview what changed.
-
-Note. this client assumes you are using this with Elasticsearch 7.x. The versions listed in our build.gradle
-and docker-compose file are what we test with. Usually we update to the latest version within days after 
-Elasticsearch releases.
-
-For version 6.x, check the es-6.7.x branch.
-
+ 
 ## Building & Development
 
 You need java >= 8 and docker + docker compose (to run elasticsearch and the tests).
@@ -264,34 +258,25 @@ release 1.0, refactoring & api changes can still happen occasionally.
 
 Currently the main blockers for a 1.0 are:
 
+- Package rename to get rid of inbot.io, my former startup that is no more.
 - I'm planning to combine the 1.0 release with an epub version of the manual that I am currently 
 considering to self publish. The idea with this is that I want the library and manual to cover all of what 
-I consider the core use cases for someone building search functionality with Elasticsearch. 
-- There are still a few missing features that I want to work on mainly related to index management and 
-the query DSL.
+I consider the core use cases for someone building search functionality with Elasticsearch.
 - My time is limited. I work on this in my spare time and when I feel like it.
 
 If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
 before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.
-
-## Compatibility
-
-The general goal is to keep this client in sync with the current stable version of Elasticsearch. 
-We rely on the most recent 7.x version and only test with that.
-
-From experience, this mostly works fine against any 6.x and 7.x cluster with the exception of some changes in 
-APIs or query DSL; and possibly some older versions. Likewise, forward compatibility is generally not a big deal 
-barring major changes such as the removal of types in v7. The upcoming v8 release is currently not tested but should 
-be fine. Expect a release shortly after 8.0 stabilizes. With recent release tags, I've started adding the 
-version number of the Elasticsearch release it is based on.
-
-For version 6.x, you can use the es-6.7.x branch or use one of the older releases (<= 0.9.11). Obviously this lacks a 
-lot of the recent feature work. Likewise, we will create a 7x branch when v8 is released.
 
 ## License
 
 This project is licensed under the [MIT license](LICENSE). This maximizes everybody's freedom to do what needs doing. 
 Please exercise your rights under this license in any way you feel is appropriate. Forking is allowed and encouraged. 
 I do appreciate attribution and pull requests ...
+
+## Support
+
+I'm available for consultancy and specialize in a few things, including Elasticsearch. I've supported small
+and large companies with search related product features, complex migrations, query optimizations, plugin
+development, and more. I have over 15 years of experience with Lucene, Solr, and of course Elasticsearch.
 
 

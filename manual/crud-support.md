@@ -94,23 +94,23 @@ Output:
 
 ```
 {
-  "test-54b50820-90b3-4e48-b4e4-c449ecbfd801" : {
+  "test-7ea67983-cb24-47c9-92b1-4f0e73a7261e" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1597933816587",
+    "creation_date" : "1597941419708",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "8n1ANsEwQLqBTlq4ENk_rQ",
+    "uuid" : "Wm61NXjjSRynBNlVlrq_Cg",
     "version" : {
       "created" : "7090099"
     },
-    "provided_name" : "test-54b50820-90b3-4e48-b4e4-c449ecbfd801"
+    "provided_name" : "test-7ea67983-cb24-47c9-92b1-4f0e73a7261e"
     }
   }
   }
 }
-test-54b50820-90b3-4e48-b4e4-c449ecbfd801 -> {"_meta":{"content_hash":"ZLExK0PCG
-9+CpgXySXotIQ==","timestamp":"2020-08-20T14:30:16.578099Z"},"properties":{"amoun
+test-7ea67983-cb24-47c9-92b1-4f0e73a7261e -> {"_meta":{"content_hash":"ZLExK0PCG
+9+CpgXySXotIQ==","timestamp":"2020-08-20T16:36:59.677229Z"},"properties":{"amoun
 t":{"type":"long","fields":{"abetterway":{"type":"double"},"imadouble":{"type":"
 double"},"somesubfield":{"type":"keyword"}}},"name":{"type":"text"}}}
 ```

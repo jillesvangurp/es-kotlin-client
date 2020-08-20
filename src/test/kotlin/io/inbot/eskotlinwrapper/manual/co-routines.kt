@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.AsyncSearchResults
@@ -69,7 +71,7 @@ val coRoutines by withTestIndex<Thing, Lazy<String>> {
                 // code generator plugin this is a suspend version so we put it in
                 // a runBlocking to get a coroutine scope use a more appropriate
                 // scope in your own application of course.
-                val response = ic.reloadAnalyzersAsync(
+                val response2 = ic.reloadAnalyzersAsync(
                     ReloadAnalyzersRequest("myindex"), RequestOptions.DEFAULT
                 )
             }

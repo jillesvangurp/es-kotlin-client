@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package io.inbot.eskotlinwrapper.manual
 
 import io.inbot.eskotlinwrapper.withTestIndex

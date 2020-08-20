@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "UNUSED_VARIABLE")
 
 package io.inbot.eskotlinwrapper.manual
 

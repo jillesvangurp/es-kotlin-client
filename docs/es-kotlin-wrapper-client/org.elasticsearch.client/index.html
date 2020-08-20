@@ -89,6 +89,13 @@
 </tr>
 <tr>
 <td>
+<h4><a href="clear-privileges-cache-async.html">clearPrivilegesCacheAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">SecurityClient</span><span class="symbol">.</span><span class="identifier">clearPrivilegesCacheAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$clearPrivilegesCacheAsync(org.elasticsearch.client.SecurityClient, org.elasticsearch.client.security.ClearPrivilegesCacheRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">ClearPrivilegesCacheRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$clearPrivilegesCacheAsync(org.elasticsearch.client.SecurityClient, org.elasticsearch.client.security.ClearPrivilegesCacheRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">ClearPrivilegesCacheResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="clear-realm-cache-async.html">clearRealmCacheAsync</a></h4>
 </td>
 <td>
@@ -170,6 +177,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="create-data-stream-async.html">createDataStreamAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">createDataStreamAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$createDataStreamAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.CreateDataStreamRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">CreateDataStreamRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$createDataStreamAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.CreateDataStreamRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="create-index-repository.html">createIndexRepository</a></h4>
 </td>
 <td>
@@ -195,6 +209,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><s><span class="identifier">crudDao</span></s><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/modelReaderAndWriter">modelReaderAndWriter</span><span class="symbol">:</span>&nbsp;<a href="../io.inbot.eskotlinwrapper/-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;JacksonModelReaderAndWriter.create&lt;T&gt;()<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;"_doc"<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/readAlias">readAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;index<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/writeAlias">writeAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;index<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/refreshAllowed">refreshAllowed</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$crudDao(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.crudDao.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.client.RequestOptions)/defaultRequestOptions">defaultRequestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><a href="../io.inbot.eskotlinwrapper/-index-repository/index.html"><span class="identifier">IndexRepository</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="data-streams-stats-async.html">dataStreamsStatsAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">dataStreamsStatsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$dataStreamsStatsAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.DataStreamsStatsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DataStreamsStatsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$dataStreamsStatsAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.DataStreamsStatsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">DataStreamsStatsResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -289,6 +310,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">deleteDataFrameAnalyticsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$deleteDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.DeleteDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeleteDataFrameAnalyticsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$deleteDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.DeleteDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="delete-data-stream-async.html">deleteDataStreamAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">deleteDataStreamAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$deleteDataStreamAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.DeleteDataStreamRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">DeleteDataStreamRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$deleteDataStreamAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.DeleteDataStreamRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">AcknowledgedResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -678,6 +706,13 @@ Elastic Cloud that requires authentication or a local cluster.</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">getDataFrameAnalyticsStatsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$getDataFrameAnalyticsStatsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.GetDataFrameAnalyticsStatsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">GetDataFrameAnalyticsStatsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$getDataFrameAnalyticsStatsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.GetDataFrameAnalyticsStatsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">GetDataFrameAnalyticsStatsResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-data-stream-async.html">getDataStreamAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">IndicesClient</span><span class="symbol">.</span><span class="identifier">getDataStreamAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$getDataStreamAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.GetDataStreamRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">GetDataStreamRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$getDataStreamAsync(org.elasticsearch.client.IndicesClient, org.elasticsearch.client.indices.GetDataStreamRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">GetDataStreamResponse</span></code></td>
 </tr>
 <tr>
 <td>
@@ -1656,6 +1691,13 @@ The search request already has your index. Also see extension functions added in
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">updateDatafeedAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$updateDatafeedAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.UpdateDatafeedRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">UpdateDatafeedRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$updateDatafeedAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.UpdateDatafeedRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">PutDatafeedResponse</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="update-data-frame-analytics-async.html">updateDataFrameAnalyticsAsync</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">MachineLearningClient</span><span class="symbol">.</span><span class="identifier">updateDataFrameAnalyticsAsync</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$updateDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.UpdateDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/request">request</span><span class="symbol">:</span>&nbsp;<span class="identifier">UpdateDataFrameAnalyticsRequest</span><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$updateDataFrameAnalyticsAsync(org.elasticsearch.client.MachineLearningClient, org.elasticsearch.client.ml.UpdateDataFrameAnalyticsRequest, org.elasticsearch.client.RequestOptions)/requestOptions">requestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">PutDataFrameAnalyticsResponse</span></code></td>
 </tr>
 <tr>
 <td>

@@ -1,0 +1,47 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>IMapBackedProperties - es-kotlin-wrapper-client</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="./index.html">IMapBackedProperties</a><br/>
+<br/>
+<h1>IMapBackedProperties</h1>
+<code><span class="keyword">interface </span><span class="identifier">IMapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="put-no-snake-case.html">putNoSnakeCase</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">putNoSnakeCase</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.IMapBackedProperties$putNoSnakeCase(kotlin.String, kotlin.Any)/key">key</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.IMapBackedProperties$putNoSnakeCase(kotlin.String, kotlin.Any)/value">value</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="../../io.inbot.eskotlinwrapper.dsl/-e-s-query/index.html">ESQuery</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">ESQuery</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">IMapBackedProperties</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="../-map-backed-properties/index.html">MapBackedProperties</a></h4>
+</td>
+<td>
+<p>Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
+implementing DSLs for querying, mappings, and other things in Elasticsearch. You may also use this to extend the
+DSL. Either extend directly or use this via e.g. interface delegation.</p>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">ToXContent</span><span class="symbol">, </span><a href="./index.html"><span class="identifier">IMapBackedProperties</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

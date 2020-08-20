@@ -219,7 +219,7 @@ class MatchQuery(
 ) : ESQuery(name = "match") {
   // The map is empty until we assign something
   init {
-    this[field] = matchQueryConfig
+    putNoSnakeCase(field, matchQueryConfig)
     matchQueryConfig.query = query
     block?.invoke(matchQueryConfig)
   }

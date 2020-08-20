@@ -75,6 +75,13 @@ use multiple Threads to consume bulk requests.</p>
 </tr>
 <tr>
 <td>
+<h4><a href="-i-map-backed-properties/index.html">IMapBackedProperties</a></h4>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">IMapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="-index-repository/index.html">IndexRepository</a></h4>
 </td>
 <td>
@@ -111,7 +118,7 @@ use multiple Threads to consume bulk requests.</p>
 <p>Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
 implementing DSLs for querying, mappings, and other things in Elasticsearch. You may also use this to extend the
 DSL. Either extend directly or use this via e.g. interface delegation.</p>
-<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">ToXContent</span></code></td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">MapBackedProperties</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier">ToXContent</span><span class="symbol">, </span><a href="-i-map-backed-properties/index.html"><span class="identifier">IMapBackedProperties</span></a></code></td>
 </tr>
 <tr>
 <td>

@@ -23,8 +23,8 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             
             **The kotlin client takes away none of that but adds a lot of power and convenience.**
             
-            - Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
-            - Things that are not supported, are easy to configure via Kotlin's Map DSL or by using indexed map properties. Additionally, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
+            - Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries as well as defining mappings. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
+            - Things that are not supported are easy to configure by modifying the Map directly. For this our DSL classes delegate to a `MapBackedProperties` class that facilitates this. Of course, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
             - Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** add convenience and get rid of 
             Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
             friendly API over the underlying client functionality.
@@ -35,9 +35,9 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
                 - Bulk indexing DSL to do bulk operations without boiler plate and with fine-grained error handling (via callbacks)
                 - Search & count objects in the index using a Kotlin Query DSL or simply use raw json from either a file or a templated multiline kotlin string. Or if you really want, you can use the Java builders that come with the RestHighLevelClient.
                 - Much more
-                - **Co-routine friendly** & ready for reactive usage. We use generated extension functions that we add with a source generation plugin to add cancellable suspend functions for almost all client functions. Additionally, the before mentioned `IndexRepository` has an `AsyncIndexRepository` variant with suspending variants of the same functionality. Where appropriate, Kotlin's new `Flow` API is used.
-                - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
-                asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
+            - **Co-routine friendly** & ready for reactive usage. We use generated extension functions that we add with a source generation plugin to add cancellable suspend functions for almost all client functions. Additionally, the before mentioned `IndexRepository` has an `AsyncIndexRepository` variant with suspending variants of the same functionality. Where appropriate, Kotlin's new `Flow` API is used.
+            - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
+             asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
             
             ## Documentation
             

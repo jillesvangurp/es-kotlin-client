@@ -115,7 +115,7 @@ class ScrollingSearchResults<T : Any>(
             seed = searchResponse,
             nextFunction = {
                 val currentScrollId = it.scrollId
-                if (currentScrollId != null && it?.hits?.hits?.isNotEmpty() == true) {
+                if (currentScrollId != null && it.hits?.hits?.isNotEmpty() == true) {
                     restHighLevelClient.scroll(currentScrollId, scrollTtlInMinutes, defaultRequestOptions)
                 } else {
                     if (currentScrollId != null) {

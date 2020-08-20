@@ -12,19 +12,18 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-7-7.8.1")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-8-7.9.0")
     }
 }
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.72"
+    id("org.jetbrains.kotlin.jvm") version "1.4.0"
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.github.ben-manes.versions") version "0.29.0" // gradle dependencyUpdates -Drevision=release
-    id("org.jmailen.kotlinter") version "2.4.1"
 
     java
 
-    id("com.avast.gradle.docker-compose") version "0.13.0"
+    id("com.avast.gradle.docker-compose") version "0.13.2"
     `maven-publish`
 }
 
@@ -88,12 +87,8 @@ configure<ComposeExtension> {
     forceRecreate = true
 }
 
-kotlinter {
-    ignoreFailures = true
-}
-
 tasks.withType<Test> {
-    dependsOn("examplesClasses", "composeUp","formatKotlin")
+    dependsOn("examplesClasses", "composeUp")
     useJUnitPlatform()
     testLogging.exceptionFormat = TestExceptionFormat.FULL
     testLogging.events = setOf(
@@ -123,18 +118,18 @@ publishing {
     }
 }
 
-val kotlinVersion = "1.3.72"
+val kotlinVersion = "1.4.0"
 // match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.8.1"
+val elasticVersion = "7.9.0"
 val slf4jVersion = "1.7.26"
 val junitVersion = "5.6.0"
-val jacksonVersion = "2.11.1"
-val ktorVersion = "1.3.2"
+val jacksonVersion = "2.11.2"
+val ktorVersion = "1.4.0"
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.8")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9")
     api("io.github.microutils:kotlin-logging:1.8.3")
 
     api("org.apache.commons:commons-lang3:3.11")

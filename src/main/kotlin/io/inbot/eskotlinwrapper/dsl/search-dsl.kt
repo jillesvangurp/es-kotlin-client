@@ -2,6 +2,7 @@
 
 package io.inbot.eskotlinwrapper.dsl
 
+import io.inbot.eskotlinwrapper.IMapBackedProperties
 import io.inbot.eskotlinwrapper.MapBackedProperties
 import org.elasticsearch.common.xcontent.stringify
 
@@ -10,7 +11,7 @@ annotation class SearchDSLMarker
 
 @SearchDSLMarker
 open class ESQuery(val name: String, val queryDetails: MapBackedProperties = MapBackedProperties()) :
-    MutableMap<String, Any> by queryDetails {
+    IMapBackedProperties by queryDetails {
 
     fun toMap(): Map<String, MapBackedProperties> = mapOf(name to queryDetails)
 }

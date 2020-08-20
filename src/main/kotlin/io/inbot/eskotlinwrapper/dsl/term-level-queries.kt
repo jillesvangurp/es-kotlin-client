@@ -31,7 +31,7 @@ class FuzzyQuery(
 ) :
     ESQuery("fuzzy") {
     init {
-        this[field] = fuzzyQueryConfig
+        putNoSnakeCase(field, fuzzyQueryConfig)
         fuzzyQueryConfig.value = value
         block?.invoke(fuzzyQueryConfig)
     }
@@ -56,7 +56,7 @@ class PrefixQuery(
     block: (PrefixQueryConfig.() -> Unit)? = null
 ) : ESQuery("prefix") {
     init {
-        this[field] = prefixQueryConfig
+        putNoSnakeCase(field, prefixQueryConfig)
         prefixQueryConfig.value = value
         block?.invoke(prefixQueryConfig)
     }
@@ -81,7 +81,7 @@ class RangeQuery(
     block: RangeQueryConfig.() -> Unit
 ) : ESQuery("range") {
     init {
-        this[field] = rangeQueryConfig
+        putNoSnakeCase(field, rangeQueryConfig)
         block.invoke(rangeQueryConfig)
     }
 }
@@ -101,7 +101,7 @@ class RegExpQuery(
     block: (RegExpQueryConfig.() -> Unit)? = null
 ) : ESQuery("regexp") {
     init {
-        this[field] = regExpQueryConfig
+        putNoSnakeCase(field, regExpQueryConfig)
         regExpQueryConfig.value = value
         block?.invoke(regExpQueryConfig)
     }
@@ -123,7 +123,7 @@ class TermQuery(
     var boost by queryDetails.property<Double>()
 
     init {
-        this[field] = termQueryConfig
+        putNoSnakeCase(field, termQueryConfig)
         termQueryConfig.value = value
         block?.invoke(termQueryConfig)
     }
@@ -142,7 +142,7 @@ class TermsQuery(
     var routing by queryDetails.property<String>()
 
     init {
-        this[field] = values
+        putNoSnakeCase(field, values)
         block?.invoke(this)
     }
 }

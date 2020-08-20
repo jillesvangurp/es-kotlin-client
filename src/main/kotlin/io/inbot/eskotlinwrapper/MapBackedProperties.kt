@@ -7,6 +7,9 @@ import org.elasticsearch.common.xcontent.writeAny
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+interface IMapBackedProperties : MutableMap<String, Any> {
+    fun putNoSnakeCase(key: String, value: Any)
+}
 /**
  * Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
  * implementing DSLs for querying, mappings, and other things in Elasticsearch. You may also use this to extend the
@@ -19,9 +22,14 @@ import kotlin.reflect.KProperty
 @MapPropertiesDSLMarker
 open class MapBackedProperties internal constructor(
     internal val _properties: MutableMap<String, Any> = mutableMapOf()
-) : MutableMap<String, Any> by _properties, ToXContent {
+) : MutableMap<String, Any> by _properties, ToXContent, IMapBackedProperties {
 
     override fun get(key: String) = _properties[key.snakeCaseToUnderscore()]
+
+    override fun putNoSnakeCase(key: String, value: Any) {
+        _properties[key] = value
+    }
+
     override fun put(key: String, value: Any) {
         _properties[key.snakeCaseToUnderscore()] = value
     }

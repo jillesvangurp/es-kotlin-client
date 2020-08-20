@@ -36,7 +36,7 @@ class MatchQuery(
 ) : ESQuery(name = "match") {
     // The map is empty until we assign something
     init {
-        this[field] = matchQueryConfig
+        putNoSnakeCase(field, matchQueryConfig)
         matchQueryConfig.query = query
         block?.invoke(matchQueryConfig)
     }
@@ -63,7 +63,7 @@ class MatchBoolPrefixQuery(
     block: (MatchBoolPrefixQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match_bool_prefix") {
     init {
-        this[field] = matchBoolPrefixQueryConfig
+        putNoSnakeCase(field, matchBoolPrefixQueryConfig)
         matchBoolPrefixQueryConfig.query = query
         block?.invoke(matchBoolPrefixQueryConfig)
     }
@@ -85,7 +85,7 @@ class MatchPhrasePrefixQuery(
     block: (MatchPhrasePrefixQueryConfig.() -> Unit)? = null
 ) : ESQuery(name = "match_phrase_prefix") {
     init {
-        this[field] = matchPhrasePrefixQueryConfig
+        putNoSnakeCase(field, matchPhrasePrefixQueryConfig)
         matchPhrasePrefixQueryConfig.query = query
         block?.invoke(matchPhrasePrefixQueryConfig)
     }

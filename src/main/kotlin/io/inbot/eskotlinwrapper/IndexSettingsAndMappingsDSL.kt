@@ -120,7 +120,7 @@ class FieldMappings : MapBackedProperties() {
     fun field(name: String, type: String, block: FieldMapping.() -> Unit) {
         val mapping = FieldMapping(type)
         block.invoke(mapping)
-        put(name, mapping)
+        putNoSnakeCase(name, mapping)
     }
 
     fun stringify(pretty: Boolean = false) {

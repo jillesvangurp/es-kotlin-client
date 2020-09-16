@@ -39,7 +39,7 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
              asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
             
-            ## Documentation
+            ## Documentation & Support
             
             - [manual](https://www.jillesvangurp.com/es-kotlin-manual/) A growing collection of executable examples. This manual is 
             generated from kotlin code and all the examples in it are run as part of the test suite. This is the best
@@ -51,6 +51,7 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
              how to use things.
             - [Elasticsearch java client documentation](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) - All of the functionality provided by the java client is supported. All this kotlin wrapper does is add stuff. Elasticsearch has awesome documentation for this.
             - [demo project](https://github.com/jillesvangurp/es-kotlin-demo) - Note, this is outdated and has largely been replaced by the manual mentioned above.
+            - Within reason, I'm always happy to **support** users with issues. Feel free to approach me via the issue tracker, twitter (jillesvangurp), or email (jilles AT jillesvangurp.com). I'm also available for consulting on Elasticsearch projects and am happy to help you with architecture reviews, implementation work, query & indexing strategy, etc. Check my [homepage for more details](https://jillesvangurp.com).
             
             ## Example
             

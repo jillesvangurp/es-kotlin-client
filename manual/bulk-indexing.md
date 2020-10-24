@@ -19,7 +19,7 @@ Again we use our `Thing` class and `thingRepository`
 data class Thing(val name: String, val amount: Long = 42)
 ```
 
-To make this easy, the library comes with a [`BulkIndexingSession`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/io/inbot/eskotlinwrapper/BulkIndexingSession.kt). This takes care
+To make this easy, the library comes with a [`BulkIndexingSession`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/com/jillesvangurp/eskotlinwrapper/BulkIndexingSession.kt). This takes care
 of all the boiler plate of constructing and sending bulk requests. Of course, our `IndexRepository` provides a
 simple `bulk` method that creates a session for you:
 

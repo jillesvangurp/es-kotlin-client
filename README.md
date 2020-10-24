@@ -197,6 +197,13 @@ runBlocking {
 }
 ```
 
+Captured Output:
+
+```
+we've found a thing with: 666
+
+```
+
 For more examples, check the manual or the examples source folder.
 
 ## Code generation
@@ -255,16 +262,8 @@ a mess there (I learned that lesson a long time ago).
 This library should be perfectly fine for general use at this point and is currently available as a beta release. 
 
 Please note, that you can always access the underlying Java client, which is stable. However, until we 
-release 1.0, refactoring & api changes can still happen occasionally.
-
-Currently the main blockers for a 1.0 are:
-
-- Package rename to get rid of inbot.io, my former startup that is no more.
-- I'm planning to combine the 1.0 release with an epub version of the manual that I am currently 
-considering to self publish. The idea with this is that I want the library and manual to cover all of what 
-I consider the core use cases for someone building search functionality with Elasticsearch.
-- My time is limited. I work on this in my spare time and when I feel like it.
-
+release 1.0, refactoring & api changes can still happen occasionally. Please check the issue tracker for progress on this.
+ 
 If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
 before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.
 

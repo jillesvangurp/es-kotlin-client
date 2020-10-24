@@ -67,21 +67,6 @@ val (searchHit, deserialized) = firstHit
 println("Hit: ${searchHit.id}:\n$deserialized")
 ```
 
-->
-
-```
-({
-  "_index" : "manual",
-  "_type" : "_doc",
-  "_id" : "1",
-  "_score" : 3.830421,
-  "_source" : {
-  "name" : "The quick brown fox",
-  "amount" : 42
-  }
-}, Thing(name=The quick brown fox, amount=42))
-```
-
 Captured Output:
 
 ```
@@ -128,7 +113,7 @@ println("We found $count results matching $query")
 Captured Output:
 
 ```
-The total number of documents is 598
+The total number of documents is 100
 We found 3 results matching quick
 
 ```

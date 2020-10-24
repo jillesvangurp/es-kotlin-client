@@ -1,0 +1,600 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>AsyncIndexRepository</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+    <link href="../../../styles/style.css" rel="Stylesheet">
+    <link href="../../../styles/logo-styles.css" rel="Stylesheet">
+    <link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+    <link href="../../../styles/main.css" rel="Stylesheet">
+    <script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/main.js" async="async"></script>
+    <script>var pathToRoot = "../../../";</script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn">
+        <div id="logo"></div>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+        <div id="searchBar"></div>
+        <script type="text/javascript" src="../../../scripts/pages.js"></script>
+        <script type="text/javascript" src="../../../scripts/main.js"></script>
+        <div id="content" pageIds="com.jillesvangurp.eskotlinwrapper/AsyncIndexRepository///PointingToDeclaration//-1129890644">
+          <div class="breadcrumbs"><a href="../../index.html">es-kotlin-wrapper-client</a>/<a href="../index.html">com.jillesvangurp.eskotlinwrapper</a>/<a href="index.html">AsyncIndexRepository</a></div>
+          <div class="cover ">
+            <h1 class="cover"><span>Async</span><wbr></wbr><span>Index</span><wbr></wbr><span>Repository</span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">class <a href="index.html">AsyncIndexRepository</a>&lt;<a href="index.html">T</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>&gt;(indexName: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, client: <span data-unresolved-link="org.elasticsearch.client/RestHighLevelClient///PointingToDeclaration/">RestHighLevelClient</span>, modelReaderAndWriter: <a href="../-model-reader-and-writer/index.html">ModelReaderAndWriter</a>&lt;<a href="index.html">T</a>&gt;, refreshAllowed: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>, type: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>?, indexWriteAlias: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, indexReadAlias: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, fetchSourceContext: <span data-unresolved-link="org.elasticsearch.search.fetch.subphase/FetchSourceContext///PointingToDeclaration/">FetchSourceContext</span>?, defaultRequestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span>)<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div><p class="paragraph">Repository abstraction that allows you to work with indices asynchronously via co-routines.</p><p class="paragraph">You should create a Repository for each index you work with. You need to specify a <a href="../-model-reader-and-writer/index.html">ModelReaderAndWriter</a> for serialization and deserialization.</p></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button><button class="section-tab" data-togglable="Parameters">Parameters</button><button class="section-tab" data-togglable="See also">See also</button></div>
+            <div class="tabs-section-body">
+              <h2 class="">See also</h2>
+              <div data-togglable="See also">
+                <div class="platform-hinted WithExtraAttributes" data-platform-hinted="data-platform-hinted" data-togglable="See also"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div data-togglable="See also"><div class="table" data-togglable="See also"><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes RowTitle"><div class=""><span class="inline-flex"></span><span class="inline-flex"><div data-togglable="See also"><p class="paragraph"><code>RestHighLevelClient.asyncIndexRepository</code> for a convenient way to create a repository.</p></div></span></div><div></div></div></div></div></div></div></div>
+              </div>
+              <h2 class="">Parameters</h2>
+              <div data-togglable="Parameters">
+                <div class="platform-hinted WithExtraAttributes" data-platform-hinted="data-platform-hinted" data-togglable="Parameters"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div data-togglable="Parameters"><div class="table" data-togglable="Parameters"><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">defaultRequestOptions</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">passed on all API calls. Defaults to <code>RequestOptions.DEFAULT</code>. Use this to set custom headers or override on each call on the repository.</p></div></div></div></div></div><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">fetchSourceContext</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">if not null, will be passed to Get and Search requests.</p></div></div></div></div></div><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">indexName</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">name of the index</p></div></div></div></div></div><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">indexReadAlias</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">Alias used for read operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.</p></div></div></div></div></div><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">indexWriteAlias</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">Alias used for write operations. If you are using aliases, you can separate reads and writes. Defaults to indexName.</p></div></div></div></div></div><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">modelReaderAndWriter</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">serialization of your model class.</p></div></div></div></div></div><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">refreshAllowed</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">if false, the refresh will throw an exception. Defaults to false.</p></div></div></div></div></div><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">T</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">the type of the object that is stored in the index.</p></div></div></div></div></div><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">type</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">the type of the documents in the index; defaults to null. Since ES 6, there can only be one type. Types are deprecated in ES 7 and removed in ES 8.</p></div></div></div></div></div></div></div></div></div>
+              </div>
+              <h2 class="tabbedcontent">Constructors</h2>
+              <div class="table" data-togglable="Constructors"><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FAsyncIndexRepository%2F%23kotlin.String%23org.elasticsearch.client.RestHighLevelClient%23com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%23kotlin.Boolean%23kotlin.String%3F%23kotlin.String%23kotlin.String%23org.elasticsearch.search.fetch.subphase.FetchSourceContext%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FConstructors%2F-1129890644" anchor-label="AsyncIndexRepository" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FAsyncIndexRepository%2F%23kotlin.String%23org.elasticsearch.client.RestHighLevelClient%23com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%23kotlin.Boolean%23kotlin.String%3F%23kotlin.String%23kotlin.String%23org.elasticsearch.search.fetch.subphase.FetchSourceContext%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FConstructors%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue TabbedContent">
+                    <div class=""><span class="inline-flex"><a href="-async-index-repository.html">AsyncIndexRepository</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FAsyncIndexRepository%2F%23kotlin.String%23org.elasticsearch.client.RestHighLevelClient%23com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%23kotlin.Boolean%23kotlin.String%3F%23kotlin.String%23kotlin.String%23org.elasticsearch.search.fetch.subphase.FetchSourceContext%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FConstructors%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">fun &lt;<a href="index.html">T</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>&gt; <a href="-async-index-repository.html">AsyncIndexRepository</a>(indexName: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, client: <span data-unresolved-link="org.elasticsearch.client/RestHighLevelClient///PointingToDeclaration/">RestHighLevelClient</span>, modelReaderAndWriter: <a href="../-model-reader-and-writer/index.html">ModelReaderAndWriter</a>&lt;<a href="index.html">T</a>&gt;, refreshAllowed: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a> = false, type: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>? = null, indexWriteAlias: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a> = indexName, indexReadAlias: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a> = indexWriteAlias, fetchSourceContext: <span data-unresolved-link="org.elasticsearch.search.fetch.subphase/FetchSourceContext///PointingToDeclaration/">FetchSourceContext</span>? = null, defaultRequestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = RequestOptions.DEFAULT)<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div><div class="brief ">the type of the object that is stored in the index.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fbulk%2F%23kotlin.Int%23kotlin.Int%23org.elasticsearch.action.support.WriteRequest.RefreshPolicy%23kotlin.coroutines.SuspendFunction2%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkOperation%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Corg.elasticsearch.action.bulk.BulkItemResponse%2Ckotlin.Unit%5D%23kotlinx.coroutines.CoroutineDispatcher%3F%23kotlin.coroutines.SuspendFunction1%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkIndexingSession%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="bulk" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fbulk%2F%23kotlin.Int%23kotlin.Int%23org.elasticsearch.action.support.WriteRequest.RefreshPolicy%23kotlin.coroutines.SuspendFunction2%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkOperation%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Corg.elasticsearch.action.bulk.BulkItemResponse%2Ckotlin.Unit%5D%23kotlinx.coroutines.CoroutineDispatcher%3F%23kotlin.coroutines.SuspendFunction1%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkIndexingSession%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="bulk.html">bulk</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fbulk%2F%23kotlin.Int%23kotlin.Int%23org.elasticsearch.action.support.WriteRequest.RefreshPolicy%23kotlin.coroutines.SuspendFunction2%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkOperation%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Corg.elasticsearch.action.bulk.BulkItemResponse%2Ckotlin.Unit%5D%23kotlinx.coroutines.CoroutineDispatcher%3F%23kotlin.coroutines.SuspendFunction1%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkIndexingSession%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="bulk.html">bulk</a>(bulkSize: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a> = 100, retryConflictingUpdates: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a> = 0, refreshPolicy: <span data-unresolved-link="org.elasticsearch.action.support/WriteRequest.RefreshPolicy///PointingToDeclaration/">WriteRequest.RefreshPolicy</span> = WriteRequest.RefreshPolicy.WAIT_UNTIL, itemCallback: suspend (<a href="../-async-bulk-operation/index.html">AsyncBulkOperation</a>&lt;<a href="index.html">T</a>&gt;, <span data-unresolved-link="org.elasticsearch.action.bulk/BulkItemResponse///PointingToDeclaration/">BulkItemResponse</span>) -&gt; <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> = { operation, itemResponse -&gt;
+            if (itemResponse.isFailed) {
+                if (retryConflictingUpdates &gt; 0 &amp;&amp; DocWriteRequest.OpType.UPDATE === itemResponse.opType &amp;&amp; itemResponse.failure.status === RestStatus.CONFLICT) {
+                    update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
+                    logger.debug { &quot;retried updating ${operation.id} after version conflict&quot; }
+                } else {
+                    logger.warn { &quot;failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}&quot; }
+                }
+            }
+        }, bulkDispatcher: <span data-unresolved-link="kotlinx.coroutines/CoroutineDispatcher///PointingToDeclaration/">CoroutineDispatcher</span>? = null, operationsBlock: suspend <a href="../-async-bulk-indexing-session/index.html">AsyncBulkIndexingSession</a>&lt;<a href="index.html">T</a>&gt;.() -&gt; <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a>)<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fbulk%2F%23kotlin.Int%23kotlin.Int%23org.elasticsearch.action.support.WriteRequest.RefreshPolicy%23kotlin.coroutines.SuspendFunction2%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkOperation%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Corg.elasticsearch.action.bulk.BulkItemResponse%2Ckotlin.Unit%5D%23kotlinx.coroutines.CoroutineDispatcher%3F%23kotlin.coroutines.SuspendFunction1%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkIndexingSession%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="bulk" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fbulk%2F%23kotlin.Int%23kotlin.Int%23org.elasticsearch.action.support.WriteRequest.RefreshPolicy%23kotlin.coroutines.SuspendFunction2%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkOperation%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Corg.elasticsearch.action.bulk.BulkItemResponse%2Ckotlin.Unit%5D%23kotlinx.coroutines.CoroutineDispatcher%3F%23kotlin.coroutines.SuspendFunction1%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkIndexingSession%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fbulk%2F%23kotlin.Int%23kotlin.Int%23org.elasticsearch.action.support.WriteRequest.RefreshPolicy%23kotlin.coroutines.SuspendFunction2%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkOperation%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Corg.elasticsearch.action.bulk.BulkItemResponse%2Ckotlin.Unit%5D%23kotlinx.coroutines.CoroutineDispatcher%3F%23kotlin.coroutines.SuspendFunction1%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkIndexingSession%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="bulk" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fbulk%2F%23kotlin.Int%23kotlin.Int%23org.elasticsearch.action.support.WriteRequest.RefreshPolicy%23kotlin.coroutines.SuspendFunction2%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkOperation%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Corg.elasticsearch.action.bulk.BulkItemResponse%2Ckotlin.Unit%5D%23kotlinx.coroutines.CoroutineDispatcher%3F%23kotlin.coroutines.SuspendFunction1%5Bcom.jillesvangurp.eskotlinwrapper.AsyncBulkIndexingSession%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Create a <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a> and use it with the <span data-unresolved-link="com.jillesvangurp.eskotlinwrapper/AsyncIndexRepository/operationsBlock/#/PointingToCallableParameters(-1)/">operationsBlock</span>.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fcount%2F%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.client.core.CountRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="count" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fcount%2F%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.client.core.CountRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="count.html">count</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fcount%2F%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.client.core.CountRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="count.html">count</a>(requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions, block: <span data-unresolved-link="org.elasticsearch.client.core/CountRequest///PointingToDeclaration/">CountRequest</span>.() -&gt; <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> = {}): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcreateIndex%2F%23org.elasticsearch.client.RequestOptions%23org.elasticsearch.action.support.ActiveShardCount%3F%23kotlin.coroutines.SuspendFunction1%5Borg.elasticsearch.client.indices.CreateIndexRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="createIndex" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcreateIndex%2F%23org.elasticsearch.client.RequestOptions%23org.elasticsearch.action.support.ActiveShardCount%3F%23kotlin.coroutines.SuspendFunction1%5Borg.elasticsearch.client.indices.CreateIndexRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="create-index.html">createIndex</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcreateIndex%2F%23org.elasticsearch.client.RequestOptions%23org.elasticsearch.action.support.ActiveShardCount%3F%23kotlin.coroutines.SuspendFunction1%5Borg.elasticsearch.client.indices.CreateIndexRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="create-index.html">createIndex</a>(requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions, waitForActiveShards: <span data-unresolved-link="org.elasticsearch.action.support/ActiveShardCount///PointingToDeclaration/">ActiveShardCount</span>? = null, block: suspend <span data-unresolved-link="org.elasticsearch.client.indices/CreateIndexRequest///PointingToDeclaration/">CreateIndexRequest</span>.() -&gt; <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a>)<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcreateIndex%2F%23org.elasticsearch.client.RequestOptions%23org.elasticsearch.action.support.ActiveShardCount%3F%23kotlin.coroutines.SuspendFunction1%5Borg.elasticsearch.client.indices.CreateIndexRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="createIndex" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcreateIndex%2F%23org.elasticsearch.client.RequestOptions%23org.elasticsearch.action.support.ActiveShardCount%3F%23kotlin.coroutines.SuspendFunction1%5Borg.elasticsearch.client.indices.CreateIndexRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcreateIndex%2F%23org.elasticsearch.client.RequestOptions%23org.elasticsearch.action.support.ActiveShardCount%3F%23kotlin.coroutines.SuspendFunction1%5Borg.elasticsearch.client.indices.CreateIndexRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="createIndex" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcreateIndex%2F%23org.elasticsearch.client.RequestOptions%23org.elasticsearch.action.support.ActiveShardCount%3F%23kotlin.coroutines.SuspendFunction1%5Borg.elasticsearch.client.indices.CreateIndexRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Create the index.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcurrentAliases%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="currentAliases" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcurrentAliases%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="current-aliases.html">currentAliases</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcurrentAliases%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="current-aliases.html">currentAliases</a>(requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-set/index.html">Set</a>&lt;<span data-unresolved-link="org.elasticsearch.cluster.metadata/AliasMetadata///PointingToDeclaration/">AliasMetadata</span>&gt;<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcurrentAliases%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="currentAliases" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcurrentAliases%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcurrentAliases%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="currentAliases" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FcurrentAliases%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Returns a set of the current <code>AliasMetaData</code> associated with the <code>indexName</code>.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fdelete%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="delete" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fdelete%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="delete.html">delete</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fdelete%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="delete.html">delete</a>(id: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions)<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fdelete%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="delete" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fdelete%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fdelete%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="delete" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fdelete%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Deletes the object object identified by <code>id</code>.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FdeleteIndex%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="deleteIndex" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FdeleteIndex%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="delete-index.html">deleteIndex</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FdeleteIndex%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="delete-index.html">deleteIndex</a>(requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FdeleteIndex%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="deleteIndex" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FdeleteIndex%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FdeleteIndex%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="deleteIndex" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FdeleteIndex%2F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Delete the index associated with the repository.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="equals" id="%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="../../com.jillesvangurp.eskotlinwrapper.dsl/-wild-card-query/index.html#%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644">equals</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">open operator fun <a href="../../com.jillesvangurp.eskotlinwrapper.dsl/-wild-card-query/index.html#%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644">equals</a>(other: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>?): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fget%2F%23kotlin.String%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="get" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fget%2F%23kotlin.String%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get.html">get</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fget%2F%23kotlin.String%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="get.html">get</a>(id: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>): <a href="index.html">T</a>?<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fget%2F%23kotlin.String%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="get" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fget%2F%23kotlin.String%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fget%2F%23kotlin.String%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="get" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fget%2F%23kotlin.String%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Returns the deserialized <a href="index.html">T</a> for the document identified by <code>id</code>.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FgetWithGetResponse%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="getWithGetResponse" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FgetWithGetResponse%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-with-get-response.html">getWithGetResponse</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FgetWithGetResponse%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="get-with-get-response.html">getWithGetResponse</a>(id: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html">Pair</a>&lt;<a href="index.html">T</a>, <span data-unresolved-link="org.elasticsearch.action.get/GetResponse///PointingToDeclaration/">GetResponse</span>&gt;?<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FgetWithGetResponse%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="getWithGetResponse" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FgetWithGetResponse%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FgetWithGetResponse%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="getWithGetResponse" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FgetWithGetResponse%2F%23kotlin.String%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Returns a <code>Pair</code> of the deserialized <a href="index.html">T</a> and the <code>GetResponse</code> with all the relevant metadata.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="hashCode" id="%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="../../com.jillesvangurp.eskotlinwrapper.dsl/-wild-card-query/index.html#%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644">hashCode</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">open fun <a href="../../com.jillesvangurp.eskotlinwrapper.dsl/-wild-card-query/index.html#%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644">hashCode</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Findex%2F%23kotlin.String%23TypeParam%28bounds%3D%5Bkotlin.Any%5D%29%23kotlin.Boolean%23kotlin.Long%3F%23kotlin.Long%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="index" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Findex%2F%23kotlin.String%23TypeParam%28bounds%3D%5Bkotlin.Any%5D%29%23kotlin.Boolean%23kotlin.Long%3F%23kotlin.Long%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="--index--.html">index</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Findex%2F%23kotlin.String%23TypeParam%28bounds%3D%5Bkotlin.Any%5D%29%23kotlin.Boolean%23kotlin.Long%3F%23kotlin.Long%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="--index--.html">index</a>(id: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, obj: <a href="index.html">T</a>, create: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a> = true, seqNo: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a>? = null, primaryTerm: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a>? = null, requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions)<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Findex%2F%23kotlin.String%23TypeParam%28bounds%3D%5Bkotlin.Any%5D%29%23kotlin.Boolean%23kotlin.Long%3F%23kotlin.Long%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="index" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Findex%2F%23kotlin.String%23TypeParam%28bounds%3D%5Bkotlin.Any%5D%29%23kotlin.Boolean%23kotlin.Long%3F%23kotlin.Long%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Findex%2F%23kotlin.String%23TypeParam%28bounds%3D%5Bkotlin.Any%5D%29%23kotlin.Boolean%23kotlin.Long%3F%23kotlin.Long%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="index" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Findex%2F%23kotlin.String%23TypeParam%28bounds%3D%5Bkotlin.Any%5D%29%23kotlin.Boolean%23kotlin.Long%3F%23kotlin.Long%3F%23org.elasticsearch.client.RequestOptions%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Index a document with a given <code>id</code>.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Frefresh%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="refresh" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Frefresh%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="refresh.html">refresh</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Frefresh%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="refresh.html">refresh</a>()<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Frefresh%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="refresh" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Frefresh%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Frefresh%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="refresh" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Frefresh%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Call the refresh API on elasticsearch.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fsearch%2F%23kotlin.Boolean%23kotlin.Long%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.action.search.SearchRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="search" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fsearch%2F%23kotlin.Boolean%23kotlin.Long%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.action.search.SearchRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="search.html">search</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fsearch%2F%23kotlin.Boolean%23kotlin.Long%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.action.search.SearchRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="search.html">search</a>(scrolling: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a> = false, scrollTtlInMinutes: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a> = 1, requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions, block: <span data-unresolved-link="org.elasticsearch.action.search/SearchRequest///PointingToDeclaration/">SearchRequest</span>.() -&gt; <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a>): <a href="../-async-search-results/index.html">AsyncSearchResults</a>&lt;<a href="index.html">T</a>&gt;<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fsearch%2F%23kotlin.Boolean%23kotlin.Long%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.action.search.SearchRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="search" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fsearch%2F%23kotlin.Boolean%23kotlin.Long%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.action.search.SearchRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fsearch%2F%23kotlin.Boolean%23kotlin.Long%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.action.search.SearchRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="search" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fsearch%2F%23kotlin.Boolean%23kotlin.Long%23org.elasticsearch.client.RequestOptions%23kotlin.Function1%5Borg.elasticsearch.action.search.SearchRequest%2Ckotlin.Unit%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Perform an asynchronous search against your index.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="toString" id="%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="../../com.jillesvangurp.eskotlinwrapper.dsl/-wild-card-query/index.html#%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644">toString</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">open fun <a href="../../com.jillesvangurp.eskotlinwrapper.dsl/-wild-card-query/index.html#%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644">toString</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fupdate%2F%23kotlin.String%23kotlin.Int%23org.elasticsearch.client.RequestOptions%23kotlin.coroutines.SuspendFunction1%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%2CTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="update" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fupdate%2F%23kotlin.String%23kotlin.Int%23org.elasticsearch.client.RequestOptions%23kotlin.coroutines.SuspendFunction1%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%2CTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="update.html">update</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fupdate%2F%23kotlin.String%23kotlin.Int%23org.elasticsearch.client.RequestOptions%23kotlin.coroutines.SuspendFunction1%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%2CTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="update.html">update</a>(id: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, maxUpdateTries: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a> = 2, requestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = this.defaultRequestOptions, transformFunction: suspend (<a href="index.html">T</a>) -&gt; <a href="index.html">T</a>)<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fupdate%2F%23kotlin.String%23kotlin.Int%23org.elasticsearch.client.RequestOptions%23kotlin.coroutines.SuspendFunction1%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%2CTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="update" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fupdate%2F%23kotlin.String%23kotlin.Int%23org.elasticsearch.client.RequestOptions%23kotlin.coroutines.SuspendFunction1%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%2CTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fupdate%2F%23kotlin.String%23kotlin.Int%23org.elasticsearch.client.RequestOptions%23kotlin.coroutines.SuspendFunction1%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%2CTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" anchor-label="update" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fupdate%2F%23kotlin.String%23kotlin.Int%23org.elasticsearch.client.RequestOptions%23kotlin.coroutines.SuspendFunction1%5BTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%2CTypeParam%28bounds%3D%5Bkotlin.Any%5D%29%5D%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>Updates document identified by <code>id</code> by fetching the current version with <a href="get.html">get</a> and then applying the <span data-unresolved-link="com.jillesvangurp.eskotlinwrapper/AsyncIndexRepository/transformFunction/#/PointingToCallableParameters(-1)/">transformFunction</span> to produce the updated version.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Properties</h2>
+              <div class="table" data-togglable="Properties"><a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fclient%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" anchor-label="client" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fclient%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="client.html">client</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Fclient%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">val <a href="client.html">client</a>: <span data-unresolved-link="org.elasticsearch.client/RestHighLevelClient///PointingToDeclaration/">RestHighLevelClient</span><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexName%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" anchor-label="indexName" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexName%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index-name.html">indexName</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexName%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">val <a href="index-name.html">indexName</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div><div class="brief ">name of the index</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexReadAlias%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" anchor-label="indexReadAlias" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexReadAlias%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index-read-alias.html">indexReadAlias</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexReadAlias%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">val <a href="index-read-alias.html">indexReadAlias</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div><div class="brief ">Alias used for read operations.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexWriteAlias%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" anchor-label="indexWriteAlias" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexWriteAlias%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index-write-alias.html">indexWriteAlias</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2FindexWriteAlias%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">val <a href="index-write-alias.html">indexWriteAlias</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div><div class="brief ">Alias used for write operations.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Ftype%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" anchor-label="type" id="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Ftype%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="type.html">type</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bcom.jillesvangurp.eskotlinwrapper%2FAsyncIndexRepository%2Ftype%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1129890644"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.2496 5.3C20.3496 4.5 19.2496 4 18.0496 4C16.8496 4 15.6496 4.5 14.8496 5.3L10.3496 9.8L11.7496 11.2L16.2496 6.7C17.2496 5.7 18.8496 5.7 19.8496 6.7C20.8496 7.7 20.8496 9.3 19.8496 10.3L15.3496 14.8L16.7496 16.2L21.2496 11.7C22.1496 10.8 22.5496 9.7 22.5496 8.5C22.5496 7.3 22.1496 6.2 21.2496 5.3Z"/>
+    <path d="M8.35 16.7998C7.35 17.7998 5.75 17.7998 4.75 16.7998C3.75 15.7998 3.75 14.1998 4.75 13.1998L9.25 8.6998L7.85 7.2998L3.35 11.7998C1.55 13.5998 1.55 16.3998 3.35 18.1998C4.25 19.0998 5.35 19.4998 6.55 19.4998C7.75 19.4998 8.85 19.0998 9.75 18.1998L14.25 13.6998L12.85 12.2998L8.35 16.7998Z"/>
+</svg></span>
+                          <div class="copy-popup-wrapper "><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace strikethrough">val <a href="type.html">type</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>? = null<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div><div class="brief ">the type of the documents in the index; defaults to null.</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#container"><svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11.3337 9.66683H0.666992L6.00033 3.66683L11.3337 9.66683Z" fill="black"/>
+    <path d="M0.666992 0.333496H11.3337V1.66683H0.666992V0.333496Z" fill="black"/>
+</svg></a></span><span>© 2020 Copyright</span><span class="pull-right"><span>Sponsored and developed by dokka</span><a href="https://github.com/Kotlin/dokka"><span class="padded-icon"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 0H2.3949L4.84076 2.44586L0 7.28662L0.713376 8L5.55414 3.15924L8 5.6051V0Z" fill="black"/>
+</svg></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+

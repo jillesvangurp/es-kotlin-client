@@ -1,8 +1,8 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 
-io.inbot.eskotlinwrapper
-io.inbot.eskotlinwrapper.dsl
+com.jillesvangurp.eskotlinwrapper
+com.jillesvangurp.eskotlinwrapper.dsl
 org.elasticsearch.action.search
 org.elasticsearch.client
 org.elasticsearch.common.xcontent

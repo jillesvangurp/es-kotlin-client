@@ -13,7 +13,7 @@ should be familiar if you've ever written a database application using modern fr
 as Spring, Ruby on Rails, etc. In such frameworks a  Repository 
 provides primitives for interacting with objects in a particular database table.
 
-We provide a similar abstraction the [`IndexRepository`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/io/inbot/eskotlinwrapper/IndexRepository.kt). You create one for each 
+We provide a similar abstraction the [`IndexRepository`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/com/jillesvangurp/eskotlinwrapper/IndexRepository.kt). You create one for each 
 index that you have and it allows you to do Create, Read, Update, and Delete (CRUD) operations as well as 
 a few other things.
 
@@ -94,23 +94,23 @@ Captured Output:
 
 ```
 {
-  "test-c99b9e15-cd50-4bca-96ef-00c55627c4a6" : {
+  "test-9b40c19e-9cad-439a-af4c-4eeaf07e8cc3" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1603512217788",
+    "creation_date" : "1603514939671",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "LqcV2j5jTmWVg4O1htiiKQ",
+    "uuid" : "XaTXJOBdRayLA_rWlPjBSA",
     "version" : {
       "created" : "7090099"
     },
-    "provided_name" : "test-c99b9e15-cd50-4bca-96ef-00c55627c4a6"
+    "provided_name" : "test-9b40c19e-9cad-439a-af4c-4eeaf07e8cc3"
     }
   }
   }
 }
-test-c99b9e15-cd50-4bca-96ef-00c55627c4a6 -> {"_meta":{"content_hash":"ZLExK0PCG
-9+CpgXySXotIQ==","timestamp":"2020-10-24T04:03:37.783516Z"},"properties":{"amoun
+test-9b40c19e-9cad-439a-af4c-4eeaf07e8cc3 -> {"_meta":{"content_hash":"ZLExK0PCG
+9+CpgXySXotIQ==","timestamp":"2020-10-24T04:48:59.658793Z"},"properties":{"amoun
 t":{"type":"long","fields":{"abetterway":{"type":"double"},"imadouble":{"type":"
 double"},"somesubfield":{"type":"keyword"}}},"name":{"type":"text"}}}
 ```
@@ -340,7 +340,7 @@ All updates succeeded! amount = 30.
 ## Custom serialization 
 
 If you want to customize how serialization and deserialization works, you can pass in a
-[`ModelReaderAndWriter`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/io/inbot/eskotlinwrapper/ModelReaderAndWriter.kt) implementation.
+[`ModelReaderAndWriter`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/com/jillesvangurp/eskotlinwrapper/ModelReaderAndWriter.kt) implementation.
 
 The default value of this is an instance of the included JacksonModelReaderAndWriter, which
 uses Jackson to serialize and deserialize our `Thing` objects. 

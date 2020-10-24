@@ -64,14 +64,15 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             }
 
             // we can also get the underlying `SearchHit` that Elasticsearch returns
-            results.searchHits.first().apply {
+            val firstSearchHit = results.searchHits.first()
+            firstSearchHit.apply {
                 // this would be useful if we wanted to do some bulk updates
                 println("Hit: $id $seqNo $primaryTerm\n$sourceAsString")
             }
 
             // or we can get both as a `Pair`
-            val first = results.hits.first()
-            val (searchHit, deserialized) = first
+            val firstHit = results.hits.first()
+            val (searchHit, deserialized) = firstHit
             println("Hit: ${searchHit.id}:\n$deserialized")
         }
 

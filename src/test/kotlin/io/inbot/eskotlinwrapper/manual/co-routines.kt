@@ -15,6 +15,7 @@ import org.elasticsearch.client.indices.ReloadAnalyzersRequest
 import org.elasticsearch.client.indices.ReloadAnalyzersResponse
 import org.elasticsearch.client.reloadAnalyzersAsync
 import org.elasticsearch.common.xcontent.XContentType
+import java.util.*
 
 val coRoutines by withTestIndex<Thing, Lazy<String>> {
     sourceGitRepository.md {
@@ -83,7 +84,7 @@ val coRoutines by withTestIndex<Thing, Lazy<String>> {
             `IndexRepository` also has an `AsyncIndexRepository` counter part. The API of this is
             similar to the regular repository. 
         """
-        block {
+        block(runBlock = false) {
             // you can create a new repository via an extension function
             val asyncRepo = esClient.asyncIndexRepository<Thing>("asyncthings")
 

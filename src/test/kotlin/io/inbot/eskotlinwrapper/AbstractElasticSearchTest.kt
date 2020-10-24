@@ -28,7 +28,7 @@ inline fun <reified T : Any, O> withTestIndex(
 ): O {
     val esClient = create(port = 9999)
     val repo = esClient.indexRepository(
-        index = index ?: "test-${UUID.randomUUID()}",
+        index = if(index != null) "$index-${UUID.randomUUID()}" else  "test-${UUID.randomUUID()}",
         refreshAllowed = refreshAllowed,
         modelReaderAndWriter = JacksonModelReaderAndWriter(
             T::class,

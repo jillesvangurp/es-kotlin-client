@@ -122,6 +122,8 @@ class AsyncIndexRepository<T : Any>(
     /**
      * Index a document with a given `id`. Set `create` to `false` for upserts. Otherwise it fails on creating documents that already exist.
      *
+     * The id is nullable and elasticsearch will generate an id for you if you set it to null.
+     *
      * You can optionally specify `seqNo` and `primaryTerm` to implement optimistic locking. However, you should use
      * [update] which does this for you.
      */

@@ -91,13 +91,12 @@ class BulkIndexingSession<T : Any>(
         check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val indexRequest = IndexRequest()
                 .index(repository.indexWriteAlias)
-                .create(create)
                 .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
                 .let {
                     if (id == null) {
                         it
                     } else {
-                        it.id(id)
+                        it.id(id).create(create)
                     }
                 }
         if (!repository.type.isNullOrBlank()) {

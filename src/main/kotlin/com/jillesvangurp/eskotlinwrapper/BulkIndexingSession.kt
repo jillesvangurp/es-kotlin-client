@@ -21,10 +21,10 @@ import kotlin.concurrent.write
 private val logger = KotlinLogging.logger {}
 
 data class BulkOperation<T : Any>(
-    val operation: DocWriteRequest<*>,
-    val id: String,
-    val updateFunction: ((T) -> T)? = null,
-    val itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
+        val operation: DocWriteRequest<*>,
+        val id: String?,
+        val updateFunction: ((T) -> T)? = null,
+        val itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = { _, _ -> }
 )
 
 /**
@@ -49,14 +49,14 @@ data class BulkOperation<T : Any>(
  *
  */
 class BulkIndexingSession<T : Any>(
-    private val client: RestHighLevelClient,
-    private val repository: IndexRepository<T>,
-    private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
-    private val bulkSize: Int = 100,
-    private val retryConflictingUpdates: Int = 0,
-    private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-    private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-    private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
+        private val client: RestHighLevelClient,
+        private val repository: IndexRepository<T>,
+        private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
+        private val bulkSize: Int = 100,
+        private val retryConflictingUpdates: Int = 0,
+        private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+        private val itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+        private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
 
 ) : AutoCloseable {
     // adding things to a request should be thread safe
@@ -70,7 +70,7 @@ class BulkIndexingSession<T : Any>(
         if (itemCallback == null) {
             if (itemResponse.isFailed) {
                 if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                    repository.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction!!)
+                    repository.update(operation.id?:error("id is required for updates"), retryConflictingUpdates, defaultRequestOptions, operation.updateFunction!!)
                     logger.debug { "retried updating ${operation.id} after version conflict" }
                 } else {
                     logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
@@ -87,23 +87,29 @@ class BulkIndexingSession<T : Any>(
      * @param create set to true for upsert
      */
     @Suppress("DEPRECATION") // we allow using types for now
-    fun index(id: String, obj: T, create: Boolean = true, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
+    fun index(id: String?, obj: T, create: Boolean = true, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val indexRequest = IndexRequest()
-            .index(repository.indexWriteAlias)
-            .id(id)
-            .create(create)
-            .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+                .index(repository.indexWriteAlias)
+                .create(create)
+                .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+                .let {
+                    if (id == null) {
+                        it
+                    } else {
+                        it.id(id)
+                    }
+                }
         if (!repository.type.isNullOrBlank()) {
             indexRequest.type(repository.type)
         }
         rwLock.read {
             page.add(
-                BulkOperation(
-                    indexRequest,
-                    id,
-                    itemCallback = itemCallback
-                )
+                    BulkOperation(
+                            indexRequest,
+                            id,
+                            itemCallback = itemCallback
+                    )
             )
         }
         flushIfNeeded()
@@ -127,23 +133,23 @@ class BulkIndexingSession<T : Any>(
     fun update(id: String, seqNo: Long, primaryTerms: Long, original: T, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback, updateFunction: (T) -> T) {
         check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val updateRequest = UpdateRequest()
-            .index(repository.indexWriteAlias)
-            .id(id)
-            .detectNoop(true)
-            .setIfSeqNo(seqNo)
-            .setIfPrimaryTerm(primaryTerms)
-            .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
+                .index(repository.indexWriteAlias)
+                .id(id)
+                .detectNoop(true)
+                .setIfSeqNo(seqNo)
+                .setIfPrimaryTerm(primaryTerms)
+                .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
         if (!repository.type.isNullOrBlank()) {
             updateRequest.type(repository.type)
         }
         rwLock.read {
             page.add(
-                BulkOperation(
-                    updateRequest,
-                    id,
-                    updateFunction = updateFunction,
-                    itemCallback = itemCallback
-                )
+                    BulkOperation(
+                            updateRequest,
+                            id,
+                            updateFunction = updateFunction,
+                            itemCallback = itemCallback
+                    )
             )
         }
         flushIfNeeded()
@@ -156,8 +162,8 @@ class BulkIndexingSession<T : Any>(
     fun delete(id: String, seqNo: Long? = null, term: Long? = null, itemCallback: (BulkOperation<T>, BulkItemResponse) -> Unit = this::defaultItemResponseCallback) {
         check(!closed.get()) { "cannot add bulk operations after the BulkIndexingSession is closed" }
         val deleteRequest = DeleteRequest()
-            .index(repository.indexWriteAlias)
-            .id(id)
+                .index(repository.indexWriteAlias)
+                .id(id)
 
         if (!repository.type.isNullOrBlank()) {
             deleteRequest.type(repository.type)
@@ -171,11 +177,11 @@ class BulkIndexingSession<T : Any>(
         }
         rwLock.read {
             page.add(
-                BulkOperation(
-                    deleteRequest,
-                    id,
-                    itemCallback = itemCallback
-                )
+                    BulkOperation(
+                            deleteRequest,
+                            id,
+                            itemCallback = itemCallback
+                    )
             )
         }
         flushIfNeeded()

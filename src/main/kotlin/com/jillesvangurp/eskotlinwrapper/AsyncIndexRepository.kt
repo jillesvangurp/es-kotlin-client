@@ -196,12 +196,12 @@ class AsyncIndexRepository<T : Any>(
             if (sourceAsBytes != null) {
                 val currentValue = modelReaderAndWriter.deserialize(sourceAsBytes)
                 val transformed = transformFunction.invoke(currentValue)
-                val response = index(id, transformed, create = false, seqNo = response.seqNo, primaryTerm = response.primaryTerm)
+                val indexResponse = index(id, transformed, create = false, seqNo = response.seqNo, primaryTerm = response.primaryTerm)
                 if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
                     logger.warn { "retry update $id succeeded after tries=$tries" }
                 }
-                return response
+                return indexResponse
             } else {
                 throw IllegalStateException("id $id not found")
             }

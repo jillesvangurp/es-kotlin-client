@@ -2,7 +2,7 @@ package recipesearch
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.inbot.eskotlinwrapper.AsyncIndexRepository
+import com.jillesvangurp.eskotlinwrapper.AsyncIndexRepository
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.healthAsync

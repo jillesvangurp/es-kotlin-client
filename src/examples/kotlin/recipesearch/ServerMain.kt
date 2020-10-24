@@ -2,7 +2,7 @@ package recipesearch
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import io.inbot.eskotlinwrapper.JacksonModelReaderAndWriter
+import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation

@@ -1,6 +1,6 @@
 package recipesearch
 
-import io.inbot.eskotlinwrapper.AsyncSearchResults
+import com.jillesvangurp.eskotlinwrapper.AsyncSearchResults
 import kotlinx.coroutines.flow.collect
 
 // BEGIN search_response

@@ -1,6 +1,6 @@
 package org.elasticsearch.action.search
 
-import io.inbot.eskotlinwrapper.dsl.SearchDSL
+import com.jillesvangurp.eskotlinwrapper.dsl.SearchDSL
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest

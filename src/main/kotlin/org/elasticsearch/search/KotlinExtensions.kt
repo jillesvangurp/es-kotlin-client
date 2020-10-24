@@ -1,6 +1,6 @@
 package org.elasticsearch.search
 
-import io.inbot.eskotlinwrapper.ModelReaderAndWriter
+import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
 
 /**
  * Shortcut to hits.map.

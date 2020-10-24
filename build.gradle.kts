@@ -1,5 +1,5 @@
 import com.avast.gradle.dockercompose.ComposeExtension
-import io.inbot.escodegen.EsKotlinCodeGenPluginExtension
+import com.jillesvangurp.escodegen.EsKotlinCodeGenPluginExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -11,7 +11,7 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-9-7.9.3")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:7.9.3.0")
     }
 }
 

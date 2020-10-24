@@ -45,7 +45,7 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             generated from kotlin code and all the examples in it are run as part of the test suite. This is the best
             place to get started.
             - The same manual as an **[epub](book.epub)**. Very much a work in progress. Please give me feedback on this. I may end up self publishing this at some point.
-            - [dokka api docs](https://htmlpreview.github.io/?https://github.com/jillesvangurp/es-kotlin-wrapper-client/blob/master/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
+            - [dokka api docs](https://www.jillesvangurp.com/es-kotlin-manual/docs/es-kotlin-wrapper-client/index.html) - API documentation - this gets regenerated for each release and should usually be up to date. But you can always `gradle dokka` yourself.
             - Some stand alone examples are included in the examples source folder.
             - The tests test most of the important features and should be fairly readable and provide a good overview of
              how to use things.

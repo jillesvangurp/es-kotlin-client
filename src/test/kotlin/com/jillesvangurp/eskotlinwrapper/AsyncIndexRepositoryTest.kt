@@ -26,6 +26,15 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
     }
 
     @Test
+    fun `it should index fine without an id and autoassign one`() {
+        runBlocking {
+            val obj = TestModel("ohai!")
+            val newId = repository.index(null, obj).id
+            assertThat(repository.get(newId)).isEqualTo(obj)
+        }
+    }
+
+    @Test
     fun `update a document using a lambda function to transform what we have in the index`() {
         runBlocking {
             val id = randomId()

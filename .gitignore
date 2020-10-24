@@ -23,3 +23,5 @@ out/
 .DS_Store
 .vscode
 epub
+docs
+book.epub

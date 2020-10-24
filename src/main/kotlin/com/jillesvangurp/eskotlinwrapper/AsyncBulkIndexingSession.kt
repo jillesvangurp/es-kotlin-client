@@ -31,10 +31,10 @@ import org.elasticsearch.rest.RestStatus
 private val logger = KotlinLogging.logger {}
 
 data class AsyncBulkOperation<T : Any>(
-    val operation: DocWriteRequest<*>,
-    val id: String,
-    val updateFunction: suspend ((T) -> T) = { it },
-    val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit
+        val operation: DocWriteRequest<*>,
+        val id: String?,
+        val updateFunction: suspend ((T) -> T) = { it },
+        val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit
 )
 
 /**
@@ -47,67 +47,67 @@ data class AsyncBulkOperation<T : Any>(
  */
 @Suppress("unused")
 class AsyncBulkIndexingSession<T : Any> constructor(
-    private val repository: AsyncIndexRepository<T>,
-    private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
-    private val retryConflictingUpdates: Int = 0,
-    private val operationChannel: SendChannel<AsyncBulkOperation<T>>,
-    private val itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit),
-    private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
+        private val repository: AsyncIndexRepository<T>,
+        private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
+        private val retryConflictingUpdates: Int = 0,
+        private val operationChannel: SendChannel<AsyncBulkOperation<T>>,
+        private val itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit),
+        private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
 ) {
     companion object {
         private fun <T> chunkFLow(
-            chunkSize: Int = 20,
-            producerBlock: CoroutineScope.(channel: SendChannel<T>) -> Unit
+                chunkSize: Int = 20,
+                producerBlock: CoroutineScope.(channel: SendChannel<T>) -> Unit
         ): Flow<List<T>> =
-            flow {
-                coroutineScope {
-                    val channel = Channel<T>(chunkSize)
-                    launch {
-                        producerBlock(channel)
-                    }
-                    var page = mutableListOf<T>()
-                    channel.consumeAsFlow().collect { value ->
-                        page.add(value)
-                        if (page.size > chunkSize) {
+                flow {
+                    coroutineScope {
+                        val channel = Channel<T>(chunkSize)
+                        launch {
+                            producerBlock(channel)
+                        }
+                        var page = mutableListOf<T>()
+                        channel.consumeAsFlow().collect { value ->
+                            page.add(value)
+                            if (page.size > chunkSize) {
+                                emit(page)
+                                page = mutableListOf()
+                            }
+                        }
+                        if (page.isNotEmpty()) {
                             emit(page)
-                            page = mutableListOf()
                         }
                     }
-                    if (page.isNotEmpty()) {
-                        emit(page)
-                    }
                 }
-            }
 
         suspend fun <T : Any> asyncBulk(
-            client: RestHighLevelClient,
-            repository: AsyncIndexRepository<T>,
-            modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
-            bulkSize: Int = 100,
-            retryConflictingUpdates: Int = 0,
-            refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-            itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation, itemResponse ->
-                if (itemResponse.isFailed) {
-                    if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                        repository.update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
-                        logger.debug { "retried updating ${operation.id} after version conflict" }
-                    } else {
-                        logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
+                client: RestHighLevelClient,
+                repository: AsyncIndexRepository<T>,
+                modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
+                bulkSize: Int = 100,
+                retryConflictingUpdates: Int = 0,
+                refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+                itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation, itemResponse ->
+                    if (itemResponse.isFailed) {
+                        if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
+                            repository.update(operation.id ?: error("id is required for update"), retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
+                            logger.debug { "retried updating ${operation.id} after version conflict" }
+                        } else {
+                            logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
+                        }
                     }
-                }
-            },
-            defaultRequestOptions: RequestOptions = repository.defaultRequestOptions,
-            block: suspend AsyncBulkIndexingSession<T>.() -> Unit,
-            bulkDispatcher: CoroutineDispatcher?
+                },
+                defaultRequestOptions: RequestOptions = repository.defaultRequestOptions,
+                block: suspend AsyncBulkIndexingSession<T>.() -> Unit,
+                bulkDispatcher: CoroutineDispatcher?
         ) {
             val flow = chunkFLow<AsyncBulkOperation<T>>(chunkSize = bulkSize) { channel ->
                 val session = AsyncBulkIndexingSession(
-                    repository,
-                    modelReaderAndWriter,
-                    retryConflictingUpdates,
-                    channel,
-                    itemCallback,
-                    defaultRequestOptions
+                        repository,
+                        modelReaderAndWriter,
+                        retryConflictingUpdates,
+                        channel,
+                        itemCallback,
+                        defaultRequestOptions
                 )
                 launch {
                     val asyncJob = async {
@@ -136,25 +136,30 @@ class AsyncBulkIndexingSession<T : Any> constructor(
 
     @Suppress("DEPRECATION") // we allow using types for now
     fun index(
-        id: String,
-        obj: T,
-        create: Boolean = true
+            id: String?,
+            obj: T,
+            create: Boolean = true
     ) {
         val indexRequest = IndexRequest()
-            .index(repository.indexWriteAlias)
-            .id(id)
-            .create(create)
-            .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+                .index(repository.indexWriteAlias)
+                .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+                .let {
+                    if (id == null) {
+                        it
+                    } else {
+                        it.id(id).create(create)
+                    }
+                }
         if (!repository.type.isNullOrBlank()) {
             indexRequest.type(repository.type)
         }
 
         operationChannel.sendBlocking(
-            AsyncBulkOperation(
-                operation = indexRequest,
-                id = id,
-                itemCallback = itemCallback
-            )
+                AsyncBulkOperation(
+                        operation = indexRequest,
+                        id = id,
+                        itemCallback = itemCallback
+                )
         )
     }
 
@@ -162,8 +167,8 @@ class AsyncBulkIndexingSession<T : Any> constructor(
      * Safe way to bulk update objects. Gets the object from the index first before applying the lambda to it to modify the existing object. If you set `retryConflictingUpdates` > 0, it will attempt to retry to get the latest document and apply the `updateFunction` if there is a version conflict.
      */
     suspend fun getAndUpdate(
-        id: String,
-        updateFunction: suspend (T) -> T
+            id: String,
+            updateFunction: suspend (T) -> T
     ) {
         val pair = repository.getWithGetResponse(id)
         if (pair != null) {
@@ -177,29 +182,29 @@ class AsyncBulkIndexingSession<T : Any> constructor(
      */
     @Suppress("DEPRECATION") // we allow using types for now
     suspend fun update(
-        id: String,
-        seqNo: Long,
-        primaryTerms: Long,
-        original: T,
-        updateFunction: suspend (T) -> T
+            id: String,
+            seqNo: Long,
+            primaryTerms: Long,
+            original: T,
+            updateFunction: suspend (T) -> T
     ) {
         val updateRequest = UpdateRequest()
-            .index(repository.indexWriteAlias)
-            .id(id)
-            .detectNoop(true)
-            .setIfSeqNo(seqNo)
-            .setIfPrimaryTerm(primaryTerms)
-            .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
+                .index(repository.indexWriteAlias)
+                .id(id)
+                .detectNoop(true)
+                .setIfSeqNo(seqNo)
+                .setIfPrimaryTerm(primaryTerms)
+                .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
         if (!repository.type.isNullOrBlank()) {
             updateRequest.type(repository.type)
         }
         operationChannel.sendBlocking(
-            AsyncBulkOperation(
-                updateRequest,
-                id,
-                updateFunction = updateFunction,
-                itemCallback = itemCallback
-            )
+                AsyncBulkOperation(
+                        updateRequest,
+                        id,
+                        updateFunction = updateFunction,
+                        itemCallback = itemCallback
+                )
         )
     }
 
@@ -208,13 +213,13 @@ class AsyncBulkIndexingSession<T : Any> constructor(
      */
     @Suppress("DEPRECATION") // we allow using types for now
     fun delete(
-        id: String,
-        seqNo: Long? = null,
-        term: Long? = null
+            id: String,
+            seqNo: Long? = null,
+            term: Long? = null
     ) {
         val deleteRequest = DeleteRequest()
-            .index(repository.indexWriteAlias)
-            .id(id)
+                .index(repository.indexWriteAlias)
+                .id(id)
 
         if (!repository.type.isNullOrBlank()) {
             deleteRequest.type(repository.type)
@@ -227,11 +232,11 @@ class AsyncBulkIndexingSession<T : Any> constructor(
             }
         }
         operationChannel.sendBlocking(
-            AsyncBulkOperation(
-                deleteRequest,
-                id,
-                itemCallback = itemCallback
-            )
+                AsyncBulkOperation(
+                        deleteRequest,
+                        id,
+                        itemCallback = itemCallback
+                )
         )
     }
 }

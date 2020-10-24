@@ -11,6 +11,7 @@ import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.ActiveShardCount
 import org.elasticsearch.action.support.WriteRequest
@@ -48,15 +49,15 @@ private val logger = KotlinLogging.logger {}
  *
  */
 class IndexRepository<T : Any>(
-    val indexName: String,
-    private val client: RestHighLevelClient,
-    internal val modelReaderAndWriter: ModelReaderAndWriter<T>,
-    private val refreshAllowed: Boolean = false,
-    @Deprecated("Types are deprecated in ES 7.x and will be removed in v8") val type: String? = null,
-    val indexWriteAlias: String = indexName,
-    val indexReadAlias: String = indexWriteAlias,
-    private val fetchSourceContext: FetchSourceContext? = null,
-    internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+        val indexName: String,
+        private val client: RestHighLevelClient,
+        internal val modelReaderAndWriter: ModelReaderAndWriter<T>,
+        private val refreshAllowed: Boolean = false,
+        @Deprecated("Types are deprecated in ES 7.x and will be removed in v8") val type: String? = null,
+        val indexWriteAlias: String = indexName,
+        val indexReadAlias: String = indexWriteAlias,
+        private val fetchSourceContext: FetchSourceContext? = null,
+        internal val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ) {
     /**
      * Create the index.
@@ -70,9 +71,9 @@ class IndexRepository<T : Any>(
      * ```
      */
     fun createIndex(
-        requestOptions: RequestOptions = this.defaultRequestOptions,
-        waitForActiveShards: ActiveShardCount? = null,
-        block: CreateIndexRequest.() -> Unit
+            requestOptions: RequestOptions = this.defaultRequestOptions,
+            waitForActiveShards: ActiveShardCount? = null,
+            block: CreateIndexRequest.() -> Unit
     ) {
 
         val indexRequest = CreateIndexRequest(indexName)
@@ -111,38 +112,47 @@ class IndexRepository<T : Any>(
      */
     fun currentAliases(requestOptions: RequestOptions = this.defaultRequestOptions): Set<AliasMetadata> {
         return client.indices().getAlias(GetAliasesRequest().indices(indexName), requestOptions).aliases[this.indexName]
-            ?: throw IllegalStateException("Inde $indexName does not exist")
+                ?: throw IllegalStateException("Inde $indexName does not exist")
     }
 
     /**
      * Index a document with a given `id`. Set `create` to `false` for upserts. Otherwise it fails on creating documents that already exist.
+     *
+     * The id is nullable and elasticsearch will generate an id for you if you set it to null.
      *
      * You can optionally specify `seqNo` and `primaryTerm` to implement optimistic locking. However, you should use
      * [update] which does this for you.
      */
     @Suppress("DEPRECATION")
     fun index(
-        id: String,
-        obj: T,
-        create: Boolean = true,
-        seqNo: Long? = null,
-        primaryTerm: Long? = null,
-        requestOptions: RequestOptions = this.defaultRequestOptions
-    ) {
+            id: String? = null,
+            obj: T,
+            create: Boolean = true,
+            seqNo: Long? = null,
+            primaryTerm: Long? = null,
+            requestOptions: RequestOptions = this.defaultRequestOptions
+    ): IndexResponse {
         val indexRequest = IndexRequest()
-            .index(indexWriteAlias)
-            .id(id)
-            .create(create)
-            .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+                .index(indexWriteAlias)
+                .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+                .let {
+                    if (id != null) {
+                        it.id(id).create(create)
+                    } else {
+                        it
+                    }
+                }
+
         if (!type.isNullOrBlank()) {
             indexRequest.type(type)
         }
         if (seqNo != null) {
             indexRequest.setIfSeqNo(seqNo)
-            indexRequest.setIfPrimaryTerm(primaryTerm ?: throw IllegalArgumentException("you must also set primaryTerm when setting a seqNo"))
+            indexRequest.setIfPrimaryTerm(primaryTerm
+                    ?: throw IllegalArgumentException("you must also set primaryTerm when setting a seqNo"))
         }
-        client.index(
-            indexRequest, requestOptions
+        return client.index(
+                indexRequest, requestOptions
         )
     }
 
@@ -152,23 +162,23 @@ class IndexRepository<T : Any>(
      * if [maxUpdateTries] > 0, it will deal with version conflicts (e.g. due to concurrent updates) by retrying with the latest version.
      */
     fun update(
-        id: String,
-        maxUpdateTries: Int = 2,
-        requestOptions: RequestOptions = this.defaultRequestOptions,
-        transformFunction: (T) -> T
-    ) {
-        update(0, id, transformFunction, maxUpdateTries, requestOptions)
+            id: String,
+            maxUpdateTries: Int = 2,
+            requestOptions: RequestOptions = this.defaultRequestOptions,
+            transformFunction: (T) -> T
+    ): IndexResponse {
+        return update(0, id, transformFunction, maxUpdateTries, requestOptions)
     }
 
     @Suppress("DEPRECATION")
     private fun update(
-        tries: Int,
-        id: String,
-        transformFunction: (T) -> T,
-        maxUpdateTries: Int,
-        requestOptions: RequestOptions
+            tries: Int,
+            id: String,
+            transformFunction: (T) -> T,
+            maxUpdateTries: Int,
+            requestOptions: RequestOptions
 
-    ) {
+    ): IndexResponse {
         try {
             val getRequest = GetRequest().index(indexWriteAlias).id(id)
             if (!type.isNullOrBlank()) {
@@ -176,17 +186,18 @@ class IndexRepository<T : Any>(
             }
 
             val response =
-                client.get(getRequest, requestOptions)
+                    client.get(getRequest, requestOptions)
 
             val sourceAsBytes = response.sourceAsBytes
             if (sourceAsBytes != null) {
                 val currentValue = modelReaderAndWriter.deserialize(sourceAsBytes)
                 val transformed = transformFunction.invoke(currentValue)
-                index(id, transformed, create = false, seqNo = response.seqNo, primaryTerm = response.primaryTerm)
+                val indexResponse = index(id, transformed, create = false, seqNo = response.seqNo, primaryTerm = response.primaryTerm)
                 if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
                     logger.warn { "retry update $id succeeded after tries=$tries" }
                 }
+                return indexResponse
             } else {
                 throw IllegalStateException("id $id not found")
             }
@@ -196,7 +207,7 @@ class IndexRepository<T : Any>(
                 if (tries < maxUpdateTries) {
                     // we got a version conflict, retry after sleeping a bit (without this failures are more likely
                     Thread.sleep(RandomUtils.nextLong(50, 500))
-                    update(tries + 1, id, transformFunction, maxUpdateTries, requestOptions)
+                    return update(tries + 1, id, transformFunction, maxUpdateTries, requestOptions)
                 } else {
                     throw IllegalStateException("update of $id failed after $tries attempts")
                 }
@@ -233,8 +244,8 @@ class IndexRepository<T : Any>(
      */
     @Suppress("DEPRECATION")
     fun getWithGetResponse(
-        id: String,
-        requestOptions: RequestOptions = this.defaultRequestOptions
+            id: String,
+            requestOptions: RequestOptions = this.defaultRequestOptions
     ): Pair<T, GetResponse>? {
         val getRequest = GetRequest().index(indexReadAlias).id(id)
         if (fetchSourceContext != null) {
@@ -267,17 +278,17 @@ class IndexRepository<T : Any>(
      *
      */
     fun bulk(
-        bulkSize: Int = 100,
-        retryConflictingUpdates: Int = 0,
-        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-        operationsBlock: BulkIndexingSession<T>.(session: BulkIndexingSession<T>) -> Unit
+            bulkSize: Int = 100,
+            retryConflictingUpdates: Int = 0,
+            refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+            itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+            operationsBlock: BulkIndexingSession<T>.(session: BulkIndexingSession<T>) -> Unit
     ) {
         val indexer = bulkIndexer(
-            bulkSize = bulkSize,
-            retryConflictingUpdates = retryConflictingUpdates,
-            refreshPolicy = refreshPolicy,
-            itemCallback = itemCallback
+                bulkSize = bulkSize,
+                retryConflictingUpdates = retryConflictingUpdates,
+                refreshPolicy = refreshPolicy,
+                itemCallback = itemCallback
         )
         // autocloseable so we flush all the items ...
         indexer.use {
@@ -289,20 +300,20 @@ class IndexRepository<T : Any>(
      * Returns a [BulkIndexingSession] for this repository. See [BulkIndexingSession] for the meaning of the other parameters.
      */
     fun bulkIndexer(
-        bulkSize: Int = 100,
-        retryConflictingUpdates: Int = 0,
-        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-        itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
-        requestOptions: RequestOptions = this.defaultRequestOptions
+            bulkSize: Int = 100,
+            retryConflictingUpdates: Int = 0,
+            refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+            itemCallback: ((BulkOperation<T>, BulkItemResponse) -> Unit)? = null,
+            requestOptions: RequestOptions = this.defaultRequestOptions
     ) = BulkIndexingSession(
-        client,
-        this,
-        modelReaderAndWriter,
-        bulkSize,
-        retryConflictingUpdates = retryConflictingUpdates,
-        refreshPolicy = refreshPolicy,
-        itemCallback = itemCallback,
-        defaultRequestOptions = requestOptions
+            client,
+            this,
+            modelReaderAndWriter,
+            bulkSize,
+            retryConflictingUpdates = retryConflictingUpdates,
+            refreshPolicy = refreshPolicy,
+            itemCallback = itemCallback,
+            defaultRequestOptions = requestOptions
     )
 
     /**
@@ -331,10 +342,10 @@ class IndexRepository<T : Any>(
      * You can also set a [scrollTtlInMinutes] if you want something else than the default of 1 minute.
      */
     fun search(
-        scrolling: Boolean = false,
-        scrollTtlInMinutes: Long = 1,
-        requestOptions: RequestOptions = this.defaultRequestOptions,
-        block: SearchRequest.() -> Unit
+            scrolling: Boolean = false,
+            scrollTtlInMinutes: Long = 1,
+            requestOptions: RequestOptions = this.defaultRequestOptions,
+            block: SearchRequest.() -> Unit
     ): SearchResults<T> {
         val wrappedBlock: SearchRequest.() -> Unit = {
             this.indices(indexReadAlias)
@@ -354,11 +365,11 @@ class IndexRepository<T : Any>(
             PagedSearchResults(searchResponse, modelReaderAndWriter)
         } else {
             ScrollingSearchResults(
-                searchResponse,
-                modelReaderAndWriter,
-                client,
-                scrollTtlInMinutes,
-                requestOptions
+                    searchResponse,
+                    modelReaderAndWriter,
+                    client,
+                    scrollTtlInMinutes,
+                    requestOptions
             )
         }
     }

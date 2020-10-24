@@ -12,6 +12,18 @@ import org.junit.jupiter.api.fail
 class BulkIndexingSessionTest : AbstractElasticSearchTest(indexPrefix = "bulk") {
 
     @Test
+    fun `it should index fine with null ids`() {
+        repository.bulk(bulkSize = 2) {
+            index(null, TestModel("hi"))
+            index(null, TestModel("world"))
+            index(null, TestModel("."))
+        }
+        repository.refresh()
+        val count =repository.count()
+        assertThat(count).isEqualTo(3)
+    }
+
+    @Test
     fun `This is how you bulk index some documents`() {
         val ids = mutableListOf<String>()
         for (i in 0..4) {

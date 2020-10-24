@@ -1,15 +1,10 @@
-$dokka.format:html
+$dokka.format:html-v1
 $dokka.linkExtension:html
-$dokka.location:io.inbot.eskotlinwrapper$snakeCaseToUnderscore(kotlin.String)io.inbot.eskotlinwrapper/kotlin.-string/snake-case-to-underscore.html
-$dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.core.CountRequest, java.io.InputStream, org.elasticsearch.common.xcontent.DeprecationHandler)org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/source.html
-$dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.core.CountRequest, java.io.Reader, org.elasticsearch.common.xcontent.DeprecationHandler)org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/source.html
-$dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.core.CountRequest, kotlin.Function1((org.elasticsearch.search.builder.SearchSourceBuilder, kotlin.Unit)))org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/source.html
-$dokka.location:org.elasticsearch.action.search$source(org.elasticsearch.client.core.CountRequest, kotlin.String, org.elasticsearch.common.xcontent.DeprecationHandler)org.elasticsearch.action.search/org.elasticsearch.client.core.-count-request/source.html
-$dokka.location:org.elasticsearch.client$configure(org.elasticsearch.client.indices.CreateIndexRequest, kotlin.Boolean, kotlin.Boolean, kotlin.Function1((io.inbot.eskotlinwrapper.IndexSettingsAndMappingsDSL, kotlin.Unit)))org.elasticsearch.client/org.elasticsearch.client.indices.-create-index-request/configure.html
-$dokka.location:org.elasticsearch.client$source(org.elasticsearch.client.indices.CreateIndexRequest, kotlin.String)org.elasticsearch.client/org.elasticsearch.client.indices.-create-index-request/source.html
+
 io.inbot.eskotlinwrapper
 io.inbot.eskotlinwrapper.dsl
 org.elasticsearch.action.search
 org.elasticsearch.client
 org.elasticsearch.common.xcontent
 org.elasticsearch.search
+

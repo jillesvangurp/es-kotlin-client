@@ -1,16 +1,55 @@
-<HTML>
-<HEAD>
-<meta charset="UTF-8">
-<title>indexRepository - es-kotlin-wrapper-client</title>
-<link rel="stylesheet" href="../../style.css">
-</HEAD>
-<BODY>
-<a href="../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="index.html">org.elasticsearch.client</a>&nbsp;/&nbsp;<a href="./index-repository.html">indexRepository</a><br/>
-<br/>
-<h1>indexRepository</h1>
-<a name="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)"></a>
-<code><span class="keyword">fun </span><span class="symbol">&lt;</span><span class="keyword">reified</span>&nbsp;<span class="identifier">T</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span> <span class="identifier">RestHighLevelClient</span><span class="symbol">.</span><span class="identifier">indexRepository</span><span class="symbol">(</span><span class="identifier" id="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)/modelReaderAndWriter">modelReaderAndWriter</span><span class="symbol">:</span>&nbsp;<a href="../io.inbot.eskotlinwrapper/-model-reader-and-writer/index.html"><span class="identifier">ModelReaderAndWriter</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;JacksonModelReaderAndWriter.create&lt;T&gt;()<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;"_doc"<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)/readAlias">readAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;index<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)/writeAlias">writeAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;index<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)/refreshAllowed">refreshAllowed</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)/fetchSourceContext">fetchSourceContext</span><span class="symbol">:</span>&nbsp;<span class="identifier">FetchSourceContext</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="org.elasticsearch.client$indexRepository(org.elasticsearch.client.RestHighLevelClient, kotlin.String, io.inbot.eskotlinwrapper.ModelReaderAndWriter((org.elasticsearch.client.indexRepository.T)), kotlin.String, kotlin.String, kotlin.String, kotlin.Boolean, org.elasticsearch.search.fetch.subphase.FetchSourceContext, org.elasticsearch.client.RequestOptions)/defaultRequestOptions">defaultRequestOptions</span><span class="symbol">:</span>&nbsp;<span class="identifier">RequestOptions</span>&nbsp;<span class="symbol">=</span>&nbsp;RequestOptions.DEFAULT<span class="symbol">)</span><span class="symbol">: </span><a href="../io.inbot.eskotlinwrapper/-index-repository/index.html"><span class="identifier">IndexRepository</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code>
-<p>Create a new Index Repository. If you've used enterprise frameworks, you should be familiar with this pattern.</p>
-<p>This abstracts the business of telling the client which index to run against and serializing/deserializing documents in it.</p>
-</BODY>
-</HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>indexRepository</title>
+    <link href="../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script>
+    <link href="../../styles/style.css" rel="Stylesheet">
+    <link href="../../styles/logo-styles.css" rel="Stylesheet">
+    <link href="../../styles/jetbrains-mono.css" rel="Stylesheet">
+    <link href="../../styles/main.css" rel="Stylesheet">
+    <script type="text/javascript" src="../../scripts/clipboard.js" async="async"></script>
+    <script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script>
+    <script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script>
+    <script type="text/javascript" src="../../scripts/main.js" async="async"></script>
+    <script>var pathToRoot = "../../";</script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn">
+        <div id="logo"></div>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+        <div id="searchBar"></div>
+        <script type="text/javascript" src="../../scripts/pages.js"></script>
+        <script type="text/javascript" src="../../scripts/main.js"></script>
+        <div id="content" pageIds="org.elasticsearch.client//indexRepository/org.elasticsearch.client.RestHighLevelClient#kotlin.String#io.inbot.eskotlinwrapper.ModelReaderAndWriter[TypeParam(bounds=[kotlin.Any])]#kotlin.String#kotlin.String#kotlin.String#kotlin.Boolean#org.elasticsearch.search.fetch.subphase.FetchSourceContext?#org.elasticsearch.client.RequestOptions/PointingToDeclaration//-1352519770">
+          <div class="breadcrumbs"><a href="../index.html">es-kotlin-wrapper-client</a>/<a href="index.html">org.elasticsearch.client</a>/<a href="index-repository.html">indexRepository</a></div>
+          <div class="cover ">
+            <h1 class="cover"><span>index</span><wbr></wbr><span>Repository</span></h1>
+          </div>
+<div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">inline fun &lt;<a href="index-repository.html">T</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>&gt; <span data-unresolved-link="org.elasticsearch.client/RestHighLevelClient///PointingToDeclaration/">RestHighLevelClient</span>.<a href="index-repository.html">indexRepository</a>(index: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, modelReaderAndWriter: <a href="../io.inbot.eskotlinwrapper/-model-reader-and-writer/index.html">ModelReaderAndWriter</a>&lt;<a href="index-repository.html">T</a>&gt; = JacksonModelReaderAndWriter.create&lt;T&gt;(), type: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a> = &quot;_doc&quot;, readAlias: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a> = index, writeAlias: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a> = index, refreshAllowed: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a> = false, fetchSourceContext: <span data-unresolved-link="org.elasticsearch.search.fetch.subphase/FetchSourceContext///PointingToDeclaration/">FetchSourceContext</span>? = null, defaultRequestOptions: <span data-unresolved-link="org.elasticsearch.client/RequestOptions///PointingToDeclaration/">RequestOptions</span> = RequestOptions.DEFAULT): <a href="../io.inbot.eskotlinwrapper/-index-repository/index.html">IndexRepository</a>&lt;<a href="index-repository.html">T</a>&gt;<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<p class="paragraph">Create a new Index Repository. If you've used enterprise frameworks, you should be familiar with this pattern.</p><p class="paragraph">This abstracts the business of telling the client which index to run against and serializing/deserializing documents in it.</p></div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#container"><svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11.3337 9.66683H0.666992L6.00033 3.66683L11.3337 9.66683Z" fill="black"/>
+    <path d="M0.666992 0.333496H11.3337V1.66683H0.666992V0.333496Z" fill="black"/>
+</svg></a></span><span>© 2020 Copyright</span><span class="pull-right"><span>Sponsored and developed by dokka</span><a href="https://github.com/Kotlin/dokka"><span class="padded-icon"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 0H2.3949L4.84076 2.44586L0 7.28662L0.713376 8L5.55414 3.15924L8 5.6051V0Z" fill="black"/>
+</svg></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+

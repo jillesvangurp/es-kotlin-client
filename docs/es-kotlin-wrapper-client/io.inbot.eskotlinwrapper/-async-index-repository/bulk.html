@@ -1,30 +1,64 @@
-<HTML>
-<HEAD>
-<meta charset="UTF-8">
-<title>AsyncIndexRepository.bulk - es-kotlin-wrapper-client</title>
-<link rel="stylesheet" href="../../../style.css">
-</HEAD>
-<BODY>
-<a href="../../index.html">es-kotlin-wrapper-client</a>&nbsp;/&nbsp;<a href="../index.html">io.inbot.eskotlinwrapper</a>&nbsp;/&nbsp;<a href="index.html">AsyncIndexRepository</a>&nbsp;/&nbsp;<a href="./bulk.html">bulk</a><br/>
-<br/>
-<h1>bulk</h1>
-<a name="io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))"></a>
-<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">bulk</span><span class="symbol">(</span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/bulkSize">bulkSize</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/retryConflictingUpdates">retryConflictingUpdates</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;0<span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/refreshPolicy">refreshPolicy</span><span class="symbol">:</span>&nbsp;<span class="identifier">RefreshPolicy</span>&nbsp;<span class="symbol">=</span>&nbsp;WriteRequest.RefreshPolicy.WAIT_UNTIL<span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/itemCallback">itemCallback</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><span class="symbol">(</span><a href="../-async-bulk-operation/index.html"><span class="identifier">AsyncBulkOperation</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">,</span>&nbsp;<span class="identifier">BulkItemResponse</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a>&nbsp;<span class="symbol">=</span>&nbsp;{ operation, itemResponse -&gt;
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>bulk</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+    <link href="../../../styles/style.css" rel="Stylesheet">
+    <link href="../../../styles/logo-styles.css" rel="Stylesheet">
+    <link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+    <link href="../../../styles/main.css" rel="Stylesheet">
+    <script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/main.js" async="async"></script>
+    <script>var pathToRoot = "../../../";</script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn">
+        <div id="logo"></div>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+        <div id="searchBar"></div>
+        <script type="text/javascript" src="../../../scripts/pages.js"></script>
+        <script type="text/javascript" src="../../../scripts/main.js"></script>
+        <div id="content" pageIds="io.inbot.eskotlinwrapper/AsyncIndexRepository/bulk/#kotlin.Int#kotlin.Int#org.elasticsearch.action.support.WriteRequest.RefreshPolicy#kotlin.coroutines.SuspendFunction2[io.inbot.eskotlinwrapper.AsyncBulkOperation[TypeParam(bounds=[kotlin.Any])],org.elasticsearch.action.bulk.BulkItemResponse,kotlin.Unit]#kotlinx.coroutines.CoroutineDispatcher?#kotlin.coroutines.SuspendFunction1[io.inbot.eskotlinwrapper.AsyncBulkIndexingSession[TypeParam(bounds=[kotlin.Any])],kotlin.Unit]/PointingToDeclaration//-1352519770">
+          <div class="breadcrumbs"><a href="../../index.html">es-kotlin-wrapper-client</a>/<a href="../index.html">io.inbot.eskotlinwrapper</a>/<a href="index.html">AsyncIndexRepository</a>/<a href="bulk.html">bulk</a></div>
+          <div class="cover ">
+            <h1 class="cover"><span>bulk</span></h1>
+          </div>
+<div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">suspend fun <a href="bulk.html">bulk</a>(bulkSize: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a> = 100, retryConflictingUpdates: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a> = 0, refreshPolicy: <span data-unresolved-link="org.elasticsearch.action.support/WriteRequest.RefreshPolicy///PointingToDeclaration/">WriteRequest.RefreshPolicy</span> = WriteRequest.RefreshPolicy.WAIT_UNTIL, itemCallback: suspend (<a href="../-async-bulk-operation/index.html">AsyncBulkOperation</a>&lt;<a href="index.html">T</a>&gt;, <span data-unresolved-link="org.elasticsearch.action.bulk/BulkItemResponse///PointingToDeclaration/">BulkItemResponse</span>) -&gt; <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> = { operation, itemResponse -&gt;
             if (itemResponse.isFailed) {
                 if (retryConflictingUpdates &gt; 0 &amp;&amp; DocWriteRequest.OpType.UPDATE === itemResponse.opType &amp;&amp; itemResponse.failure.status === RestStatus.CONFLICT) {
                     update(operation.id, retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
-                    logger.debug { "retried updating ${operation.id} after version conflict" }
+                    logger.debug { &quot;retried updating ${operation.id} after version conflict&quot; }
                 } else {
-                    logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
+                    logger.warn { &quot;failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}&quot; }
                 }
             }
-        }<span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/bulkDispatcher">bulkDispatcher</span><span class="symbol">:</span>&nbsp;<span class="identifier">CoroutineDispatcher</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/operationsBlock">operationsBlock</span><span class="symbol">:</span>&nbsp;<span class="keyword">suspend </span><a href="../-async-bulk-indexing-session/index.html"><span class="identifier">AsyncBulkIndexingSession</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
-<p>Create a <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a> and use it with the <a href="bulk.html#io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/operationsBlock">operationsBlock</a>. Inside the block you can call operations
-like <code>index</code> and other functions exposed by <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a>. The resulting bulk
-operations are automatically grouped in bulk requests of size <a href="bulk.html#io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/bulkSize">bulkSize</a> and sent off to Elasticsearch. For each
-operation there will be a call to the <a href="bulk.html#io.inbot.eskotlinwrapper.AsyncIndexRepository$bulk(kotlin.Int, kotlin.Int, org.elasticsearch.action.support.WriteRequest.RefreshPolicy, kotlin.coroutines.SuspendFunction2((io.inbot.eskotlinwrapper.AsyncBulkOperation((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), org.elasticsearch.action.bulk.BulkItemResponse, kotlin.Unit)), kotlinx.coroutines.CoroutineDispatcher, kotlin.coroutines.SuspendFunction1((io.inbot.eskotlinwrapper.AsyncBulkIndexingSession((io.inbot.eskotlinwrapper.AsyncIndexRepository.T)), kotlin.Unit)))/itemCallback">itemCallback</a>. This allows you to keep track of failures, do logging,
-or implement retries. If you leave this <code>null</code>, the default callback implementation defined in
-<a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a> is used.</p>
-<p>See <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a> for the meaning of the other parameters.</p>
-</BODY>
-</HTML>
+        }, bulkDispatcher: <span data-unresolved-link="kotlinx.coroutines/CoroutineDispatcher///PointingToDeclaration/">CoroutineDispatcher</span>? = null, operationsBlock: suspend <a href="../-async-bulk-indexing-session/index.html">AsyncBulkIndexingSession</a>&lt;<a href="index.html">T</a>&gt;.() -&gt; <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a>)<span class="top-right-position"><span class="copy-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 4H15V16H5V4ZM17 7H19V18V20H17H8V18H17V7Z" fill="black"/>
+                       </svg></span><div class="copy-popup-wrapper popup-to-left"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 9C18 14 14 18 9 18C4 18 0 14 0 9C0 4 4 0 9 0C14 0 18 4 18 9ZM14.2 6.2L12.8 4.8L7.5 10.1L5.3 7.8L3.8 9.2L7.5 13L14.2 6.2Z" fill="#4DBB5F"/>
+</svg><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<p class="paragraph">Create a <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a> and use it with the <span data-unresolved-link="io.inbot.eskotlinwrapper/AsyncIndexRepository/operationsBlock/#/PointingToCallableParameters(-1)/">operationsBlock</span>. Inside the block you can call operations like <code>index</code> and other functions exposed by <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a>. The resulting bulk operations are automatically grouped in bulk requests of size <span data-unresolved-link="io.inbot.eskotlinwrapper/AsyncIndexRepository/bulkSize/#/PointingToCallableParameters(-1)/">bulkSize</span> and sent off to Elasticsearch. For each operation there will be a call to the <span data-unresolved-link="io.inbot.eskotlinwrapper/AsyncIndexRepository/itemCallback/#/PointingToCallableParameters(-1)/">itemCallback</span>. This allows you to keep track of failures, do logging, or implement retries. If you leave this <code>null</code>, the default callback implementation defined in <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a> is used.</p><p class="paragraph">See <a href="../-bulk-indexing-session/index.html">BulkIndexingSession</a> for the meaning of the other parameters.</p></div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#container"><svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11.3337 9.66683H0.666992L6.00033 3.66683L11.3337 9.66683Z" fill="black"/>
+    <path d="M0.666992 0.333496H11.3337V1.66683H0.666992V0.333496Z" fill="black"/>
+</svg></a></span><span>© 2020 Copyright</span><span class="pull-right"><span>Sponsored and developed by dokka</span><a href="https://github.com/Kotlin/dokka"><span class="padded-icon"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 0H2.3949L4.84076 2.44586L0 7.28662L0.713376 8L5.55414 3.15924L8 5.6051V0Z" fill="black"/>
+</svg></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+

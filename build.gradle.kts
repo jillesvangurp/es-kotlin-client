@@ -11,7 +11,7 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-8-7.9.0")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:1.0-Beta-9-7.9.3")
     }
 }
 

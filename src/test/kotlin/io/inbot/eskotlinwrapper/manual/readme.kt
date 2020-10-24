@@ -65,7 +65,7 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
         """
         snippetBlockFromClass(Thing::class, "thing-class")
 
-        block {
+        block(runBlock = false) {
             // create a Repository
             // with the default jackson model reader and writer
             // (you can use something else)

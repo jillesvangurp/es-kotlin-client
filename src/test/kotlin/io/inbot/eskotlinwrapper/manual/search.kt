@@ -29,6 +29,7 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
                     index("$it", Thing("Another thing: $it"))
                 }
             }
+            repo.refresh()
         }
 
         +"""

@@ -34,7 +34,7 @@ val results = repo.search {
 println("We found ${results.totalHits} results.")
 ```
 
-Output:
+Captured Output:
 
 ```
 We found 3 hits results.
@@ -63,7 +63,7 @@ val results = repo.search {
 println("We found ${results.totalHits} results.")
 ```
 
-Output:
+Captured Output:
 
 ```
 We found 3 hits results.
@@ -125,7 +125,7 @@ val results = repo.search {
 println("We found ${results.totalHits} results.")
 ```
 
-Output:
+Captured Output:
 
 ```
 We found 3 hits results.
@@ -172,7 +172,7 @@ val results = repo.search {
 println("We found ${results.totalHits} results.")
 ```
 
-Output:
+Captured Output:
 
 ```
 We found 3 hits results.

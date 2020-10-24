@@ -34,7 +34,7 @@ repo.bulk {
 println("Lets get one of them " + repo.get("doc-100"))
 ```
 
-Output:
+Captured Output:
 
 ```
 Lets get one of them Thing(name=indexed 100, amount=666)
@@ -87,7 +87,7 @@ println(repo.get("doc-3"))
 println(repo.get("doc-4"))
 ```
 
-Output:
+Captured Output:
 
 ```
 Thing(name=upserted 1, amount=666)
@@ -107,37 +107,6 @@ this does two things:
 - it retries conflicting updates
 
 For most users this should be OK but if you want, you can do something custom:
-
-# Other parameters
-
-There are a few more parameters that you can override.
-
-```kotlin
-repo.bulk(
-  // controls the number of items to send to Elasticsearch
-  // what is optimal depends on the size of your documents and
-  // your cluster setup.
-  bulkSize = 10,
-  // controls how often documents are retried by the default
-  // item callback
-  retryConflictingUpdates = 3,
-  // controls how Elasticsearch refreshes and whether
-  // the bulk request blocks until ES has refreshed or not
-  refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE
-) {
-
-  delete("doc-1")
-  update(
-    id = "doc-2",
-    // these values are wrong so this will be retried
-    seqNo = 12,
-    primaryTerms = 34,
-    original = Thing("updated 2", 666)
-  ) { currentVersion ->
-    currentVersion.copy(name = "safely updated 3")
-  }
-}
-```
 
 ```kotlin
 repo.bulk(
@@ -174,7 +143,7 @@ println("" + repo.get("doc-2"))
   
   There are a few more parameters that you can override.
 """
-blockWithOutput {
+block {
   repo.bulk(
     // controls the number of items to send to Elasticsearch
     // what is optimal depends on the size of your documents and
@@ -202,7 +171,38 @@ blockWithOutput {
 }
 ```
 
-Output:
+# Other parameters
+
+There are a few more parameters that you can override.
+
+```kotlin
+repo.bulk(
+  // controls the number of items to send to Elasticsearch
+  // what is optimal depends on the size of your documents and
+  // your cluster setup.
+  bulkSize = 10,
+  // controls how often documents are retried by the default
+  // item callback
+  retryConflictingUpdates = 3,
+  // controls how Elasticsearch refreshes and whether
+  // the bulk request blocks until ES has refreshed or not
+  refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE
+) {
+
+  delete("doc-1")
+  update(
+    id = "doc-2",
+    // these values are wrong so this will be retried
+    seqNo = 12,
+    primaryTerms = 34,
+    original = Thing("updated 2", 666)
+  ) { currentVersion ->
+    currentVersion.copy(name = "safely updated 3")
+  }
+}
+```
+
+Captured Output:
 
 ```
 doc-2: UPDATE failed, code: CONFLICT

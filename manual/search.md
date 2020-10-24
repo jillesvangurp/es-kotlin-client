@@ -22,6 +22,7 @@ repo.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
     index("$it", Thing("Another thing: $it"))
   }
 }
+repo.refresh()
 ```
 
 ## Searching
@@ -54,19 +55,34 @@ results.mappedHits.forEach {
 }
 
 // we can also get the underlying `SearchHit` that Elasticsearch returns
-results.searchHits.first().apply {
+val firstSearchHit = results.searchHits.first()
+firstSearchHit.apply {
   // this would be useful if we wanted to do some bulk updates
   println("Hit: $id $seqNo $primaryTerm\n$sourceAsString")
 }
 
 // or we can get both as a `Pair`
-results.hits.first().apply {
-  val (searchHit, deserialized) = this
-  println("Hit: ${searchHit.id}:\n$deserialized")
-}
+val firstHit = results.hits.first()
+val (searchHit, deserialized) = firstHit
+println("Hit: ${searchHit.id}:\n$deserialized")
 ```
 
-Output:
+->
+
+```
+({
+  "_index" : "manual",
+  "_type" : "_doc",
+  "_id" : "1",
+  "_score" : 3.830421,
+  "_source" : {
+  "name" : "The quick brown fox",
+  "amount" : 42
+  }
+}, Thing(name=The quick brown fox, amount=42))
+```
+
+Captured Output:
 
 ```
 Found 3 hits
@@ -109,7 +125,7 @@ val count = repo.count {
 println("We found $count results matching $query")
 ```
 
-Output:
+Captured Output:
 
 ```
 The total number of documents is 598

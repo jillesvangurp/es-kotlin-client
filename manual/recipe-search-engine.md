@@ -17,7 +17,7 @@ implements a simple Rest service for indexing and searching recipes. Since both 
 support co-routines, we'll do the extra bit of work to fully utilize that.
 
 You can find the source code for this example 
-[here](https://github.com/jillesvangurp/es-kotlin-wrapper-client).
+[here](https://github.com/jillesvangurp/es-kotlin-wrapper-clientsrc/examples/kotlin/recipesearch).
 
 ## Our data model
 

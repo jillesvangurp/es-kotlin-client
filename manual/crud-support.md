@@ -90,27 +90,27 @@ repo.getMappings().mappings()
   }
 ```
 
-Output:
+Captured Output:
 
 ```
 {
-  "test-d7dc502f-6e0d-4133-9ff1-4b2744939c30" : {
+  "test-c99b9e15-cd50-4bca-96ef-00c55627c4a6" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1600246056276",
+    "creation_date" : "1603512217788",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "AHS5GhOpSdusue5b4l6XAQ",
+    "uuid" : "LqcV2j5jTmWVg4O1htiiKQ",
     "version" : {
       "created" : "7090099"
     },
-    "provided_name" : "test-d7dc502f-6e0d-4133-9ff1-4b2744939c30"
+    "provided_name" : "test-c99b9e15-cd50-4bca-96ef-00c55627c4a6"
     }
   }
   }
 }
-test-d7dc502f-6e0d-4133-9ff1-4b2744939c30 -> {"_meta":{"content_hash":"ZLExK0PCG
-9+CpgXySXotIQ==","timestamp":"2020-09-16T08:47:36.259548Z"},"properties":{"amoun
+test-c99b9e15-cd50-4bca-96ef-00c55627c4a6 -> {"_meta":{"content_hash":"ZLExK0PCG
+9+CpgXySXotIQ==","timestamp":"2020-10-24T04:03:37.783516Z"},"properties":{"amoun
 t":{"type":"long","fields":{"abetterway":{"type":"double"},"imadouble":{"type":"
 double"},"somesubfield":{"type":"keyword"}}},"name":{"type":"text"}}}
 ```
@@ -164,7 +164,7 @@ repo.index(id, Thing("A thing", 42))
 println("Now we get back our object: ${repo.get(id)}")
 ```
 
-Output:
+Captured Output:
 
 ```
 Object does not exist: null
@@ -186,7 +186,7 @@ repo.index(id, Thing("Another thing", 666), create = false)
 println("It was changed: ${repo.get(id)}")
 ```
 
-Output:
+Captured Output:
 
 ```
 we already had one of those and es returned 409
@@ -201,7 +201,7 @@ repo.delete("1")
 println(repo.get("1"))
 ```
 
-Output:
+Captured Output:
 
 ```
 null
@@ -250,10 +250,10 @@ try {
 }
 ```
 
-Output:
+Captured Output:
 
 ```
-obj with name 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 3
+obj with name 'Another thing' has id: 2, primaryTerm: 1, and seqNo: 0
 Version conflict! Es returned 409
 
 ```
@@ -277,7 +277,7 @@ repo.update("3") { currentThing ->
 println("It was updated again ${repo.get("3")}")
 ```
 
-Output:
+Captured Output:
 
 ```
 It was updated: Thing(name=an updated thing, amount=666)
@@ -311,7 +311,7 @@ try {
 }
 ```
 
-Output:
+Captured Output:
 
 ```
 It failed because we disabled retries and we got a conflict
@@ -330,7 +330,7 @@ repo.index("5", Thing("First version of the thing", amount = 0))
 println("All updates succeeded! amount = ${repo.get("5")?.amount}.")
 ```
 
-Output:
+Captured Output:
 
 ```
 All updates succeeded! amount = 30.

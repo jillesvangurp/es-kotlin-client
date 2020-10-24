@@ -121,7 +121,7 @@ runBlocking {
 }
 ```
 
-Output:
+Captured Output:
 
 ```
 indexed 10 items
@@ -146,7 +146,7 @@ runBlocking {
 }
 ```
 
-Output:
+Captured Output:
 
 ```
 Hits: 10

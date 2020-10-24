@@ -117,7 +117,7 @@ val coRoutines by withTestIndex<Thing, Lazy<String>> {
                 }
             }
         }
-        blockWithOutput {
+        block {
             // all functions on the asyncRepo are of course suspend so we
             // need to run them in a co-routine scope
             runBlocking {
@@ -142,7 +142,7 @@ val coRoutines by withTestIndex<Thing, Lazy<String>> {
             The search API is very similar; except for the returned ${AsyncSearchResults::class.simpleName}. The 
             results make use of the `Flow` api in the Kotlin Co-Routines library.
         """
-        blockWithOutput {
+        block {
             runBlocking {
                 val results = asyncRepo.search(scrolling = true) {
                     dsl {

@@ -99,7 +99,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
             us to have type safe properties and helper methods and mix that with raw map access where our DSL misses
             features.
         """
-        blockWithOutput(wrapOutput = true) {
+        block(wrap = true) {
             // stringify is a useful extension function we added to the response
             println(repo.getSettings().stringify(true))
 
@@ -152,7 +152,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
             Now that we have an index, we can use the CRUD operations.
         """
 
-        blockWithOutput {
+        block {
             val id = "first"
             println("Object does not exist: ${repo.get(id)}")
             // so lets store something
@@ -165,7 +165,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
             You can't index an object twice unless you opt in to it being overwritten.
         """
 
-        blockWithOutput {
+        block {
             val id = "first"
             try {
                 repo.index(id, Thing("A thing", 42))
@@ -180,7 +180,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         +"""
             Of course deleting an object is also possible.
         """
-        blockWithOutput {
+        block {
             repo.delete("1")
             println(repo.get("1"))
         }
@@ -195,7 +195,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
             
             This works as follows.
         """
-        blockWithOutput {
+        block {
             repo.index("2", Thing("Another thing"))
 
             val (obj, rawGetResponse) = repo.getWithGetResponse("2")
@@ -232,7 +232,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
             While you can do this manually, the Kotlin client makes optimistic locking a bit easier by 
             providing a robust update method instead.
         """
-        blockWithOutput {
+        block {
             repo.index("3", Thing("Yet another thing"))
 
             repo.update("3") { currentThing ->
@@ -262,7 +262,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
             retries:
         """
 
-        blockWithOutput {
+        block {
             repo.index("4", Thing("First version of the thing", amount = 0))
 
             try {
@@ -278,7 +278,7 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
         +"""
                 Doing the same with 10 retries, fixes the problem.
             """
-        blockWithOutput {
+        block {
             repo.index("5", Thing("First version of the thing", amount = 0))
 
             1.rangeTo(30).toList().parallelStream().forEach { n ->

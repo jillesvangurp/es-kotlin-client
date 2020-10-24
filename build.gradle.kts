@@ -2,7 +2,6 @@ import com.avast.gradle.dockercompose.ComposeExtension
 import io.inbot.escodegen.EsKotlinCodeGenPluginExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -17,13 +16,13 @@ buildscript {
 }
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.4.0"
-    id("org.jetbrains.dokka") version "0.10.1"
-    id("com.github.ben-manes.versions") version "0.29.0" // gradle dependencyUpdates -Drevision=release
+    id("org.jetbrains.kotlin.jvm") version "1.4.10"
+    id("org.jetbrains.dokka") version "1.4.10.2"
+    id("com.github.ben-manes.versions") version "0.33.0" // gradle dependencyUpdates -Drevision=release
 
     java
 
-    id("com.avast.gradle.docker-compose") version "0.13.2"
+    id("com.avast.gradle.docker-compose") version "0.13.4"
     `maven-publish`
 }
 
@@ -63,14 +62,17 @@ tasks.withType<KotlinCompile> {
     this.sourceFilesExtensions
 }
 
-val dokka by tasks.getting(DokkaTask::class) {
-    outputFormat = "html"
-    outputDirectory = "docs"
-    configuration {
-        jdkVersion = 8
-        includes = listOf("src/main/kotlin/io/inbot/eskotlinwrapper/module.md")
-    }
-}
+
+ tasks.dokkaHtml.configure {
+     outputDirectory.set(projectDir.resolve("docs"))
+     dokkaSourceSets {
+         configureEach {
+//            includes.setFrom(files("packages.md", "extra.md","module.md"))
+            jdkVersion.set(8)
+         }
+     }
+
+ }
 
 configure<EsKotlinCodeGenPluginExtension> {
     output = projectDir.absolutePath + "/build/generatedcode"
@@ -118,19 +120,19 @@ publishing {
     }
 }
 
-val kotlinVersion = "1.4.0"
+val kotlinVersion = "1.4.10"
 // match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.9.0"
-val slf4jVersion = "1.7.26"
-val junitVersion = "5.6.0"
+val elasticVersion = "7.9.3"
+val slf4jVersion = "1.7.30"
+val junitVersion = "5.7.0"
 val jacksonVersion = "2.11.2"
-val ktorVersion = "1.4.0"
+val ktorVersion = "1.4.1"
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9")
-    api("io.github.microutils:kotlin-logging:1.8.3")
+    api("io.github.microutils:kotlin-logging:2.0.3")
 
     api("org.apache.commons:commons-lang3:3.11")
 
@@ -152,9 +154,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
-    testImplementation("io.mockk:mockk:1.10.0")
+    testImplementation("io.mockk:mockk:1.10.2")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.20")
-    testImplementation("com.github.jillesvangurp:kotlin4example:0.1.1")
+    testImplementation("com.github.jillesvangurp:kotlin4example:0.2.2")
 
     examplesImplementation("io.ktor:ktor-server-netty:$ktorVersion")
     examplesImplementation("io.ktor:ktor-server-core:$ktorVersion")

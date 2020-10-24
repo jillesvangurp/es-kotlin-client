@@ -35,7 +35,7 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             ## Searching
 
         """
-        blockWithOutput {
+        block {
             // a SearchRequest is created and passed into the block
             val results = repo.search {
                 // we can use Kotlin's string templating
@@ -69,10 +69,9 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             }
 
             // or we can get both as a `Pair`
-            results.hits.first().apply {
-                val (searchHit, deserialized) = this
-                println("Hit: ${searchHit.id}:\n$deserialized")
-            }
+            val first = results.hits.first()
+            val (searchHit, deserialized) = first
+            println("Hit: ${searchHit.id}:\n$deserialized")
         }
 
         +"""
@@ -87,7 +86,7 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             
             We can also query just to get a document count.
         """
-        blockWithOutput {
+        block {
             println("The total number of documents is ${repo.count()}")
 
             // like with search, we can pass in a JSON query
@@ -124,7 +123,7 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             A classic use case for using scrolls is to bulk update your documents. You can do this as follows. 
         """
 
-        blockWithOutput {
+        block {
             repo.bulk {
                 // simply set scrolling to true will allow us to scroll over the entire index
                 // this will scale no matter what the size of your index is. If you use

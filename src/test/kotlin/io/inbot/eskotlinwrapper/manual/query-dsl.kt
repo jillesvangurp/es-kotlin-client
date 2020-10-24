@@ -45,7 +45,7 @@ val queryDsl by withTestIndex<Thing, Lazy<String>> {
 
         """
 
-        blockWithOutput {
+        block {
             val results = repo.search {
                 source(
                     searchSource()
@@ -63,7 +63,7 @@ val queryDsl by withTestIndex<Thing, Lazy<String>> {
         +"""
             This is unfortunately quite ugly from a Kotlin point of view. Lets see if we can clean that up a little.
         """
-        blockWithOutput {
+        block {
 
             // more idomatic Kotlin using apply { ... }
             val results = repo.search {
@@ -96,7 +96,7 @@ val queryDsl by withTestIndex<Thing, Lazy<String>> {
             The example below uses the type safe way to set up the same query as before.
         """
 
-        blockWithOutput {
+        block {
             // more idomatic Kotlin using apply { ... }
             val results = repo.search {
                 // SearchRequest.dsl is the extension function that allows us to use the dsl.
@@ -145,7 +145,7 @@ val queryDsl by withTestIndex<Thing, Lazy<String>> {
             this is easy too.
         """
 
-        blockWithOutput {
+        block {
             // more idomatic Kotlin using apply { ... }
             val results = repo.search {
                 // SearchRequest.dsl is the extension function that allows us to use the dsl.

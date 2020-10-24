@@ -20,7 +20,7 @@ val recipeSearch by withTestIndex<Thing, Lazy<String>>(index = "manual", refresh
             support co-routines, we'll do the extra bit of work to fully utilize that.
             
             You can find the source code for this example 
-            ${mdLinkToRepoResource("here", "src/examples/kotlin/recipesearch")}.
+            ${mdLinkToRepoResource("here", "/src/examples/kotlin/recipesearch")}.
 
             ## Our data model
             

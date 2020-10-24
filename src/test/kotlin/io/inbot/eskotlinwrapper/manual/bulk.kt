@@ -33,7 +33,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
             simple `bulk` method that creates a session for you:
         """
 
-        blockWithOutput {
+        block {
             // creates a BulkIndexingSession<Thing> and passes it to the block
             repo.bulk {
                 1.rangeTo(500).forEach {
@@ -54,7 +54,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
             In addition to `index` we have a few more operations.
         """
 
-        blockWithOutput {
+        block {
             repo.bulk(bulkSize = 50) {
                 // setting create=false overwrites and is the appropriate thing
                 // to do if you are replacing documents in bulk
@@ -105,7 +105,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
             For most users this should be OK but if you want, you can do something custom:
         """
 
-        blockWithOutput {
+        block {
             repo.bulk(
                 itemCallback = object : (BulkOperation<Thing>, BulkItemResponse) -> Unit {
                     // Elasticsearch confirms what it did for each item in a bulk request
@@ -140,7 +140,7 @@ val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed 
                 
                 There are a few more parameters that you can override.
             """
-            blockWithOutput {
+            block {
                 repo.bulk(
                     // controls the number of items to send to Elasticsearch
                     // what is optimal depends on the size of your documents and

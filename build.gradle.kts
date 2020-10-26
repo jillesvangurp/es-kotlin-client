@@ -1,4 +1,5 @@
 import com.avast.gradle.dockercompose.ComposeExtension
+import com.jfrog.bintray.gradle.BintrayExtension
 import com.jillesvangurp.escodegen.EsKotlinCodeGenPluginExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
@@ -7,7 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven(url = "https://jitpack.io")
     }
     dependencies {
@@ -19,6 +20,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.4.10"
     id("org.jetbrains.dokka") version "1.4.10.2"
     id("com.github.ben-manes.versions") version "0.33.0" // gradle dependencyUpdates -Drevision=release
+    id("com.jfrog.bintray") version "1.8.5"
 
     java
 
@@ -101,24 +103,6 @@ tasks.withType<Test> {
         TestLogEvent.STANDARD_OUT
     )
 }
-val artifactName = "es-kotlin-wrapper-client"
-val artifactGroup = "com.github.jillesvangurp"
-
-publishing {
-    publications {
-        create<MavenPublication>("lib") {
-            groupId = artifactGroup
-            artifactId = artifactName
-            from(components["java"])
-        }
-    }
-    repositories {
-        maven {
-            name = "myRepo"
-            url = uri("file://$buildDir/repo")
-        }
-    }
-}
 
 val kotlinVersion = "1.4.10"
 // match the version used by the es-kotlin-codegen-plugin
@@ -168,4 +152,39 @@ dependencies {
     examplesImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
     examplesImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.13.3") // es seems to insist on log4j2
     examplesImplementation("ch.qos.logback:logback-classic:1.2.3")
+}
+
+val jcenterUser: String by project
+val jcenterToken: String by project
+
+bintray {
+    user = jcenterUser
+    key = jcenterToken
+    pkg(closureOf<BintrayExtension.PackageConfig> {
+        repo="es-kotlin-client"
+        name="Elasticsearch Kotlin Client"
+        setLicenses("MIT")
+        publish=false
+        setPublications("mavenJava")
+        vcsUrl = "https://github.com/jillesvangurp/es-kotlin-client.git"
+    })
+}
+
+val artifactName = "es-kotlin-wrapper-client"
+val artifactGroup = "com.github.jillesvangurp"
+
+publishing {
+    publications {
+        create<MavenPublication>("lib") {
+            groupId = artifactGroup
+            artifactId = artifactName
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            name = "myRepo"
+            url = uri("file://$buildDir/repo")
+        }
+    }
 }

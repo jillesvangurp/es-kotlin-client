@@ -162,23 +162,59 @@ bintray {
     key = jcenterToken
     pkg(closureOf<BintrayExtension.PackageConfig> {
         repo="es-kotlin-client"
-        name="Elasticsearch Kotlin Client"
+        name="es-kotlin-client"
         setLicenses("MIT")
-        publish=false
+        publish=true
         setPublications("mavenJava")
         vcsUrl = "https://github.com/jillesvangurp/es-kotlin-client.git"
     })
 }
 
-val artifactName = "es-kotlin-wrapper-client"
+val artifactName = "es-kotlin-client"
 val artifactGroup = "com.github.jillesvangurp"
+
+
+val sourceJar = task("sourceJar", Jar::class) {
+    dependsOn(tasks["classes"])
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+val javadocJar = task("javadocJar", Jar::class) {
+    from(tasks["dokkaJavadoc"])
+    archiveClassifier.set("javadoc")
+}
 
 publishing {
     publications {
-        create<MavenPublication>("lib") {
+        create<MavenPublication>("mavenJava") {
             groupId = artifactGroup
             artifactId = artifactName
+            pom {
+                description.set("Kotlin client for Elasticsearch that uses the Elastic Java client.")
+                name.set(artifactId)
+                url.set("https://github.com/jillesvangurp/es-kotlin-client")
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://github.com/jillesvangurp/es-kotlin-client/LICENSE")
+                        distribution.set("repo")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("jillesvangurp")
+                        name.set("Jilles van Gurp")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/mvysny/karibu-testing")
+                }
+            }
+
             from(components["java"])
+            artifact(sourceJar)
+            artifact(javadocJar)
         }
     }
     repositories {

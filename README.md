@@ -1,16 +1,15 @@
 # Elasticsearch Kotlin Client 
 
-[![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
+[![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
-Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) is written in Java and provides access to essentially everything in the 
-REST API that Elasticsearch exposes. It's a very powerful Java API
-but maybe not the easiest thing to work with directly. 
+The Es Kotlin Client provides a friendly Kotlin API on top of the official Elastic Java client.
+Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. It's a very powerful Java API that provides access to all of the oss and x-pack features. But it is not the easiest thing to work with directly. 
 
-**The kotlin client takes away none of that but adds a lot of power and convenience.**
+**The Es Kotlin Client takes away none of that but adds a lot of power and convenience.** The underlying java functionality is always there ready to be used if you need it. However, for most commonly used things, this client provides more Kotlin appropriate ways to access the functionality.
 
-- Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries as well as defining mappings. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
-- Things that are not supported are easy to configure by modifying the Map directly. For this our DSL classes delegate to a `MapBackedProperties` class that facilitates this. Of course, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
+- Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries as well as defining mappings and settings for your indices. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
+    - Things that are not supported are easy to configure by modifying the Map directly. For this our DSL classes delegate to a `MapBackedProperties` class that facilitates this. Of course, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
 - Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** add convenience and get rid of 
 Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
 friendly API over the underlying client functionality.
@@ -25,6 +24,23 @@ friendly API over the underlying client functionality.
 - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
  asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
 
+## Get it
+
+```
+implementation("com.github.jillesvangurp:es-kotlin-client:v1.0.0-RC0-7.9.3")
+```
+
+The post-fix in the version tag indicates which version of the java client was used. As the client uses the REST API; things should generally be forward and backward compatible with Elasticsearch except of course when Elastic changes their API. 
+
+Note, the repository was recently renamed from es-kotlin-wrapper-client to es-kotlin-client. Until recently, I also deployed versions
+on jitpack. These are still available of course and if not, you can 
+[regenerate them there](https://jitpack.io/#jillesvangurp/es-kotlin-client) if you need older versions.
+
+As of RC0 I deploy via jcenter. So check there for the latest version.
+
+See [release notes](https://github.com/jillesvangurp/es-kotlin-wrapper-client/releases) with each github release 
+tag for an overview what changed.
+            
 ## Documentation & Support
 
 - [manual](https://www.jillesvangurp.com/es-kotlin-manual/) A growing collection of executable examples. This manual is 
@@ -226,16 +242,6 @@ Elasticsearch releases. Barring REST API changes, most of this client should wor
 any future releases and probably also 6.x.
 
 For version 6.x, check the es-6.7.x branch.
-
-# Get it
-
-We are using jitpack for releases currently; the nice thing is that all I need to do is tag the release on Github and 
-they do the rest. Jitpack has nice instructions for setting up your gradle or pom file:
-
-[![](https://jitpack.io/v/jillesvangurp/es-kotlin-wrapper-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-wrapper-client)
-
-See [release notes](https://github.com/jillesvangurp/es-kotlin-wrapper-client/releases) with each github release 
-tag for an overview what changed.
  
 ## Building & Development
 

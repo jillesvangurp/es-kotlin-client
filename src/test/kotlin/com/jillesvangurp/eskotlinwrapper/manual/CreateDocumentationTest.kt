@@ -5,7 +5,7 @@ import com.jillesvangurp.kotlin4example.mdLink
 import org.junit.jupiter.api.Test
 import java.io.File
 
-const val indexMd = "index.md"
+const val manualIndexMd = "index.md"
 
 /**
  * Simple abstraction for a page. Pages go in some output directory, have a title, and may or may not be part of a book.
@@ -23,19 +23,19 @@ val sourceGitRepository = SourceRepository(
 )
 
 val readmePage = Page("Elasticsearch Kotlin Client", "README.md", outputDir = ".")
-val manualIndexPage = Page("Elasticsearch Kotlin Client Manual", indexMd)
-val createClientPage = Page("How to create the client", "creating-client.md", parent = indexMd, emitBookPage = true)
+val manualIndexPage = Page("Elasticsearch Kotlin Client Manual", manualIndexMd)
+val createClientPage = Page("How to create the client", "creating-client.md", parent = manualIndexMd, emitBookPage = true)
 val indexRepositoryPage =
-    Page("Working with objects", "crud-support.md", parent = indexMd, emitBookPage = true)
-val bulkPage = Page("Bulk Indexing", "bulk-indexing.md", parent = indexMd, emitBookPage = true)
-val searchPage = Page("Search", "search.md", parent = indexMd, emitBookPage = true)
-val queryDslPage = Page("Query DSL", "query-dsl.md", parent = indexMd, emitBookPage = true)
-val coroutinesPage = Page("Co-routines", "coroutines.md", parent = indexMd, emitBookPage = true)
+    Page("Working with objects", "crud-support.md", parent = manualIndexMd, emitBookPage = true)
+val bulkPage = Page("Bulk Indexing", "bulk-indexing.md", parent = manualIndexMd, emitBookPage = true)
+val searchPage = Page("Search", "search.md", parent = manualIndexMd, emitBookPage = true)
+val queryDslPage = Page("Query DSL", "query-dsl.md", parent = manualIndexMd, emitBookPage = true)
+val coroutinesPage = Page("Co-routines", "coroutines.md", parent = manualIndexMd, emitBookPage = true)
 val recipeSearchEnginePage = Page(
     "Building a Recipe Search Engine",
-    "recipe-search-engine.md", parent = indexMd, emitBookPage = true
+    "recipe-search-engine.md", parent = manualIndexMd, emitBookPage = true
 )
-val aboutThisManualPage = Page("About this manual", "about.md", parent = indexMd, emitBookPage = true)
+val aboutThisManualPage = Page("About this manual", "about.md", parent = manualIndexMd, emitBookPage = true)
 
 val manualPages = listOf(createClientPage, indexRepositoryPage, bulkPage, searchPage, queryDslPage, coroutinesPage, recipeSearchEnginePage, aboutThisManualPage)
 

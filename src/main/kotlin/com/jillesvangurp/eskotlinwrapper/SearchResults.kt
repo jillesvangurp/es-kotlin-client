@@ -174,7 +174,6 @@ class AsyncSearchResults<T : Any>(
 
     private suspend fun fetchNext(it: SearchResponse, ttl: Long): SearchResponse? {
         val currentScrollId = it.scrollId
-        println(currentScrollId)
         return if (currentScrollId != null && it.hits?.hits?.isNotEmpty() == true) {
             client.scrollAsync(
                 SearchScrollRequest(currentScrollId).scroll(

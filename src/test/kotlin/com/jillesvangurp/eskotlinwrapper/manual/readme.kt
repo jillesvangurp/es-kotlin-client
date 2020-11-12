@@ -18,16 +18,17 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
             The Es Kotlin Client provides a friendly Kotlin API on top of the official Elastic Java client.
-            Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. It's a very powerful Java API that provides access to all of the oss and x-pack features. But it is not the easiest thing to work with directly. 
+            Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. This API provides access to all of the oss and x-pack features. However, it is not the easiest thing to work with directly. 
             
-            **The Es Kotlin Client takes away none of that but adds a lot of power and convenience.** The underlying java functionality is always there ready to be used if you need it. However, for most commonly used things, this client provides more Kotlin appropriate ways to access the functionality.
+            **The Es Kotlin Client takes away none of that power but adds a lot of power and convenience.** The underlying java functionality is always there ready to be used if you need it. However, for most commonly used things, this client provides more Kotlin appropriate ways to access the functionality.
             
             - Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries as well as defining mappings and settings for your indices. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
-                - Things that are not supported are easy to configure by modifying the Map directly. For this our DSL classes delegate to a `MapBackedProperties` class that facilitates this. Of course, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
+                - Things that are not supported are easy to configure by modifying the underlying data model directly using Kotlin's syntactic sugar for working with `Map`. 
+                - To enable this our DSL classes delegate to a `MapBackedProperties` class that backs normal type safe kotlin properties with a `Map`. Anything that's not supported, you can just add yourself. Additionally, it is easy to extend the DSLs with your own type safe constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
             - Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** add convenience and get rid of 
             Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
             friendly API over the underlying client functionality.
-            - A **repository** abstraction that allows you to: 
+            - A **repository** abstraction that allows you represent an Index with a data class: 
                 - Manage indices with a flexible DSL for mappings.
                 - Serialize/deserialize JSON objects using your favorite serialization framework. A Jackson implementation comes with the client but you can trivially add support for other frameworks. Deserialization support is also available on search results and the bulk API.
                 - Do CRUD on json documents with safe updates that retry in case of a version conflict.
@@ -84,7 +85,7 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
         block(runBlock = false) {
             // create a Repository
             // with the default jackson model reader and writer
-            // (you can use something else)
+            // (you can use something else by overriding default values of the args)
             val thingRepository = esClient.indexRepository<Thing>(
                 index = "things",
                 // you have to opt in to refreshes, bad idea to refresh in production code
@@ -122,7 +123,7 @@ val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
             val results = thingRepository.search {
                 dsl {
                     // added names to the args for clarity here, but optional of course
-                    query = MatchQuery(field = "name", query = "nar")
+                    query = MatchQuery(field = "name", query = "bar")
                 }
             }
             // results know hot deserialize Things

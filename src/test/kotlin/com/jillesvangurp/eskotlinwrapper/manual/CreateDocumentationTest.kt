@@ -76,14 +76,14 @@ class ManualOverviewPageTest {
     fun `generate manual`() {
         mapOf(
             readmePage to readme,
-            aboutThisManualPage to about,
             createClientPage to clientCreation,
             indexRepositoryPage to indexRepository,
             bulkPage to bulk,
             searchPage to search,
-            coroutinesPage to coRoutines,
             queryDslPage to queryDsl,
-            recipeSearchEnginePage to recipeSearch
+            coroutinesPage to coRoutines,
+            recipeSearchEnginePage to recipeSearch,
+            aboutThisManualPage to about,
         ).forEach { (page, md) ->
             markdownPageWithNavigation(page, md)
         }

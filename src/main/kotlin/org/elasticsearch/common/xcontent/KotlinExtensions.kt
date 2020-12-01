@@ -4,6 +4,7 @@ import org.elasticsearch.common.xcontent.json.JsonXContent
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
+import java.time.Instant
 
 // Misc helpers to make dealing with XContent a bit less painful. There seems to be no way around this low level stuff
 // in the Java client as lots of endpoints lack suitable type safe builders or schemas. Use with caution.
@@ -70,6 +71,9 @@ fun XContentBuilder.writeAny(obj: Any?) {
                 // this only works with XContentBuilder implementations that use a ByteArrayOutputStream, like the one created by xContentBuilder
                 throw IllegalStateException("Cannot grab content from underlying OutputStream because it is not a ByteArrayOutputStream")
             }
+        }
+        is Instant -> {
+            this.value(obj.toString())
         }
         is Number -> {
             this.value(obj)

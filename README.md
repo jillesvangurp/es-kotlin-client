@@ -4,16 +4,21 @@
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
 The Es Kotlin Client provides a friendly Kotlin API on top of the official Elastic Java client.
-Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. It's a very powerful Java API that provides access to all of the oss and x-pack features. But it is not the easiest thing to work with directly. 
+Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. This API provides access to all of the oss and x-pack features. However, it is not the easiest thing to work with directly. 
 
-**The Es Kotlin Client takes away none of that but adds a lot of power and convenience.** The underlying java functionality is always there ready to be used if you need it. However, for most commonly used things, this client provides more Kotlin appropriate ways to access the functionality.
+**The Es Kotlin Client takes away none of that power but adds a lot of power and convenience.** 
+
+The underlying java functionality is always there ready to be used if you need it. However, for most commonly used things, this client provides more Kotlin appropriate ways to access the functionality.
+
+## Features
 
 - Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries as well as defining mappings and settings for your indices. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
-    - Things that are not supported are easy to configure by modifying the Map directly. For this our DSL classes delegate to a `MapBackedProperties` class that facilitates this. Of course, it is easy to extend the query dsl with your own constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
+    - Things that are not supported are easy to configure by modifying the underlying data model directly using Kotlin's syntactic sugar for working with `Map`. 
+    - To enable this our DSL classes delegate to a `MapBackedProperties` class that backs normal type safe kotlin properties with a `Map`. Anything that's not supported, you can just add yourself. Additionally, it is easy to extend the DSLs with your own type safe constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
 - Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** add convenience and get rid of 
 Java specific boilerplate. The Java client is designed for Java users and comes with a lot of things that are a bit awkward / non idiomatic in Kotlin. This client cuts down on the boiler plate and uses Kotlin's DSL features, extension functions, etc. to layer a 
 friendly API over the underlying client functionality.
-- A **repository** abstraction that allows you to: 
+- A **repository** abstraction that allows you represent an Index with a data class: 
     - Manage indices with a flexible DSL for mappings.
     - Serialize/deserialize JSON objects using your favorite serialization framework. A Jackson implementation comes with the client but you can trivially add support for other frameworks. Deserialization support is also available on search results and the bulk API.
     - Do CRUD on json documents with safe updates that retry in case of a version conflict.
@@ -24,7 +29,9 @@ friendly API over the underlying client functionality.
 - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
  asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
 
-## Get it
+## Get it from jcenter
+
+[![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)
 
 ```
 implementation("com.github.jillesvangurp:es-kotlin-client:v1.0.0-RC0-7.9.3")
@@ -76,7 +83,7 @@ data class Thing(
 ```kotlin
 // create a Repository
 // with the default jackson model reader and writer
-// (you can use something else)
+// (you can use something else by overriding default values of the args)
 val thingRepository = esClient.indexRepository<Thing>(
   index = "things",
   // you have to opt in to refreshes, bad idea to refresh in production code
@@ -114,7 +121,7 @@ thingRepository.refresh()
 val results = thingRepository.search {
   dsl {
     // added names to the args for clarity here, but optional of course
-    query = MatchQuery(field = "name", query = "nar")
+    query = MatchQuery(field = "name", query = "bar")
   }
 }
 // results know hot deserialize Things
@@ -169,25 +176,32 @@ thingRepository.bulk {
 }
 ```
 
-## Co-routines
+            ## Co-routines
+            
+            Using co-routines is easy in Kotlin. Mostly things work almost the same way. Except everything is non blocking
+            and asynchronous, which is nice. In other languages this creates all sorts of complications that Kotlin largely avoids.
+            
+            The Java client in Elasticsearch has support for non blocking IO. We leverage this to add our own suspending
+            calls using extension functions via our gradle code generation plugin. This runs as part of the build process for this
+             library so there should be no need for you to use  this plugin. 
 
-Using co-routines is easy in Kotlin. Mostly things work the same way. Except everything is non blocking
-and asynchronous. In other languages this creates all sorts of complications that Kotlin largely avoids.
-
-The Java client in Elasticsearch has support for non blocking IO. We leverage this to add our own suspending
-calls using extension functions. Mostly these have very similar signatures as their blocking variants. But 
-of course we also added a suspending version of the Index Repository. 
+            The added functions have the same signatures as their blocking variants. Except of course they have the 
+\           word async in their names and the suspend keyword in front of them. 
+            
+            We added suspending versions of the `Repository` and `BulkSession` as well, so either blocking or non
+            blocking. It's up to you.
 
 ```kotlin
-// we reuse the index we created already
+// we reuse the index we created already to create an ayncy index repo
 val repo = esClient.asyncIndexRepository<Thing>(
   index = "things",
   refreshAllowed = true
 )
-// co routines require a CoroutineScope, so let create one
+// co routines require a CoroutineScope, so let use one
 runBlocking {
-  // lets create some more things
+  // lets create some more things; this works the same as before
   repo.bulk {
+    // but we now get an AsyncBulkIndexingSession<Thing>
     (1..1000).forEach {
       index(
         "$it",
@@ -198,13 +212,14 @@ runBlocking {
   // refresh so we can search
   repo.refresh()
   // if you are wondering, yes this is almost identical
-  // as the synchronous version above.
+  // to the synchronous version above.
+  // However, we now get an AsyncSearchResults back
   val results = repo.search {
     dsl {
       query = TermQuery("name.keyword", "thing #666")
     }
   }
-  // However, results is a Flow instead of a Sequence
+  // However, mappedHits is now a Flow instead of a Sequence
   results.mappedHits.collect {
     // collect is part of the kotlin Flow API
     // this is one of the few parts where the API is different
@@ -224,8 +239,8 @@ For more examples, check the manual or the examples source folder.
 
 ## Code generation
 
-This library makes use of code generated by a 
-[code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin). This mainly 
+This library makes use of code generated by our 
+[code generation gradle plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin). This is mainly 
 used to generate co-routine friendly suspendable extension functions for all asynchronous methods in the 
 RestHighLevelClient. We may add more features in the future.
 
@@ -265,10 +280,11 @@ a mess there (I learned that lesson a long time ago).
 
 ## Development status
 
-This library should be perfectly fine for general use at this point and is currently available as a beta release. 
+This library should be perfectly fine for general use at this point. 
 
 Please note, that you can always access the underlying Java client, which is stable. However, until we 
-release 1.0, refactoring & api changes can still happen occasionally. Please check the issue tracker for progress on this.
+release 1.0, refactoring & api changes can still happen occasionally although it is getting less likely. 
+Please check the issue tracker for progress on this.
  
 If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
 before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.
@@ -281,8 +297,10 @@ I do appreciate attribution and pull requests ...
 
 ## Support
 
-I'm available for consultancy and specialize in a few things, including Elasticsearch. I've supported small
+For small things, use the issue tracker; I generally try to be helpful. However, I'm available for 
+consultancy and specialize in a few things, including of course Elasticsearch. I've supported small
 and large companies with search related product features, complex migrations, query optimizations, plugin
-development, and more. I have over 15 years of experience with Lucene, Solr, and of course Elasticsearch.
+development, and more. I have over 15 years of experience with Lucene, Solr, and of course Elasticsearch. So,
+if you need help with something bigger please reach out.
 
 

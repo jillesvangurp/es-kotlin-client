@@ -70,7 +70,7 @@ class IndexManagementTest : AbstractElasticSearchTest("indexmngmnt", createIndex
         esClient.indices().getMapping(GetMappingsRequest().indices(repository.indexName), RequestOptions.DEFAULT)
             .mappings().forEach { (f, m) ->
                 println(f)
-                println(m.get().source().string())
+                println(m.source().string())
             }
     }
 }

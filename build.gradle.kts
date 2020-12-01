@@ -12,14 +12,14 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:7.9.3.0")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:7.10.0.0")
     }
 }
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.4.10"
+    id("org.jetbrains.kotlin.jvm") version "1.4.20"
     id("org.jetbrains.dokka") version "1.4.10.2"
-    id("com.github.ben-manes.versions") version "0.33.0" // gradle dependencyUpdates -Drevision=release
+    id("com.github.ben-manes.versions") version "0.36.0" // gradle dependencyUpdates -Drevision=release
     id("com.jfrog.bintray") version "1.8.5"
 
     java
@@ -104,18 +104,18 @@ tasks.withType<Test> {
     )
 }
 
-val kotlinVersion = "1.4.10"
+val kotlinVersion = "1.4.20"
 // match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.9.3"
+val elasticVersion = "7.10.0"
 val slf4jVersion = "1.7.30"
 val junitVersion = "5.7.0"
-val jacksonVersion = "2.11.2"
+val jacksonVersion = "2.12.0"
 val ktorVersion = "1.4.1"
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.2")
     api("io.github.microutils:kotlin-logging:2.0.3")
 
     api("org.apache.commons:commons-lang3:3.11")
@@ -132,7 +132,7 @@ dependencies {
     testImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
     testImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
     testImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.13.3") // es seems to insist on log4j2
+    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.14.0") // es seems to insist on log4j2
     testImplementation("ch.qos.logback:logback-classic:1.2.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")

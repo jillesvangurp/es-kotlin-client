@@ -1,7 +1,7 @@
 package com.jillesvangurp.eskotlinwrapper
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import kotlin.reflect.KClass
 
 /**
@@ -34,7 +34,7 @@ class JacksonModelReaderAndWriter<T : Any>(
             return if (objectMapper == null) {
                 val om = ObjectMapper().findAndRegisterModules()
                 // sane default, if you want camelcase, override the objectmapper
-                om.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+                om.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
                 JacksonModelReaderAndWriter<T>(T::class, om)
             } else {
                 JacksonModelReaderAndWriter<T>(T::class, objectMapper)

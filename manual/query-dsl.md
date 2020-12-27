@@ -1,4 +1,4 @@
-[previous](search.md) | [index](index.md)
+[previous](search.md) | [index](index.md) | [next](coroutines.md)
 
 ___
 
@@ -234,5 +234,5 @@ The DSL is currently kind of experimental and very incomplete. I will add more t
 
 ___
 
-[previous](search.md) | [index](index.md)
+[previous](search.md) | [index](index.md) | [next](coroutines.md)
 

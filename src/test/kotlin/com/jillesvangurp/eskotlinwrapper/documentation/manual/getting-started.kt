@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_VARIABLE") @file:JvmName("IntroductionKt")
-
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing

@@ -1,4 +1,4 @@
-[previous](query-dsl.md) | [index](index.md)
+[previous](query-dsl.md) | [index](index.md) | [next](recipe-search-engine.md)
 
 ___
 
@@ -156,5 +156,5 @@ Hits: 10
 
 ___
 
-[previous](query-dsl.md) | [index](index.md)
+[previous](query-dsl.md) | [index](index.md) | [next](recipe-search-engine.md)
 

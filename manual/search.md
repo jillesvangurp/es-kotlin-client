@@ -1,4 +1,4 @@
-[previous](bulk-indexing.md) | [index](index.md)
+[previous](bulk-indexing.md) | [index](index.md) | [next](query-dsl.md)
 
 ___
 
@@ -166,5 +166,5 @@ repo.bulk {
 
 ___
 
-[previous](bulk-indexing.md) | [index](index.md)
+[previous](bulk-indexing.md) | [index](index.md) | [next](query-dsl.md)
 

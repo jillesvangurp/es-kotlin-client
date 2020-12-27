@@ -76,7 +76,7 @@ class CreateDocumentationTest {
         File("epub", "styles.css").writeText(
             """
             /* This defines styles and classes used in the book */
-            body { margin: 0; text-align: justify; font-size: medium; font-family: Athelas, Georgia, serif; }
+            body { margin: 0; text-align: justify; font-size: small; font-family: Athelas, Georgia, serif; }
             h1 { text-align: left; }
             h2 { text-align: left; }
             h3 { text-align: left; }
@@ -93,39 +93,13 @@ class CreateDocumentationTest {
             a.footnote-ref { vertical-align: super; }
             em, em em em, em em em em em { font-style: italic;}
             em em, em em em em { font-style: normal; }
-            pre {font-size: 50%;}
+            pre {font-size: 0.8rem%;}
             code{ font-family: monospace; white-space: pre-wrap; }
             span.smallcaps{ font-variant: small-caps; }
             span.underline{ text-decoration: underline; }
             q { quotes: "“" "”" "‘" "’"; }
             div.column{ display: inline-block; vertical-align: top; width: 50%; }
             div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-            
-            /* https://pandoc.org/demos.html */
-            code span.al { color: #ff0000; } /* Alert */
-            code span.an { color: #008000; } /* Annotation */
-            code span.at { } /* Attribute */
-            code span.bu { } /* BuiltIn */
-            code span.cf { color: #0000ff; } /* ControlFlow */
-            code span.ch { color: #008080; } /* Char */
-            code span.cn { } /* Constant */
-            code span.co { color: #008000; } /* Comment */
-            code span.cv { color: #008000; } /* CommentVar */
-            code span.do { color: #008000; } /* Documentation */
-            code span.er { color: #ff0000; font-weight: bold; } /* Error */
-            code span.ex { } /* Extension */
-            code span.im { } /* Import */
-            code span.in { color: #008000; } /* Information */
-            code span.kw { color: #0000ff; } /* Keyword */
-            code span.op { } /* Operator */
-            code span.ot { color: #ff4000; } /* Other */
-            code span.pp { color: #ff4000; } /* Preprocessor */
-            code span.sc { color: #008080; } /* SpecialChar */
-            code span.ss { color: #008080; } /* SpecialString */
-            code span.st { color: #008080; } /* String */
-            code span.va { } /* Variable */
-            code span.vs { color: #008080; } /* VerbatimString */
-            code span.wa { color: #008000; font-weight: bold; } /* Warning */
 
             """.trimIndent()
         )
@@ -134,7 +108,7 @@ class CreateDocumentationTest {
             ---
             title: Searching Elasticsearch using Kotlin
             author: Jilles van Gurp
-            rights:  Copyright Jilles van Gurp, 2019
+            rights:  Copyright Jilles van Gurp, 2019-2021
             language: en-US
             ...
             
@@ -144,19 +118,22 @@ class CreateDocumentationTest {
             """
             # Preface
             
-            This Ebook is a work in progress. It may eventually become something I put up on e.g. Amazon for a low fee. 
+            This epub book is a work in progress. It may eventually become something I put up on e.g. Amazon for a low fee. 
             Regardless of that, I intend to keep this manual bundled with the source under the MIT License in Markdown
             version.
             
             Meanwhile, I would appreciate any feedback you have on this manual, any grammar/text issues,
             layout/formatting issues, or anything that you would like clarified in more detail.
             
+            Currently, there are some issues with syntax highlighting and some epub readers. The Calibre viewer seems 
+            to work though.
+            
             """.trimIndent()
         )
         File("epub", "create_ebook.sh").writeText(
             """
             #!/bin/bash
-            pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${manualPages.values.joinToString(" ") {it.fileName}}
+            pandoc --toc -t epub3 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${manualPages.values.joinToString(" ") {it.fileName}}
             """.trimIndent()
         )
     }

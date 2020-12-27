@@ -14,38 +14,60 @@ const val manualIndexParent = "index.md"
 class MDPage(
     val title: String,
     val fileName: String,
-    val markdown: ()->String,
+    val markdown: () -> String,
     val outputDir: String = "manual",
     val parent: String? = null,
     val emitBookPage: Boolean = false
 )
+
 val sourceGitRepository = SourceRepository(
     repoUrl = "https://github.com/jillesvangurp/es-kotlin-wrapper-client",
     sourcePaths = setOf("src/main/kotlin", "src/test/kotlin", "src/examples/kotlin")
 )
 
-val readmePage =MDPage("Elasticsearch Kotlin Client", "README.md", outputDir = ".", markdown = {readmeMd})
-val manualIndexPage = MDPage("Elasticsearch Kotlin Client Manual", manualIndexParent, markdown = {manualIndexMd})
+val readmePage = MDPage("Elasticsearch Kotlin Client", "README.md", outputDir = ".", markdown = { readmeMd })
+val manualIndexPage = MDPage("Elasticsearch Kotlin Client Manual", manualIndexParent, markdown = { manualIndexMd })
 
-val manualPages:Map<String, MDPage> =
+val manualPages: Map<String, MDPage> =
     mapOf(
-        "clientCreation" to MDPage(
-            "How to create the client",
-            "creating-client.md",
+        "introduction" to MDPage(
+            "Introduction",
+            "introduction.md",
             parent = manualIndexParent,
             emitBookPage = true,
-            markdown = {clientCreationMd}
+            markdown = { introductionMd }),
+        "clientCreation" to MDPage(
+            "Getting Started",
+            "getting-started.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = { gettingStarted }
         ),
         "crudSupport" to MDPage(
             "Working with objects",
             "crud-support.md",
             parent = manualIndexParent,
             emitBookPage = true,
-            markdown = {indexRepositoryMd}
+            markdown = { indexRepositoryMd }
         ),
-        "bulkIndexing" to MDPage("Bulk Indexing", "bulk-indexing.md", parent = manualIndexParent, emitBookPage = true, markdown = { bulkMd }),
-        "search" to MDPage("Search", "search.md", parent = manualIndexParent, emitBookPage = true, markdown = { searchMd }),
-        "queryDSL" to MDPage("Query DSL", "query-dsl.md", parent = manualIndexParent, emitBookPage = true, markdown = { queryDslMd }),
+        "bulkIndexing" to MDPage(
+            "Bulk Indexing",
+            "bulk-indexing.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = { bulkMd }),
+        "search" to MDPage(
+            "Search",
+            "search.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = { searchMd }),
+        "queryDSL" to MDPage(
+            "Query DSL",
+            "query-dsl.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = { queryDslMd }),
         "coRoutines" to MDPage(
             "Co-routines",
             "coroutines.md",
@@ -58,7 +80,12 @@ val manualPages:Map<String, MDPage> =
             "recipe-search-engine.md", parent = manualIndexParent, emitBookPage = true,
             markdown = { recipeSearchMd }
         ),
-        "about" to MDPage("About this manual", "about.md", parent = manualIndexParent, emitBookPage = true, markdown = { aboutMd })
+        "about" to MDPage(
+            "About this manual",
+            "about.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = { aboutMd })
     )
 
 class CreateDocumentationTest {
@@ -133,14 +160,18 @@ class CreateDocumentationTest {
         File("epub", "create_ebook.sh").writeText(
             """
             #!/bin/bash
-            pandoc --toc -t epub3 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${manualPages.values.joinToString(" ") {it.fileName}}
+            pandoc --toc -t epub3 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${
+                manualPages.values.joinToString(
+                    " "
+                ) { it.fileName }
+            }
             """.trimIndent()
         )
     }
 }
 
 fun markdownPageWithNavigation(page: MDPage) {
-    val pages=manualPages.values.toList()
+    val pages = manualPages.values.toList()
     val index = pages.indexOf(page)
     val previous = if (index < 0) null else if (index == 0) null else pages[index - 1].fileName
     val next = if (index < 0) null else if (index == manualPages.size - 1) null else pages[index + 1].fileName
@@ -158,8 +189,8 @@ fun markdownPageWithNavigation(page: MDPage) {
 
     val pageWithNavigationMd =
         (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n\n___\n\n" else "") +
-            md + "\n" +
-            (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "")
+                md + "\n" +
+                (if (nav.isNotEmpty()) "___\n\n" + nav.joinToString(" | ") + "\n\n" else "")
 
     File(page.outputDir).mkdirs()
     File(page.outputDir, page.fileName).writeText(pageWithNavigationMd)

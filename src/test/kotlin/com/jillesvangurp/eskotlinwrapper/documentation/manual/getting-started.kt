@@ -1,21 +1,30 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE") @file:JvmName("IntroductionKt")
 
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing
 import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
+import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import org.apache.http.HttpHost
+import org.elasticsearch.action.search.dsl
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.create
+import org.elasticsearch.client.indexRepository
 
-val clientCreationMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
+val gettingStarted by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
         +"""
-            To use the ES Kotlin Client, you simply have to create an instance
-            of the Java High Level Restclient (and have this library on the classpath). 
-            There are several ways to do this.
+            To get started, you will need to add a dependency to the jar file to your gradle project:
+            
+            ```
+            implementation("com.github.jillesvangurp:es-kotlin-client:VERSION")
+            ```
+            
+            
+            To use the ES Kotlin Client, you can simply create an instance
+            of the Java High Level Restclient. There are several ways to do this.
                             
             ## Do it the Java way 
             
@@ -59,7 +68,34 @@ val clientCreationMd by withTestIndex<Thing, Lazy<String>>(index = "manual", ref
         }
 
         +"""
-            ## Set up cluster sniffing
+            ## A simple example
+        """.trimIndent()
+
+        block {
+            data class Foo(val message: String)
+            val fooRepo = esClient.indexRepository<Foo>("my-index", refreshAllowed = true)
+            fooRepo.index(obj=Foo("Hello World!"))
+            // ensure the document is committed
+            fooRepo.refresh()
+            val results = fooRepo.search {
+                dsl {
+                    query = matchAll()
+                }
+            }
+            println(results.mappedHits.first().message)
+        }
+
+        +"""
+            This simple example adds a json document to Elasticsearch that is serialized from the `Foo` data class using
+            an index repository. We then refresh the index so that the document is available for search. Finally,
+            we do a simple match all query and print the first result.
+            
+            We will dive into these features more in the next chapters.
+        """.trimIndent()
+
+
+        +"""
+            ## Setting up cluster sniffing
             
             If your application has direct access to the Elasticsearch cluster and is not using a load balancer,
             you can use client side load balancing. For this purpose, the create function has a `useSniffing` 

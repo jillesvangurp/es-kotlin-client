@@ -1,14 +1,14 @@
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
+import com.jillesvangurp.eskotlinwrapper.documentation.Thing
+import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
 import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 
-val about by withTestIndex<Thing, Lazy<String>> {
+val aboutMd by withTestIndex<Thing, Lazy<String>> {
     sourceGitRepository.md {
 
         +"""
-            ## About this manual
-            
             This manual is an attempt at 
             ${mdLink("literate programming", "https://en.wikipedia.org/wiki/Literate_programming")}. When I 
             started writing it, I quickly discovered that copying bits of source code to quickly leads to broken

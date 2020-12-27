@@ -1,10 +1,13 @@
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
+import com.jillesvangurp.eskotlinwrapper.documentation.*
 import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import java.io.File
 
-val recipeSearch by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
+private const val recipeSearchSource = "src/examples/kotlin/recipesearch/RecipeSearch.kt"
+
+val recipeSearchMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
         +"""
             The Elasticsearch Kotlin Client is designed to simplify writing code that
@@ -39,8 +42,8 @@ val recipeSearch by withTestIndex<Thing, Lazy<String>>(index = "manual", refresh
 
         +"""
             Given this model, we can create simple `AsyncIndexRepository` and use it (see ${mdLink(
-            indexRepositoryPage.title,
-            indexRepositoryPage.fileName
+            manualPages["crudSupport"]!!.title,
+            manualPages["crudSupport"]!!.fileName
         )}) 
             to create a simple ktor server that can index and search through recipes. 
 
@@ -61,7 +64,7 @@ val recipeSearch by withTestIndex<Thing, Lazy<String>>(index = "manual", refresh
             
             We create a custom index with the custom mapping DSL that is part of the Kotlin client.
         """
-        snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "mapping_dsl")
+        snippetFromSourceFile(recipeSearchSource, "mapping_dsl")
 
         +"""
             This somewhat elaborate mapping example shows how you can mix our DSL with simple put
@@ -78,7 +81,7 @@ val recipeSearch by withTestIndex<Thing, Lazy<String>>(index = "manual", refresh
             bulk DSL to bulk index all the files in the `src/examples/resources/recipes` directory. Bulk indexing 
             allows Elasticsearch to process batches of documents efficiently.
         """
-        snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "index_recipes")
+        snippetFromSourceFile(recipeSearchSource, "index_recipes")
 
         +"""
             Note how small this code is. There's almost nothing to this. Yet this code is safe, robust, asynchronous,
@@ -90,7 +93,7 @@ val recipeSearch by withTestIndex<Thing, Lazy<String>>(index = "manual", refresh
             
             Once we have documents in our index, we can search through them as follows:
         """
-        snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "search_recipes")
+        snippetFromSourceFile(recipeSearchSource, "search_recipes")
 
         +"""
             As you can see, searching is similarly simple. The `search` extension function takes a block that
@@ -113,7 +116,7 @@ val recipeSearch by withTestIndex<Thing, Lazy<String>>(index = "manual", refresh
             Since we added custom analyzers on the `title.autocomplete` field, we can also implement that. The response 
             format for that is the same. Our mapping uses a simple edge ngram analyzer.
         """
-        snippetFromSourceFile("src/examples/kotlin/recipesearch/RecipeSearch.kt", "autocomplete_recipes")
+        snippetFromSourceFile(recipeSearchSource, "autocomplete_recipes")
 
         +"""                
             ## Creating a Ktor server

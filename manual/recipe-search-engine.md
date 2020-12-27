@@ -96,7 +96,7 @@ suspend fun main(vararg args: String) {
   objectMapper.findAndRegisterModules()
   // make sure we convert names with underscores properly to and
   // from kotlin (camelCase)
-  objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+  objectMapper.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
 
   val esClient = create(host = "localhost", port = 9999)
   // shut down client cleanly after ktor exits
@@ -387,6 +387,7 @@ private fun createServer(
       }
     }
   }
+}
 ```
 
 KTor uses a DSL for defining the server. In this case, we simply reuse our Jackson object mapper

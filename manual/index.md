@@ -6,7 +6,8 @@ adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co
 
 ## Chapters
 
-- [How to create the client](creating-client.md)
+- [Introduction](introduction.md)
+- [Getting Started](getting-started.md)
 - [Working with objects](crud-support.md)
 - [Bulk Indexing](bulk-indexing.md)
 - [Search](search.md)

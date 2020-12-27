@@ -1,5 +1,6 @@
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
+import com.jillesvangurp.eskotlinwrapper.documentation.*
 import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.dsl.MatchQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.bool
@@ -12,7 +13,7 @@ import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.elasticsearch.index.query.QueryBuilders.matchQuery
 import org.elasticsearch.search.builder.SearchSourceBuilder.searchSource
 
-val queryDsl by withTestIndex<Thing, Lazy<String>> {
+val queryDslMd by withTestIndex<Thing, Lazy<String>> {
 
     // lets put some stuff in our index again
     repo.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
@@ -35,7 +36,10 @@ val queryDsl by withTestIndex<Thing, Lazy<String>> {
             On this page we outline a few ways in which you can build queries both programmatically using the builders
             that come with the Java client, using json strings, and using our Kotlin DSL.
             
-            We will use the same example as before in ${mdLink(searchPage.title, searchPage.fileName)}. 
+            We will use the same example as before in ${mdLink(
+            manualPages["search"]!!.title,
+            manualPages["search"]!!.fileName
+        )}. 
             
             ## Java Builders
             

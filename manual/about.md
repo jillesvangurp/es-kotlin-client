@@ -4,8 +4,6 @@ ___
 
 # About this manual 
 
-## About this manual
-
 This manual is an attempt at 
 [literate programming](https://en.wikipedia.org/wiki/Literate_programming). When I 
 started writing it, I quickly discovered that copying bits of source code to quickly leads to broken

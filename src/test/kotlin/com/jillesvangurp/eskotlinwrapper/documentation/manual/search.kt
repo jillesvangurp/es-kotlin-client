@@ -1,13 +1,14 @@
 @file:Suppress("unused")
 
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
+import com.jillesvangurp.eskotlinwrapper.documentation.*
 import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
 
-val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
+val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
         block(true) {
             // lets use a slightly different model class this time
@@ -78,8 +79,8 @@ val search by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowe
 
         +"""
             We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see ${mdLink(
-            queryDslPage.title,
-            queryDslPage.fileName
+            manualPages["queryDSL"]!!.title,
+            manualPages["queryDSL"]!!.fileName
         )}
         """
 

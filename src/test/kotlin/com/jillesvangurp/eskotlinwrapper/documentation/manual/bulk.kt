@@ -1,14 +1,16 @@
 @file:Suppress("unused")
 
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.jillesvangurp.eskotlinwrapper.BulkIndexingSession
 import com.jillesvangurp.eskotlinwrapper.BulkOperation
+import com.jillesvangurp.eskotlinwrapper.documentation.Thing
+import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import org.elasticsearch.action.bulk.BulkItemResponse
 import org.elasticsearch.action.support.WriteRequest
 
-val bulk by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
+val bulkMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
         +"""
             An important part of working with Elasticsearch is adding content. While the CRUD support is useful

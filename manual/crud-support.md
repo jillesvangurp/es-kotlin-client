@@ -1,4 +1,4 @@
-[previous](creating-client.md) | [index](index.md) | [next](bulk-indexing.md)
+[previous](getting-started.md) | [index](index.md) | [next](bulk-indexing.md)
 
 ___
 
@@ -94,23 +94,23 @@ Captured Output:
 
 ```
 {
-  "test-dc204c85-b381-4663-b634-15fc90c8f3a5" : {
+  "test-6a263b18-11de-4d88-b5d3-fc7bc52aaeab" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1606841466596",
+    "creation_date" : "1609078953070",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "hahss-mbSfWqnHWdr09qCw",
+    "uuid" : "C-ZY_-KIRjGdpoju5IkiAw",
     "version" : {
       "created" : "7100099"
     },
-    "provided_name" : "test-dc204c85-b381-4663-b634-15fc90c8f3a5"
+    "provided_name" : "test-6a263b18-11de-4d88-b5d3-fc7bc52aaeab"
     }
   }
   }
 }
-test-dc204c85-b381-4663-b634-15fc90c8f3a5 -> {"_meta":{"content_hash":"ZLExK0PCG
-9+CpgXySXotIQ==","timestamp":"2020-12-01T16:51:06.557568Z"},"properties":{"amoun
+test-6a263b18-11de-4d88-b5d3-fc7bc52aaeab -> {"_meta":{"content_hash":"ZLExK0PCG
+9+CpgXySXotIQ==","timestamp":"2020-12-27T14:22:33.052411Z"},"properties":{"amoun
 t":{"type":"long","fields":{"abetterway":{"type":"double"},"imadouble":{"type":"
 double"},"somesubfield":{"type":"keyword"}}},"name":{"type":"text"}}}
 ```
@@ -374,5 +374,5 @@ For more details on how to use co-routines, see [Co-routines](coroutines.md)
 
 ___
 
-[previous](creating-client.md) | [index](index.md) | [next](bulk-indexing.md)
+[previous](getting-started.md) | [index](index.md) | [next](bulk-indexing.md)
 

@@ -1,18 +1,20 @@
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation
 
+import com.jillesvangurp.eskotlinwrapper.documentation.manual.*
 import com.jillesvangurp.kotlin4example.SourceRepository
 import com.jillesvangurp.kotlin4example.mdLink
 import org.junit.jupiter.api.Test
 import java.io.File
 
-const val manualIndexMd = "index.md"
+const val manualIndexParent = "index.md"
 
 /**
  * Simple abstraction for a page. Pages go in some output directory, have a title, and may or may not be part of a book.
  */
-data class Page(
+class MDPage(
     val title: String,
     val fileName: String,
+    val markdown: ()->String,
     val outputDir: String = "manual",
     val parent: String? = null,
     val emitBookPage: Boolean = false
@@ -22,75 +24,54 @@ val sourceGitRepository = SourceRepository(
     sourcePaths = setOf("src/main/kotlin", "src/test/kotlin", "src/examples/kotlin")
 )
 
-val readmePage = Page("Elasticsearch Kotlin Client", "README.md", outputDir = ".")
-val manualIndexPage = Page("Elasticsearch Kotlin Client Manual", manualIndexMd)
-val createClientPage = Page("How to create the client", "creating-client.md", parent = manualIndexMd, emitBookPage = true)
-val indexRepositoryPage =
-    Page("Working with objects", "crud-support.md", parent = manualIndexMd, emitBookPage = true)
-val bulkPage = Page("Bulk Indexing", "bulk-indexing.md", parent = manualIndexMd, emitBookPage = true)
-val searchPage = Page("Search", "search.md", parent = manualIndexMd, emitBookPage = true)
-val queryDslPage = Page("Query DSL", "query-dsl.md", parent = manualIndexMd, emitBookPage = true)
-val coroutinesPage = Page("Co-routines", "coroutines.md", parent = manualIndexMd, emitBookPage = true)
-val recipeSearchEnginePage = Page(
-    "Building a Recipe Search Engine",
-    "recipe-search-engine.md", parent = manualIndexMd, emitBookPage = true
-)
-val aboutThisManualPage = Page("About this manual", "about.md", parent = manualIndexMd, emitBookPage = true)
+val readmePage =MDPage("Elasticsearch Kotlin Client", "README.md", outputDir = ".", markdown = {readmeMd})
+val manualIndexPage = MDPage("Elasticsearch Kotlin Client Manual", manualIndexParent, markdown = {manualIndexMd})
 
-val manualPages = listOf(createClientPage, indexRepositoryPage, bulkPage, searchPage, queryDslPage, coroutinesPage, recipeSearchEnginePage, aboutThisManualPage)
+val manualPages:Map<String, MDPage> =
+    mapOf(
+        "clientCreation" to MDPage(
+            "How to create the client",
+            "creating-client.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = {clientCreationMd}
+        ),
+        "crudSupport" to MDPage(
+            "Working with objects",
+            "crud-support.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = {indexRepositoryMd}
+        ),
+        "bulkIndexing" to MDPage("Bulk Indexing", "bulk-indexing.md", parent = manualIndexParent, emitBookPage = true, markdown = { bulkMd }),
+        "search" to MDPage("Search", "search.md", parent = manualIndexParent, emitBookPage = true, markdown = { searchMd }),
+        "queryDSL" to MDPage("Query DSL", "query-dsl.md", parent = manualIndexParent, emitBookPage = true, markdown = { queryDslMd }),
+        "coRoutines" to MDPage(
+            "Co-routines",
+            "coroutines.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = { coRoutinesMd }
+        ),
+        "recipeSearch" to MDPage(
+            "Building a Recipe Search Engine",
+            "recipe-search-engine.md", parent = manualIndexParent, emitBookPage = true,
+            markdown = { recipeSearchMd }
+        ),
+        "about" to MDPage("About this manual", "about.md", parent = manualIndexParent, emitBookPage = true, markdown = { aboutMd })
+    )
 
-class ManualOverviewPageTest {
+class CreateDocumentationTest {
+
     @Test
-    fun `generate index md`() {
-        val markdown by sourceGitRepository.md {
-            +"""
-                The [Elasticsearch Kotlin Client](https://github.com/jillesvangurp/es-kotlin-wrapper-client) is a client 
-                library written in Kotlin that 
-                adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html) provided by Elasticsearch.
-                
-                ## Chapters
-            """
-            +manualPages.joinToString("\n") { "- ${mdLink(it.title, it.fileName)}" }
-            +"""
-                
-                ## Introduction
-                
-                The official Java client provides client functionality for essentially everything exposed by their REST
-                API. The Elasticsearch Kotlin Client makes using this functionality more Kotlin friendly. 
-
-                It does this
-                through extension functions that add many useful features and shortcuts. It adds Kotlin DSLs for
-                querying, defining mappings, and bulk indexing. To facilitate the most common use cases, this library
-                also provides a Repository abstraction that enables the user to interact with an index in a way that
-                is less boilerplate heavy.
-                
-                Additionally, it provides co-routine friendly versions of the asynchronous clients in the Java library.
-                This enables the user to write fully reactive code in e.g. Ktor or Spring Boot. This makes this
-                library the easiest way to do this currently.
-            """
-        }
-        markdownPageWithNavigation(manualIndexPage, markdown)
+    fun `generate documentation`() {
+        markdownPageWithNavigation(readmePage)
+        markdownPageWithNavigation(manualIndexPage)
+        manualPages.values.forEach { page -> markdownPageWithNavigation(page) }
     }
 
     @Test
-    fun `generate manual`() {
-        mapOf(
-            readmePage to readme,
-            createClientPage to clientCreation,
-            indexRepositoryPage to indexRepository,
-            bulkPage to bulk,
-            searchPage to search,
-            queryDslPage to queryDsl,
-            coroutinesPage to coRoutines,
-            recipeSearchEnginePage to recipeSearch,
-            aboutThisManualPage to about,
-        ).forEach { (page, md) ->
-            markdownPageWithNavigation(page, md)
-        }
-    }
-
-    @Test
-    fun `create ebook create script`() {
+    fun `create ebook script`() {
         File("epub").mkdirs()
         File("epub", "styles.css").writeText(
             """
@@ -175,16 +156,17 @@ class ManualOverviewPageTest {
         File("epub", "create_ebook.sh").writeText(
             """
             #!/bin/bash
-            pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${manualPages.joinToString(" ") {it.fileName}}
+            pandoc --css styles.css -t epub2 -o book.epub -f gfm --metadata-file metadata.yml preface.md ${manualPages.values.joinToString(" ") {it.fileName}}
             """.trimIndent()
         )
     }
 }
 
-fun markdownPageWithNavigation(page: Page, markdown: String) {
-    val index = manualPages.indexOf(page)
-    val previous = if (index < 0) null else if (index == 0) null else manualPages[index - 1].fileName
-    val next = if (index < 0) null else if (index == manualPages.size - 1) null else manualPages[index + 1].fileName
+fun markdownPageWithNavigation(page: MDPage) {
+    val pages=manualPages.values.toList()
+    val index = pages.indexOf(page)
+    val previous = if (index < 0) null else if (index == 0) null else pages[index - 1].fileName
+    val next = if (index < 0) null else if (index == manualPages.size - 1) null else pages[index + 1].fileName
     val nav = listOfNotNull(
         if (!previous.isNullOrBlank()) mdLink("previous", previous) else null,
         if (!page.parent.isNullOrBlank()) mdLink("index", page.parent) else null,
@@ -195,7 +177,7 @@ fun markdownPageWithNavigation(page: Page, markdown: String) {
         """
             # ${page.title} 
             
-        """.trimIndent().trimMargin() + "\n\n" + markdown
+        """.trimIndent().trimMargin() + "\n\n" + page.markdown.invoke()
 
     val pageWithNavigationMd =
         (if (nav.isNotEmpty()) nav.joinToString(" | ") + "\n\n___\n\n" else "") +

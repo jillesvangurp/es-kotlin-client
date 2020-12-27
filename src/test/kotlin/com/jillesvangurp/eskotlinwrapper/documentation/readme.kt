@@ -1,4 +1,4 @@
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation
 
 import com.jillesvangurp.eskotlinwrapper.dsl.MatchQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.TermQuery
@@ -11,7 +11,7 @@ import org.elasticsearch.client.asyncIndexRepository
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
 
-val readme by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
+val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
         +"""
             [![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)

@@ -1,4 +1,4 @@
-[index](index.md) | [next](crud-support.md)
+[index](index.md)
 
 ___
 
@@ -70,5 +70,5 @@ val restHighLevelClient = create(
 
 ___
 
-[index](index.md) | [next](crud-support.md)
+[index](index.md)
 

@@ -1,8 +1,10 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.jillesvangurp.eskotlinwrapper.AsyncSearchResults
+import com.jillesvangurp.eskotlinwrapper.documentation.Thing
+import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import kotlinx.coroutines.flow.count
@@ -15,9 +17,8 @@ import org.elasticsearch.client.indices.ReloadAnalyzersRequest
 import org.elasticsearch.client.indices.ReloadAnalyzersResponse
 import org.elasticsearch.client.reloadAnalyzersAsync
 import org.elasticsearch.common.xcontent.XContentType
-import java.util.*
 
-val coRoutines by withTestIndex<Thing, Lazy<String>> {
+val coRoutinesMd by withTestIndex<Thing, Lazy<String>> {
     sourceGitRepository.md {
         +"""
             The RestHighLevelClient exposes asynchronous versions of most APIs that take a call back to process

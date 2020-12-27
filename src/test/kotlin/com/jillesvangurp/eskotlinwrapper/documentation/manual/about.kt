@@ -1,9 +1,11 @@
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
+import com.jillesvangurp.eskotlinwrapper.documentation.Thing
+import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
 import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 
-val about by withTestIndex<Thing, Lazy<String>> {
+val aboutMd by withTestIndex<Thing, Lazy<String>> {
     sourceGitRepository.md {
 
         +"""

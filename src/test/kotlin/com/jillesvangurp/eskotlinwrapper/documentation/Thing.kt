@@ -1,4 +1,4 @@
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation
 
 // BEGIN thing-class
 // given some model class with two fields

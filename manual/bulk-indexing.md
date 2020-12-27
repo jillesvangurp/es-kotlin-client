@@ -1,4 +1,4 @@
-[previous](crud-support.md) | [index](index.md) | [next](search.md)
+[previous](crud-support.md) | [index](index.md)
 
 ___
 
@@ -213,5 +213,5 @@ Thing(name=updated 2, amount=666)
 
 ___
 
-[previous](crud-support.md) | [index](index.md) | [next](search.md)
+[previous](crud-support.md) | [index](index.md)
 

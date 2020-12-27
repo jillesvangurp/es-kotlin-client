@@ -1,6 +1,7 @@
 package recipesearch
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
 import io.ktor.application.call
@@ -32,7 +33,7 @@ suspend fun main(vararg args: String) {
     objectMapper.findAndRegisterModules()
     // make sure we convert names with underscores properly to and
     // from kotlin (camelCase)
-    objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+    objectMapper.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
 
     val esClient = create(host = "localhost", port = 9999)
     // shut down client cleanly after ktor exits
@@ -143,5 +144,5 @@ private fun createServer(
             }
         }
     }
-    // END ktor_setup
 }
+// END ktor_setup

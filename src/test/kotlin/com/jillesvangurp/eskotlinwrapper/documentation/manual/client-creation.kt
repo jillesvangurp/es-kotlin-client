@@ -1,14 +1,16 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
+import com.jillesvangurp.eskotlinwrapper.documentation.Thing
+import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import org.apache.http.HttpHost
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.create
 
-val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
+val clientCreationMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
         +"""
             To use the ES Kotlin Client, you simply have to create an instance
@@ -21,7 +23,7 @@ val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refre
             You simply create a Java Highlevel Rest client as usual. For example:
         """
 
-        block() {
+        block(runBlock = false) {
             val restClientBuilder = RestClient.builder(
                 HttpHost("localhost", 9200, "http")
             )
@@ -35,7 +37,7 @@ val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refre
             extension function that has a lot of parameters with sane default values.
     
         """
-        block() {
+        block(runBlock = false) {
             // connects to localhost:9200
             val restHighLevelClient = create()
         }
@@ -45,7 +47,7 @@ val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refre
             connect to Elastic Cloud:
         """
 
-        block() {
+        block(runBlock = false) {
             // connects to localhost:9200
             val restHighLevelClient = create(
                 host = "XXXXXXXXXX.eu-central-1.aws.cloud.es.io",
@@ -68,7 +70,7 @@ val clientCreation by withTestIndex<Thing, Lazy<String>>(index = "manual", refre
             simple round robing load balancing as well as recover from nodes disappearing. Both are useful features 
             to have in production environment. 
         """
-        block() {
+        block(runBlock = false) {
             val restHighLevelClient = create(
                 host = "localhost",
                 port = 9200,

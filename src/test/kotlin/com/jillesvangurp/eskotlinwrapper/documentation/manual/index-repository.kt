@@ -1,12 +1,13 @@
 @file:Suppress("unused", "UNUSED_VARIABLE")
 
-package com.jillesvangurp.eskotlinwrapper.manual
+package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.IndexRepository
 import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
+import com.jillesvangurp.eskotlinwrapper.documentation.*
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.client.configure
@@ -14,7 +15,7 @@ import org.elasticsearch.client.indexRepository
 import org.elasticsearch.client.source
 import org.elasticsearch.common.xcontent.stringify
 
-val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
+val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
     sourceGitRepository.md {
         +""" 
             To do anything with Elasticsearch we have to store documents in some index. The Java client
@@ -322,7 +323,10 @@ val indexRepository by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
             suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
             is different and makes use of teh Flow API. 
 
-            For more details on how to use co-routines, see ${mdLink(coroutinesPage.title, coroutinesPage.fileName)}
+            For more details on how to use co-routines, see ${mdLink(
+            manualPages["coRoutines"]!!.title,
+            manualPages["coRoutines"]!!.fileName
+        )}
         """.trimIndent()
     }
 }

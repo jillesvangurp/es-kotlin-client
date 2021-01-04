@@ -176,20 +176,20 @@ thingRepository.bulk {
 }
 ```
 
-            ## Co-routines
-            
-            Using co-routines is easy in Kotlin. Mostly things work almost the same way. Except everything is non blocking
-            and asynchronous, which is nice. In other languages this creates all sorts of complications that Kotlin largely avoids.
-            
-            The Java client in Elasticsearch has support for non blocking IO. We leverage this to add our own suspending
-            calls using extension functions via our gradle code generation plugin. This runs as part of the build process for this
-             library so there should be no need for you to use  this plugin. 
+## Co-routines
 
-            The added functions have the same signatures as their blocking variants. Except of course they have the 
-\           word async in their names and the suspend keyword in front of them. 
-            
-            We added suspending versions of the `Repository` and `BulkSession` as well, so either blocking or non
-            blocking. It's up to you.
+Using co-routines is easy in Kotlin. Mostly things work almost the same way. Except everything is non blocking
+and asynchronous, which is nice. In other languages this creates all sorts of complications that Kotlin largely avoids.
+
+The Java client in Elasticsearch has support for non blocking IO. We leverage this to add our own suspending
+calls using extension functions via our gradle code generation plugin. This runs as part of the build process for this
+ library so there should be no need for you to use  this plugin. 
+
+The added functions have the same signatures as their blocking variants. Except of course they have the 
+word async in their names and the suspend keyword in front of them. 
+
+We added suspending versions of the `Repository` and `BulkSession` as well, so either blocking or non
+blocking. It's up to you.
 
 ```kotlin
 // we reuse the index we created already to create an ayncy index repo

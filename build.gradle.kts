@@ -64,7 +64,6 @@ tasks.withType<KotlinCompile> {
     this.sourceFilesExtensions
 }
 
-
  tasks.dokkaHtml.configure {
      outputDirectory.set(projectDir.resolve("docs"))
      dokkaSourceSets {

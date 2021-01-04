@@ -110,6 +110,7 @@ class AsyncBulkIndexingSession<T : Any> constructor(
                         defaultRequestOptions
                 )
                 launch {
+                    // FIXME specify dispatcher?
                     val asyncJob = async {
                         block.invoke(session)
                     }

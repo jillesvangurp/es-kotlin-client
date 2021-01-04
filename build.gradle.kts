@@ -64,16 +64,16 @@ tasks.withType<KotlinCompile> {
     this.sourceFilesExtensions
 }
 
- tasks.dokkaHtml.configure {
-     outputDirectory.set(projectDir.resolve("docs"))
-     dokkaSourceSets {
-         configureEach {
+tasks.dokkaHtml.configure {
+    outputDirectory.set(projectDir.resolve("docs"))
+    dokkaSourceSets {
+        configureEach {
 //            includes.setFrom(files("packages.md", "extra.md","module.md"))
             jdkVersion.set(8)
-         }
-     }
+        }
+    }
 
- }
+}
 
 configure<EsKotlinCodeGenPluginExtension> {
     output = projectDir.absolutePath + "/build/generatedcode"
@@ -88,6 +88,9 @@ sourceSets.main {
 configure<ComposeExtension> {
     buildAdditionalArgs = listOf("--force-rm")
     forceRecreate = true
+    stopContainers = true
+    removeContainers = true
+
 }
 
 tasks.withType<Test> {
@@ -101,6 +104,7 @@ tasks.withType<Test> {
         TestLogEvent.STANDARD_ERROR,
         TestLogEvent.STANDARD_OUT
     )
+   this.finalizedBy("composeDown")
 }
 
 val kotlinVersion = "1.4.20"
@@ -160,10 +164,10 @@ bintray {
     user = jcenterUser
     key = jcenterToken
     pkg(closureOf<BintrayExtension.PackageConfig> {
-        repo="es-kotlin-client"
-        name="es-kotlin-client"
+        repo = "es-kotlin-client"
+        name = "es-kotlin-client"
         setLicenses("MIT")
-        publish=true
+        publish = true
         setPublications("mavenJava")
         vcsUrl = "https://github.com/jillesvangurp/es-kotlin-client.git"
     })

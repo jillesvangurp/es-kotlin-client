@@ -194,7 +194,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
              library so there should be no need for you to use  this plugin. 
 
             The added functions have the same signatures as their blocking variants. Except of course they have the 
-\           word async in their names and the suspend keyword in front of them. 
+            word async in their names and the suspend keyword in front of them. 
             
             We added suspending versions of the `Repository` and `BulkSession` as well, so either blocking or non
             blocking. It's up to you.

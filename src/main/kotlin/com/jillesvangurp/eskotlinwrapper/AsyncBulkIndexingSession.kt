@@ -1,19 +1,5 @@
 package com.jillesvangurp.eskotlinwrapper
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.sendBlocking
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.bulk.BulkItemResponse
@@ -23,7 +9,6 @@ import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.bulkAsync
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
@@ -31,145 +16,95 @@ import org.elasticsearch.rest.RestStatus
 private val logger = KotlinLogging.logger {}
 
 data class AsyncBulkOperation<T : Any>(
-        val operation: DocWriteRequest<*>,
-        val id: String?,
-        val updateFunction: suspend ((T) -> T) = { it },
-        val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit
+    val operation: DocWriteRequest<*>,
+    val id: String?,
+    val updateFunction: suspend ((T) -> T) = { it },
+    val itemCallback: suspend (AsyncBulkOperation<T>, BulkItemResponse) -> Unit
 )
 
 /**
- * Asynchronous bulk indexing that uses the experimental Kotlin flows. Works similar to the synchronous version except
- * it fires bulk requests asynchronously. On paper using multiple threads, allows ES to
- * use multiple Threads to consume bulk requests.
- *
- * Note: you need the kotlin.Experimental flag set for this to work. As Flow is a bit in flux, I expect the internals of this may change still before they finalize this. So, beware when using this.
- *
+ * Asynchronous bulk indexing. Works similar to the synchronous version except
+ * it fires bulk requests asynchronously.
  */
-@Suppress("unused")
-class AsyncBulkIndexingSession<T : Any> constructor(
-        private val repository: AsyncIndexRepository<T>,
-        private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
-        private val retryConflictingUpdates: Int = 0,
-        private val operationChannel: SendChannel<AsyncBulkOperation<T>>,
-        private val itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit),
-        private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions
+class AsyncBulkIndexingSession<T : Any> private constructor(
+    // private constructor because you should use the companion object which has a function that flushes after use
+    private val repository: AsyncIndexRepository<T>,
+    private val modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
+    private val itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit),
+    private val defaultRequestOptions: RequestOptions = repository.defaultRequestOptions,
+    private val bulkSize: Int = 100,
+    private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
 ) {
-    companion object {
-        private fun <T> chunkFLow(
-                chunkSize: Int = 20,
-                producerBlock: CoroutineScope.(channel: SendChannel<T>) -> Unit
-        ): Flow<List<T>> =
-                flow {
-                    coroutineScope {
-                        val channel = Channel<T>(chunkSize)
-                        launch {
-                            producerBlock(channel)
-                        }
-                        var page = mutableListOf<T>()
-                        channel.consumeAsFlow().collect { value ->
-                            page.add(value)
-                            if (page.size > chunkSize) {
-                                emit(page)
-                                page = mutableListOf()
-                            }
-                        }
-                        if (page.isNotEmpty()) {
-                            emit(page)
-                        }
-                    }
-                }
+    private val buffer = mutableListOf<AsyncBulkOperation<T>>()
 
+    companion object {
         suspend fun <T : Any> asyncBulk(
-                client: RestHighLevelClient,
-                repository: AsyncIndexRepository<T>,
-                modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
-                bulkSize: Int = 100,
-                retryConflictingUpdates: Int = 0,
-                refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
-                itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation, itemResponse ->
-                    if (itemResponse.isFailed) {
-                        if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                            repository.update(operation.id ?: error("id is required for update"), retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
-                            logger.debug { "retried updating ${operation.id} after version conflict" }
-                        } else {
-                            logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
-                        }
+            repository: AsyncIndexRepository<T>,
+            modelReaderAndWriter: ModelReaderAndWriter<T> = repository.modelReaderAndWriter,
+            bulkSize: Int = 100,
+            retryConflictingUpdates: Int = 0,
+            refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
+            itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation, itemResponse ->
+                if (itemResponse.isFailed) {
+                    if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
+                        repository.update(
+                            operation.id ?: error("id is required for update"),
+                            retryConflictingUpdates,
+                            defaultRequestOptions,
+                            operation.updateFunction
+                        )
+                        logger.debug { "retried updating ${operation.id} after version conflict" }
+                    } else {
+                        logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }
                     }
-                },
-                defaultRequestOptions: RequestOptions = repository.defaultRequestOptions,
-                block: suspend AsyncBulkIndexingSession<T>.() -> Unit,
-                bulkDispatcher: CoroutineDispatcher?
+                }
+            },
+            defaultRequestOptions: RequestOptions = repository.defaultRequestOptions,
+            block: suspend AsyncBulkIndexingSession<T>.() -> Unit,
         ) {
-            val flow = chunkFLow<AsyncBulkOperation<T>>(chunkSize = bulkSize) { channel ->
-                val session = AsyncBulkIndexingSession(
-                        repository,
-                        modelReaderAndWriter,
-                        retryConflictingUpdates,
-                        channel,
-                        itemCallback,
-                        defaultRequestOptions
-                )
-                launch {
-                    // FIXME specify dispatcher?
-                    val asyncJob = async {
-                        block.invoke(session)
-                    }
-                    asyncJob.await()
-                    // close the channel so the collector doesn't wait forever
-                    channel.close()
-                }
-            }.map { ops ->
-                val bulkRequest = BulkRequest()
-                bulkRequest.refreshPolicy = refreshPolicy
-                ops.forEach { bulkRequest.add(it.operation) }
-                client.bulkAsync(bulkRequest, defaultRequestOptions).items?.forEach {
-                    val bulkOperation = ops[it.itemId]
-                    bulkOperation.itemCallback.invoke(bulkOperation, it)
-                }
-            }
-            if (bulkDispatcher != null) {
-                flow.flowOn(bulkDispatcher).collect {}
-            } else {
-                flow.collect {}
-            }
+            val session = AsyncBulkIndexingSession(
+                repository,
+                modelReaderAndWriter,
+                itemCallback,
+                defaultRequestOptions,
+                bulkSize,
+                refreshPolicy
+            )
+            block.invoke(session)
+            // flush remaining items
+            session.flush()
         }
     }
 
-    @Suppress("DEPRECATION") // we allow using types for now
-    fun index(
-            id: String?,
-            obj: T,
-            create: Boolean = true
+    @Suppress("DEPRECATION")
+    suspend fun index(
+        id: String?,
+        obj: T,
+        create: Boolean = true
     ) {
+
         val indexRequest = IndexRequest()
-                .index(repository.indexWriteAlias)
-                .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
-                .let {
-                    if (id == null) {
-                        it
-                    } else {
-                        it.id(id).create(create)
-                    }
+            .index(repository.indexWriteAlias)
+            .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
+            .let {
+                if (id == null) {
+                    it
+                } else {
+                    it.id(id).create(create)
                 }
+            }
         if (!repository.type.isNullOrBlank()) {
             indexRequest.type(repository.type)
         }
-
-        operationChannel.sendBlocking(
-                AsyncBulkOperation(
-                        operation = indexRequest,
-                        id = id,
-                        itemCallback = itemCallback
-                )
-        )
+        addOp(AsyncBulkOperation(operation = indexRequest, id = id, itemCallback = itemCallback))
     }
 
     /**
      * Safe way to bulk update objects. Gets the object from the index first before applying the lambda to it to modify the existing object. If you set `retryConflictingUpdates` > 0, it will attempt to retry to get the latest document and apply the `updateFunction` if there is a version conflict.
      */
     suspend fun getAndUpdate(
-            id: String,
-            updateFunction: suspend (T) -> T
+        id: String,
+        updateFunction: suspend (T) -> T
     ) {
         val pair = repository.getWithGetResponse(id)
         if (pair != null) {
@@ -183,29 +118,29 @@ class AsyncBulkIndexingSession<T : Any> constructor(
      */
     @Suppress("DEPRECATION") // we allow using types for now
     suspend fun update(
-            id: String,
-            seqNo: Long,
-            primaryTerms: Long,
-            original: T,
-            updateFunction: suspend (T) -> T
+        id: String,
+        seqNo: Long,
+        primaryTerms: Long,
+        original: T,
+        updateFunction: suspend (T) -> T
     ) {
         val updateRequest = UpdateRequest()
-                .index(repository.indexWriteAlias)
-                .id(id)
-                .detectNoop(true)
-                .setIfSeqNo(seqNo)
-                .setIfPrimaryTerm(primaryTerms)
-                .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
+            .index(repository.indexWriteAlias)
+            .id(id)
+            .detectNoop(true)
+            .setIfSeqNo(seqNo)
+            .setIfPrimaryTerm(primaryTerms)
+            .doc(modelReaderAndWriter.serialize(updateFunction.invoke(original)), XContentType.JSON)
         if (!repository.type.isNullOrBlank()) {
             updateRequest.type(repository.type)
         }
-        operationChannel.sendBlocking(
-                AsyncBulkOperation(
-                        updateRequest,
-                        id,
-                        updateFunction = updateFunction,
-                        itemCallback = itemCallback
-                )
+        addOp(
+            AsyncBulkOperation(
+                updateRequest,
+                id,
+                updateFunction = updateFunction,
+                itemCallback = itemCallback
+            )
         )
     }
 
@@ -213,14 +148,14 @@ class AsyncBulkIndexingSession<T : Any> constructor(
      * Delete an object from the index.
      */
     @Suppress("DEPRECATION") // we allow using types for now
-    fun delete(
-            id: String,
-            seqNo: Long? = null,
-            term: Long? = null
+    suspend fun delete(
+        id: String,
+        seqNo: Long? = null,
+        term: Long? = null
     ) {
         val deleteRequest = DeleteRequest()
-                .index(repository.indexWriteAlias)
-                .id(id)
+            .index(repository.indexWriteAlias)
+            .id(id)
 
         if (!repository.type.isNullOrBlank()) {
             deleteRequest.type(repository.type)
@@ -232,12 +167,40 @@ class AsyncBulkIndexingSession<T : Any> constructor(
                 deleteRequest.setIfPrimaryTerm(term)
             }
         }
-        operationChannel.sendBlocking(
-                AsyncBulkOperation(
-                        deleteRequest,
-                        id,
-                        itemCallback = itemCallback
-                )
+        addOp(
+            AsyncBulkOperation(
+                deleteRequest,
+                id,
+                itemCallback = itemCallback
+            )
         )
+    }
+
+    private suspend fun addOp(op: AsyncBulkOperation<T>) {
+        synchronized(buffer) {
+            // just in case somebody decides to use threads, lets guard list modifications
+            buffer.add(op)
+        }
+        if (buffer.size > bulkSize) {
+            flush()
+        }
+    }
+
+    private suspend fun flush() {
+        if (buffer.isNotEmpty()) {
+            val ops = mutableListOf<AsyncBulkOperation<T>>()
+            synchronized(buffer) {
+                // just in case somebody decides to use threads, lets guard list modifications
+                ops.addAll(buffer)
+                buffer.clear()
+            }
+            val bulkRequest = BulkRequest()
+            bulkRequest.refreshPolicy = refreshPolicy
+            ops.forEach { bulkRequest.add(it.operation) }
+            repository.client.bulkAsync(bulkRequest, defaultRequestOptions).items?.forEach {
+                val bulkOperation = ops[it.itemId]
+                bulkOperation.itemCallback.invoke(bulkOperation, it)
+            }
+        }
     }
 }

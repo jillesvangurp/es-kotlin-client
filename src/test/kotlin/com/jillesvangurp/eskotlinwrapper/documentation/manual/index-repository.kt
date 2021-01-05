@@ -321,7 +321,7 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
             
             This works almost the same as the synchronous version except all of the functions are marked as 
             suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
-            is different and makes use of teh Flow API. 
+            is different and makes use of the Flow API. 
 
             For more details on how to use co-routines, see ${mdLink(
             manualPages["coRoutines"]!!.title,

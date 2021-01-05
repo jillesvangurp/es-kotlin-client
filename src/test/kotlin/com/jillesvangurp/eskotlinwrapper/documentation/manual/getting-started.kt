@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing

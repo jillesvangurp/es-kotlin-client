@@ -295,7 +295,6 @@ class AsyncIndexRepository<T : Any>(
                     }
                 }
             },
-            bulkDispatcher: CoroutineDispatcher? = null,
             operationsBlock: suspend AsyncBulkIndexingSession<T>.() -> Unit
     ) {
         AsyncBulkIndexingSession.asyncBulk(
@@ -303,8 +302,6 @@ class AsyncIndexRepository<T : Any>(
                 retryConflictingUpdates = retryConflictingUpdates,
                 refreshPolicy = refreshPolicy,
                 itemCallback = itemCallback,
-                client = this.client,
-                bulkDispatcher = bulkDispatcher,
                 repository = this,
                 block = operationsBlock
         )

@@ -125,8 +125,7 @@ val coRoutinesMd by withTestIndex<Thing, Lazy<String>> {
             runBlocking {
                 // all of these use suspend functions
                 asyncRepo.index("thing1", Thing("The first thing"))
-                // this uses the `AsyncBulkIndexingSession`, which uses the new
-                // `Flow` API underneath.
+                // this uses the `AsyncBulkIndexingSession`
                 asyncRepo.bulk {
                     for (i in 2.rangeTo(10)) {
                         index("thing_$i", Thing("thing $i"))

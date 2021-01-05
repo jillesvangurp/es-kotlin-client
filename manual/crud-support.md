@@ -94,23 +94,23 @@ Captured Output:
 
 ```
 {
-  "test-82eeefb9-cfef-40e8-afb7-af9e65b7887e" : {
+  "test-5cb41116-bff6-4204-be07-76721c49862f" : {
   "settings" : {
     "index" : {
-    "creation_date" : "1609857728850",
+    "creation_date" : "1609858328483",
     "number_of_shards" : "1",
     "number_of_replicas" : "0",
-    "uuid" : "rfI5OxFvTIWS7x0ShT97HQ",
+    "uuid" : "K85kreM3SNWvRiTUOEQSLA",
     "version" : {
       "created" : "7100099"
     },
-    "provided_name" : "test-82eeefb9-cfef-40e8-afb7-af9e65b7887e"
+    "provided_name" : "test-5cb41116-bff6-4204-be07-76721c49862f"
     }
   }
   }
 }
-test-82eeefb9-cfef-40e8-afb7-af9e65b7887e -> {"_meta":{"content_hash":"ZLExK0PCG
-9+CpgXySXotIQ==","timestamp":"2021-01-05T14:42:08.824228Z"},"properties":{"amoun
+test-5cb41116-bff6-4204-be07-76721c49862f -> {"_meta":{"content_hash":"ZLExK0PCG
+9+CpgXySXotIQ==","timestamp":"2021-01-05T14:52:08.455709Z"},"properties":{"amoun
 t":{"type":"long","fields":{"abetterway":{"type":"double"},"imadouble":{"type":"
 double"},"somesubfield":{"type":"keyword"}}},"name":{"type":"text"}}}
 ```
@@ -367,7 +367,7 @@ variant `AsyncIndexRepository`. To use that, you need to use `esClient.asyncInde
 
 This works almost the same as the synchronous version except all of the functions are marked as 
 suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
-is different and makes use of teh Flow API. 
+is different and makes use of the Flow API. 
 
 For more details on how to use co-routines, see [Co-routines](coroutines.md)
 

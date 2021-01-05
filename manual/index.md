@@ -21,8 +21,7 @@ adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co
 The official Java client provides client functionality for essentially everything exposed by their REST
 API. The Elasticsearch Kotlin Client makes using this functionality more Kotlin friendly. 
 
-It does this
-through extension functions that add many useful features and shortcuts. It adds Kotlin DSLs for
+It does this through extension functions that add many useful features and shortcuts. It adds Kotlin DSLs for
 querying, defining mappings, and bulk indexing. To facilitate the most common use cases, this library
 also provides a Repository abstraction that enables the user to interact with an index in a way that
 is less boilerplate heavy.

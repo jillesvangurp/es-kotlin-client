@@ -105,6 +105,7 @@ class MultiMatchQuery(
     val fields: Array<String> get() = this["fields"] as Array<String>
 
     var type by queryDetails.property<MultiMatchType>()
+    var boost by queryDetails.property<Double>()
 
     // note not all of these are usable with all types; check documentation
     var tieBreaker by queryDetails.property<Double>()
@@ -136,6 +137,7 @@ class QueryStringQuery(
 
     val query: String get() = this["query"] as String
     val fields: Array<String> get() = this["fields"] as Array<String>
+    var boost by queryDetails.property<Double>()
 
     var defaultField by queryDetails.property<String>()
     var allowLeadingWildcard by queryDetails.property<Boolean>()
@@ -173,6 +175,7 @@ class SimpleQueryStringQuery(
     ESQuery("simple_query_string") {
     val query: String get() = this["query"] as String
     val fields: Array<String> get() = this["fields"] as Array<String>
+    var boost by queryDetails.property<Double>()
 
     var defaultField by queryDetails.property<String>()
     var allFields by queryDetails.property<Boolean>()

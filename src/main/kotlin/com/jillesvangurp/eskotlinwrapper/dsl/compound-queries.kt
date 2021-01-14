@@ -8,6 +8,13 @@ class BoolQuery : ESQuery(name = "bool") {
     fun must(vararg q: ESQuery) = queryDetails.getOrCreateMutableList("must").addAll(q.map { it.toMap() })
     fun mustNot(vararg q: ESQuery) = queryDetails.getOrCreateMutableList("must_not").addAll(q.map { it.toMap() })
     fun filter(vararg q: ESQuery) = queryDetails.getOrCreateMutableList("filter").addAll(q.map { it.toMap() })
+
+    fun should(q: List<ESQuery>) = queryDetails.getOrCreateMutableList("should").addAll(q.map { it.toMap() })
+    fun must(q: List<ESQuery>) = queryDetails.getOrCreateMutableList("must").addAll(q.map { it.toMap() })
+    fun mustNot(q: List<ESQuery>) = queryDetails.getOrCreateMutableList("must_not").addAll(q.map { it.toMap() })
+    fun filter(q: List<ESQuery>) = queryDetails.getOrCreateMutableList("filter").addAll(q.map { it.toMap() })
+
+    var boost by queryDetails.property<Double>()
 }
 
 fun bool(block: BoolQuery.() -> Unit): BoolQuery {
@@ -21,6 +28,7 @@ class BoostingQuery : ESQuery(name = "boosting") {
     var positive: ESQuery by queryDetails.esQueryProperty()
     var negative: ESQuery by queryDetails.esQueryProperty()
     var negativeBoost: Double by queryDetails.property()
+    var boost: Double by queryDetails.property()
 }
 
 fun boosting(block: BoostingQuery.() -> Unit): BoostingQuery {
@@ -44,7 +52,9 @@ fun constantScore(block: ConstantScoreQuery.() -> Unit): ConstantScoreQuery {
 @SearchDSLMarker
 class DisMaxQuery : ESQuery(name = "dis_max") {
     fun queries(vararg q: ESQuery) = queryDetails.getOrCreateMutableList("queries").addAll(q.map { it.toMap() })
+    fun queries(q: List<ESQuery>) = queryDetails.getOrCreateMutableList("queries").addAll(q.map { it.toMap() })
     var tieBreaker: Double by queryDetails.property()
+    var boost: Double by queryDetails.property()
 }
 
 fun disMax(block: DisMaxQuery.() -> Unit): DisMaxQuery {

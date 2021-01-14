@@ -14,6 +14,7 @@ class ExistsQuery(field: String) : ESQuery("exists") {
 }
 
 class FuzzyQueryConfig : MapBackedProperties() {
+    var boost by property<Double>()
     var value by property<String>()
     var fuzziness by property<String>()
     var maxExpansions by property<Int>()
@@ -42,9 +43,11 @@ class IdsQuery(vararg values: String) : ESQuery("ids") {
     init {
         this["values"] = values
     }
+    var boost: Double by queryDetails.property()
 }
 
 class PrefixQueryConfig : MapBackedProperties() {
+    var boost by property<Double>()
     var value by property<String>()
 }
 
@@ -87,6 +90,7 @@ class RangeQuery(
 }
 
 class RegExpQueryConfig : MapBackedProperties() {
+    var boost by property<Double>()
     var value by property<String>()
     var flags by property<String>()
     var maxDeterminizedStates by property<Int>()
@@ -119,8 +123,6 @@ class TermQuery(
     termQueryConfig: TermQueryConfig = TermQueryConfig(),
     block: (TermQueryConfig.() -> Unit)? = null
 ) : ESQuery("term") {
-
-    var boost by queryDetails.property<Double>()
 
     init {
         putNoSnakeCase(field, termQueryConfig)

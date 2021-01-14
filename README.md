@@ -119,7 +119,7 @@ thingRepository.index("3", Thing("foobar", 42))
 thingRepository.refresh()
 
 val results = thingRepository.search {
-  dsl {
+  configure {
     // added names to the args for clarity here, but optional of course
     query = MatchQuery(field = "name", query = "bar")
   }
@@ -144,7 +144,7 @@ thingRepository.bulk {
   // all you do is set scrolling to true and you can
   // scroll through billions of results.
   val sequence = thingRepository.search(scrolling = true) {
-    dsl {
+    configure {
       from = 0
       // when scrolling, this is the scroll page size
       resultSize = 10
@@ -215,7 +215,7 @@ runBlocking {
   // to the synchronous version above.
   // However, we now get an AsyncSearchResults back
   val results = repo.search {
-    dsl {
+    configure {
       query = TermQuery("name.keyword", "thing #666")
     }
   }

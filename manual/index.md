@@ -13,6 +13,7 @@ adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co
 - [Search](search.md)
 - [Query DSL](query-dsl.md)
 - [Co-routines](coroutines.md)
+- [Extending and Customizing DSLs](dsl-customization.md)
 - [Building a Recipe Search Engine](recipe-search-engine.md)
 - [About this manual](about.md)
 

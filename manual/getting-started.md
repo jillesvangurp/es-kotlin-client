@@ -59,7 +59,7 @@ fooRepo.index(obj=Foo("Hello World!"))
 // ensure the document is committed
 fooRepo.refresh()
 val results = fooRepo.search {
-  dsl {
+  configure {
     query = matchAll()
   }
 }

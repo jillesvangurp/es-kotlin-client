@@ -1,4 +1,4 @@
-[previous](coroutines.md) | [index](index.md) | [next](about.md)
+[previous](dsl-customization.md) | [index](index.md) | [next](about.md)
 
 ___
 
@@ -414,5 +414,5 @@ $ curl 'localhost:8080/search?q=banana'
 
 ___
 
-[previous](coroutines.md) | [index](index.md) | [next](about.md)
+[previous](dsl-customization.md) | [index](index.md) | [next](about.md)
 

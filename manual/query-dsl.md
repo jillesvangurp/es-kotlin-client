@@ -84,7 +84,7 @@ The example below uses the type safe way to set up the same query as before.
 // more idomatic Kotlin using apply { ... }
 val results = repo.search {
   // SearchRequest.dsl is the extension function that allows us to use the dsl.
-  dsl {
+  configure {
     // SearchDSL is passed to the block as this
     // It extends our MapBackedProperties class
     // This allows us to delegate properties to a MutableMap
@@ -139,7 +139,7 @@ this is easy too.
 // more idomatic Kotlin using apply { ... }
 val results = repo.search {
   // SearchRequest.dsl is the extension function that allows us to use the dsl.
-  dsl {
+  configure {
     this["from"] = 0
     this["size"] = 10
     query =

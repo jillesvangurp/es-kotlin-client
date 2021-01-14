@@ -1,4 +1,4 @@
-[previous](query-dsl.md) | [index](index.md) | [next](recipe-search-engine.md)
+[previous](query-dsl.md) | [index](index.md) | [next](dsl-customization.md)
 
 ___
 
@@ -135,7 +135,7 @@ results make use of the `Flow` api in the Kotlin Co-Routines library.
 ```kotlin
 runBlocking {
   val results = asyncRepo.search(scrolling = true) {
-    dsl {
+    configure {
       query = matchAll()
     }
   }
@@ -155,5 +155,5 @@ Hits: 10
 
 ___
 
-[previous](query-dsl.md) | [index](index.md) | [next](recipe-search-engine.md)
+[previous](query-dsl.md) | [index](index.md) | [next](dsl-customization.md)
 

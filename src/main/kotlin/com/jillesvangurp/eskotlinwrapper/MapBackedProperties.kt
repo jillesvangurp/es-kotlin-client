@@ -3,6 +3,7 @@ package com.jillesvangurp.eskotlinwrapper
 import com.jillesvangurp.eskotlinwrapper.dsl.ESQuery
 import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentBuilder
+import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.common.xcontent.writeAny
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -96,6 +97,10 @@ open class MapBackedProperties internal constructor(
             this[key] = mutableListOf<Any>()
         }
         return this[key] as MutableList<Any>
+    }
+
+    override fun toString(): String {
+        return stringify(true)
     }
 }
 

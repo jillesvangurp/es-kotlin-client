@@ -6,6 +6,7 @@ import com.jillesvangurp.eskotlinwrapper.dsl.bool
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.dsl
 import org.elasticsearch.client.asyncIndexRepository
 import org.elasticsearch.client.configure
@@ -127,7 +128,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             thingRepository.refresh()
 
             val results = thingRepository.search {
-                dsl {
+                configure {
                     // added names to the args for clarity here, but optional of course
                     query = MatchQuery(field = "name", query = "bar")
                 }
@@ -152,7 +153,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
                 // all you do is set scrolling to true and you can
                 // scroll through billions of results.
                 val sequence = thingRepository.search(scrolling = true) {
-                    dsl {
+                    configure {
                         from = 0
                         // when scrolling, this is the scroll page size
                         resultSize = 10
@@ -224,7 +225,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
                 // to the synchronous version above.
                 // However, we now get an AsyncSearchResults back
                 val results = repo.search {
-                    dsl {
+                    configure {
                         query = TermQuery("name.keyword", "thing #666")
                     }
                 }

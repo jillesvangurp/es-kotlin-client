@@ -4,6 +4,7 @@ package com.jillesvangurp.eskotlinwrapper.dsl
 
 import com.jillesvangurp.eskotlinwrapper.IMapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
+import com.jillesvangurp.eskotlinwrapper.mapProps
 import org.elasticsearch.common.xcontent.stringify
 
 @DslMarker
@@ -13,7 +14,11 @@ annotation class SearchDSLMarker
 open class ESQuery(val name: String, val queryDetails: MapBackedProperties = MapBackedProperties()) :
     IMapBackedProperties by queryDetails {
 
-    fun toMap(): Map<String, MapBackedProperties> = mapOf(name to queryDetails)
+    fun toMap(): Map<String, Any> = mapProps { this[name] = queryDetails }
+
+    override fun toString(): String {
+        return toMap().toString()
+    }
 }
 
 fun customQuery(name: String, block: MapBackedProperties.() -> Unit): ESQuery {

@@ -7,6 +7,7 @@ import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import org.apache.http.HttpHost
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.dsl
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
@@ -78,7 +79,7 @@ val gettingStarted by withTestIndex<Thing, Lazy<String>>(index = "manual", refre
             // ensure the document is committed
             fooRepo.refresh()
             val results = fooRepo.search {
-                dsl {
+                configure {
                     query = matchAll()
                 }
             }

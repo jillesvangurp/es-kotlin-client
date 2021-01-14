@@ -111,6 +111,7 @@ class RegExpQuery(
     }
 }
 
+// BEGIN term-query
 class TermQueryConfig : MapBackedProperties() {
     var value by property<String>()
     var boost by property<Double>()
@@ -130,6 +131,7 @@ class TermQuery(
         block?.invoke(termQueryConfig)
     }
 }
+// END term-query
 
 @SearchDSLMarker
 class TermsQuery(

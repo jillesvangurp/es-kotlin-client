@@ -88,11 +88,21 @@ fun SearchRequest.source(reader: Reader, deprecationHandler: DeprecationHandler 
     }
 }
 
-fun SearchRequest.dsl(pretty: Boolean = false, block: SearchDSL.() -> Unit) {
+fun SearchRequest.configure(pretty: Boolean = false, block: SearchDSL.() -> Unit): SearchDSL {
     val searchDSL = SearchDSL()
     block.invoke(searchDSL)
     val query = searchDSL.stringify(pretty)
     source(query)
+    return searchDSL
+}
+
+@Deprecated("Use SearchRequest.configure")
+fun SearchRequest.dsl(pretty: Boolean = false, block: SearchDSL.() -> Unit): SearchDSL {
+    val searchDSL = SearchDSL()
+    block.invoke(searchDSL)
+    val query = searchDSL.stringify(pretty)
+    source(query)
+    return searchDSL
 }
 
 /**

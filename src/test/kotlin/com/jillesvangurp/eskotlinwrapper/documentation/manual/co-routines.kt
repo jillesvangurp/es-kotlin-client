@@ -10,6 +10,7 @@ import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.ActionListener
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.dsl
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.asyncIndexRepository
@@ -146,7 +147,7 @@ val coRoutinesMd by withTestIndex<Thing, Lazy<String>> {
         block {
             runBlocking {
                 val results = asyncRepo.search(scrolling = true) {
-                    dsl {
+                    configure {
                         query = matchAll()
                     }
                 }

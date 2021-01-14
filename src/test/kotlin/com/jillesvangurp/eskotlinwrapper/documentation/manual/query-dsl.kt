@@ -1,13 +1,15 @@
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
-import com.jillesvangurp.eskotlinwrapper.documentation.*
-import com.jillesvangurp.kotlin4example.mdLink
+import com.jillesvangurp.eskotlinwrapper.documentation.Thing
+import com.jillesvangurp.eskotlinwrapper.documentation.manualPages
+import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
 import com.jillesvangurp.eskotlinwrapper.dsl.MatchQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.bool
 import com.jillesvangurp.eskotlinwrapper.dsl.customQuery
 import com.jillesvangurp.eskotlinwrapper.mapProps
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
-import org.elasticsearch.action.search.dsl
+import com.jillesvangurp.kotlin4example.mdLink
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.elasticsearch.index.query.QueryBuilders.matchQuery
@@ -104,7 +106,7 @@ val queryDslMd by withTestIndex<Thing, Lazy<String>> {
             // more idomatic Kotlin using apply { ... }
             val results = repo.search {
                 // SearchRequest.dsl is the extension function that allows us to use the dsl.
-                dsl {
+                configure {
                     // SearchDSL is passed to the block as this
                     // It extends our MapBackedProperties class
                     // This allows us to delegate properties to a MutableMap
@@ -153,7 +155,7 @@ val queryDslMd by withTestIndex<Thing, Lazy<String>> {
             // more idomatic Kotlin using apply { ... }
             val results = repo.search {
                 // SearchRequest.dsl is the extension function that allows us to use the dsl.
-                dsl {
+                configure {
                     this["from"] = 0
                     this["size"] = 10
                     query =

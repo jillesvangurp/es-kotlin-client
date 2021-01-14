@@ -9,6 +9,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.runBlocking
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.dsl
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -97,7 +98,7 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
             }
             repository.refresh()
             val count = repository.search(scrolling = true) {
-                dsl {
+                configure {
                     resultSize = 5
                 }
             }.mappedHits.count()

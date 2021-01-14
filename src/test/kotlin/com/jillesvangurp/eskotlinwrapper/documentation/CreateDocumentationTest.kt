@@ -75,9 +75,18 @@ val manualPages: Map<String, MDPage> =
             emitBookPage = true,
             markdown = { coRoutinesMd }
         ),
+        "dslCustomization" to MDPage(
+            "Extending and Customizing DSLs",
+            "dsl-customization.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
+            markdown = { dslCustomizationsMd }
+        ),
         "recipeSearch" to MDPage(
             "Building a Recipe Search Engine",
-            "recipe-search-engine.md", parent = manualIndexParent, emitBookPage = true,
+            "recipe-search-engine.md",
+            parent = manualIndexParent,
+            emitBookPage = true,
             markdown = { recipeSearchMd }
         ),
         "about" to MDPage(

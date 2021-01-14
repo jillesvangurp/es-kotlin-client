@@ -54,9 +54,12 @@ class IndexSettings : MapBackedProperties() {
 }
 
 @MapPropertiesDSLMarker
-class FieldMapping(typeName: String) : MapBackedProperties() {
+class FieldMappingConfig(typeName: String) : MapBackedProperties() {
     var type: String by property()
-    //    var properties: Map<String, FieldMapping>? by property()
+    var boost by property<Double>()
+    var docValues by property<Boolean>()
+    var store by property<Boolean>()
+    var enabled by property<Boolean>()
     var copyTo: List<String> by property()
 
     var analyzer: String by property()
@@ -76,15 +79,23 @@ class FieldMapping(typeName: String) : MapBackedProperties() {
 @MapPropertiesDSLMarker
 class FieldMappings : MapBackedProperties() {
     fun text(name: String) = field(name, "text") {}
-    fun text(name: String, block: FieldMapping.() -> Unit) = field(name, "text", block)
+    fun text(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "text", block)
     fun keyword(name: String) = field(name, "keyword") {}
-    fun keyword(name: String, block: FieldMapping.() -> Unit) = field(name, "keyword", block)
+    fun keyword(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "keyword", block)
     fun bool(name: String) = field(name, "boolean") {}
-    fun bool(name: String, block: FieldMapping.() -> Unit) = field(name, "boolean", block)
+    fun bool(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "boolean", block)
+    fun date(name: String) = field(name,"date")
+    fun date(name: String, block: FieldMappingConfig.()->Unit) = field(name,"date", block)
+
+    fun geoPoint(name: String) = field(name,"geo_point")
+    fun geoPoint(name: String, block: FieldMappingConfig.()->Unit) = field(name,"geo_point", block)
+
+    fun geoShape(name: String) = field(name,"geo_shape")
+    fun geoShape(name: String, block: FieldMappingConfig.()->Unit) = field(name,"geo_shape", block)
 
     inline fun <reified T : Number> number(name: String) = number<T>(name) {}
 
-    inline fun <reified T : Number> number(name: String, noinline block: FieldMapping.() -> Unit) {
+    inline fun <reified T : Number> number(name: String, noinline block: FieldMappingConfig.() -> Unit) {
         val type = when (T::class) {
             Long::class -> "long"
             Int::class -> "integer"
@@ -117,8 +128,8 @@ class FieldMappings : MapBackedProperties() {
 
     fun field(name: String, type: String) = field(name, type) {}
 
-    fun field(name: String, type: String, block: FieldMapping.() -> Unit) {
-        val mapping = FieldMapping(type)
+    fun field(name: String, type: String, block: FieldMappingConfig.() -> Unit) {
+        val mapping = FieldMappingConfig(type)
         block.invoke(mapping)
         putNoSnakeCase(name, mapping)
     }

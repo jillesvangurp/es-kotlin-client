@@ -43,9 +43,11 @@ class SearchDSL : MapBackedProperties() {
         set(value) {
             this["query"] = value.toMap()
         }
+
+
 }
 
-fun matchAll() = ESQuery("match_all")
+fun SearchDSL.matchAll() = ESQuery("match_all")
 
 fun main() {
     val d = SearchDSL()

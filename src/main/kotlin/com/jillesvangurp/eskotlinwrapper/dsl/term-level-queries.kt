@@ -5,13 +5,17 @@ package com.jillesvangurp.eskotlinwrapper.dsl
 import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
 
 @SearchDSLMarker
-class ExistsQuery(field: String) : ESQuery("exists") {
+class ExistsQuery(field: String, block: (ExistsQuery.() -> Unit)? = null) : ESQuery("exists") {
     init {
         this["field"] = field
     }
 
     val field = queryDetails["field"] as String
+    var boost by queryDetails.property<Double>()
+
 }
+
+fun SearchDSL.exists(field: String, block: (ExistsQuery.() -> Unit)? = null) = ExistsQuery(field, block)
 
 class FuzzyQueryConfig : MapBackedProperties() {
     var boost by property<Double>()
@@ -38,13 +42,22 @@ class FuzzyQuery(
     }
 }
 
+fun SearchDSL.fuzzy(field: String, query: String, block: (FuzzyQueryConfig.() -> Unit)? = null) =
+    FuzzyQuery(field, query, block = block)
+
 @SearchDSLMarker
-class IdsQuery(vararg values: String) : ESQuery("ids") {
+class IdsQuery(vararg values: String, block: (IdsQuery.()->Unit)?=null) : ESQuery("ids") {
     init {
         this["values"] = values
     }
+
     var boost: Double by queryDetails.property()
 }
+
+fun SearchDSL.ids(
+    vararg values: String,
+    block: (IdsQuery.() -> Unit)? = null
+) = IdsQuery(*values,block = block)
 
 class PrefixQueryConfig : MapBackedProperties() {
     var boost by property<Double>()
@@ -64,6 +77,13 @@ class PrefixQuery(
         block?.invoke(prefixQueryConfig)
     }
 }
+
+fun SearchDSL.prefix(
+    field: String,
+    value: String,
+    block: (PrefixQueryConfig.() -> Unit)? = null
+) =
+    PrefixQuery(field, value, block = block)
 
 enum class RangeRelation { INTERSECTS, CONTAINS, WITHIN }
 class RangeQueryConfig : MapBackedProperties() {
@@ -89,6 +109,10 @@ class RangeQuery(
     }
 }
 
+fun SearchDSL.range(field: String, block: RangeQueryConfig.() -> Unit) =
+    RangeQuery(field, block = block)
+
+
 class RegExpQueryConfig : MapBackedProperties() {
     var boost by property<Double>()
     var value by property<String>()
@@ -111,6 +135,13 @@ class RegExpQuery(
     }
 }
 
+fun SearchDSL.regExp(
+    field: String,
+    value: String,
+    block: RegExpQueryConfig.() -> Unit
+) =
+    RegExpQuery(field,value, block = block)
+
 // BEGIN term-query
 class TermQueryConfig : MapBackedProperties() {
     var value by property<String>()
@@ -131,6 +162,13 @@ class TermQuery(
         block?.invoke(termQueryConfig)
     }
 }
+
+fun SearchDSL.term(
+    field: String,
+    value: String,
+    block: (TermQueryConfig.() -> Unit)? = null
+) =
+    TermQuery(field,value, block = block)
 // END term-query
 
 @SearchDSLMarker
@@ -150,6 +188,13 @@ class TermsQuery(
         block?.invoke(this)
     }
 }
+
+fun SearchDSL.terms(
+    field: String,
+    vararg values: String,
+    block: (TermsQuery.() -> Unit)? = null
+) =
+    TermsQuery(field,*values, block = block)
 
 class WildCardQueryConfig : MapBackedProperties() {
     var value by property<String>()
@@ -173,3 +218,10 @@ class WildCardQuery(
         block?.invoke(wildCardQueryConfig)
     }
 }
+
+fun SearchDSL.wildcard(
+    field: String,
+    value: String,
+    block: (WildCardQueryConfig.() -> Unit)? = null
+) =
+    WildCardQuery(field,value, block = block)

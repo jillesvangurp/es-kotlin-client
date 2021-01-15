@@ -41,6 +41,11 @@ class MatchQuery(
         block?.invoke(matchQueryConfig)
     }
 }
+
+fun SearchDSL.match(
+    field: String,
+    query: String, block: (MatchQueryConfig.() -> Unit)? = null
+) = MatchQuery(field, query, block = block)
 // END MATCH_QUERY
 
 class MatchPhraseQueryConfig : MapBackedProperties() {
@@ -51,13 +56,23 @@ class MatchPhraseQueryConfig : MapBackedProperties() {
     var zeroTermsQuery by property<ZeroTermsQuery>()
 }
 
-class MatchPhraseQuery(field: String, query: String, matchPhraseQueryConfig: MatchPhraseQueryConfig= MatchPhraseQueryConfig(), block: (MatchPhraseQueryConfig.() -> Unit)?): ESQuery(name = "match_phrase") {
+class MatchPhraseQuery(
+    field: String,
+    query: String,
+    matchPhraseQueryConfig: MatchPhraseQueryConfig = MatchPhraseQueryConfig(),
+    block: (MatchPhraseQueryConfig.() -> Unit)?
+) : ESQuery(name = "match_phrase") {
     init {
         putNoSnakeCase(field, matchPhraseQueryConfig)
         matchPhraseQueryConfig.query = query
         block?.invoke(matchPhraseQueryConfig)
     }
 }
+
+fun SearchDSL.matchPhrase(
+    field: String,
+    query: String, block: (MatchPhraseQueryConfig.() -> Unit)? = null
+) = MatchPhraseQuery(field, query, block = block)
 
 class MatchBoolPrefixQueryConfig : MapBackedProperties() {
     var query by property<String>()
@@ -85,6 +100,11 @@ class MatchBoolPrefixQuery(
     }
 }
 
+fun SearchDSL.matchBoolPrefix(
+    field: String,
+    query: String, block: (MatchBoolPrefixQueryConfig.() -> Unit)? = null
+) = MatchBoolPrefixQuery(field, query, block = block)
+
 class MatchPhrasePrefixQueryConfig : MapBackedProperties() {
     var query by property<String>()
     var boost by property<Double>()
@@ -106,6 +126,11 @@ class MatchPhrasePrefixQuery(
         block?.invoke(matchPhrasePrefixQueryConfig)
     }
 }
+
+fun SearchDSL.matchPhrasePrefix(
+    field: String,
+    query: String, block: (MatchPhrasePrefixQueryConfig.() -> Unit)? = null
+) = MatchPhrasePrefixQuery(field, query, block = block)
 
 @Suppress("EnumEntryName")
 enum class MultiMatchType {
@@ -145,6 +170,11 @@ class MultiMatchQuery(
     }
 }
 
+fun SearchDSL.multiMatch(
+    field: String,
+    vararg fields: String, block: (MultiMatchQuery.() -> Unit)? = null
+) = MultiMatchQuery(field, *fields, block = block)
+
 class QueryStringQuery(
     query: String,
     vararg fields: String,
@@ -183,6 +213,11 @@ class QueryStringQuery(
     }
 }
 
+fun SearchDSL.queryString(
+    field: String,
+    query: String, block: (QueryStringQuery.() -> Unit)? = null
+) = QueryStringQuery(field, query, block = block)
+
 class SimpleQueryStringQuery(
     query: String,
     vararg fields: String,
@@ -215,3 +250,8 @@ class SimpleQueryStringQuery(
         block?.invoke(this)
     }
 }
+
+fun SearchDSL.simpleQueryString(
+    field: String,
+    query: String, vararg fields: String, block: (SimpleQueryStringQuery.() -> Unit)? = null
+) = SimpleQueryStringQuery(field, query, *fields, block = block)

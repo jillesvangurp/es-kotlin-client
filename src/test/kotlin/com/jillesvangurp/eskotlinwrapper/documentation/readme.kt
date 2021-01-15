@@ -47,7 +47,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             [![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)
             
             ```
-            implementation("com.github.jillesvangurp:es-kotlin-client:v1.0.0-RC0-7.9.3")
+            implementation("com.github.jillesvangurp:es-kotlin-client:1.0.2")
             ```
             
             The post-fix in the version tag indicates which version of the java client was used. As the client uses the REST API; things should generally be forward and backward compatible with Elasticsearch except of course when Elastic changes their API. 

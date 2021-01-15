@@ -2,7 +2,7 @@
 
 ___
 
-# Co-routines 
+# Asynchronous IO with Co-routines 
 
 The RestHighLevelClient exposes asynchronous versions of most APIs that take a call back to process
 the response when it comes back. Using this is kind of boiler plate heavy. 
@@ -11,13 +11,15 @@ Luckily, Kotlin has co-routines for asynchronous programming and this library pr
 friendly versions of these functions. These `suspend` functions work pretty much the same way as their 
 synchronous version except they are marked as suspend and use a `SuspendingActionListener` that uses
 Kotlin's `suspendCancellableCoroutine` to wrap the callback that the rest high level client expects.
-
+            
 As of Elasticsearch 7.5.0, all asynchronous calls return a `Cancellable` object that allows you to cancel
 the task. Using `suspendCancellableCoRoutine` uses this and this means that if you have some failure
 or abort a coroutine scope, all the running tasks are cancelled. 
 
 If you use an asynchronous server framework such as Ktor or Spring Boot 2.x (in reactive mode), you'll
 want to use the asynchronous functions.
+
+## Generated suspend variants of async* methods
 
 To support co-routines, this project is using a 
 [code generation plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) 
@@ -106,7 +108,7 @@ runBlocking {
 // all functions on the asyncRepo are of course suspend so we
 // need to run them in a co-routine scope
 runBlocking {
-  // all of these use suspend functions
+  // all of these use asynchronous suspend functions
   asyncRepo.index("thing1", Thing("The first thing"))
   // this uses the `AsyncBulkIndexingSession`
   asyncRepo.bulk {
@@ -129,7 +131,7 @@ indexed 10 items
 
 ## Asynchronous search
 
-The search API is very similar; except for the returned AsyncSearchResults. The 
+The asynchronous search API is very similar; except for the returned AsyncSearchResults. The 
 results make use of the `Flow` api in the Kotlin Co-Routines library.
 
 ```kotlin

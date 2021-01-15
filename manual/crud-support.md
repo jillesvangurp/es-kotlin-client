@@ -2,7 +2,7 @@
 
 ___
 
-# Working with objects 
+# Using the IndexRepository 
 
 To do anything with Elasticsearch we have to store documents in some index. The Java client
 provides everything you need to do this but using it the right way requires quite a bit of boiler plate 
@@ -74,47 +74,6 @@ repo.createIndex {
 }
 ```
 
-Note. The mapping DSL is a work in progress. The goal is not to support everything as you
-can simply fall back to Kotlin's Map DSL with `mapOf("myfield" to someValue)`. Both `FieldMapping`
-and `FieldMappings` extend a `MapBackedProperties` class that delegates to a `MutableMap`. This allows 
-us to have type safe properties and helper methods and mix that with raw map access where our DSL misses
-features.
-
-```kotlin
-// stringify is a useful extension function we added to the response
-println(repo.getSettings().stringify(true))
-
-repo.getMappings().mappings()
-  .forEach { (name, meta) ->
-    print("$name -> ${meta.source().string()}")
-  }
-```
-
-Captured Output:
-
-```
-{
-  "test-fc7cf9b3-7d37-4315-b5b0-b37571c69008" : {
-  "settings" : {
-    "index" : {
-    "creation_date" : "1610647520688",
-    "number_of_shards" : "1",
-    "number_of_replicas" : "0",
-    "uuid" : "2Wiq9RtNSYWRAQ3Ia1GPtg",
-    "version" : {
-      "created" : "7100099"
-    },
-    "provided_name" : "test-fc7cf9b3-7d37-4315-b5b0-b37571c69008"
-    }
-  }
-  }
-}
-test-fc7cf9b3-7d37-4315-b5b0-b37571c69008 -> {"_meta":{"content_hash":"ZLExK0PCG
-9+CpgXySXotIQ==","timestamp":"2021-01-14T18:05:20.661658Z"},"properties":{"amoun
-t":{"type":"long","fields":{"abetterway":{"type":"double"},"imadouble":{"type":"
-double"},"somesubfield":{"type":"keyword"}}},"name":{"type":"text"}}}
-```
-
 Of course you can also simply set the settings json using source. This is 
 useful if you maintain your mappings as separate json files.
 
@@ -153,7 +112,7 @@ repo.createIndex {
 
 ## CRUD operations
 
-Now that we have an index, we can use the CRUD operations.
+Now that we have an index, we can use Create, Read, Update, and Delete (CRUD) operations.
 
 ```kotlin
 val id = "first"
@@ -172,7 +131,7 @@ Now we get back our object: Thing(name=A thing, amount=42)
 
 ```
 
-You can't index an object twice unless you opt in to it being overwritten.
+You cannot index an object twice unless you opt in to it being overwritten.
 
 ```kotlin
 val id = "first"
@@ -337,10 +296,29 @@ All updates succeeded! amount = 30.
 
 ```
 
+## Searching in your index
+
+Now that we know how to add content, we can of course search as well.
+
+We will dive into the different ways of searching in next chapters. But here is how you do simple search
+
+```kotlin
+repo.search {
+  configure {
+    resultSize = 5
+    query = matchAll()
+  }
+}.mappedHits.forEach { deserializedObject ->
+  println("${deserializedObject.name}: ${deserializedObject.amount}")
+}
+```
+
 ## Custom serialization 
 
-If you want to customize how serialization and deserialization works, you can pass in a
-[`ModelReaderAndWriter`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/com/jillesvangurp/eskotlinwrapper/ModelReaderAndWriter.kt) implementation.
+By default, we use the popular jackson framework.         
+However, If you want something else, you can customize how serialization and deserialization works. 
+
+To do this, you have to provide your own [`ModelReaderAndWriter`](https://github.com/jillesvangurp/es-kotlin-wrapper-client/tree/master/src/main/kotlin/com/jillesvangurp/eskotlinwrapper/ModelReaderAndWriter.kt) implementation.
 
 The default value of this is an instance of the included JacksonModelReaderAndWriter, which
 uses Jackson to serialize and deserialize our `Thing` objects. 
@@ -369,7 +347,7 @@ This works almost the same as the synchronous version except all of the function
 suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
 is different and makes use of the Flow API. 
 
-For more details on how to use co-routines, see [Co-routines](coroutines.md)
+For more details on how to use co-routines with the ES Kotlin Client, see [Asynchronous IO with Co-routines](coroutines.md)
 
 
 ___

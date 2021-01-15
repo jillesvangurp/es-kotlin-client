@@ -2,7 +2,7 @@
 
 ___
 
-# Building a Recipe Search Engine 
+# Example: Building a Recipe Search Engine 
 
 The Elasticsearch Kotlin Client is designed to simplify writing code that
 interacts with Elasticsearch.
@@ -84,7 +84,7 @@ data class Recipe(
 )
 ```
 
-Given this model, we can create simple `AsyncIndexRepository` and use it (see [Working with objects](crud-support.md)) 
+Given this model, we can create simple `AsyncIndexRepository` and use it (see [Using the IndexRepository](crud-support.md)) 
 to create a simple ktor server that can index and search through recipes. 
 
 Lets start with our `main` function:
@@ -229,28 +229,30 @@ over a database table, a CSV file, crawl the web, etc.
 Once we have documents in our index, we can search through them as follows:
 
 ```kotlin
-suspend fun search(query: String, from: Int, size: Int):
+suspend fun search(text: String, start: Int, hits: Int):
   SearchResponse<Recipe> {
     return repository.search {
-      source(
-        searchSource().apply {
-          from(from)
-          size(size)
-          query(
-            if (query.isBlank()) {
-              matchAllQuery()
-            } else {
-              boolQuery().apply {
-                should().apply {
-                  add(matchPhraseQuery("title", query).boost(2.0f))
-                  add(matchQuery("title", query).boost(2.0f))
-                  add(matchQuery("description", query))
-                }
-              }
-            }
-          )
+      configure {
+        from = start
+        resultSize = hits
+        query = if(text.isBlank()) {
+          matchAll()
+        } else {
+          bool {
+            should(
+              matchPhrase("title", text) {
+                boost=2.0
+              },
+              match("title", text) {
+                boost=1.5
+                fuzziness="auto"
+              },
+              match("description", text)
+            )
+          }
         }
-      )
+
+      }
     }.toSearchResponse()
   }
 ```
@@ -286,18 +288,19 @@ Since we added custom analyzers on the `title.autocomplete` field, we can also i
 format for that is the same. Our mapping uses a simple edge ngram analyzer.
 
 ```kotlin
-suspend fun autocomplete(query: String, from: Int, size: Int):
+suspend fun autocomplete(text: String, start: Int, hits: Int):
   SearchResponse<Recipe> {
     return repository.search {
-      source(
-        searchSource().apply {
-          from(from)
-          size(size)
-          query(
-            matchQuery("title.autocomplete", query)
-          )
+      configure {
+        from = start
+        resultSize = hits
+        query = if(text.isBlank()) {
+          matchAll()
+        } else {
+          match("title.autocomplete", text)
         }
-      )
+
+      }
     }.toSearchResponse()
   }
 ```

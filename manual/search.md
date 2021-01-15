@@ -25,26 +25,16 @@ repo.bulk(refreshPolicy = WriteRequest.RefreshPolicy.IMMEDIATE) {
 repo.refresh()
 ```
 
-## Searching
+## Searching and working with results
 
 ```kotlin
 // a SearchRequest is created and passed into the block
 val results = repo.search {
   // we can use Kotlin's string templating
   val text = "brown"
-  source(
-    """
-      {
-        "query": {
-          "match": {
-            "name": {
-              "query": "$text"
-            }
-          }
-        }
-      }
-    """.trimIndent()
-  )
+  configure {
+    query = match("name", text)
+  }
 }
 println("Found ${results.totalHits}")
 
@@ -81,7 +71,7 @@ Thing(name=The quick brown fox, amount=42)
 
 ```
 
-We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see [Query DSL](query-dsl.md)
+We provide several alternative ways to query elasticsearch; including the Kotlin DSL that we used above, raw json in the form of multi line strings, or the Java builders that come with the Java client. For documentation for that see [Kotlin Query DSL](query-dsl.md)
 
 ## Count
 
@@ -90,24 +80,13 @@ We can also query just to get a document count.
 ```kotlin
 println("The total number of documents is ${repo.count()}")
 
-// like with search, we can pass in a JSON query
-val query = "quick"
+val text = "quick"
 val count = repo.count {
-  source(
-    """
-      {
-        "query": {
-          "match": {
-            "name": {
-              "query": "$query"
-            }
-          }
-        }
-      }            
-    """.trimIndent()
-  )
+  configure {
+    query = match("name", text)
+  }
 }
-println("We found $count results matching $query")
+println("We found $count results matching $text")
 ```
 
 Captured Output:
@@ -115,6 +94,40 @@ Captured Output:
 ```
 The total number of documents is 100
 We found 3 results matching quick
+
+```
+
+## Using multi line strings
+
+Using the Kotlin DSL is nice if you want to programmatically construct your queries in a typesafe way.
+
+However, sometimes you just want to run a query straight from the Kibana Development console in json form. And since Kotlin has multi line strings, doing this is easy.
+
+```kotlin
+val results = repo.search {
+  // we can use Kotlin's string templating
+  val text = "brown"
+  source("""
+    {
+      "size": 10,
+      "query": {
+        "match": {
+          // did you know ES allows comments in JSON?
+          // Look we can inject our variable
+          // but of course beware script injection!
+          "name": "$text"
+        }
+      }
+    }          
+  """.trimIndent())
+}
+println("Found ${results.totalHits}")
+```
+
+Captured Output:
+
+```
+Found 3 hits
 
 ```
 
@@ -139,28 +152,42 @@ repo.bulk {
     scrolling = true,
     scrollTtlInMinutes = 10
   ) {
-    source(
-      """
-        {
-          "size": 10,
-          "query": {
-            "match_all": {}
-          }
-        }
-      """.trimIndent()
-    )
-  }
-  results.hits.forEach { (hit, thing) ->
-    if (thing != null) {
-      // we dig out the meta data we need for optimistic locking
-      // from the search response
-      update(hit.id, hit.seqNo, hit.primaryTerm, thing) { currentThing ->
-        currentThing.copy(name = "updated thing")
-      }
+    configure {
+      // the page size for the scrolling search
+      // note, resultSize is translated to size. But since size is also
+      // a function on Map, we work around this.
+      resultSize = 5
+      query = matchAll()
     }
+  }
+  // lets not print lots of results
+  results.hits.take(15).forEach { (hit, thing) ->
+    // if you turn off source on your mapping, thing could be null
+    println("${hit.id}: ${thing?.name}")
   }
   // after the last page of results, the scroll is cleaned up
 }
+```
+
+Captured Output:
+
+```
+1: The quick brown fox
+2: The quick brown emu
+3: The quick brown gnu
+4: Another thing
+5: Another thing: 5
+6: Another thing: 6
+7: Another thing: 7
+8: Another thing: 8
+9: Another thing: 9
+10: Another thing: 10
+11: Another thing: 11
+12: Another thing: 12
+13: Another thing: 13
+14: Another thing: 14
+15: Another thing: 15
+
 ```
 
 

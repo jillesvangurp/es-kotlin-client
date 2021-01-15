@@ -8,13 +8,13 @@ adapts the [Highlevel Elasticsearch HTTP client for Java](https://www.elastic.co
 
 - [Introduction](introduction.md)
 - [Getting Started](getting-started.md)
-- [Working with objects](crud-support.md)
-- [Bulk Indexing](bulk-indexing.md)
+- [Using the IndexRepository](crud-support.md)
+- [Bulk Indexing made easy](bulk-indexing.md)
 - [Search](search.md)
-- [Query DSL](query-dsl.md)
-- [Co-routines](coroutines.md)
-- [Extending and Customizing DSLs](dsl-customization.md)
-- [Building a Recipe Search Engine](recipe-search-engine.md)
+- [Kotlin Query DSL](query-dsl.md)
+- [Asynchronous IO with Co-routines](coroutines.md)
+- [Extending and Customizing the Kotlin DSLs](dsl-customization.md)
+- [Example: Building a Recipe Search Engine](recipe-search-engine.md)
 - [About this manual](about.md)
 
 ## Introduction

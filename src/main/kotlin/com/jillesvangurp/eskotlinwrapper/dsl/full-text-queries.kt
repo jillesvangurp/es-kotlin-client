@@ -43,6 +43,22 @@ class MatchQuery(
 }
 // END MATCH_QUERY
 
+class MatchPhraseQueryConfig : MapBackedProperties() {
+    var query by property<String>()
+    var boost by property<Double>()
+    var analyzer by property<String>()
+    var slop by property<Int>()
+    var zeroTermsQuery by property<ZeroTermsQuery>()
+}
+
+class MatchPhraseQuery(field: String, query: String, matchPhraseQueryConfig: MatchPhraseQueryConfig= MatchPhraseQueryConfig(), block: (MatchPhraseQueryConfig.() -> Unit)?): ESQuery(name = "match_phrase") {
+    init {
+        putNoSnakeCase(field, matchPhraseQueryConfig)
+        matchPhraseQueryConfig.query = query
+        block?.invoke(matchPhraseQueryConfig)
+    }
+}
+
 class MatchBoolPrefixQueryConfig : MapBackedProperties() {
     var query by property<String>()
     var boost by property<Double>()

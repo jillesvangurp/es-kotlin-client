@@ -29,7 +29,7 @@ val coRoutinesMd by withTestIndex<Thing, Lazy<String>> {
             friendly versions of these functions. These `suspend` functions work pretty much the same way as their 
             synchronous version except they are marked as suspend and use a `SuspendingActionListener` that uses
             Kotlin's `suspendCancellableCoroutine` to wrap the callback that the rest high level client expects.
-            
+                        
             As of Elasticsearch 7.5.0, all asynchronous calls return a `Cancellable` object that allows you to cancel
             the task. Using `suspendCancellableCoRoutine` uses this and this means that if you have some failure
             or abort a coroutine scope, all the running tasks are cancelled. 
@@ -37,6 +37,8 @@ val coRoutinesMd by withTestIndex<Thing, Lazy<String>> {
             If you use an asynchronous server framework such as Ktor or Spring Boot 2.x (in reactive mode), you'll
             want to use the asynchronous functions.
 
+            ## Generated suspend variants of async* methods
+            
             To support co-routines, this project is using a 
             [code generation plugin](https://github.com/jillesvangurp/es-kotlin-codegen-plugin) 
             to generate the co-routine friendly versions of each of the
@@ -124,7 +126,7 @@ val coRoutinesMd by withTestIndex<Thing, Lazy<String>> {
             // all functions on the asyncRepo are of course suspend so we
             // need to run them in a co-routine scope
             runBlocking {
-                // all of these use suspend functions
+                // all of these use asynchronous suspend functions
                 asyncRepo.index("thing1", Thing("The first thing"))
                 // this uses the `AsyncBulkIndexingSession`
                 asyncRepo.bulk {
@@ -141,7 +143,7 @@ val coRoutinesMd by withTestIndex<Thing, Lazy<String>> {
         +"""
             ## Asynchronous search
             
-            The search API is very similar; except for the returned ${AsyncSearchResults::class.simpleName}. The 
+            The asynchronous search API is very similar; except for the returned ${AsyncSearchResults::class.simpleName}. The 
             results make use of the `Flow` api in the Kotlin Co-Routines library.
         """
         block {

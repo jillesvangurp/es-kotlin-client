@@ -3,7 +3,12 @@ package recipesearch
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.jillesvangurp.eskotlinwrapper.AsyncIndexRepository
+import com.jillesvangurp.eskotlinwrapper.dsl.bool
+import com.jillesvangurp.eskotlinwrapper.dsl.match
+import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import com.jillesvangurp.eskotlinwrapper.dsl.matchPhrase
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.healthAsync
 import org.elasticsearch.cluster.health.ClusterHealthStatus
@@ -97,45 +102,48 @@ class RecipeSearch(
     // END index_recipes
 
     // BEGIN search_recipes
-    suspend fun search(query: String, from: Int, size: Int):
+    suspend fun search(text: String, start: Int, hits: Int):
         SearchResponse<Recipe> {
             return repository.search {
-                source(
-                    searchSource().apply {
-                        from(from)
-                        size(size)
-                        query(
-                            if (query.isBlank()) {
-                                matchAllQuery()
-                            } else {
-                                boolQuery().apply {
-                                    should().apply {
-                                        add(matchPhraseQuery("title", query).boost(2.0f))
-                                        add(matchQuery("title", query).boost(2.0f))
-                                        add(matchQuery("description", query))
-                                    }
-                                }
-                            }
-                        )
+                configure {
+                    from = start
+                    resultSize = hits
+                    query = if(text.isBlank()) {
+                        matchAll()
+                    } else {
+                        bool {
+                            should(
+                                matchPhrase("title", text) {
+                                    boost=2.0
+                                },
+                                match("title", text) {
+                                    boost=1.5
+                                    fuzziness="auto"
+                                },
+                                match("description", text)
+                            )
+                        }
                     }
-                )
+
+                }
             }.toSearchResponse()
         }
     // END search_recipes
 
     // BEGIN autocomplete_recipes
-    suspend fun autocomplete(query: String, from: Int, size: Int):
+    suspend fun autocomplete(text: String, start: Int, hits: Int):
         SearchResponse<Recipe> {
             return repository.search {
-                source(
-                    searchSource().apply {
-                        from(from)
-                        size(size)
-                        query(
-                            matchQuery("title.autocomplete", query)
-                        )
+                configure {
+                    from = start
+                    resultSize = hits
+                    query = if(text.isBlank()) {
+                        matchAll()
+                    } else {
+                        match("title.autocomplete", text)
                     }
-                )
+
+                }
             }.toSearchResponse()
         }
     // END autocomplete_recipes

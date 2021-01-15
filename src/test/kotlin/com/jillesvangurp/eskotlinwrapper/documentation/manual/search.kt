@@ -3,8 +3,11 @@
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.jillesvangurp.eskotlinwrapper.documentation.*
+import com.jillesvangurp.eskotlinwrapper.dsl.match
+import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.source
 import org.elasticsearch.action.support.WriteRequest
 
@@ -34,7 +37,7 @@ val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", re
         }
 
         +"""
-            ## Searching
+            ## Searching and working with results
 
         """
         block {
@@ -42,19 +45,9 @@ val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", re
             val results = repo.search {
                 // we can use Kotlin's string templating
                 val text = "brown"
-                source(
-                    """
-                        {
-                            "query": {
-                                "match": {
-                                    "name": {
-                                        "query": "$text"
-                                    }
-                                }
-                            }
-                        }
-                    """.trimIndent()
-                )
+                configure {
+                    query = match("name", text)
+                }
             }
             println("Found ${results.totalHits}")
 
@@ -78,7 +71,7 @@ val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", re
         }
 
         +"""
-            We provide several alternative ways to query elasticsearch; including a Kotlin DSL. For documentation for that see ${mdLink(
+            We provide several alternative ways to query elasticsearch; including the Kotlin DSL that we used above, raw json in the form of multi line strings, or the Java builders that come with the Java client. For documentation for that see ${mdLink(
             manualPages["queryDSL"]!!.title,
             manualPages["queryDSL"]!!.fileName
         )}
@@ -92,24 +85,43 @@ val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", re
         block {
             println("The total number of documents is ${repo.count()}")
 
-            // like with search, we can pass in a JSON query
-            val query = "quick"
+            val text = "quick"
             val count = repo.count {
-                source(
-                    """
-                        {
-                            "query": {
-                                "match": {
-                                    "name": {
-                                        "query": "$query"
-                                    }
-                                }
-                            }
-                        }                        
-                    """.trimIndent()
-                )
+                configure {
+                    query = match("name", text)
+                }
             }
-            println("We found $count results matching $query")
+            println("We found $count results matching $text")
+        }
+
+        +"""
+            ## Using multi line strings
+            
+            Using the Kotlin DSL is nice if you want to programmatically construct your queries in a typesafe way.
+            
+            However, sometimes you just want to run a query straight from the Kibana Development console in json form. And since Kotlin has multi line strings, doing this is easy.
+            
+        """.trimIndent()
+
+        block {
+            val results = repo.search {
+                // we can use Kotlin's string templating
+                val text = "brown"
+                source("""
+                    {
+                        "size": 10,
+                        "query": {
+                            "match": {
+                                // did you know ES allows comments in JSON?
+                                // Look we can inject our variable
+                                // but of course beware script injection!
+                                "name": "$text"
+                            }
+                        }
+                    }                    
+                """.trimIndent())
+            }
+            println("Found ${results.totalHits}")
         }
 
         +"""
@@ -135,25 +147,18 @@ val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", re
                     scrolling = true,
                     scrollTtlInMinutes = 10
                 ) {
-                    source(
-                        """
-                            {
-                                "size": 10,
-                                "query": {
-                                    "match_all": {}
-                                }
-                            }
-                        """.trimIndent()
-                    )
-                }
-                results.hits.forEach { (hit, thing) ->
-                    if (thing != null) {
-                        // we dig out the meta data we need for optimistic locking
-                        // from the search response
-                        update(hit.id, hit.seqNo, hit.primaryTerm, thing) { currentThing ->
-                            currentThing.copy(name = "updated thing")
-                        }
+                    configure {
+                        // the page size for the scrolling search
+                        // note, resultSize is translated to size. But since size is also
+                        // a function on Map, we work around this.
+                        resultSize = 5
+                        query = matchAll()
                     }
+                }
+                // lets not print lots of results
+                results.hits.take(15).forEach { (hit, thing) ->
+                    // if you turn off source on your mapping, thing could be null
+                    println("${hit.id}: ${thing?.name}")
                 }
                 // after the last page of results, the scroll is cleaned up
             }

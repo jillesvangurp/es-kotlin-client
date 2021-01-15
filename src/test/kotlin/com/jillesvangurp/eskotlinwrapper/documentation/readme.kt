@@ -1,8 +1,6 @@
 package com.jillesvangurp.eskotlinwrapper.documentation
 
-import com.jillesvangurp.eskotlinwrapper.dsl.MatchQuery
-import com.jillesvangurp.eskotlinwrapper.dsl.TermQuery
-import com.jillesvangurp.eskotlinwrapper.dsl.bool
+import com.jillesvangurp.eskotlinwrapper.dsl.*
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
@@ -27,7 +25,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             
             ## Features
             
-            - Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object manipulation**. These provide type safe support for commonly used things such as match and bool queries as well as defining mappings and settings for your indices. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
+            - Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object CRUD**. These kotlin DSLs provide type safe support for commonly used things such as match and bool queries as well as defining mappings and settings for your indices. At this point most commonly used queries are supported including all full-text queries, compound queries, and term-level queries.
                 - Things that are not supported are easy to configure by modifying the underlying data model directly using Kotlin's syntactic sugar for working with `Map`. 
                 - To enable this our DSL classes delegate to a `MapBackedProperties` class that backs normal type safe kotlin properties with a `Map`. Anything that's not supported, you can just add yourself. Additionally, it is easy to extend the DSLs with your own type safe constructions (pull requests welcome) if you are using some query or mapping construction that is not yet supported.  
             - Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** add convenience and get rid of 
@@ -159,9 +157,9 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
                         resultSize = 10
                         query = bool {
                             should(
-                                MatchQuery("name", "foo"),
-                                MatchQuery("name", "bar"),
-                                MatchQuery("name", "foobar")
+                                match("name", "foo"),
+                                match("name", "bar"),
+                                match("name", "foobar")
                             )
                         }
                     }
@@ -226,7 +224,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
                 // However, we now get an AsyncSearchResults back
                 val results = repo.search {
                     configure {
-                        query = TermQuery("name.keyword", "thing #666")
+                        query = term("name.keyword", "thing #666")
                     }
                 }
                 // However, mappedHits is now a Flow instead of a Sequence
@@ -239,7 +237,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
         }
 
         +"""    
-            For more examples, check the manual or the examples source folder.
+            For more examples, check the [manual](https://www.jillesvangurp.com/es-kotlin-manual/) or look in the [examples](src/examples/kotlin) source directory.
             
             ## Code generation
             
@@ -299,13 +297,15 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             Please exercise your rights under this license in any way you feel is appropriate. Forking is allowed and encouraged. 
             I do appreciate attribution and pull requests ...
             
-            ## Support
+            ## Support & Consultancy
             
-            For small things, use the issue tracker; I generally try to be helpful. However, I'm available for 
+            For small things, use the issue tracker; I generally try to be helpful and try to resolve valid 
+            issues quickly. However, I'm also available for 
             consultancy and specialize in a few things, including of course Elasticsearch. I've supported small
             and large companies with search related product features, complex migrations, query optimizations, plugin
             development, and more. I have over 15 years of experience with Lucene, Solr, and of course Elasticsearch. So,
-            if you need help with something bigger please reach out.
+            if you need help with your Elastic setup, want to improve your queries or ingest architecture, or 
+            otherwise could use a second pair of eyes, please reach out.
         """
     }
 }

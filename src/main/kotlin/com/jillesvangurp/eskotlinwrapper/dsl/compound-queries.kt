@@ -17,7 +17,7 @@ class BoolQuery : ESQuery(name = "bool") {
     var boost by queryDetails.property<Double>()
 }
 
-fun bool(block: BoolQuery.() -> Unit): BoolQuery {
+fun SearchDSL.bool(block: BoolQuery.() -> Unit): BoolQuery {
     val q = BoolQuery()
     block.invoke(q)
     return q
@@ -31,7 +31,7 @@ class BoostingQuery : ESQuery(name = "boosting") {
     var boost: Double by queryDetails.property()
 }
 
-fun boosting(block: BoostingQuery.() -> Unit): BoostingQuery {
+fun SearchDSL.boosting(block: BoostingQuery.() -> Unit): BoostingQuery {
     val q = BoostingQuery()
     block.invoke(q)
     return q
@@ -43,7 +43,7 @@ class ConstantScoreQuery : ESQuery(name = "constant_score") {
     var boost: Double by queryDetails.property()
 }
 
-fun constantScore(block: ConstantScoreQuery.() -> Unit): ConstantScoreQuery {
+fun SearchDSL.constantScore(block: ConstantScoreQuery.() -> Unit): ConstantScoreQuery {
     val q = ConstantScoreQuery()
     block.invoke(q)
     return q
@@ -57,7 +57,7 @@ class DisMaxQuery : ESQuery(name = "dis_max") {
     var boost: Double by queryDetails.property()
 }
 
-fun disMax(block: DisMaxQuery.() -> Unit): DisMaxQuery {
+fun SearchDSL.disMax(block: DisMaxQuery.() -> Unit): DisMaxQuery {
     val q = DisMaxQuery()
     block.invoke(q)
     return q

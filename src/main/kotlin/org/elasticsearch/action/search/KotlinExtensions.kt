@@ -119,6 +119,14 @@ fun CountRequest.source(reader: Reader, deprecationHandler: DeprecationHandler =
     }
 }
 
+fun CountRequest.configure(pretty: Boolean = false, block: SearchDSL.() -> Unit): SearchDSL {
+    val searchDSL = SearchDSL()
+    block.invoke(searchDSL)
+    val query = searchDSL.stringify(pretty)
+    source(query)
+    return searchDSL
+}
+
 /**
  * Supports taking the query straight from an InputStream. You probably should use the reader version.
  */

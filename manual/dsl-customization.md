@@ -2,15 +2,15 @@
 
 ___
 
-# Extending and Customizing DSLs 
+# Extending and Customizing the Kotlin DSLs 
 
-The provided Kotlin DSLs for mappings, settings, or querying are nice but don't cover 100% of what Elasticsearch provides. And Elasticsearch keeps on adding new things to their client library with each new release so it is quite hard for us to keep up with that. Consequently we made a choice to focus on supporting the commonly used things; or at least things we ourselves use. 
+The provided Kotlin DSLs for mappings, settings, or querying are nice but don't cover 100% of what Elasticsearch provides. And Elasticsearch keeps on adding new things to their client library with each new release so it is quite hard for us to keep up with that. So, we made a choice to focus on supporting the commonly used things; or at least things we ourselves use. 
 
-Luckily, it is quite easy to work around this and either extend our DSLs to add support for new things, or simply fall back to using the underlying DSL for constructing arbitrary JSON structures that our DSLs are built on.
+Luckily, it is quite easy to work around this and either extend our DSLs to add support for new things, or simply fall back to using the underlying functionality for constructing arbitrary JSON structures that our DSLs are built on.
 
 ## How does this work?
 
-Elasticsearch provides a REST api that accepts JSON. So the goal of our DSLs is to programmatically construct an object tree that can be serialized to a JSON structure that matches what Elasticsearch expects and that is ultimately sent over the network via the Elasticsearch `LowLevelClient`.
+Elasticsearch provides a REST api that accepts JSON. So the goal of our DSLs is to programmatically construct an object structure that can be serialized to a JSON that matches what Elasticsearch expects. This JSON is sent over the network via the Elasticsearch `LowLevelClient`.
 
 For serialization, we piggy back on `XContent` which is the built in framework that the elasticsearch client uses for dealing with JSON content. 
 
@@ -44,9 +44,18 @@ class TermQuery(
     block?.invoke(termQueryConfig)
   }
 }
+
+fun SearchDSL.term(
+  field: String,
+  value: String,
+  block: (TermQueryConfig.() -> Unit)? = null
+) =
+  TermQuery(field,value, block = block)
 ```
 
 `TermQuery` extends a base class called `ESQuery`, which in turn is a MapBackedProperties with a single field (the query name) mapped to another `MapBackedProperties` (the query details). From there on it is pretty straightforward: TermQuery has two constructor parameters: `field` and `value`. field is used as the key to yet another `MapBackedProperties` object with the `TermConfiguration` which in this case contains things like the value and the boost.
+
+Finally, note that we added a `SearchDSL.term` extension function this makes it easy to find supported queries via autocomplete in your IDE. And of course you can add your own extension functions as well.
 
 ```kotlin
 val termQuery = TermQuery("myField", "someValue") {
@@ -70,18 +79,20 @@ Captured Output:
 
 ```
 
-As you can see, termQuery inherits a convenient `toString` implementation that prints JSON. This is useful for debugging and logging if you ar programmatically creating queries using the DSL.
+As you can see, `TermQuery` inherits a convenient `toString` implementation that prints JSON. This is useful for debugging and logging if you ar programmatically creating queries using the DSL.
 
-Also note how we use delegated properties in the `TermConfiguration`. This allows us to set values to these properties when using the DSL using a simple assignment.
+Also note how we use delegated properties in the `TermConfiguration`. This allows you to set values to these properties when using the DSL using a simple assignment.
 
-Suppose we forgot to add something here and you need to set a (non existing) property named foo on a the term query configuration:
+But suppose we forgot to add something here and you need to set a (non existing) property named foo on a the term query configuration:
 
 ```kotlin
 val termQuery = TermQuery("myField", "someValue") {
   // we support boost
   boost=2.0
   // but foo is not something we support
-  // but we can still add it
+  // but we can still add it to the TermQueryConfig
+  // because it is backed by MapBackedProperties
+  // and implements Map<String, Any>
   this["foo"] = "bar"
 }
 
@@ -103,17 +114,21 @@ Captured Output:
 
 ```
 
-Obviously, Elasticsearch would reject this query with a bad request because there is no `foo` property.
+Obviously, Elasticsearch would reject this query with a bad request because there is no `foo` property for the term query.
 
 ## Creating more complex JSON
 
-You can construct arbitrary json pretty easily. If you want to create a blank object, use `mapProps`
+You can construct arbitrary json pretty easily. If you want to create a json object, you can use `mapProps`
 
 ```kotlin
 val aCustomObject = mapProps {
+  // mixed type lists
   this["icanhasjson"] = listOf(1,2,"4")
   this["meaning_of_life"] = 42
   this["nested_object"] = mapProps {
+    this["another"] = mapProps {
+      this["nested_object_prop"] = 42
+    }
     this["some more stuff"] = "you get the point"
   }
 }
@@ -132,13 +147,22 @@ Captured Output:
   ],
   "meaning_of_life" : 42,
   "nested_object" : {
+  "another" : {
+    "nested_object_prop" : 42
+  },
   "some more stuff" : "you get the point"
   }
 }
 
 ```
 
-You can put lots of different types in the map. To enable XContent to serialize things, we use the `writeAny` extension function. It currently supports most primitives, maps, enums, iterables, and more.
+You can mix different types in the map. To enable XContent to serialize things, we use the `writeAny` extension function as part of the `toXContent` function on `MapBackedProperties`. That function currently supports most primitives, maps, enums, iterables, and more.
+
+## Snake Case vs. Camel Case
+
+Most of the APIs in Elasticsearch expect snake case (lower case and underscores) in json keys used in the DSLs. Kotlin on the other hand uses camel case as a convention for things like variable names. 
+
+Therefore, `MapBackedProperties` uses a `put` implementation that snake cases field values. For some things like field names this is not desirable and you should use the `putNoSnakeCase` method instead to bypass this behavior. 
 
 ## XContent extensions
 
@@ -154,10 +178,10 @@ The `MapBackedProperties` mentioned above of course implements the `ToXContent` 
 
 ## Extending the DSL
 
-We've covered most of the basic queries in the search DSL but currently we are adding to this only on a need to have basis. However, should you have a need for something we do not yet provide, it is very easy to extend the DSL.
-Simply extend ESQuery and use delegated properties as explained above. Of course pull requests with new query types or improvements to the existing ones are welcome.
+We've covered most of the basic term, text, and compound queries in the search DSL and most of their configuration properties. Currently we are adding to this only on a need to have basis. However, should you have a need for something we do not yet provide, it is very easy to extend the DSL.
+Simply extend ESQuery and use delegated properties as explained above. Also don't forget to add an extension function to `SearchDSL`. Of course pull requests with new query types or improvements to the existing ones are welcome. 
 
-There are also functions in the Elasticsearch client that have their own DSL that we have not covered yet. For these, you can of course also create your own DSLs. And of course pull requests for this are very much appreciated as well.
+There are also other client APIs in the Elasticsearch client that have their own DSL we currently don't support. For these, you can of course also create your own DSLs. And of course pull requests for this are very much appreciated as well.
 
 
 ___

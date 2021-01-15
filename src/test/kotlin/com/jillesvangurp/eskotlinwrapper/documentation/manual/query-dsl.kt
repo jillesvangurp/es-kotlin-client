@@ -3,12 +3,9 @@ package com.jillesvangurp.eskotlinwrapper.documentation.manual
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing
 import com.jillesvangurp.eskotlinwrapper.documentation.manualPages
 import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
-import com.jillesvangurp.eskotlinwrapper.dsl.MatchQuery
-import com.jillesvangurp.eskotlinwrapper.dsl.bool
-import com.jillesvangurp.eskotlinwrapper.dsl.customQuery
+import com.jillesvangurp.eskotlinwrapper.dsl.*
 import com.jillesvangurp.eskotlinwrapper.mapProps
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
-import com.jillesvangurp.kotlin4example.mdLink
 import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
@@ -38,10 +35,8 @@ val queryDslMd by withTestIndex<Thing, Lazy<String>> {
             On this page we outline a few ways in which you can build queries both programmatically using the builders
             that come with the Java client, using json strings, and using our Kotlin DSL.
             
-            We will use the same example as before in ${mdLink(
-            manualPages["search"]!!.title,
-            manualPages["search"]!!.fileName
-        )}. 
+            We will use the same example as before in ${
+            com.jillesvangurp.eskotlinwrapper.documentation.mdLink(manualPages["search"])}. 
             
             ## Java Builders
             
@@ -132,55 +127,18 @@ val queryDslMd by withTestIndex<Thing, Lazy<String>> {
                             // it also has filter, should, and mustNot
                             must(
                                 // it has a vararg list of ESQuery
-                                MatchQuery("name", "quick") {
+                                match("name", "qiuck") {
                                     // match always needs a field and query
                                     // but boost is optional
                                     boost = 2.0
+                                    // so we find something despite the misspelled quick
+                                    fuzziness = "auto"
                                 },
                                 // but the block param is nullable and
                                 // defaults to null
-                                MatchQuery("name", "brown")
-                            )
-                        }
-                }
-            }
-            println("We found ${results.totalHits} results.")
-        }
-        +"""
-            If you want to use it in schemaless mode or want to use things that aren't part of the DSL
-            this is easy too.
-        """
-
-        block {
-            // more idomatic Kotlin using apply { ... }
-            val results = repo.search {
-                // SearchRequest.dsl is the extension function that allows us to use the dsl.
-                configure {
-                    this["from"] = 0
-                    this["size"] = 10
-                    query =
-                        // custom query constructs an object with an object inside
-                        // as elasticsearch expects.
-                        customQuery("bool") {
-                            // the inner object is a MapBackedProperties instance
-                            // which is a MutableMap<String,Any>
-                            // so we can assign a list to the must key
-                            this["must"] = listOf(
-                                // match is another customQuery
-                                customQuery("match") {
-                                    // elasticsearch expects fieldName: object
-                                    // so we use mapProps to construct and use
-                                    // another MapBackedProperties
-                                    this["name"] = mapProps {
-                                        this["query"] = "quick"
-                                        this["boost"] = 2.0
-                                    }
-                                }.toMap(),
-                                customQuery("match") {
-                                    this["name"] = mapProps {
-                                        this["query"] = "brown"
-                                    }
-                                }.toMap()
+                                matchPhrase("name", "quick brown") {
+                                    slop = 1
+                                }
                             )
                         }
                 }
@@ -195,16 +153,14 @@ val queryDslMd by withTestIndex<Thing, Lazy<String>> {
             in schema-less mode allows you to work around this and you can of course mix both approaches.
             
             However, if you need something added to the DSL it is really easy to do this yourself. For example 
-            this is the implementation of the match we use above. 
+            this is the implementation of the match we use above: 
         """
 
         snippetFromSourceFile("src/main/kotlin/com/jillesvangurp/eskotlinwrapper/dsl/full-text-queries.kt", "MATCH_QUERY", wrap = true)
 
         +"""
-            Writing your own EsQuery subclass should be straight-forward. Just extend `EsQuery` and write a function 
-            that constructs it.
-            
-            The DSL is currently kind of experimental and very incomplete. I will add more to this over time.
+            For more information on this check the ${com.jillesvangurp.eskotlinwrapper.documentation.mdLink(manualPages["dslCustomization"])}
         """
+
     }
 }

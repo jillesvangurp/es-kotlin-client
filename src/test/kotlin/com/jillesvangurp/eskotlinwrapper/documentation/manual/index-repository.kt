@@ -8,8 +8,10 @@ import com.jillesvangurp.eskotlinwrapper.IndexRepository
 import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.documentation.*
+import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import org.elasticsearch.ElasticsearchStatusException
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
 import org.elasticsearch.client.source
@@ -93,22 +95,6 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
             }
         }
 
-        +"""
-            Note. The mapping DSL is a work in progress. The goal is not to support everything as you
-            can simply fall back to Kotlin's Map DSL with `mapOf("myfield" to someValue)`. Both `FieldMapping`
-            and `FieldMappings` extend a `MapBackedProperties` class that delegates to a `MutableMap`. This allows 
-            us to have type safe properties and helper methods and mix that with raw map access where our DSL misses
-            features.
-        """
-        block(wrap = true) {
-            // stringify is a useful extension function we added to the response
-            println(repo.getSettings().stringify(true))
-
-            repo.getMappings().mappings()
-                .forEach { (name, meta) ->
-                    print("$name -> ${meta.source().string()}")
-                }
-        }
         +"""   
             Of course you can also simply set the settings json using source. This is 
             useful if you maintain your mappings as separate json files.
@@ -150,7 +136,7 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
         +"""
             ## CRUD operations
             
-            Now that we have an index, we can use the CRUD operations.
+            Now that we have an index, we can use Create, Read, Update, and Delete (CRUD) operations.
         """
 
         block {
@@ -163,7 +149,7 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
         }
 
         +"""
-            You can't index an object twice unless you opt in to it being overwritten.
+            You cannot index an object twice unless you opt in to it being overwritten.
         """
 
         block {
@@ -277,8 +263,8 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
             }
         }
         +"""
-                Doing the same with 10 retries, fixes the problem.
-            """
+            Doing the same with 10 retries, fixes the problem.
+        """
         block {
             repo.index("5", Thing("First version of the thing", amount = 0))
 
@@ -290,10 +276,32 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
         }
 
         +"""
+            ## Searching in your index
+            
+            Now that we know how to add content, we can of course search as well.
+            
+            We will dive into the different ways of searching in next chapters. But here is how you do simple search
+            
+        """.trimIndent()
+
+        block {
+            repo.search {
+                configure {
+                    resultSize = 5
+                    query = matchAll()
+                }
+            }.mappedHits.forEach { deserializedObject ->
+                println("${deserializedObject.name}: ${deserializedObject.amount}")
+            }
+        }
+
+        +"""
            ## Custom serialization 
            
-           If you want to customize how serialization and deserialization works, you can pass in a
-           ${mdLink(ModelReaderAndWriter::class)} implementation.
+           By default, we use the popular jackson framework.         
+           However, If you want something else, you can customize how serialization and deserialization works. 
+           
+           To do this, you have to provide your own ${mdLink(ModelReaderAndWriter::class)} implementation.
            
            The default value of this is an instance of the included JacksonModelReaderAndWriter, which
            uses Jackson to serialize and deserialize our `Thing` objects. 
@@ -323,7 +331,7 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
             suspend on the `AsyncIndexRepository` class. Additionally, the return type of the search method
             is different and makes use of the Flow API. 
 
-            For more details on how to use co-routines, see ${mdLink(
+            For more details on how to use co-routines with the ES Kotlin Client, see ${mdLink(
             manualPages["coRoutines"]!!.title,
             manualPages["coRoutines"]!!.fileName
         )}

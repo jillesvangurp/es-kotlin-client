@@ -1,6 +1,7 @@
 package com.jillesvangurp.eskotlinwrapper.documentation
 
 import com.jillesvangurp.eskotlinwrapper.documentation.manual.*
+import com.jillesvangurp.kotlin4example.Page
 import com.jillesvangurp.kotlin4example.SourceRepository
 import com.jillesvangurp.kotlin4example.mdLink
 import org.junit.jupiter.api.Test
@@ -19,6 +20,8 @@ class MDPage(
     val parent: String? = null,
     val emitBookPage: Boolean = false
 )
+
+fun mdLink(page: MDPage?) = mdLink(page!!.title, page.fileName)
 
 val sourceGitRepository = SourceRepository(
     repoUrl = "https://github.com/jillesvangurp/es-kotlin-wrapper-client",
@@ -44,14 +47,14 @@ val manualPages: Map<String, MDPage> =
             markdown = { gettingStarted }
         ),
         "crudSupport" to MDPage(
-            "Working with objects",
+            "Using the IndexRepository",
             "crud-support.md",
             parent = manualIndexParent,
             emitBookPage = true,
             markdown = { indexRepositoryMd }
         ),
         "bulkIndexing" to MDPage(
-            "Bulk Indexing",
+            "Bulk Indexing made easy",
             "bulk-indexing.md",
             parent = manualIndexParent,
             emitBookPage = true,
@@ -63,27 +66,27 @@ val manualPages: Map<String, MDPage> =
             emitBookPage = true,
             markdown = { searchMd }),
         "queryDSL" to MDPage(
-            "Query DSL",
+            "Kotlin Query DSL",
             "query-dsl.md",
             parent = manualIndexParent,
             emitBookPage = true,
             markdown = { queryDslMd }),
         "coRoutines" to MDPage(
-            "Co-routines",
+            "Asynchronous IO with Co-routines",
             "coroutines.md",
             parent = manualIndexParent,
             emitBookPage = true,
             markdown = { coRoutinesMd }
         ),
         "dslCustomization" to MDPage(
-            "Extending and Customizing DSLs",
+            "Extending and Customizing the Kotlin DSLs",
             "dsl-customization.md",
             parent = manualIndexParent,
             emitBookPage = true,
             markdown = { dslCustomizationsMd }
         ),
         "recipeSearch" to MDPage(
-            "Building a Recipe Search Engine",
+            "Example: Building a Recipe Search Engine",
             "recipe-search-engine.md",
             parent = manualIndexParent,
             emitBookPage = true,

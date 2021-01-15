@@ -313,6 +313,17 @@ repo.search {
 }
 ```
 
+Captured Output:
+
+```
+Another thing: 666
+nr_25: 28
+Another Thing: 42
+we can do this again and again: 666
+nr_1: 42
+
+```
+
 ## Custom serialization 
 
 By default, we use the popular jackson framework.         

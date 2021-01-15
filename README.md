@@ -34,7 +34,7 @@ friendly API over the underlying client functionality.
 [![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)
 
 ```
-implementation("com.github.jillesvangurp:es-kotlin-client:v1.0.0-RC0-7.9.3")
+implementation("com.github.jillesvangurp:es-kotlin-client:1.0.2")
 ```
 
 The post-fix in the version tag indicates which version of the java client was used. As the client uses the REST API; things should generally be forward and backward compatible with Elasticsearch except of course when Elastic changes their API. 
@@ -121,7 +121,7 @@ thingRepository.refresh()
 val results = thingRepository.search {
   configure {
     // added names to the args for clarity here, but optional of course
-    query = MatchQuery(field = "name", query = "bar")
+    query = match(field = "name", query = "bar")
   }
 }
 // results know hot deserialize Things
@@ -253,14 +253,14 @@ a fat library like that on Android is probably a bad idea and you should probabl
 directly from a mobile phone in any case.
 
 This library is tested with Elasticsearch 7.x. Usually we update to the latest version within days after 
-Elasticsearch releases. Barring REST API changes, most of this client should work with recent 7.x releases, 
+Elasticsearch releases. Barring REST API changes, most of this client should work with any recent 7.x releases, 
 any future releases and probably also 6.x.
 
 For version 6.x, check the es-6.7.x branch.
  
 ## Building & Development
 
-You need java >= 8 and docker + docker compose (to run elasticsearch and the tests).
+You need java >= 8 and docker + docker compose to run elasticsearch and the tests.
 
 Simply use the gradle wrapper to build things:
 
@@ -278,13 +278,10 @@ If you want to run the tests from your IDE, just use `docker-compose up -d` to s
 that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making 
 a mess there (I learned that lesson a long time ago).
 
-## Development status
+## Development
 
-This library should be perfectly fine for general use at this point. 
-
-Please note, that you can always access the underlying Java client, which is stable. However, until we 
-release 1.0, refactoring & api changes can still happen occasionally although it is getting less likely. 
-Please check the issue tracker for progress on this.
+This library should be perfectly fine for general use at this point. We released 1.0 beginning of 2021 an 
+the plan is to continue to add functionality and continue to maintain this.
  
 If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
 before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.

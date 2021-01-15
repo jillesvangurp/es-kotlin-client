@@ -128,7 +128,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             val results = thingRepository.search {
                 configure {
                     // added names to the args for clarity here, but optional of course
-                    query = MatchQuery(field = "name", query = "bar")
+                    query = match(field = "name", query = "bar")
                 }
             }
             // results know hot deserialize Things
@@ -255,14 +255,14 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             directly from a mobile phone in any case.
             
             This library is tested with Elasticsearch 7.x. Usually we update to the latest version within days after 
-            Elasticsearch releases. Barring REST API changes, most of this client should work with recent 7.x releases, 
+            Elasticsearch releases. Barring REST API changes, most of this client should work with any recent 7.x releases, 
             any future releases and probably also 6.x.
             
             For version 6.x, check the es-6.7.x branch.
              
             ## Building & Development
             
-            You need java >= 8 and docker + docker compose (to run elasticsearch and the tests).
+            You need java >= 8 and docker + docker compose to run elasticsearch and the tests.
             
             Simply use the gradle wrapper to build things:
             
@@ -280,13 +280,10 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             that on a non standard port of `9999`. This is to avoid accidentally running tests against a real cluster and making 
             a mess there (I learned that lesson a long time ago).
             
-            ## Development status
+            ## Development
             
-            This library should be perfectly fine for general use at this point. 
-            
-            Please note, that you can always access the underlying Java client, which is stable. However, until we 
-            release 1.0, refactoring & api changes can still happen occasionally although it is getting less likely. 
-            Please check the issue tracker for progress on this.
+            This library should be perfectly fine for general use at this point. We released 1.0 beginning of 2021 an 
+            the plan is to continue to add functionality and continue to maintain this.
              
             If you want to contribute, please file tickets, create PRs, etc. For bigger work, please communicate before hand 
             before committing a lot of your time. I'm just inventing this as I go. Let me know what you think.

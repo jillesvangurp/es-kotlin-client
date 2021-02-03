@@ -134,7 +134,7 @@ class AsyncSearchResults<T : Any>(
     private val client: RestHighLevelClient,
     private val modelReaderAndWriter: ModelReaderAndWriter<T>,
     private val scrollTtlInMinutes: Long,
-    private val firstResponse: SearchResponse,
+    val firstResponse: SearchResponse,
     private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
 ) {
     val totalHits: TotalHits? by lazy { firstResponse.hits?.totalHits }

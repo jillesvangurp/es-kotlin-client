@@ -20,7 +20,7 @@ import java.util.function.Supplier
 
 private val logger: KLogger = KotlinLogging.logger { }
 
-private val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : DeprecationHandler {
+val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : DeprecationHandler {
     override fun usedDeprecatedName(
         parserName: String?,
         location: Supplier<XContentLocation>?,
@@ -91,6 +91,7 @@ fun SearchRequest.source(reader: Reader, deprecationHandler: DeprecationHandler 
 fun SearchRequest.configure(pretty: Boolean = false, block: SearchDSL.() -> Unit): SearchDSL {
     val searchDSL = SearchDSL()
     block.invoke(searchDSL)
+    searchDSL.toString()
     val query = searchDSL.stringify(pretty)
     source(query)
     return searchDSL

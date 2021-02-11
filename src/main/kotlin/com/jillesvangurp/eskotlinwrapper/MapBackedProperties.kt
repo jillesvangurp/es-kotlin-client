@@ -21,7 +21,7 @@ interface IMapBackedProperties : MutableMap<String, Any> {
  */
 @Suppress("UNCHECKED_CAST")
 @MapPropertiesDSLMarker
-open class MapBackedProperties internal constructor(
+open class MapBackedProperties(
     internal val _properties: MutableMap<String, Any> = mutableMapOf()
 ) : MutableMap<String, Any> by _properties, ToXContent, IMapBackedProperties {
 

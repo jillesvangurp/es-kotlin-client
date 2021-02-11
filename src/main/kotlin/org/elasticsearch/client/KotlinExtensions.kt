@@ -6,12 +6,14 @@ import com.jillesvangurp.eskotlinwrapper.IndexSettingsAndMappingsDSL
 import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.SuspendingActionListener.Companion.suspending
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.search.ClearScrollRequest
 import org.elasticsearch.action.search.ClearScrollResponse
+import org.elasticsearch.action.search.LOGGING_DEPRECATION_HANDLER
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchScrollRequest
@@ -19,8 +21,15 @@ import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.sniff.SniffOnFailureListener
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.common.unit.TimeValue
+import org.elasticsearch.common.xcontent.NamedXContentRegistry
+import org.elasticsearch.common.xcontent.ToXContent
+import org.elasticsearch.common.xcontent.XContentBuilder
+import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
+import java.lang.Exception
+import java.nio.charset.StandardCharsets
+import kotlin.reflect.KClass
 
 /**
  * Factory method that gives you sane defaults that will allow you to quickly connect to your cluster whether it is in
@@ -259,4 +268,54 @@ fun CreateIndexRequest.configure(
     block: IndexSettingsAndMappingsDSL.() -> Unit
 ) {
     source(IndexSettingsAndMappingsDSL.indexSettingsAndMappings(generateMetaFields = generateMetaFields, pretty = pretty, block = block))
+}
+
+/**
+ * Allows bypassing client side parsing & XContent processing of the request and sending json straight to
+ * the search endpoint. This is useful with features supported in the server but not the Java client.
+ *
+ * Throws an IllegalStateException if Elasticsearch fails to return an OK status with details as to what went wrong.
+ */
+@Suppress("BlockingMethodInNonBlockingContext")
+suspend fun RestHighLevelClient.searchAsyncDirect(endpoint: String, json: String,options: RequestOptions = RequestOptions.DEFAULT): SearchResponse {
+    val request = Request("POST", "$endpoint/_search")
+    request.options = options
+    request.setJsonEntity(json)
+    val (response,content) = lowLevelClient.performRequestAsyncCustom(request)
+    if(response.statusLine.statusCode == 200) {
+        return XContentType.JSON.xContent().createParser(
+            NamedXContentRegistry.EMPTY, LOGGING_DEPRECATION_HANDLER, content
+        ).use {
+            SearchResponse.fromXContent(it)
+        }
+    } else {
+        throw IllegalStateException("elasticsearch returned ${response.statusLine}\n${String(content,StandardCharsets.UTF_8)}")
+    }
+}
+
+/**
+ * Suspending version of performRequestAsync that simply returns the raw response + any byte content as a pair.
+ *
+ * Because of the resource processing and async call backs, we have to extract the content from the response here.
+ * The input stream of the response entity is closed automatically; whether you read it or not.
+ */
+suspend fun RestClient.performRequestAsyncCustom(
+    request: Request,
+): Pair<Response, ByteArray> {
+    return suspendCancellableCoroutine { continuation ->
+        val cancellable = this.performRequestAsync(request, object: ResponseListener  {
+            override fun onSuccess(response: Response) {
+                // we have to consume content before resources are cleaned up
+                val content = response.entity.content.readAllBytes()
+                continuation.resumeWith(Result.success(response to content))
+            }
+
+            override fun onFailure(exception: Exception) {
+                continuation.resumeWith(Result.failure(exception))
+            }
+        })
+        continuation.invokeOnCancellation { _ ->
+            cancellable.cancel()
+        }
+    }
 }

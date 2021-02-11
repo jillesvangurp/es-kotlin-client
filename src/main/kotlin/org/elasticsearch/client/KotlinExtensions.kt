@@ -306,7 +306,7 @@ suspend fun RestClient.performRequestAsyncCustom(
         val cancellable = this.performRequestAsync(request, object: ResponseListener  {
             override fun onSuccess(response: Response) {
                 // we have to consume content before resources are cleaned up
-                val content = response.entity.content.readAllBytes()
+                val content = response.entity.content.readBytes()
                 continuation.resumeWith(Result.success(response to content))
             }
 

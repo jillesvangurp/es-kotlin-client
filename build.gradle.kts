@@ -1,5 +1,4 @@
 import com.avast.gradle.dockercompose.ComposeExtension
-import com.jfrog.bintray.gradle.BintrayExtension
 import com.jillesvangurp.escodegen.EsKotlinCodeGenPluginExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
@@ -20,8 +19,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.4.20"
     id("org.jetbrains.dokka") version "1.4.20"
     id("com.github.ben-manes.versions") version "0.36.0" // gradle dependencyUpdates -Drevision=release
-    id("com.jfrog.bintray") version "1.8.5"
-
     java
 
     id("com.avast.gradle.docker-compose") version "0.14.0"
@@ -157,25 +154,8 @@ dependencies {
     examplesImplementation("ch.qos.logback:logback-classic:1.2.3")
 }
 
-val jcenterUser: String by project
-val jcenterToken: String by project
-
-bintray {
-    user = jcenterUser
-    key = jcenterToken
-    pkg(closureOf<BintrayExtension.PackageConfig> {
-        repo = "es-kotlin-client"
-        name = "es-kotlin-client"
-        setLicenses("MIT")
-        publish = true
-        setPublications("mavenJava")
-        vcsUrl = "https://github.com/jillesvangurp/es-kotlin-client.git"
-    })
-}
-
 val artifactName = "es-kotlin-client"
 val artifactGroup = "com.github.jillesvangurp"
-
 
 val sourceJar = task("sourceJar", Jar::class) {
     dependsOn(tasks["classes"])
@@ -218,12 +198,6 @@ publishing {
             from(components["java"])
             artifact(sourceJar)
             artifact(javadocJar)
-        }
-    }
-    repositories {
-        maven {
-            name = "myRepo"
-            url = uri("file://$buildDir/repo")
         }
     }
 }

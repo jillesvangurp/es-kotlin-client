@@ -1,6 +1,6 @@
 # Elasticsearch Kotlin Client 
 
-[![](https://jitpack.io/v/jillesvangurp/es-kotlin-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-client)
+[![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
 The Es Kotlin Client provides a friendly Kotlin API on top of the official Elastic Java client.
@@ -29,25 +29,21 @@ friendly API over the underlying client functionality.
 - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
  asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
 
-## Get it 
+## Get it from jcenter
 
-After a brief period of having releases on JCenter, JFrog decided to discontinue that. So, as of 1.0.4, we're back 
-on jitpack.io. I may at some point invest the time to figure out maven central and gradle. But for now, jitpack seems to work great.
+[![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)
 
-[![](https://jitpack.io/v/jillesvangurp/es-kotlin-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-client)
-
-```kotlin
-implementation("com.github.jillesvangurp:es-kotlin-client:<latest version>")
+```
+implementation("com.github.jillesvangurp:es-kotlin-client:1.0.2")
 ```
 
-Note, you will need to add the [jitpack](https://jitpack.io) repository as well:
+The post-fix in the version tag indicates which version of the java client was used. As the client uses the REST API; things should generally be forward and backward compatible with Elasticsearch except of course when Elastic changes their API. 
 
-```kotlin
-repositories {
-    mavenCentral()
-    maven { url = uri("https://jitpack.io") }
-}
-```
+Note, the repository was recently renamed from es-kotlin-wrapper-client to es-kotlin-client. Until recently, I also deployed versions
+on jitpack. These are still available of course and if not, you can 
+[regenerate them there](https://jitpack.io/#jillesvangurp/es-kotlin-client) if you need older versions.
+
+As of RC0 I deploy via jcenter. So check there for the latest version.
 
 See [release notes](https://github.com/jillesvangurp/es-kotlin-wrapper-client/releases) with each github release 
 tag for an overview what changed.

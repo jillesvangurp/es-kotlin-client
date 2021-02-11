@@ -13,7 +13,7 @@ import org.elasticsearch.client.indexRepository
 val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
         +"""
-            [![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)
+            [![](https://jitpack.io/v/jillesvangurp/es-kotlin-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-client)
             [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
             The Es Kotlin Client provides a friendly Kotlin API on top of the official Elastic Java client.
@@ -42,21 +42,25 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             - This means this Kotlin library is currently the most convenient way to use Elasticsearch from e.g. Ktor or Spring Boot if you want to use 
              asynchronous IO. Using the Java client like this library does is of course possible but will end up being very boiler plate heavy.
 
-            ## Get it from jcenter
+            ## Get it
+
+            [![](https://jitpack.io/v/jillesvangurp/es-kotlin-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-client)
+
+            As JFrog is shutting down JCenter, the latest releases are once more available via Jitpack. 
+            Add this to your `build.gradke.kts`            
             
-            [![Download](https://api.bintray.com/packages/jillesvangurp/es-kotlin-client/es-kotlin-client/images/download.svg) ](https://bintray.com/jillesvangurp/es-kotlin-client/es-kotlin-client/_latestVersion)
-            
+            ```kotlin
+            implementation("com.github.jillesvangurp:es-kotlin-client:<version>")
             ```
-            implementation("com.github.jillesvangurp:es-kotlin-client:1.0.2")
+            
+            You will also need to add the Jitpack repository:
+            
+            ```kotlin
+            repositories {
+                mavenCentral()
+                maven { url = uri("https://jitpack.io") }
+            }
             ```
-            
-            The post-fix in the version tag indicates which version of the java client was used. As the client uses the REST API; things should generally be forward and backward compatible with Elasticsearch except of course when Elastic changes their API. 
-            
-            Note, the repository was recently renamed from es-kotlin-wrapper-client to es-kotlin-client. Until recently, I also deployed versions
-            on jitpack. These are still available of course and if not, you can 
-            [regenerate them there](https://jitpack.io/#jillesvangurp/es-kotlin-client) if you need older versions.
-            
-            As of RC0 I deploy via jcenter. So check there for the latest version.
             
             See [release notes](https://github.com/jillesvangurp/es-kotlin-wrapper-client/releases) with each github release 
             tag for an overview what changed.

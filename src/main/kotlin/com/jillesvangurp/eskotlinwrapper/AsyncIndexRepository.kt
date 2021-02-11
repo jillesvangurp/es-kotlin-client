@@ -30,6 +30,7 @@ import org.elasticsearch.client.indexAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.refreshAsync
 import org.elasticsearch.client.searchAsync
+import org.elasticsearch.client.searchAsyncDirect
 import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
@@ -349,7 +350,21 @@ class AsyncIndexRepository<T : Any>(
             }
         }
 
-        return AsyncSearchResults(client, modelReaderAndWriter, scrollTtlInMinutes, searchResponse, defaultRequestOptions)
+        return AsyncSearchResults(client, modelReaderAndWriter, scrollTtlInMinutes, searchResponse, requestOptions)
+    }
+
+    /**
+     * Bypass the HighLevelClient XContent juggling and execute a raw json search. The response is parsed back into a SearchResponse.
+     *
+     * Note, this is workaround for limitation with the Elastic Java client which seems to not support the geo_shape query and refuses to send the request.
+     *
+     * The actual query runs fine on Elasticsearch; so that is not the problem. This completely bypasses client side parsing of the query.
+     *
+     * Warning: this function is experimental and may change or be removed in the future.
+     */
+    suspend fun jsonSearch(json: String, requestOptions: RequestOptions = this.defaultRequestOptions): AsyncSearchResults<T> {
+        val searchResp = client.searchAsyncDirect(indexReadAlias,json, requestOptions)
+        return AsyncSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
     }
 
     suspend fun count(requestOptions: RequestOptions = this.defaultRequestOptions, block: CountRequest.() -> Unit = {}): Long {

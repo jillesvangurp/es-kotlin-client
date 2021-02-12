@@ -267,7 +267,13 @@ fun CreateIndexRequest.configure(
     pretty: Boolean = false,
     block: IndexSettingsAndMappingsDSL.() -> Unit
 ) {
-    source(IndexSettingsAndMappingsDSL.indexSettingsAndMappings(generateMetaFields = generateMetaFields, pretty = pretty, block = block))
+    source(
+        IndexSettingsAndMappingsDSL.indexSettingsAndMappings(
+            generateMetaFields = generateMetaFields,
+            pretty = pretty,
+            block = block
+        )
+    )
 }
 
 /**
@@ -277,44 +283,58 @@ fun CreateIndexRequest.configure(
  * Throws an IllegalStateException if Elasticsearch fails to return an OK status with details as to what went wrong.
  */
 @Suppress("BlockingMethodInNonBlockingContext")
-suspend fun RestHighLevelClient.searchAsyncDirect(endpoint: String, json: String,options: RequestOptions = RequestOptions.DEFAULT): SearchResponse {
+suspend fun RestHighLevelClient.searchAsyncDirect(
+    endpoint: String,
+    json: String,
+    options: RequestOptions = RequestOptions.DEFAULT
+): SearchResponse {
     val request = Request("POST", "$endpoint/_search")
     request.options = options
     request.setJsonEntity(json)
-    val (response,content) = lowLevelClient.performRequestAsyncCustom(request)
-    if(response.statusLine.statusCode == 200) {
-        return XContentType.JSON.xContent().createParser(
-            NamedXContentRegistry.EMPTY, LOGGING_DEPRECATION_HANDLER, content
-        ).use {
-            SearchResponse.fromXContent(it)
+    return lowLevelClient.performRequestAsyncCustom(request) { response, content ->
+        if (response.statusLine.statusCode == 200) {
+            XContentType.JSON.xContent().createParser(
+                NamedXContentRegistry.EMPTY, LOGGING_DEPRECATION_HANDLER, content
+            ).use {
+                SearchResponse.fromXContent(it)
+            }
+        } else {
+            throw IllegalStateException(
+                "elasticsearch returned ${response.statusLine}\n${
+                    String(
+                        content,
+                        StandardCharsets.UTF_8
+                    )
+                }"
+            )
         }
-    } else {
-        throw IllegalStateException("elasticsearch returned ${response.statusLine}\n${String(content,StandardCharsets.UTF_8)}")
     }
 }
 
 /**
- * Suspending version of performRequestAsync that simply returns the raw response + any byte content as a pair.
+ * Suspending version of performRequestAsync that applies a converter to the raw response + any byte content
+ * and returns the result.
  *
- * Because of the resource processing and async call backs, we have to extract the content from the response here.
- * The input stream of the response entity is closed automatically; whether you read it or not.
+ * Because of the asynchronous resource processing and async call backs, it's best to extract the content from
+ * the response here and avoid any issues with the input stream being closed.
  */
-suspend fun RestClient.performRequestAsyncCustom(
+suspend fun <T> RestClient.performRequestAsyncCustom(
     request: Request,
-): Pair<Response, ByteArray> {
+    converter: (Response, ByteArray) -> T
+): T {
     return suspendCancellableCoroutine { continuation ->
-        val cancellable = this.performRequestAsync(request, object: ResponseListener  {
+        val cancellable = this.performRequestAsync(request, object : ResponseListener {
             override fun onSuccess(response: Response) {
-                // we have to consume content before resources are cleaned up
+                // we have to consume content before resources are cleaned up; so consume it right away to avoid issues
                 val content = response.entity.content.readBytes()
-                continuation.resumeWith(Result.success(response to content))
+                continuation.resumeWith(Result.success(converter.invoke(response, content)))
             }
 
             override fun onFailure(exception: Exception) {
                 continuation.resumeWith(Result.failure(exception))
             }
         })
-        continuation.invokeOnCancellation { _ ->
+        continuation.invokeOnCancellation {
             cancellable.cancel()
         }
     }

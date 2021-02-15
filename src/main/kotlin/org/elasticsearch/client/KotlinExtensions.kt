@@ -277,8 +277,8 @@ fun CreateIndexRequest.configure(
  * Throws an IllegalStateException if Elasticsearch fails to return an OK status with details as to what went wrong.
  */
 @Suppress("BlockingMethodInNonBlockingContext")
-suspend fun RestHighLevelClient.searchAsyncDirect(endpoint: String, json: String,options: RequestOptions = RequestOptions.DEFAULT): SearchResponse {
-    val request = Request("POST", "$endpoint/_search")
+suspend fun RestHighLevelClient.searchAsyncDirect(index: String, json: String,options: RequestOptions = RequestOptions.DEFAULT): SearchResponse {
+    val request = Request("POST", "/$index/_search")
     request.options = options
     request.setJsonEntity(json)
     val (response,content) = lowLevelClient.performRequestAsyncCustom(request)

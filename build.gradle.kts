@@ -140,7 +140,7 @@ dependencies {
 
     testImplementation("io.mockk:mockk:1.10.5")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.20")
-    testImplementation("com.github.jillesvangurp:kotlin4example:0.2.2")
+    testImplementation("com.github.jillesvangurp:kotlin4example:0.2.3")
 
     examplesImplementation("io.ktor:ktor-server-netty:$ktorVersion")
     examplesImplementation("io.ktor:ktor-server-core:$ktorVersion")

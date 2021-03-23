@@ -135,6 +135,7 @@ class AsyncIndexRepository<T : Any>(
             create: Boolean = true,
             seqNo: Long? = null,
             primaryTerm: Long? = null,
+            waitUntil: Boolean = false,
             requestOptions: RequestOptions = this.defaultRequestOptions
     ): IndexResponse {
         val indexRequest = IndexRequest()
@@ -142,6 +143,9 @@ class AsyncIndexRepository<T : Any>(
                 .id(id)
                 .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
                 .let {
+                    if(waitUntil) {
+                        it.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
+                    }
                     if (id != null) {
                         it.id(id).create(create)
                     } else {
@@ -170,9 +174,10 @@ class AsyncIndexRepository<T : Any>(
             id: String,
             maxUpdateTries: Int = 2,
             requestOptions: RequestOptions = this.defaultRequestOptions,
+            waitUntil: Boolean = false,
             transformFunction: suspend (T) -> T
     ): IndexResponse {
-        return update(0, id, transformFunction, maxUpdateTries, requestOptions)
+        return update(0, id, transformFunction, maxUpdateTries, requestOptions, waitUntil)
     }
 
     @Suppress("DEPRECATION")
@@ -181,11 +186,13 @@ class AsyncIndexRepository<T : Any>(
             id: String,
             transformFunction: suspend (T) -> T,
             maxUpdateTries: Int,
-            requestOptions: RequestOptions
+            requestOptions: RequestOptions,
+            waitUntil: Boolean = false,
 
     ): IndexResponse {
         try {
             val getRequest = GetRequest().index(indexWriteAlias).id(id)
+
             if (!type.isNullOrBlank()) {
                 getRequest.type(type)
             }
@@ -197,7 +204,7 @@ class AsyncIndexRepository<T : Any>(
             if (sourceAsBytes != null) {
                 val currentValue = modelReaderAndWriter.deserialize(sourceAsBytes)
                 val transformed = transformFunction.invoke(currentValue)
-                val indexResponse = index(id, transformed, create = false, seqNo = response.seqNo, primaryTerm = response.primaryTerm)
+                val indexResponse = index(id, transformed, create = false, seqNo = response.seqNo, primaryTerm = response.primaryTerm, waitUntil = waitUntil)
                 if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
                     logger.warn { "retry update $id succeeded after tries=$tries" }
@@ -227,11 +234,15 @@ class AsyncIndexRepository<T : Any>(
      * Deletes the object object identified by `id`.
      */
     @Suppress("DEPRECATION")
-    suspend fun delete(id: String, requestOptions: RequestOptions = this.defaultRequestOptions) {
+    suspend fun delete(id: String, waitUntil: Boolean, requestOptions: RequestOptions = this.defaultRequestOptions) {
         val deleteRequest = DeleteRequest().index(indexWriteAlias).id(id)
         if (!type.isNullOrBlank()) {
             deleteRequest.type(type)
         }
+        if(waitUntil) {
+            deleteRequest.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
+        }
+
 
         client.deleteAsync(deleteRequest, requestOptions)
     }
@@ -289,7 +300,13 @@ class AsyncIndexRepository<T : Any>(
             itemCallback: suspend ((AsyncBulkOperation<T>, BulkItemResponse) -> Unit) = { operation, itemResponse ->
                 if (itemResponse.isFailed) {
                     if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                        update(operation.id ?: error("id is required for update"), retryConflictingUpdates, defaultRequestOptions, operation.updateFunction)
+                        update(
+                            id=operation.id ?: error("id is required for update"),
+                            maxUpdateTries = retryConflictingUpdates,
+                            requestOptions = defaultRequestOptions,
+                            waitUntil = false,
+                            transformFunction = operation.updateFunction
+                        )
                         logger.debug { "retried updating ${operation.id} after version conflict" }
                     } else {
                         logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }

@@ -123,4 +123,14 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
             assertThat(results.total).isEqualTo(10)
         }
     }
+
+    @Test
+    fun `it should wait until committed`() {
+        runBlocking {
+            repository.index("1", TestModel("one"), waitUntil = true)
+            repository.index("2",TestModel("another one"), waitUntil = true)
+            repository.index("3",TestModel("one more"), waitUntil = true)
+            assertThat(repository.search {  }.total).isEqualTo(3)
+        }
+    }
 }

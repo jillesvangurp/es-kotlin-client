@@ -3,6 +3,7 @@ package com.jillesvangurp.eskotlinwrapper
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
+import kotlinx.coroutines.runBlocking
 import org.elasticsearch.ElasticsearchStatusException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -60,5 +61,13 @@ class IndexRepositoryTest : AbstractElasticSearchTest(indexPrefix = "crud") {
         // you can do manual optimistic locking
         repository.index(id, TestModel("bar"), create = false, seqNo = 0, primaryTerm = 1)
         assertThat(repository.get(id)!!.message).isEqualTo("bar")
+    }
+
+    @Test
+    fun `it should wait until committed`() {
+        repository.index("1", TestModel("one"), waitUntil = true)
+        repository.index("2",TestModel("another one"), waitUntil = true)
+        repository.index("3",TestModel("one more"), waitUntil = true)
+        assertThat(repository.search {  }.total).isEqualTo(3)
     }
 }

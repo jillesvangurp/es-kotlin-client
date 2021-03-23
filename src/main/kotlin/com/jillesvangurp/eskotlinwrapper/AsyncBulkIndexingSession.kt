@@ -48,10 +48,11 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
                 if (itemResponse.isFailed) {
                     if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
                         repository.update(
-                            operation.id ?: error("id is required for update"),
-                            retryConflictingUpdates,
-                            defaultRequestOptions,
-                            operation.updateFunction
+                            id = operation.id ?: error("id is required for update"),
+                            maxUpdateTries = retryConflictingUpdates,
+                            requestOptions = defaultRequestOptions,
+                            waitUntil = false,
+                            transformFunction = operation.updateFunction
                         )
                         logger.debug { "retried updating ${operation.id} after version conflict" }
                     } else {

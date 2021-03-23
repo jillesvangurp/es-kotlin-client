@@ -70,7 +70,13 @@ class BulkIndexingSession<T : Any>(
         if (itemCallback == null) {
             if (itemResponse.isFailed) {
                 if (retryConflictingUpdates > 0 && DocWriteRequest.OpType.UPDATE === itemResponse.opType && itemResponse.failure.status === RestStatus.CONFLICT) {
-                    repository.update(operation.id?:error("id is required for updates"), retryConflictingUpdates, defaultRequestOptions, operation.updateFunction!!)
+                    repository.update(
+                        id = operation.id?:error("id is required for updates"),
+                        maxUpdateTries = retryConflictingUpdates,
+                        requestOptions = defaultRequestOptions,
+                        waitUntil = false,
+                        transformFunction = operation.updateFunction!!
+                    )
                     logger.debug { "retried updating ${operation.id} after version conflict" }
                 } else {
                     logger.warn { "failed item ${itemResponse.itemId} ${itemResponse.opType} on ${itemResponse.id} because ${itemResponse.failure.status} ${itemResponse.failureMessage}" }

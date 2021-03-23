@@ -25,6 +25,7 @@ import com.jillesvangurp.eskotlinwrapper.dsl.ZeroTermsQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.bool
 import com.jillesvangurp.eskotlinwrapper.dsl.boosting
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.dsl
 import org.junit.jupiter.api.Test
 
@@ -186,7 +187,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
         // we don't care about the results in this case
         // note we also don't test all parameters
         return repository.search {
-            dsl(true, block)
+            configure(true, block)
         }
     }
 }

@@ -317,10 +317,10 @@ Captured Output:
 
 ```
 Another thing: 666
-nr_25: 29
+nr_21: 28
 Another Thing: 42
 we can do this again and again: 666
-nr_4: 42
+nr_1: 42
 
 ```
 

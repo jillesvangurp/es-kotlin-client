@@ -51,7 +51,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
                             id = operation.id ?: error("id is required for update"),
                             maxUpdateTries = retryConflictingUpdates,
                             requestOptions = defaultRequestOptions,
-                            waitUntil = false,
+                            refreshPolicy = WriteRequest.RefreshPolicy.NONE, // don't block on retries
                             transformFunction = operation.updateFunction
                         )
                         logger.debug { "retried updating ${operation.id} after version conflict" }

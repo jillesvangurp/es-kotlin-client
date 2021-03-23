@@ -74,7 +74,7 @@ class BulkIndexingSession<T : Any>(
                         id = operation.id?:error("id is required for updates"),
                         maxUpdateTries = retryConflictingUpdates,
                         requestOptions = defaultRequestOptions,
-                        waitUntil = false,
+                        refreshPolicy = WriteRequest.RefreshPolicy.NONE, // don't block on retries
                         transformFunction = operation.updateFunction!!
                     )
                     logger.debug { "retried updating ${operation.id} after version conflict" }

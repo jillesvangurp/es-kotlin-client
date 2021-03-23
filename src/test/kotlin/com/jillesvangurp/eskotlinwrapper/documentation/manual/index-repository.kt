@@ -3,19 +3,22 @@
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.IndexRepository
 import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
-import com.jillesvangurp.eskotlinwrapper.documentation.*
+import com.jillesvangurp.eskotlinwrapper.documentation.Thing
+import com.jillesvangurp.eskotlinwrapper.documentation.manualPages
+import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import com.jillesvangurp.eskotlinwrapper.dsl.term
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
+import com.jillesvangurp.kotlin4example.mdLink
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.search.configure
+import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
 import org.elasticsearch.client.source
-import org.elasticsearch.common.xcontent.stringify
 
 val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false) {
     sourceGitRepository.md {
@@ -285,6 +288,7 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
         """.trimIndent()
 
         block {
+
             repo.search {
                 configure {
                     resultSize = 5
@@ -322,6 +326,44 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
         }
 
         +"""
+            ## Index Commits
+            
+            Elasticsearch by default does not wait for changes to get committed to your index. This can lead
+            to inconsistent results when you search right after making modifications.
+            
+            There are two solutions to this:
+            
+            
+        """.trimIndent()
+
+        block {
+            // this tells Elasticsearch to wait until changes
+            // to the index for the repo have been committed
+            repo.refresh()
+            // after this, any changes should be visible in searches
+        }
+
+        +"""
+            Alternatively, you can specify `waitUntil=true` on index, update, or delete operations
+        """.trimIndent()
+
+        block {
+            repo.index("something", Thing("a thing"),
+                refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
+            repo.update("something",
+                refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) {
+                it.copy(name = "modified")
+            }
+            val name = repo.search {
+                configure {
+                    // query on the _id field that ES adds
+                    query = term("_id", "something")
+                }
+            }.mappedHits.first()
+            println("Search returns the correct name: '$name'")
+        }
+
+        +"""
             ## Co-routine support
             
             As with most of this library, the same functionality is also available in a co-routine friendly
@@ -332,9 +374,9 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
             is different and makes use of the Flow API. 
 
             For more details on how to use co-routines with the ES Kotlin Client, see ${mdLink(
-            manualPages["coRoutines"]!!.title,
-            manualPages["coRoutines"]!!.fileName
-        )}
+                manualPages["coRoutines"]!!.title,
+                manualPages["coRoutines"]!!.fileName
+            )}
         """.trimIndent()
     }
 }

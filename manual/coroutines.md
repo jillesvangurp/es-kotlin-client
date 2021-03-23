@@ -109,14 +109,15 @@ runBlocking {
 // need to run them in a co-routine scope
 runBlocking {
   // all of these use asynchronous suspend functions
-  asyncRepo.index("thing1", Thing("The first thing"))
+  asyncRepo.index("thing1", Thing("The first thing"),
+    refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
   // this uses the `AsyncBulkIndexingSession`
-  asyncRepo.bulk {
+  asyncRepo.bulk(refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) {
     for (i in 2.rangeTo(10)) {
       index("thing_$i", Thing("thing $i"))
     }
   }
-  asyncRepo.refresh()
+  // we don't need to refresh because of the refresh policy
   val count = asyncRepo.count { }
   println("indexed $count items")
 }

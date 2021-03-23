@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.dsl
+import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
@@ -127,9 +128,9 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
     @Test
     fun `it should wait until committed`() {
         runBlocking {
-            repository.index("1", TestModel("one"), waitUntil = true)
-            repository.index("2",TestModel("another one"), waitUntil = true)
-            repository.index("3",TestModel("one more"), waitUntil = true)
+            repository.index("1", TestModel("one"), refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
+            repository.index("2",TestModel("another one"), refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
+            repository.index("3",TestModel("one more"), refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
             assertThat(repository.search {  }.total).isEqualTo(3)
         }
     }

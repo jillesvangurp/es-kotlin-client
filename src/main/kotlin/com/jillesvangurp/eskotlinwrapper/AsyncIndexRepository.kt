@@ -136,7 +136,7 @@ class AsyncIndexRepository<T : Any>(
         create: Boolean = true,
         seqNo: Long? = null,
         primaryTerm: Long? = null,
-        waitUntil: Boolean = false,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ): IndexResponse {
         val indexRequest = IndexRequest()
@@ -144,9 +144,7 @@ class AsyncIndexRepository<T : Any>(
             .id(id)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
             .let {
-                if (waitUntil) {
-                    it.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
-                }
+                it.refreshPolicy = refreshPolicy
                 if (id != null) {
                     it.id(id).create(create)
                 } else {
@@ -177,10 +175,10 @@ class AsyncIndexRepository<T : Any>(
         id: String,
         maxUpdateTries: Int = 2,
         requestOptions: RequestOptions = this.defaultRequestOptions,
-        waitUntil: Boolean = false,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
         transformFunction: suspend (T) -> T
     ): IndexResponse {
-        return update(0, id, transformFunction, maxUpdateTries, requestOptions, waitUntil)
+        return update(0, id, transformFunction, maxUpdateTries, requestOptions, refreshPolicy)
     }
 
     @Suppress("DEPRECATION")
@@ -190,7 +188,7 @@ class AsyncIndexRepository<T : Any>(
         transformFunction: suspend (T) -> T,
         maxUpdateTries: Int,
         requestOptions: RequestOptions,
-        waitUntil: Boolean = false,
+        refreshPolicy: WriteRequest.RefreshPolicy,
 
         ): IndexResponse {
         try {
@@ -213,7 +211,7 @@ class AsyncIndexRepository<T : Any>(
                     create = false,
                     seqNo = response.seqNo,
                     primaryTerm = response.primaryTerm,
-                    waitUntil = waitUntil
+                    refreshPolicy = refreshPolicy
                 )
                 if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
@@ -229,7 +227,14 @@ class AsyncIndexRepository<T : Any>(
                 if (tries < maxUpdateTries) {
                     // we got a version conflict, retry after sleeping a bit (without this failures are more likely
                     delay(RandomUtils.nextLong(50, 500))
-                    return update(tries + 1, id, transformFunction, maxUpdateTries, requestOptions)
+                    return update(
+                        tries = tries + 1,
+                        id = id,
+                        transformFunction = transformFunction,
+                        maxUpdateTries = maxUpdateTries,
+                        requestOptions = requestOptions,
+                        refreshPolicy = refreshPolicy
+                    )
                 } else {
                     throw IllegalStateException("update of $id failed after $tries attempts")
                 }
@@ -318,7 +323,7 @@ class AsyncIndexRepository<T : Any>(
                         id = operation.id ?: error("id is required for update"),
                         maxUpdateTries = retryConflictingUpdates,
                         requestOptions = defaultRequestOptions,
-                        waitUntil = false,
+                        refreshPolicy = WriteRequest.RefreshPolicy.NONE, // don't block on retries
                         transformFunction = operation.updateFunction
                     )
                     logger.debug { "retried updating ${operation.id} after version conflict" }

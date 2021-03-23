@@ -5,6 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.ElasticsearchStatusException
+import org.elasticsearch.action.support.WriteRequest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -65,9 +66,9 @@ class IndexRepositoryTest : AbstractElasticSearchTest(indexPrefix = "crud") {
 
     @Test
     fun `it should wait until committed`() {
-        repository.index("1", TestModel("one"), waitUntil = true)
-        repository.index("2",TestModel("another one"), waitUntil = true)
-        repository.index("3",TestModel("one more"), waitUntil = true)
+        repository.index("1", TestModel("one"), refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
+        repository.index("2",TestModel("another one"), refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
+        repository.index("3",TestModel("one more"), refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
         assertThat(repository.search {  }.total).isEqualTo(3)
     }
 }

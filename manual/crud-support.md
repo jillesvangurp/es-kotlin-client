@@ -303,6 +303,7 @@ Now that we know how to add content, we can of course search as well.
 We will dive into the different ways of searching in next chapters. But here is how you do simple search
 
 ```kotlin
+
 repo.search {
   configure {
     resultSize = 5
@@ -317,10 +318,10 @@ Captured Output:
 
 ```
 Another thing: 666
-nr_21: 28
+nr_4: 22
 Another Thing: 42
 we can do this again and again: 666
-nr_1: 42
+nr_23: 42
 
 ```
 
@@ -347,6 +348,45 @@ val modelReaderAndWriter = JacksonModelReaderAndWriter(
 val thingRepository = esClient.indexRepository<Thing>(
   index = "things", modelReaderAndWriter = modelReaderAndWriter
 )
+```
+
+## Index Commits
+
+Elasticsearch by default does not wait for changes to get committed to your index. This can lead
+to inconsistent results when you search right after making modifications.
+
+There are two solutions to this:
+
+```kotlin
+// this tells Elasticsearch to wait until changes
+// to the index for the repo have been committed
+repo.refresh()
+// after this, any changes should be visible in searches
+```
+
+Alternatively, you can specify `waitUntil=true` on index, update, or delete operations
+
+```kotlin
+repo.index("something", Thing("a thing"),
+  refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
+repo.update("something",
+  refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL) {
+  it.copy(name = "modified")
+}
+val name = repo.search {
+  configure {
+    // query on the _id field that ES adds
+    query = term("_id", "something")
+  }
+}.mappedHits.first()
+println("Search returns the correct name: '$name'")
+```
+
+Captured Output:
+
+```
+Search returns the correct name: 'Thing(name=modified, amount=42)'
+
 ```
 
 ## Co-routine support

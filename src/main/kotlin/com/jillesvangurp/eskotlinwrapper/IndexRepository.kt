@@ -130,16 +130,14 @@ class IndexRepository<T : Any>(
         create: Boolean = true,
         seqNo: Long? = null,
         primaryTerm: Long? = null,
-        waitUntil: Boolean = false,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ): IndexResponse {
         val indexRequest = IndexRequest()
             .index(indexWriteAlias)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
             .let {
-                if (waitUntil) {
-                    it.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
-                }
+                it.refreshPolicy = refreshPolicy
                 if (id != null) {
                     it.id(id).create(create)
                 } else {
@@ -171,7 +169,7 @@ class IndexRepository<T : Any>(
         id: String,
         maxUpdateTries: Int = 2,
         requestOptions: RequestOptions = this.defaultRequestOptions,
-        waitUntil: Boolean = false,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
         transformFunction: (T) -> T
     ): IndexResponse {
         return update(
@@ -179,7 +177,7 @@ class IndexRepository<T : Any>(
             id = id,
             transformFunction = transformFunction,
             maxUpdateTries = maxUpdateTries,
-            waitUntil = waitUntil,
+            refreshPolicy = refreshPolicy,
             requestOptions = requestOptions
         )
     }
@@ -190,7 +188,7 @@ class IndexRepository<T : Any>(
         id: String,
         transformFunction: (T) -> T,
         maxUpdateTries: Int,
-        waitUntil: Boolean = false,
+        refreshPolicy: WriteRequest.RefreshPolicy,
         requestOptions: RequestOptions
 
     ): IndexResponse {
@@ -213,7 +211,7 @@ class IndexRepository<T : Any>(
                     create = false,
                     seqNo = response.seqNo,
                     primaryTerm = response.primaryTerm,
-                    waitUntil = waitUntil
+                    refreshPolicy = refreshPolicy,
                 )
                 if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
@@ -234,7 +232,7 @@ class IndexRepository<T : Any>(
                         id = id,
                         transformFunction = transformFunction,
                         maxUpdateTries = maxUpdateTries,
-                        waitUntil = waitUntil,
+                        refreshPolicy = refreshPolicy,
                         requestOptions = requestOptions
                     )
                 } else {

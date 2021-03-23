@@ -8,6 +8,7 @@ import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
 class ExistsQuery(field: String, block: (ExistsQuery.() -> Unit)? = null) : ESQuery("exists") {
     init {
         this["field"] = field
+        block?.invoke(this)
     }
 
     val field = queryDetails["field"] as String
@@ -49,6 +50,7 @@ fun SearchDSL.fuzzy(field: String, query: String, block: (FuzzyQueryConfig.() ->
 class IdsQuery(vararg values: String, block: (IdsQuery.()->Unit)?=null) : ESQuery("ids") {
     init {
         this["values"] = values
+        block?.invoke(this)
     }
 
     var boost: Double by queryDetails.property()

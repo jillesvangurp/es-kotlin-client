@@ -250,16 +250,16 @@ class IndexRepository<T : Any>(
      */
     @Suppress("DEPRECATION")
     fun delete(id: String,
-               waitUntil: Boolean = false,
+               refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
                requestOptions: RequestOptions = this.defaultRequestOptions) {
         val deleteRequest = DeleteRequest().index(indexWriteAlias).id(id)
 
         if (!type.isNullOrBlank()) {
             deleteRequest.type(type)
         }
-        if(waitUntil) {
-            deleteRequest.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
-        }
+
+        deleteRequest.refreshPolicy = refreshPolicy
+
 
         client.delete(deleteRequest, requestOptions)
     }

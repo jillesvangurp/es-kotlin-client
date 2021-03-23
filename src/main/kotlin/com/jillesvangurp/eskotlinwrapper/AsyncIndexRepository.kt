@@ -251,18 +251,14 @@ class AsyncIndexRepository<T : Any>(
     @Suppress("DEPRECATION")
     suspend fun delete(
         id: String,
-        waitUntil: Boolean = false,
+        refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
         requestOptions: RequestOptions = this.defaultRequestOptions
     ) {
         val deleteRequest = DeleteRequest().index(indexWriteAlias).id(id)
         if (!type.isNullOrBlank()) {
             deleteRequest.type(type)
         }
-        if (waitUntil) {
-            deleteRequest.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
-        }
-
-
+        deleteRequest.refreshPolicy = refreshPolicy
         client.deleteAsync(deleteRequest, requestOptions)
     }
 

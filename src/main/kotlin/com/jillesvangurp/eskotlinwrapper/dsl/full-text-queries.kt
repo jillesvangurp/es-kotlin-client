@@ -171,9 +171,9 @@ class MultiMatchQuery(
 }
 
 fun SearchDSL.multiMatch(
-    field: String,
+    query: String,
     vararg fields: String, block: (MultiMatchQuery.() -> Unit)? = null
-) = MultiMatchQuery(field, *fields, block = block)
+) = MultiMatchQuery(query, *fields, block = block)
 
 class QueryStringQuery(
     query: String,

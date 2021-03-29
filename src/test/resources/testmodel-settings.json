@@ -12,6 +12,12 @@
     "properties": {
       "message": {
          "type": "text"
+      },
+      "tag": {
+        "type": "keyword"
+      },
+      "number": {
+        "type": "double"
       }
     }
   }

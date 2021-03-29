@@ -1,10 +1,12 @@
 package org.elasticsearch.common.xcontent
 
+import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
 import org.elasticsearch.common.xcontent.json.JsonXContent
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 import java.time.Instant
+import kotlin.reflect.KProperty
 
 // Misc helpers to make dealing with XContent a bit less painful. There seems to be no way around this low level stuff
 // in the Java client as lots of endpoints lack suitable type safe builders or schemas. Use with caution.
@@ -109,6 +111,7 @@ fun XContentBuilder.writeAny(obj: Any?) {
         is Enum<*> -> {
             this.value(obj.name)
         }
+        is KProperty<*> -> this.value(obj.name)
         else -> {
             throw IllegalArgumentException("Unsupported type: ${obj::class}")
         }

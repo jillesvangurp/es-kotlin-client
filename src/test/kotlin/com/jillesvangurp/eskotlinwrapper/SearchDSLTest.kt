@@ -5,6 +5,7 @@ import assertk.assertions.contains
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.jillesvangurp.eskotlinwrapper.documentation.Thing
 import com.jillesvangurp.eskotlinwrapper.dsl.ExistsQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.FuzzyQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.IdsQuery
@@ -19,12 +20,15 @@ import com.jillesvangurp.eskotlinwrapper.dsl.RangeQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.RegExpQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.SearchDSL
 import com.jillesvangurp.eskotlinwrapper.dsl.SimpleQueryStringQuery
+import com.jillesvangurp.eskotlinwrapper.dsl.SortMode
+import com.jillesvangurp.eskotlinwrapper.dsl.SortOrder
 import com.jillesvangurp.eskotlinwrapper.dsl.TermQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.TermsQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.ZeroTermsQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.bool
 import com.jillesvangurp.eskotlinwrapper.dsl.boosting
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import com.jillesvangurp.eskotlinwrapper.dsl.sort
 import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.dsl
 import org.junit.jupiter.api.Test
@@ -179,6 +183,17 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
     fun `terms query`() {
         testQuery {
             query = TermsQuery("_id", "42", "43")
+        }
+    }
+
+    @Test
+    fun `add sort fields`() {
+        testQuery {
+            sort {
+                +"tag"
+                +TestModel::tag
+                add(TestModel::number, order = SortOrder.DESC, mode = SortMode.MAX)
+            }
         }
     }
 

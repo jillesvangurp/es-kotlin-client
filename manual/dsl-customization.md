@@ -46,6 +46,13 @@ class TermQuery(
 }
 
 fun SearchDSL.term(
+  field: KProperty<*>,
+  value: String,
+  block: (TermQueryConfig.() -> Unit)? = null
+) =
+  TermQuery(field.name,value, block = block)
+
+fun SearchDSL.term(
   field: String,
   value: String,
   block: (TermQueryConfig.() -> Unit)? = null

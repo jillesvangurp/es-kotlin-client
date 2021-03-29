@@ -9,7 +9,7 @@ set of builders that you can use to programmatically construct queries. Of cours
 something that you should avoid in Kotlin. 
 
 On this page we outline a few ways in which you can build queries both programmatically using the builders
-that come with the Java client, using json strings, and using our Kotlin DSL.
+that come with the Java client, using json strings, and using our **Kotlin DSL**.
 
 We will use the same example as before in [Search](search.md). 
 
@@ -74,7 +74,7 @@ Using `apply` gets rid of the need to chain all the calls and it is a little bet
 
 ## Kotlin Search DSL
 
-To address this, this library provides a DSL that allows you to mix both type safe DSL constructs 
+To address this, this library provides a Kotlin DSL that allows you to mix both type safe DSL constructs 
 and simple schema-less manipulation of maps. We'll show several versions of the same query above to
 show how this works.
 
@@ -109,16 +109,17 @@ val results = repo.search {
         // BoolQuery has a function called must
         // it also has filter, should, and mustNot
         must(
-          // it has a vararg list of ESQuery
-          match("name", "qiuck") {
+          // must has a vararg list of ESQuery
+          match(Thing::name, "qiuck") {
             // match always needs a field and query
             // but boost is optional
             boost = 2.0
             // so we find something despite the misspelled quick
             fuzziness = "auto"
           },
-          // but the block param is nullable and
+          // the block param for match is nullable and
           // defaults to null
+          // you can refer fields by string name as well
           matchPhrase("name", "quick brown") {
             slop = 1
           }
@@ -138,7 +139,10 @@ We found 3 hits results.
 
 ## Extending the DSL
 
-The Elasticsearch DSL is huge and only a small part is covered in our Kotlin DSL so far. Using the DSL
+The Elasticsearch DSL is huge and only a part is covered in our Kotlin DSL so far. Currently, most 
+compound, text, and term level queries are supported.
+
+Using the DSL
 in schema-less mode allows you to work around this and you can of course mix both approaches.
 
 However, if you need something added to the DSL it is really easy to do this yourself. For example 
@@ -183,12 +187,17 @@ class MatchQuery(
 }
 
 fun SearchDSL.match(
+  field: KProperty<*>,
+  query: String, block: (MatchQueryConfig.() -> Unit)? = null
+) = MatchQuery(field.name, query, block = block)
+
+fun SearchDSL.match(
   field: String,
   query: String, block: (MatchQueryConfig.() -> Unit)? = null
 ) = MatchQuery(field, query, block = block)
 ```
 
-For more information on this check the [Extending and Customizing the Kotlin DSLs](dsl-customization.md)
+For more information on how to extend the DSL read [Extending and Customizing the Kotlin DSLs](dsl-customization.md)
 
 
 ___

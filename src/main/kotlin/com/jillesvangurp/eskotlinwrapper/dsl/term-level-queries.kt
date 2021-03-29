@@ -3,6 +3,7 @@
 package com.jillesvangurp.eskotlinwrapper.dsl
 
 import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
+import kotlin.reflect.KProperty
 
 @SearchDSLMarker
 class ExistsQuery(field: String, block: (ExistsQuery.() -> Unit)? = null) : ESQuery("exists") {
@@ -15,6 +16,8 @@ class ExistsQuery(field: String, block: (ExistsQuery.() -> Unit)? = null) : ESQu
     var boost by queryDetails.property<Double>()
 
 }
+
+fun SearchDSL.exists(field: KProperty<*>, block: (ExistsQuery.() -> Unit)? = null) = ExistsQuery(field.name, block)
 
 fun SearchDSL.exists(field: String, block: (ExistsQuery.() -> Unit)? = null) = ExistsQuery(field, block)
 
@@ -42,6 +45,9 @@ class FuzzyQuery(
         block?.invoke(fuzzyQueryConfig)
     }
 }
+
+fun SearchDSL.fuzzy(field: KProperty<*>, query: String, block: (FuzzyQueryConfig.() -> Unit)? = null) =
+    FuzzyQuery(field.name, query, block = block)
 
 fun SearchDSL.fuzzy(field: String, query: String, block: (FuzzyQueryConfig.() -> Unit)? = null) =
     FuzzyQuery(field, query, block = block)
@@ -81,6 +87,13 @@ class PrefixQuery(
 }
 
 fun SearchDSL.prefix(
+    field: KProperty<*>,
+    value: String,
+    block: (PrefixQueryConfig.() -> Unit)? = null
+) =
+    PrefixQuery(field.name, value, block = block)
+
+fun SearchDSL.prefix(
     field: String,
     value: String,
     block: (PrefixQueryConfig.() -> Unit)? = null
@@ -111,6 +124,9 @@ class RangeQuery(
     }
 }
 
+fun SearchDSL.range(field: KProperty<*>, block: RangeQueryConfig.() -> Unit) =
+    RangeQuery(field.name, block = block)
+
 fun SearchDSL.range(field: String, block: RangeQueryConfig.() -> Unit) =
     RangeQuery(field, block = block)
 
@@ -136,6 +152,13 @@ class RegExpQuery(
         block?.invoke(regExpQueryConfig)
     }
 }
+
+fun SearchDSL.regExp(
+    field: KProperty<*>,
+    value: String,
+    block: RegExpQueryConfig.() -> Unit
+) =
+    RegExpQuery(field.name,value, block = block)
 
 fun SearchDSL.regExp(
     field: String,
@@ -166,6 +189,13 @@ class TermQuery(
 }
 
 fun SearchDSL.term(
+    field: KProperty<*>,
+    value: String,
+    block: (TermQueryConfig.() -> Unit)? = null
+) =
+    TermQuery(field.name,value, block = block)
+
+fun SearchDSL.term(
     field: String,
     value: String,
     block: (TermQueryConfig.() -> Unit)? = null
@@ -190,6 +220,13 @@ class TermsQuery(
         block?.invoke(this)
     }
 }
+
+fun SearchDSL.terms(
+    field: KProperty<*>,
+    vararg values: String,
+    block: (TermsQuery.() -> Unit)? = null
+) =
+    TermsQuery(field.name,*values, block = block)
 
 fun SearchDSL.terms(
     field: String,
@@ -220,6 +257,13 @@ class WildCardQuery(
         block?.invoke(wildCardQueryConfig)
     }
 }
+
+fun SearchDSL.wildcard(
+    field: KProperty<*>,
+    value: String,
+    block: (WildCardQueryConfig.() -> Unit)? = null
+) =
+    WildCardQuery(field.name,value, block = block)
 
 fun SearchDSL.wildcard(
     field: String,

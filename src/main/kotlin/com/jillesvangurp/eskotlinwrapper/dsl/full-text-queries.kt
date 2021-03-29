@@ -3,6 +3,7 @@
 package com.jillesvangurp.eskotlinwrapper.dsl
 
 import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
+import kotlin.reflect.KProperty
 
 // Begin MATCH_QUERY
 enum class MatchOperator { AND, OR }
@@ -43,6 +44,11 @@ class MatchQuery(
 }
 
 fun SearchDSL.match(
+    field: KProperty<*>,
+    query: String, block: (MatchQueryConfig.() -> Unit)? = null
+) = MatchQuery(field.name, query, block = block)
+
+fun SearchDSL.match(
     field: String,
     query: String, block: (MatchQueryConfig.() -> Unit)? = null
 ) = MatchQuery(field, query, block = block)
@@ -68,6 +74,11 @@ class MatchPhraseQuery(
         block?.invoke(matchPhraseQueryConfig)
     }
 }
+
+fun SearchDSL.matchPhrase(
+    field: KProperty<*>,
+    query: String, block: (MatchPhraseQueryConfig.() -> Unit)? = null
+) = MatchPhraseQuery(field.name, query, block = block)
 
 fun SearchDSL.matchPhrase(
     field: String,
@@ -101,6 +112,11 @@ class MatchBoolPrefixQuery(
 }
 
 fun SearchDSL.matchBoolPrefix(
+    field: KProperty<*>,
+    query: String, block: (MatchBoolPrefixQueryConfig.() -> Unit)? = null
+) = MatchBoolPrefixQuery(field.name, query, block = block)
+
+fun SearchDSL.matchBoolPrefix(
     field: String,
     query: String, block: (MatchBoolPrefixQueryConfig.() -> Unit)? = null
 ) = MatchBoolPrefixQuery(field, query, block = block)
@@ -126,6 +142,12 @@ class MatchPhrasePrefixQuery(
         block?.invoke(matchPhrasePrefixQueryConfig)
     }
 }
+
+fun SearchDSL.matchPhrasePrefix(
+    field: KProperty<*>,
+    query: String, block: (MatchPhrasePrefixQueryConfig.() -> Unit)? = null
+) = MatchPhrasePrefixQuery(field.name, query, block = block)
+
 
 fun SearchDSL.matchPhrasePrefix(
     field: String,
@@ -172,6 +194,11 @@ class MultiMatchQuery(
 
 fun SearchDSL.multiMatch(
     query: String,
+    vararg fields: KProperty<*>, block: (MultiMatchQuery.() -> Unit)? = null
+) = MultiMatchQuery(query, *fields.map { it.name }.toTypedArray(), block = block)
+
+fun SearchDSL.multiMatch(
+    query: String,
     vararg fields: String, block: (MultiMatchQuery.() -> Unit)? = null
 ) = MultiMatchQuery(query, *fields, block = block)
 
@@ -214,6 +241,12 @@ class QueryStringQuery(
 }
 
 fun SearchDSL.queryString(
+    field: KProperty<*>,
+    query: String, block: (QueryStringQuery.() -> Unit)? = null
+) = QueryStringQuery(field.name, query, block = block)
+
+
+fun SearchDSL.queryString(
     field: String,
     query: String, block: (QueryStringQuery.() -> Unit)? = null
 ) = QueryStringQuery(field, query, block = block)
@@ -252,6 +285,9 @@ class SimpleQueryStringQuery(
 }
 
 fun SearchDSL.simpleQueryString(
-    field: String,
+    query: String, vararg fields: KProperty<*>, block: (SimpleQueryStringQuery.() -> Unit)? = null
+) = SimpleQueryStringQuery(query, *fields.map { it.name }.toTypedArray(), block = block)
+
+fun SearchDSL.simpleQueryString(
     query: String, vararg fields: String, block: (SimpleQueryStringQuery.() -> Unit)? = null
-) = SimpleQueryStringQuery(field, query, *fields, block = block)
+) = SimpleQueryStringQuery(query, *fields, block = block)

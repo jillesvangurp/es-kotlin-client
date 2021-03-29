@@ -132,7 +132,7 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
             val results = thingRepository.search {
                 configure {
                     // added names to the args for clarity here, but optional of course
-                    query = match(field = "name", query = "bar")
+                    query = match(field = Thing::name, query = "bar")
                 }
             }
             // results know hot deserialize Things
@@ -161,9 +161,11 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
                         resultSize = 10
                         query = bool {
                             should(
+                                // you can use strings
                                 match("name", "foo"),
-                                match("name", "bar"),
-                                match("name", "foobar")
+                                // or property references
+                                match(Thing::name, "bar"),
+                                match(Thing::name, "foobar")
                             )
                         }
                     }

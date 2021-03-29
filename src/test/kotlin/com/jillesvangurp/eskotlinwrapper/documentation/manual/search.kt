@@ -88,7 +88,8 @@ val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", re
             val text = "quick"
             val count = repo.count {
                 configure {
-                    query = match("name", text)
+                    // instead of "name" you can also use a property reference
+                    query = match(Thing::name, text)
                 }
             }
             println("We found $count results matching $text")

@@ -131,7 +131,8 @@ class IndexRepository<T : Any>(
         seqNo: Long? = null,
         primaryTerm: Long? = null,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
-        requestOptions: RequestOptions = this.defaultRequestOptions
+        requestOptions: RequestOptions = this.defaultRequestOptions,
+        pipeline: String? = null
     ): IndexResponse {
         val indexRequest = IndexRequest()
             .index(indexWriteAlias)
@@ -142,6 +143,9 @@ class IndexRepository<T : Any>(
                     it.id(id).create(create)
                 } else {
                     it
+                }
+                if (pipeline != null) {
+                    it.pipeline = pipeline
                 }
             }
 

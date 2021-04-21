@@ -197,6 +197,38 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
         }
     }
 
+    @Test
+    fun `should construct a query containing a post_filter expression`() {
+        val s = SearchDSL()
+        s.apply {
+            resultSize = 10
+            from = 0
+            query = matchAll()
+            postFilter = bool {
+                must(
+                    MatchQuery("title", "foo")
+                )
+            }
+        }
+        assertThat(s["from"]).isEqualTo(0)
+        assertThat(s["query"] as Map<String, Any>).hasSize(1)
+        assertThat((s["query"] as Map<String, Any>).keys).contains("match_all")
+        assertThat(s["post_filter"] as Map<String, Any>).hasSize(1)
+        assertThat((s["post_filter"] as Map<String, Any>).keys).contains("bool")
+    }
+
+    @Test
+    fun `should construct a query containing a post_filter expression which is executed successfull`() {
+        testQuery {
+            query = matchAll()
+            postFilter = bool {
+                must(
+                    MatchQuery("title", "foo")
+                )
+            }
+        }
+    }
+
     private fun testQuery(block: SearchDSL.() -> Unit): SearchResults<TestModel> {
         // we test here that ES does not throw some kind of error and accepts the query without validation problems
         // we don't care about the results in this case

@@ -46,6 +46,16 @@ class SearchDSL : MapBackedProperties() {
         set(value) {
             this["query"] = value.toMap()
         }
+
+    var postFilter: ESQuery
+        get() {
+            val map = this["post_filter"] as Map<String, MapBackedProperties>
+            val (name, queryDetails) = map.entries.first()
+            return ESQuery(name, queryDetails)
+        }
+        set(value) {
+            this["post_filter"] = value.toMap()
+        }
 }
 
 enum class SortOrder { ASC, DESC }

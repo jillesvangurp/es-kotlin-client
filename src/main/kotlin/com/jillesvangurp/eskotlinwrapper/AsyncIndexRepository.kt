@@ -1,6 +1,5 @@
 package com.jillesvangurp.eskotlinwrapper
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.apache.commons.lang3.RandomUtils
@@ -137,13 +136,15 @@ class AsyncIndexRepository<T : Any>(
         seqNo: Long? = null,
         primaryTerm: Long? = null,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
-        requestOptions: RequestOptions = this.defaultRequestOptions
-    ): IndexResponse {
+        requestOptions: RequestOptions = this.defaultRequestOptions,
+        pipeline: String? = null,
+        ): IndexResponse {
         val indexRequest = IndexRequest()
             .index(indexWriteAlias)
             .id(id)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
             .let {
+                it.pipeline = pipeline
                 it.refreshPolicy = refreshPolicy
                 if (id != null) {
                     it.id(id).create(create)
@@ -176,9 +177,10 @@ class AsyncIndexRepository<T : Any>(
         maxUpdateTries: Int = 2,
         requestOptions: RequestOptions = this.defaultRequestOptions,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
+        pipeline: String? = null,
         transformFunction: suspend (T) -> T
     ): IndexResponse {
-        return update(0, id, transformFunction, maxUpdateTries, requestOptions, refreshPolicy)
+        return update(0, id, transformFunction, maxUpdateTries, requestOptions, refreshPolicy,pipeline)
     }
 
     @Suppress("DEPRECATION")
@@ -189,7 +191,7 @@ class AsyncIndexRepository<T : Any>(
         maxUpdateTries: Int,
         requestOptions: RequestOptions,
         refreshPolicy: WriteRequest.RefreshPolicy,
-
+        pipeline: String? = null,
         ): IndexResponse {
         try {
             val getRequest = GetRequest().index(indexWriteAlias).id(id)
@@ -211,7 +213,8 @@ class AsyncIndexRepository<T : Any>(
                     create = false,
                     seqNo = response.seqNo,
                     primaryTerm = response.primaryTerm,
-                    refreshPolicy = refreshPolicy
+                    refreshPolicy = refreshPolicy,
+                    pipeline = pipeline
                 )
                 if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
@@ -233,7 +236,8 @@ class AsyncIndexRepository<T : Any>(
                         transformFunction = transformFunction,
                         maxUpdateTries = maxUpdateTries,
                         requestOptions = requestOptions,
-                        refreshPolicy = refreshPolicy
+                        refreshPolicy = refreshPolicy,
+                        pipeline
                     )
                 } else {
                     throw IllegalStateException("update of $id failed after $tries attempts")

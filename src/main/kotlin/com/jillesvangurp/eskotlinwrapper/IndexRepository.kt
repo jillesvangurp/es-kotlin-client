@@ -137,15 +137,14 @@ class IndexRepository<T : Any>(
         val indexRequest = IndexRequest()
             .index(indexWriteAlias)
             .source(modelReaderAndWriter.serialize(obj), XContentType.JSON)
-            .let {
-                it.refreshPolicy = refreshPolicy
+            .let { indexRequest ->
+                indexRequest.refreshPolicy = refreshPolicy
+                indexRequest.pipeline = pipeline
+
                 if (id != null) {
-                    it.id(id).create(create)
+                    indexRequest.id(id).create(create)
                 } else {
-                    it
-                }
-                if (pipeline != null) {
-                    it.pipeline = pipeline
+                    indexRequest
                 }
             }
 
@@ -174,6 +173,7 @@ class IndexRepository<T : Any>(
         maxUpdateTries: Int = 2,
         requestOptions: RequestOptions = this.defaultRequestOptions,
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
+        pipeline: String? = null,
         transformFunction: (T) -> T
     ): IndexResponse {
         return update(
@@ -182,7 +182,8 @@ class IndexRepository<T : Any>(
             transformFunction = transformFunction,
             maxUpdateTries = maxUpdateTries,
             refreshPolicy = refreshPolicy,
-            requestOptions = requestOptions
+            requestOptions = requestOptions,
+            pipeline = pipeline
         )
     }
 
@@ -193,9 +194,9 @@ class IndexRepository<T : Any>(
         transformFunction: (T) -> T,
         maxUpdateTries: Int,
         refreshPolicy: WriteRequest.RefreshPolicy,
-        requestOptions: RequestOptions
-
-    ): IndexResponse {
+        requestOptions: RequestOptions,
+        pipeline: String? = null,
+        ): IndexResponse {
         try {
             val getRequest = GetRequest().index(indexWriteAlias).id(id)
             if (!type.isNullOrBlank()) {
@@ -216,6 +217,7 @@ class IndexRepository<T : Any>(
                     seqNo = response.seqNo,
                     primaryTerm = response.primaryTerm,
                     refreshPolicy = refreshPolicy,
+                    pipeline = pipeline
                 )
                 if (tries > 0) {
                     // if you start seeing this a lot, you have a lot of concurrent updates to the same thing; not good
@@ -237,7 +239,8 @@ class IndexRepository<T : Any>(
                         transformFunction = transformFunction,
                         maxUpdateTries = maxUpdateTries,
                         refreshPolicy = refreshPolicy,
-                        requestOptions = requestOptions
+                        requestOptions = requestOptions,
+                        pipeline = pipeline
                     )
                 } else {
                     throw IllegalStateException("update of $id failed after $tries attempts")

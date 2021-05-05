@@ -27,6 +27,7 @@ import com.jillesvangurp.eskotlinwrapper.dsl.TermsQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.ZeroTermsQuery
 import com.jillesvangurp.eskotlinwrapper.dsl.bool
 import com.jillesvangurp.eskotlinwrapper.dsl.boosting
+import com.jillesvangurp.eskotlinwrapper.dsl.filterSource
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import com.jillesvangurp.eskotlinwrapper.dsl.sort
 import org.elasticsearch.action.search.configure
@@ -225,6 +226,35 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
                 must(
                     MatchQuery("title", "foo")
                 )
+            }
+        }
+    }
+
+    @Test
+    fun `should construct source filter with boolean`() {
+        val s = SearchDSL()
+        s.apply {
+            filterSource(true)
+        }
+        assertThat(s["_source"]).isEqualTo(true)
+    }
+
+    @Test
+    fun `should construct source filter with a list of fields`() {
+        val fields = arrayOf("foo", "bar")
+        val s = SearchDSL()
+        s.apply {
+            filterSource(*fields)
+        }
+        assertThat(s["_source"] as Array<String>).isEqualTo(fields)
+    }
+
+    @Test
+    fun `should construct source filter with include and exclude`() {
+        testQuery {
+            filterSource {
+                includes("foo", "bar")
+                excludes("baz")
             }
         }
     }

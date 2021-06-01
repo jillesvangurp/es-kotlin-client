@@ -11,14 +11,14 @@ buildscript {
         maven(url = "https://jitpack.io")
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:7.10.2.0")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:7.13.0.0")
     }
 }
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.4.20"
-    id("org.jetbrains.dokka") version "1.4.20"
-    id("com.github.ben-manes.versions") version "0.36.0" // gradle dependencyUpdates -Drevision=release
+    id("org.jetbrains.kotlin.jvm") version "1.5.10"
+    id("org.jetbrains.dokka") version "1.4.32"
+    id("com.github.ben-manes.versions") version "0.39.0" // gradle dependencyUpdates -Drevision=release
     java
 
     id("com.avast.gradle.docker-compose") version "0.14.0"
@@ -104,21 +104,19 @@ tasks.withType<Test> {
    this.finalizedBy("composeDown")
 }
 
-val kotlinVersion = "1.4.20"
+val kotlinVersion = "1.5.10"
 // match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.10.2"
+val elasticVersion = "7.13.0"
 val slf4jVersion = "1.7.30"
 val junitVersion = "5.7.0"
-val jacksonVersion = "2.12.1"
-val ktorVersion = "1.4.1"
+val jacksonVersion = "2.12.3"
+val ktorVersion = "1.6.0"
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.2")
-    api("io.github.microutils:kotlin-logging:2.0.4")
-
-    api("org.apache.commons:commons-lang3:3.11")
+    api("io.github.microutils:kotlin-logging:2.0.6")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
@@ -138,8 +136,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
-    testImplementation("io.mockk:mockk:1.10.5")
-    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.20")
+    testImplementation("io.mockk:mockk:1.11.0")
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
     testImplementation("com.github.jillesvangurp:kotlin4example:0.2.3")
 
     examplesImplementation("io.ktor:ktor-server-netty:$ktorVersion")
@@ -150,7 +148,7 @@ dependencies {
     examplesImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
     examplesImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
     examplesImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    examplesImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.14.0") // es seems to insist on log4j2
+    examplesImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.14.1") // es seems to insist on log4j2
     examplesImplementation("ch.qos.logback:logback-classic:1.2.3")
 }
 

@@ -2,7 +2,6 @@ package com.jillesvangurp.eskotlinwrapper
 
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
-import org.apache.commons.lang3.RandomUtils
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.DocWriteRequest
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
@@ -35,6 +34,7 @@ import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
+import kotlin.random.Random
 
 private val logger = KotlinLogging.logger {}
 
@@ -229,7 +229,7 @@ class AsyncIndexRepository<T : Any>(
             if (e.status().status == 409) {
                 if (tries < maxUpdateTries) {
                     // we got a version conflict, retry after sleeping a bit (without this failures are more likely
-                    delay(RandomUtils.nextLong(50, 500))
+                    delay(Random.nextLong(50,500))
                     return update(
                         tries = tries + 1,
                         id = id,

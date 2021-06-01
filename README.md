@@ -298,6 +298,13 @@ This project is licensed under the [MIT license](LICENSE). This maximizes everyb
 Please exercise your rights under this license in any way you feel is appropriate. Forking is allowed and encouraged. 
 I do appreciate attribution and pull requests ...
 
+Note, as of version 7.11.0, the Elastic Rest High Level Client that this library depends on has moved to a 
+non oss license. Before that, it was licensed under a mix of Apache 2.0 and Elastic's proprietary licensing. 
+
+As far as I understand it, that should not change anything for using this library which will continue 
+to be licensed under the MIT license. But if that matters to you, you may want to stick with version 
+1.0.12 of this library. Version 1.1.0 and onwards are going to continue to track the main line Elasticsearch.
+
 ## Support & Consultancy
 
 For small things, use the issue tracker; I generally try to be helpful and try to resolve valid 

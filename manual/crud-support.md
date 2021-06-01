@@ -227,20 +227,20 @@ repo.update("3") { currentThing ->
   currentThing.copy(name = "an updated thing", amount = 666)
 }
 
-println("It was updated: ${repo.get("3")}")
+println("It was updated: ${repo.get("3")?.name}")
 
 repo.update("3") { currentThing ->
   currentThing.copy(name = "we can do this again and again", amount = 666)
 }
 
-println("It was updated again ${repo.get("3")}")
+println("It was updated again ${repo.get("3")?.name}")
 ```
 
 Captured Output:
 
 ```
-It was updated: Thing(name=an updated thing, amount=666)
-It was updated again Thing(name=we can do this again and again, amount=666)
+It was updated: an updated thing
+It was updated again we can do this again and again
 
 ```
 
@@ -307,21 +307,20 @@ We will dive into the different ways of searching in next chapters. But here is 
 repo.search {
   configure {
     resultSize = 5
-    query = matchAll()
+    query = match(Thing::name,"another")
   }
-}.mappedHits.forEach { deserializedObject ->
-  println("${deserializedObject.name}: ${deserializedObject.amount}")
+}?.let {
+  it.mappedHits.forEach { thing ->
+    println("name: ${thing.name}, amount: ${thing.amount}")
+  }
 }
 ```
 
 Captured Output:
 
 ```
-Another thing: 666
-nr_24: 14
-Another Thing: 42
-we can do this again and again: 666
-nr_8: 42
+name: Another thing, amount: 666
+name: Another Thing, amount: 42
 
 ```
 

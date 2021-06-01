@@ -9,6 +9,7 @@ import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing
 import com.jillesvangurp.eskotlinwrapper.documentation.manualPages
 import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
+import com.jillesvangurp.eskotlinwrapper.dsl.match
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import com.jillesvangurp.eskotlinwrapper.dsl.term
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
@@ -229,13 +230,13 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
                 currentThing.copy(name = "an updated thing", amount = 666)
             }
 
-            println("It was updated: ${repo.get("3")}")
+            println("It was updated: ${repo.get("3")?.name}")
 
             repo.update("3") { currentThing ->
                 currentThing.copy(name = "we can do this again and again", amount = 666)
             }
 
-            println("It was updated again ${repo.get("3")}")
+            println("It was updated again ${repo.get("3")?.name}")
         }
 
         +"""
@@ -292,10 +293,12 @@ val indexRepositoryMd by withTestIndex<Thing, Lazy<String>>(createIndex = false)
             repo.search {
                 configure {
                     resultSize = 5
-                    query = matchAll()
+                    query = match(Thing::name,"another")
                 }
-            }.mappedHits.forEach { deserializedObject ->
-                println("${deserializedObject.name}: ${deserializedObject.amount}")
+            }?.let {
+                it.mappedHits.forEach { thing ->
+                    println("name: ${thing.name}, amount: ${thing.amount}")
+                }
             }
         }
 

@@ -56,7 +56,7 @@ fun create(
     sniffAfterFailureDelayMillis: Int = 30000,
     sniffIntervalMillis: Int = 10000
 ): RestHighLevelClient {
-    val sniffOnFailureListener = SniffOnFailureListener()
+    val sniffOnFailureListener by lazy {  SniffOnFailureListener() }
     var restClientBuilder = RestClient.builder(HttpHost(host, port, if (https) "https" else "http"))
     if (!user.isNullOrBlank()) {
         restClientBuilder = restClientBuilder.setHttpClientConfigCallback {
@@ -68,7 +68,7 @@ fun create(
             it.setDefaultCredentialsProvider(basicCredentialsProvider)
         }
         if (useSniffer) {
-            restClientBuilder.setFailureListener(sniffOnFailureListener)
+            restClientBuilder = restClientBuilder.setFailureListener(sniffOnFailureListener)
         }
     }
     val restHighLevelClient = RestHighLevelClient(restClientBuilder)

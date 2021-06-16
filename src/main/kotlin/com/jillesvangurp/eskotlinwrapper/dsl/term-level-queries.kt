@@ -8,7 +8,7 @@ import kotlin.reflect.KProperty
 @SearchDSLMarker
 class ExistsQuery(field: String, block: (ExistsQuery.() -> Unit)? = null) : ESQuery("exists") {
     init {
-        this["field"] = field
+        this.putNoSnakeCase("field", field)
         block?.invoke(this)
     }
 
@@ -252,7 +252,7 @@ class WildCardQuery(
     var boost by queryDetails.property<Double>()
 
     init {
-        this[field] = wildCardQueryConfig
+        this.putNoSnakeCase(field, wildCardQueryConfig)
         wildCardQueryConfig.value = value
         block?.invoke(wildCardQueryConfig)
     }

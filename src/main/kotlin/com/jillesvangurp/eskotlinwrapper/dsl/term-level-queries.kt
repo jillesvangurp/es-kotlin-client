@@ -247,7 +247,7 @@ class WildCardQuery(
     value: String,
     wildCardQueryConfig: WildCardQueryConfig = WildCardQueryConfig(),
     block: (WildCardQueryConfig.() -> Unit)? = null
-) : ESQuery("term") {
+) : ESQuery("wildcard") {
 
     var boost by queryDetails.property<Double>()
 

@@ -11,11 +11,11 @@ import org.elasticsearch.common.xcontent.xContentBuilder
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.format.DateTimeFormatter
-import java.util.Base64
+import java.util.*
 
 fun String.snakeCaseToUnderscore(): String {
     val re = "(?<=[a-z])[A-Z]".toRegex()
-    return re.replace(this) { m -> "_${m.value}" }.toLowerCase()
+    return re.replace(this) { m -> "_${m.value}" }.lowercase(Locale.getDefault())
 }
 
 @DslMarker

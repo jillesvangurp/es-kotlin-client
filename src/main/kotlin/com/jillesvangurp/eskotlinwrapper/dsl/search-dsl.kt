@@ -6,6 +6,7 @@ import com.jillesvangurp.eskotlinwrapper.IMapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.mapProps
 import org.elasticsearch.common.xcontent.stringify
+import java.util.*
 import kotlin.reflect.KProperty
 
 @DslMarker
@@ -80,7 +81,7 @@ class SortBuilder {
         this.putNoSnakeCase(field, mapProps {
             this["order"] = order.name
             mode?.let {
-                this["mode"] = mode.name.toLowerCase()
+                this["mode"] = mode.name.lowercase(Locale.getDefault())
             }
             block?.invoke(this)
         })

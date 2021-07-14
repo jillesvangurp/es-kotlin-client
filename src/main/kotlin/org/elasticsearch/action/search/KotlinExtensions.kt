@@ -11,6 +11,7 @@ import org.elasticsearch.common.xcontent.XContentFactory
 import org.elasticsearch.common.xcontent.XContentLocation
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.common.xcontent.stringify
+import org.elasticsearch.index.mapper.MapperExtrasPlugin
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import java.io.InputStream
@@ -44,7 +45,7 @@ val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : DeprecationHandle
     }
 }
 
-private val searchModule = SearchModule(Settings.EMPTY, false, Collections.emptyList())
+private val searchModule = SearchModule(Settings.EMPTY, false, listOf(MapperExtrasPlugin()))
 
 /**
  * Adds the missing piece to the SearchRequest API that allows you to paste raw json.

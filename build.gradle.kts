@@ -7,8 +7,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
-        jcenter()
-        maven(url = "https://jitpack.io")
+        mavenCentral()
+        maven("https://jitpack.io") {
+            content {
+                includeGroup("com.github.jillesvangurp")
+                includeGroup("com.github.jillesvangurp.es-kotlin-codegen-plugin")
+            }
+        }
     }
     dependencies {
         classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:7.13.0.0")
@@ -28,8 +33,12 @@ plugins {
 apply(plugin = "com.github.jillesvangurp.codegen")
 
 repositories {
-    jcenter()
-    maven(url = "https://jitpack.io")
+    mavenCentral()
+    maven(url = "https://jitpack.io") {
+        content {
+            includeGroup("com.github.jillesvangurp")
+        }
+    }
 }
 
 sourceSets {

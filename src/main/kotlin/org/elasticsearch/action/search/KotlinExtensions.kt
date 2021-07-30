@@ -5,17 +5,12 @@ import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.common.settings.Settings
-import org.elasticsearch.common.xcontent.DeprecationHandler
-import org.elasticsearch.common.xcontent.NamedXContentRegistry
-import org.elasticsearch.common.xcontent.XContentFactory
-import org.elasticsearch.common.xcontent.XContentLocation
-import org.elasticsearch.common.xcontent.XContentType
-import org.elasticsearch.common.xcontent.stringify
+import org.elasticsearch.common.xcontent.*
+import org.elasticsearch.plugins.SearchPlugin
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import java.io.InputStream
 import java.io.Reader
-import java.util.Collections
 import java.util.function.Supplier
 
 private val logger: KLogger = KotlinLogging.logger { }
@@ -44,15 +39,21 @@ val LOGGING_DEPRECATION_HANDLER: DeprecationHandler = object : DeprecationHandle
     }
 }
 
-private val searchModule = SearchModule(Settings.EMPTY, false, Collections.emptyList())
+private fun searchModule(settings: Settings = Settings.EMPTY, plugins: List<SearchPlugin> = listOf()) =
+    SearchModule(settings, false, plugins)
 
 /**
  * Adds the missing piece to the SearchRequest API that allows you to paste raw json.
  * This makes sense in Kotlin because it has multiline strings and support for template variables.
  */
-fun SearchRequest.source(json: String, deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER) {
+fun SearchRequest.source(
+    json: String,
+    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER,
+    settings: Settings = Settings.EMPTY,
+    plugins: List<SearchPlugin> = listOf()
+) {
     XContentFactory.xContent(XContentType.JSON).createParser(
-        NamedXContentRegistry(searchModule.namedXContents),
+        NamedXContentRegistry(searchModule(settings, plugins).namedXContents),
         deprecationHandler,
         json
     ).use {
@@ -64,9 +65,14 @@ fun SearchRequest.source(json: String, deprecationHandler: DeprecationHandler = 
  * Adds the missing piece to the CountRequest API that allows you to paste raw json.
  * This makes sense in Kotlin because it has multiline strings and support for template variables.
  */
-fun CountRequest.source(json: String, deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER) {
+fun CountRequest.source(
+    json: String,
+    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER,
+    settings: Settings = Settings.EMPTY,
+    plugins: List<SearchPlugin> = listOf()
+) {
     XContentFactory.xContent(XContentType.JSON).createParser(
-        NamedXContentRegistry(searchModule.namedXContents),
+        NamedXContentRegistry(searchModule(settings, plugins).namedXContents),
         deprecationHandler,
         json
     ).use {
@@ -77,10 +83,15 @@ fun CountRequest.source(json: String, deprecationHandler: DeprecationHandler = L
 /**
  * Adds the missing piece to the SearchRequest API that allows you to paste raw using a Reader. Useful if you store your queries in files.
  */
-fun SearchRequest.source(reader: Reader, deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER) {
+fun SearchRequest.source(
+    reader: Reader,
+    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER,
+    settings: Settings = Settings.EMPTY,
+    plugins: List<SearchPlugin> = listOf()
+) {
 
     XContentFactory.xContent(XContentType.JSON).createParser(
-        NamedXContentRegistry(searchModule.namedXContents),
+        NamedXContentRegistry(searchModule(settings, plugins).namedXContents),
         deprecationHandler,
         reader
     ).use {
@@ -109,10 +120,15 @@ fun SearchRequest.dsl(pretty: Boolean = false, block: SearchDSL.() -> Unit): Sea
 /**
  * Adds the missing piece to the CountRequest API that allows you to paste raw using a Reader. Useful if you store your queries in files.
  */
-fun CountRequest.source(reader: Reader, deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER) {
+fun CountRequest.source(
+    reader: Reader,
+    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER,
+    settings: Settings = Settings.EMPTY,
+    plugins: List<SearchPlugin> = listOf()
+) {
 
     XContentFactory.xContent(XContentType.JSON).createParser(
-        NamedXContentRegistry(searchModule.namedXContents),
+        NamedXContentRegistry(searchModule(settings, plugins).namedXContents),
         deprecationHandler,
         reader
     ).use {
@@ -133,10 +149,11 @@ fun CountRequest.configure(pretty: Boolean = false, block: SearchDSL.() -> Unit)
  */
 fun SearchRequest.source(
     inputStream: InputStream,
-    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER
+    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER,
+    settings: Settings = Settings.EMPTY, plugins: List<SearchPlugin> = listOf()
 ) {
     XContentFactory.xContent(XContentType.JSON).createParser(
-        NamedXContentRegistry(searchModule.namedXContents),
+        NamedXContentRegistry(searchModule(settings, plugins).namedXContents),
         deprecationHandler,
         inputStream
     ).use {
@@ -155,10 +172,12 @@ fun SearchRequest.source(block: SearchSourceBuilder.() -> Unit) {
  */
 fun CountRequest.source(
     inputStream: InputStream,
-    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER
+    deprecationHandler: DeprecationHandler = LOGGING_DEPRECATION_HANDLER,
+    settings: Settings = Settings.EMPTY,
+    plugins: List<SearchPlugin> = listOf()
 ) {
     XContentFactory.xContent(XContentType.JSON).createParser(
-        NamedXContentRegistry(searchModule.namedXContents),
+        NamedXContentRegistry(searchModule(settings, plugins).namedXContents),
         deprecationHandler,
         inputStream
     ).use {

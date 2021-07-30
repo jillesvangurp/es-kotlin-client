@@ -22,7 +22,7 @@ buildscript {
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
-    id("org.jetbrains.dokka") version "1.4.32"
+    id("org.jetbrains.dokka") version "1.5.0"
     id("com.github.ben-manes.versions") version "0.39.0" // gradle dependencyUpdates -Drevision=release
     java
 
@@ -113,19 +113,19 @@ tasks.withType<Test> {
    this.finalizedBy("composeDown")
 }
 
-val kotlinVersion = "1.5.10"
+val kotlinVersion = "1.5.21"
 // match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.13.0"
+val elasticVersion = "7.13.4"
 val slf4jVersion = "1.7.30"
 val junitVersion = "5.7.0"
 val jacksonVersion = "2.12.3"
-val ktorVersion = "1.6.0"
+val ktorVersion = "1.6.2"
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.2")
-    api("io.github.microutils:kotlin-logging:2.0.6")
+    api("io.github.microutils:kotlin-logging:2.0.10")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
@@ -139,13 +139,13 @@ dependencies {
     testImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
     testImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
     testImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.14.0") // es seems to insist on log4j2
+    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.14.1") // es seems to insist on log4j2
     testImplementation("ch.qos.logback:logback-classic:1.2.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
-    testImplementation("io.mockk:mockk:1.11.0")
+    testImplementation("io.mockk:mockk:1.12.0")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
     testImplementation("com.github.jillesvangurp:kotlin4example:0.2.3")
 

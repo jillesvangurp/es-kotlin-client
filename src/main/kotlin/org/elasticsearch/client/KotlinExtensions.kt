@@ -11,25 +11,16 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
-import org.elasticsearch.action.search.ClearScrollRequest
-import org.elasticsearch.action.search.ClearScrollResponse
-import org.elasticsearch.action.search.LOGGING_DEPRECATION_HANDLER
-import org.elasticsearch.action.search.SearchRequest
-import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.action.search.SearchScrollRequest
+import org.elasticsearch.action.search.*
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.sniff.SniffOnFailureListener
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.NamedXContentRegistry
-import org.elasticsearch.common.xcontent.ToXContent
-import org.elasticsearch.common.xcontent.XContentBuilder
-import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
-import kotlin.reflect.KClass
 
 /**
  * Factory method that gives you sane defaults that will allow you to quickly connect to your cluster whether it is in
@@ -277,16 +268,39 @@ fun CreateIndexRequest.configure(
  * Throws an IllegalStateException if Elasticsearch fails to return an OK status with details as to what went wrong.
  */
 @Suppress("BlockingMethodInNonBlockingContext")
-suspend fun RestHighLevelClient.searchAsyncDirect(index: String, json: String,options: RequestOptions = RequestOptions.DEFAULT): SearchResponse {
+suspend fun RestHighLevelClient.searchAsyncDirect(index: String, body: String, options: RequestOptions = RequestOptions.DEFAULT): SearchResponse {
     val request = Request("POST", "/$index/_search")
     request.options = options
-    request.setJsonEntity(json)
+    request.setJsonEntity(body)
     val (response,content) = lowLevelClient.performRequestAsyncCustom(request)
     if(response.statusLine.statusCode == 200) {
         return XContentType.JSON.xContent().createParser(
             NamedXContentRegistry.EMPTY, LOGGING_DEPRECATION_HANDLER, content
         ).use {
             SearchResponse.fromXContent(it)
+        }
+    } else {
+        throw IllegalStateException("elasticsearch returned ${response.statusLine}\n${String(content,StandardCharsets.UTF_8)}")
+    }
+}
+
+/**
+ * Allows bypassing client side parsing & XContent processing of the request and sending json straight to
+ * the search endpoint. This is useful with features supported in the server but not the Java client.
+ *
+ * Throws an IllegalStateException if Elasticsearch fails to return an OK status with details as to what went wrong.
+ */
+@Suppress("BlockingMethodInNonBlockingContext")
+suspend fun RestHighLevelClient.mSearchAsyncDirect(index: String, body: String, options: RequestOptions = RequestOptions.DEFAULT): MultiSearchResponse {
+    val request = Request("POST", "/$index/_msearch")
+    request.options = options
+    request.setJsonEntity(body)
+    val (response,content) = lowLevelClient.performRequestAsyncCustom(request)
+    if(response.statusLine.statusCode == 200) {
+        return XContentType.JSON.xContent().createParser(
+            NamedXContentRegistry.EMPTY, LOGGING_DEPRECATION_HANDLER, content
+        ).use {
+            MultiSearchResponse.fromXContext(it)
         }
     } else {
         throw IllegalStateException("elasticsearch returned ${response.statusLine}\n${String(content,StandardCharsets.UTF_8)}")

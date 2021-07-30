@@ -4,6 +4,8 @@ import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
+import assertk.assertions.isGreaterThan
+import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.search.source
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.BoolQueryBuilder
@@ -145,6 +147,21 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
         assertThat(updatedResults.total).isEqualTo(19L)
         updatedResults.mappedHits.forEach {
             assertThat(it.message).endsWith("updated")
+        }
+    }
+
+    @Test
+    fun `should do msearch`() {
+        runBlocking {
+            val response = asyncRepository.jsonMSearch("""
+                {}
+                { "query":{ "match_all": {}}}
+                {}
+                { "query":{ "match_all": {}}}
+                
+            """.trimIndent())
+            assertThat(response.took).isGreaterThan(0)
+            assertThat(response.responses.size).isEqualTo(2)
         }
     }
 }

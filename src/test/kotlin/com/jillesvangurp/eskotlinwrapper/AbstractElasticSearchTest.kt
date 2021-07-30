@@ -62,6 +62,7 @@ open class AbstractElasticSearchTest(
     val deleteIndexAfterTest: Boolean = true
 ) {
     lateinit var repository: IndexRepository<TestModel>
+    lateinit var asyncRepository: AsyncIndexRepository<TestModel>
     lateinit var esClient: RestHighLevelClient
     lateinit var indexName: String
 
@@ -73,6 +74,14 @@ open class AbstractElasticSearchTest(
         indexName = "$indexPrefix-" + randomId()
 
         repository = esClient.indexRepository(
+            index = indexName,
+            refreshAllowed = true,
+            modelReaderAndWriter = JacksonModelReaderAndWriter(
+                TestModel::class,
+                ObjectMapper().findAndRegisterModules()
+            )
+        )
+        asyncRepository = esClient.asyncIndexRepository(
             index = indexName,
             refreshAllowed = true,
             modelReaderAndWriter = JacksonModelReaderAndWriter(

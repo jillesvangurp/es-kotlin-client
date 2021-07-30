@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
 import org.apache.lucene.search.TotalHits
 import org.elasticsearch.action.search.ClearScrollRequest
+import org.elasticsearch.action.search.MultiSearchResponse
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchScrollRequest
 import org.elasticsearch.client.RequestOptions
@@ -190,6 +191,31 @@ class AsyncSearchResults<T : Any>(
                 client.clearScrollAsync(clearScrollRequest, defaultRequestOptions)
             }
             null
+        }
+    }
+}
+
+class AsyncMultiSearchResults<T : Any>(
+    private val client: RestHighLevelClient,
+    private val modelReaderAndWriter: ModelReaderAndWriter<T>,
+    private val scrollTtlInMinutes: Long,
+    private val multiSearchResponse: MultiSearchResponse,
+    private val defaultRequestOptions: RequestOptions = RequestOptions.DEFAULT
+) {
+    val took = multiSearchResponse.took.millis()
+    val responses: List<Result<AsyncSearchResults<T>>> = multiSearchResponse.responses.map { item ->
+        if (item.isFailure) {
+            Result.failure(item.failure!!)
+        } else {
+            Result.success(
+                AsyncSearchResults(
+                    client,
+                    modelReaderAndWriter,
+                    scrollTtlInMinutes,
+                    item.response!!,
+                    defaultRequestOptions
+                )
+            )
         }
     }
 }

@@ -16,19 +16,9 @@ import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.ActiveShardCount
 import org.elasticsearch.action.support.WriteRequest
-import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.*
 import org.elasticsearch.client.core.CountRequest
-import org.elasticsearch.client.countAsync
-import org.elasticsearch.client.createAsync
-import org.elasticsearch.client.deleteAsync
-import org.elasticsearch.client.getAliasAsync
-import org.elasticsearch.client.getAsync
-import org.elasticsearch.client.indexAsync
 import org.elasticsearch.client.indices.CreateIndexRequest
-import org.elasticsearch.client.refreshAsync
-import org.elasticsearch.client.searchAsync
-import org.elasticsearch.client.searchAsyncDirect
 import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
@@ -404,6 +394,14 @@ class AsyncIndexRepository<T : Any>(
     ): AsyncSearchResults<T> {
         val searchResp = client.searchAsyncDirect(indexReadAlias, json, requestOptions)
         return AsyncSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
+    }
+
+    suspend fun jsonMSearch(
+        json: String,
+        requestOptions: RequestOptions = this.defaultRequestOptions
+    ): AsyncMultiSearchResults<T> {
+        val searchResp = client.mSearchAsyncDirect(indexReadAlias, json, requestOptions)
+        return AsyncMultiSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
     }
 
     suspend fun count(

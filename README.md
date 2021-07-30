@@ -270,7 +270,7 @@ You need java >= 8 and docker + docker compose to run elasticsearch and the test
 
 Simply use the gradle wrapper to build things:
 
-```
+```bash
 ./gradlew build
 ```
 

@@ -99,13 +99,17 @@ fun SearchRequest.source(
     }
 }
 
-fun SearchRequest.configure(pretty: Boolean = false, settings: Settings = Settings.EMPTY,
-                            plugins: List<SearchPlugin> = listOf(),block: SearchDSL.() -> Unit): SearchDSL {
+fun SearchRequest.configure(
+    pretty: Boolean = false,
+    settings: Settings = Settings.EMPTY,
+    plugins: List<SearchPlugin> = listOf(),
+    block: SearchDSL.() -> Unit
+): SearchDSL {
     val searchDSL = SearchDSL()
     block.invoke(searchDSL)
     searchDSL.toString()
     val query = searchDSL.stringify(pretty)
-    source(query, settings=settings, plugins = plugins)
+    source(query, settings = settings, plugins = plugins)
     return searchDSL
 }
 

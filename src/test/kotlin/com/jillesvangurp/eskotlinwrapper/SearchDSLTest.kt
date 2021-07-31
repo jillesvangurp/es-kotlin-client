@@ -248,7 +248,7 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
         // we don't care about the results in this case
         // note we also don't test all parameters
         return repository.search {
-            configure(true, block)
+            configure(pretty = true, block = block)
         }
     }
 }

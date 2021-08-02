@@ -357,7 +357,7 @@ suspend fun RestHighLevelClient.mSearchAsyncDirect(index: String, body: String, 
 }
 
 fun RestHighLevelClient.mSearchDirect(index: String, body: String, options: RequestOptions = RequestOptions.DEFAULT): MultiSearchResponse {
-    val request = Request("POST", "/$index/_search")
+    val request = Request("POST", "/$index/_msearch")
     request.options = options
     request.setJsonEntity(body)
     val response = lowLevelClient.performRequest(request)

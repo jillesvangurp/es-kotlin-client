@@ -429,17 +429,17 @@ class IndexRepository<T : Any>(
         return AsyncSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
     }
 
-    fun mSearch(requestOptions: RequestOptions = this.defaultRequestOptions, block: MultiSearchDSL.()->Unit): AsyncMultiSearchResults<T> {
+    fun mSearch(requestOptions: RequestOptions = this.defaultRequestOptions, block: MultiSearchDSL.()->Unit): MultiSearchResults<T> {
         val resp = client.multiSearch(indexName, requestOptions, block)
-        return AsyncMultiSearchResults(client, modelReaderAndWriter, 1, resp, requestOptions)
+        return MultiSearchResults(modelReaderAndWriter, resp)
     }
 
     fun jsonMSearch(
         json: String,
         requestOptions: RequestOptions = this.defaultRequestOptions
-    ): AsyncMultiSearchResults<T> {
+    ): MultiSearchResults<T> {
         val searchResp = client.mSearchDirect(indexReadAlias, json, requestOptions)
-        return AsyncMultiSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
+        return MultiSearchResults(modelReaderAndWriter,searchResp)
     }
 
     fun count(requestOptions: RequestOptions = this.defaultRequestOptions, block: CountRequest.() -> Unit = {}): Long {

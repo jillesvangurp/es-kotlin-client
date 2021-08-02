@@ -195,6 +195,25 @@ class AsyncSearchResults<T : Any>(
     }
 }
 
+class MultiSearchResults<T : Any>(
+    private val modelReaderAndWriter: ModelReaderAndWriter<T>,
+    private val multiSearchResponse: MultiSearchResponse
+) {
+    val took = multiSearchResponse.took.millis()
+    val responses: List<Result<SearchResults<T>>> = multiSearchResponse.responses.map { item ->
+        if (item.isFailure) {
+            Result.failure(item.failure!!)
+        } else {
+            Result.success(
+                PagedSearchResults(
+                    item.response,
+                    modelReaderAndWriter
+                )
+            )
+        }
+    }
+}
+
 class AsyncMultiSearchResults<T : Any>(
     private val client: RestHighLevelClient,
     private val modelReaderAndWriter: ModelReaderAndWriter<T>,

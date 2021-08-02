@@ -151,6 +151,12 @@ class MultiSearchDSL {
         add(this, dsl)
     }
 
+    fun withQuery(queryBlock: SearchDSL.()-> Unit) {
+        val dsl = SearchDSL()
+        queryBlock.invoke(dsl)
+        add(MultiSearchHeader(), dsl)
+    }
+
     fun requestBody(): String {
         return json.joinToString("\n") + "\n"
     }

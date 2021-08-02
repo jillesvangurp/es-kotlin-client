@@ -12,7 +12,7 @@ The underlying java functionality is always there should you need it. But, for m
 
 ## Features
 
-- Extensible **Kotlin DSLs for Querying, Mappings, Bulk Indexing, and Object CRUD**. These Kotlin Domain Specific Languages (DSL) provide type safe support for commonly used things such as `match` and `bool` queries, easy boiler plate free bulk indexing with error handling, and creating mappings and index settings. At this point we support most commonly used queries; including all full-text queries, compound queries, and term-level queries.
+- Extensible **Kotlin DSLs for Search, MultiSearch, Mappings, Bulk Indexing, and Object CRUD**. These Kotlin Domain Specific Languages (DSL) provide type safe support for commonly used things such as `match` and `bool` queries, easy boiler-plate free bulk indexing with error handling, and creating mappings and index settings. At this point we support most commonly used queries; including all full-text queries, compound queries, and term-level queries.
   - Things that are not explicitly supported are easy to configure by modifying the underlying data model directly using Kotlin's syntactic sugar for working with `Map`.
   - You can also extend the DSL via the `MapBackedProperties` class that backs normal type safe kotlin properties with a `Map` in our DSL. So, anything that's not supported, you can just add yourself. Pull requests are welcome! To get started with this, look at the source code for the existing DSL.  
 - Kotlin Extension functions, default argument values, delegate properties, and many other **kotlin features** add lots convenience and gets rid of all the Java specific boilerplate.

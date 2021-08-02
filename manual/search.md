@@ -132,6 +132,41 @@ Found 3 hits
 
 ```
 
+## Multi Search (msearch)
+
+We also have a DSL for `msearch` that fires off multiple queries in one go.
+
+```kotlin
+val mSearchResults = repo.mSearch {
+  // a header with a custom searchType
+  header {
+    searchType = SearchType.dfs_query_then_fetch
+  } withQuery {
+    query = matchAll()
+  }
+
+  // an empty header
+  header {  } withQuery {
+    query = matchAll()
+  }
+
+  // adds an empty header
+  withQuery {
+    query = matchAll()
+  }
+}
+
+println("${mSearchResults.took}ms. and " +
+    "returned ${mSearchResults.responses.size} sets of results")
+```
+
+Captured Output:
+
+```
+7ms. and returned 3 sets of results
+
+```
+
 ## Scrolling searches
 
 Elasticsearch has a notion of scrolling searches for retrieving large amounts of 

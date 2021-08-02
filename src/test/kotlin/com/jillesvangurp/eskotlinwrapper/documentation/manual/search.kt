@@ -3,6 +3,7 @@
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.jillesvangurp.eskotlinwrapper.documentation.*
+import com.jillesvangurp.eskotlinwrapper.dsl.SearchType
 import com.jillesvangurp.eskotlinwrapper.dsl.match
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import com.jillesvangurp.kotlin4example.mdLink
@@ -123,6 +124,36 @@ val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", re
                 """.trimIndent())
             }
             println("Found ${results.totalHits}")
+        }
+
+        +"""
+            ## Multi Search (msearch)
+            
+            We also have a DSL for `msearch` that fires off multiple queries in one go.
+        """.trimIndent()
+
+        block {
+            val mSearchResults = repo.mSearch {
+                // a header with a custom searchType
+                header {
+                    searchType = SearchType.dfs_query_then_fetch
+                } withQuery {
+                    query = matchAll()
+                }
+
+                // an empty header
+                header {  } withQuery {
+                    query = matchAll()
+                }
+
+                // adds an empty header
+                withQuery {
+                    query = matchAll()
+                }
+            }
+
+            println("${mSearchResults.took}ms. and " +
+                    "returned ${mSearchResults.responses.size} sets of results")
         }
 
         +"""

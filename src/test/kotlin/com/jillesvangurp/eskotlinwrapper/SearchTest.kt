@@ -5,8 +5,11 @@ import assertk.assertions.contains
 import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
+import com.jillesvangurp.eskotlinwrapper.dsl.SearchType
+import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.search.source
+import org.elasticsearch.client.multiSearchAsync
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MatchQueryBuilder
@@ -162,6 +165,26 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
             """.trimIndent())
             assertThat(response.took).isGreaterThan(0)
             assertThat(response.responses.size).isEqualTo(2)
+        }
+    }
+
+    @Test
+    fun `should user multisearch dsl`() {
+        runBlocking {
+            val results = asyncRepository.mSearch {
+                header {
+                    searchType = SearchType.query_then_fetch
+                } withQuery {
+                    query = matchAll()
+                }
+                header {
+                    searchType = SearchType.dfs_query_then_fetch
+                } withQuery {
+                    query = matchAll()
+                }
+            }
+
+            assertThat(results.responses.size).isEqualTo(2)
         }
     }
 }

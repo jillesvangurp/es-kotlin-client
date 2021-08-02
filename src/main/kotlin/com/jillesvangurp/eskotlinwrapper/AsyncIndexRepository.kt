@@ -1,5 +1,6 @@
 package com.jillesvangurp.eskotlinwrapper
 
+import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.elasticsearch.ElasticsearchStatusException
@@ -394,6 +395,11 @@ class AsyncIndexRepository<T : Any>(
     ): AsyncSearchResults<T> {
         val searchResp = client.searchAsyncDirect(indexReadAlias, json, requestOptions)
         return AsyncSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
+    }
+
+    suspend fun mSearch(requestOptions: RequestOptions = this.defaultRequestOptions, block: MultiSearchDSL.()->Unit): AsyncMultiSearchResults<T> {
+        val resp = client.multiSearchAsync(indexName, requestOptions, block)
+        return AsyncMultiSearchResults(client, modelReaderAndWriter, 1, resp, requestOptions)
     }
 
     suspend fun jsonMSearch(

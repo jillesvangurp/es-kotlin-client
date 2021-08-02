@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.elasticsearch.client
 
 import com.jillesvangurp.eskotlinwrapper.AsyncIndexRepository
@@ -6,6 +8,7 @@ import com.jillesvangurp.eskotlinwrapper.IndexSettingsAndMappingsDSL
 import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.SuspendingActionListener.Companion.suspending
+import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
@@ -219,6 +222,30 @@ suspend fun RestHighLevelClient.searchAsync(
     return suspending {
         this.searchAsync(searchRequest, requestOptions, it)
     }
+}
+
+fun RestHighLevelClient.multiSearch(
+    requestOptions: RequestOptions = RequestOptions.DEFAULT,
+    block: MultiSearchRequest.() -> Unit
+): MultiSearchResponse {
+    val multiSearchRequest = MultiSearchRequest()
+    block.invoke(multiSearchRequest)
+    return this.msearch(multiSearchRequest, requestOptions)
+}
+
+suspend fun RestHighLevelClient.multiSearchAsync(
+    requestOptions: RequestOptions = RequestOptions.DEFAULT,
+    block: MultiSearchRequest.() -> Unit
+): MultiSearchResponse {
+    val multiSearchRequest = MultiSearchRequest()
+    block.invoke(multiSearchRequest)
+    return this.msearchAsync(multiSearchRequest, requestOptions)
+}
+
+suspend fun RestHighLevelClient.multiSearchAsync(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
+    val dsl = MultiSearchDSL()
+    block.invoke(dsl)
+    return mSearchAsyncDirect(index,dsl.requestBody(),requestOptions)
 }
 
 /**

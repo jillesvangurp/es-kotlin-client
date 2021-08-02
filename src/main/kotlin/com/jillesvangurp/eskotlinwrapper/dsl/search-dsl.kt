@@ -104,3 +104,58 @@ fun main() {
 
     println(d.stringify(true))
 }
+
+@Suppress("EnumEntryName")
+enum class ExpandWildCards { all, open, closed, hidden, none }
+
+@Suppress("EnumEntryName")
+enum class SearchType { query_then_fetch, dfs_query_then_fetch }
+
+@Suppress("SpellCheckingInspection")
+class MultiSearchHeader : MapBackedProperties() {
+    var allowNoIndices by property<Boolean>()
+    var ccsMinimizeRoundtrips by property<Boolean>()
+    var expandWildcards by property<ExpandWildCards>()
+    var ignoreThrottled by property<Boolean>()
+    var ignoreUnavailable by property<Boolean>()
+    var maxConcurrentSearches by property<Int>()
+    var maxConcurrentShardRequests by property<Int>()
+    var preFilterShardSize by property<Int>()
+    var restTotalHitsAsInt by property<Int>()
+    var routing by property<String>()
+    var searchType by property<SearchType>()
+    var typedKeys by property<Boolean>()
+}
+
+class MultiSearchDSL {
+    private val json = mutableListOf<String>()
+    fun add(header: MultiSearchHeader, query: SearchDSL) {
+        json.add(header.stringify(false))
+        json.add(query.stringify(false))
+    }
+
+    fun add(header: MultiSearchHeader, query: SearchDSL.() -> Unit) {
+        json.add(header.stringify(false))
+
+    }
+
+    fun header(headerBlock: MultiSearchHeader.()-> Unit) : MultiSearchHeader {
+        val header = MultiSearchHeader()
+        headerBlock.invoke(header)
+        return header
+    }
+
+    infix fun MultiSearchHeader.withQuery(queryBlock: SearchDSL.()-> Unit) {
+        val dsl = SearchDSL()
+        queryBlock.invoke(dsl)
+        add(this, dsl)
+    }
+
+    fun requestBody(): String {
+        return json.joinToString("\n") + "\n"
+    }
+
+    override fun toString(): String {
+        return requestBody()
+    }
+}

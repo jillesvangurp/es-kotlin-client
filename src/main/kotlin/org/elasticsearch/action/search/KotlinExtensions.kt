@@ -1,5 +1,6 @@
 package org.elasticsearch.action.search
 
+import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
 import com.jillesvangurp.eskotlinwrapper.dsl.SearchDSL
 import mu.KLogger
 import mu.KotlinLogging

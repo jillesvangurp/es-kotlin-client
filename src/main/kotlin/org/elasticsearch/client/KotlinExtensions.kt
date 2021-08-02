@@ -242,6 +242,12 @@ suspend fun RestHighLevelClient.multiSearchAsync(
     return this.msearchAsync(multiSearchRequest, requestOptions)
 }
 
+fun RestHighLevelClient.multiSearch(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
+    val dsl = MultiSearchDSL()
+    block.invoke(dsl)
+    return mSearchDirect(index,dsl.requestBody(),requestOptions)
+}
+
 suspend fun RestHighLevelClient.multiSearchAsync(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
     val dsl = MultiSearchDSL()
     block.invoke(dsl)
@@ -311,6 +317,22 @@ suspend fun RestHighLevelClient.searchAsyncDirect(index: String, body: String, o
     }
 }
 
+fun RestHighLevelClient.searchDirect(index: String, body: String, options: RequestOptions = RequestOptions.DEFAULT): SearchResponse {
+    val request = Request("POST", "/$index/_search")
+    request.options = options
+    request.setJsonEntity(body)
+    val response = lowLevelClient.performRequest(request)
+    if(response.statusLine.statusCode == 200) {
+        return XContentType.JSON.xContent().createParser(
+            NamedXContentRegistry.EMPTY, LOGGING_DEPRECATION_HANDLER, response.entity.content
+        ).use {
+            SearchResponse.fromXContent(it)
+        }
+    } else {
+        throw IllegalStateException("elasticsearch returned ${response.statusLine}\n${String(response.entity.content.readBytes(),StandardCharsets.UTF_8)}")
+    }
+}
+
 /**
  * Allows bypassing client side parsing & XContent processing of the request and sending json straight to
  * the search endpoint. This is useful with features supported in the server but not the Java client.
@@ -331,6 +353,22 @@ suspend fun RestHighLevelClient.mSearchAsyncDirect(index: String, body: String, 
         }
     } else {
         throw IllegalStateException("elasticsearch returned ${response.statusLine}\n${String(content,StandardCharsets.UTF_8)}")
+    }
+}
+
+fun RestHighLevelClient.mSearchDirect(index: String, body: String, options: RequestOptions = RequestOptions.DEFAULT): MultiSearchResponse {
+    val request = Request("POST", "/$index/_search")
+    request.options = options
+    request.setJsonEntity(body)
+    val response = lowLevelClient.performRequest(request)
+    if(response.statusLine.statusCode == 200) {
+        return XContentType.JSON.xContent().createParser(
+            NamedXContentRegistry.EMPTY, LOGGING_DEPRECATION_HANDLER, response.entity.content
+        ).use {
+            MultiSearchResponse.fromXContext(it)
+        }
+    } else {
+        throw IllegalStateException("elasticsearch returned ${response.statusLine}\n${String(response.entity.content.readBytes(),StandardCharsets.UTF_8)}")
     }
 }
 

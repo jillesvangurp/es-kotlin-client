@@ -1,5 +1,6 @@
 package com.jillesvangurp.eskotlinwrapper
 
+import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
 import mu.KotlinLogging
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
@@ -14,14 +15,11 @@ import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.ActiveShardCount
 import org.elasticsearch.action.support.WriteRequest
-import org.elasticsearch.client.Request
-import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.*
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.client.indices.GetMappingsRequest
-import org.elasticsearch.client.search
 import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
@@ -412,6 +410,36 @@ class IndexRepository<T : Any>(
                 requestOptions
             )
         }
+    }
+
+    /**
+     * Bypass the HighLevelClient XContent juggling and execute a raw json search. The response is parsed back into a SearchResponse.
+     *
+     * Note, this is workaround for limitation with the Elastic Java client which seems to not support the geo_shape query and refuses to send the request.
+     *
+     * The actual query runs fine on Elasticsearch; so that is not the problem. This completely bypasses client side parsing of the query.
+     *
+     * Warning: this function is experimental and may change or be removed in the future.
+     */
+    fun jsonSearch(
+        json: String,
+        requestOptions: RequestOptions = this.defaultRequestOptions
+    ): AsyncSearchResults<T> {
+        val searchResp = client.searchDirect(indexReadAlias, json, requestOptions)
+        return AsyncSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
+    }
+
+    fun mSearch(requestOptions: RequestOptions = this.defaultRequestOptions, block: MultiSearchDSL.()->Unit): AsyncMultiSearchResults<T> {
+        val resp = client.multiSearch(indexName, requestOptions, block)
+        return AsyncMultiSearchResults(client, modelReaderAndWriter, 1, resp, requestOptions)
+    }
+
+    fun jsonMSearch(
+        json: String,
+        requestOptions: RequestOptions = this.defaultRequestOptions
+    ): AsyncMultiSearchResults<T> {
+        val searchResp = client.mSearchDirect(indexReadAlias, json, requestOptions)
+        return AsyncMultiSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
     }
 
     fun count(requestOptions: RequestOptions = this.defaultRequestOptions, block: CountRequest.() -> Unit = {}): Long {

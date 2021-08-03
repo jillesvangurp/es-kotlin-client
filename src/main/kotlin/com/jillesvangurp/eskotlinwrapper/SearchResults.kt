@@ -39,7 +39,7 @@ interface SearchResults<T : Any> {
     /**
      * a sequence of pairs of search hits and their deserialized objects.
      */
-    val hits: Sequence<Pair<SearchHit, T?>>
+    val hits: Sequence<Pair<SearchHit, T>>
         get() {
             return searchHits.map {
                 Pair(it, modelReaderAndWriter.deserialize(it))

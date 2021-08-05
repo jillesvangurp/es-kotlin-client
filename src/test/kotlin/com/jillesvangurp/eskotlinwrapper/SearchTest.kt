@@ -6,8 +6,13 @@ import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import com.jillesvangurp.eskotlinwrapper.dsl.SearchType
+import com.jillesvangurp.eskotlinwrapper.dsl.filterSource
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.source
 import org.elasticsearch.client.multiSearchAsync
 import org.elasticsearch.common.unit.TimeValue
@@ -185,6 +190,23 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
             }
 
             assertThat(results.responses.size).isEqualTo(2)
+        }
+    }
+
+    @Test
+    fun `should handle source filtering`() {
+        runBlocking {
+            asyncRepository.index("xxx", TestModel("foo bar", "tt",42.0))
+            asyncRepository.refresh()
+            val msg = asyncRepository.search {
+                configure {
+                    this["fields"] = listOf(TestModel::message.name)
+                }
+            }.searchHits.map {
+                it.field(TestModel::message.name).values.first()
+            }.first()
+
+            assertThat(msg).isEqualTo("foo bar")
         }
     }
 }

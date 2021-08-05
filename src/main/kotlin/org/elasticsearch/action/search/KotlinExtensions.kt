@@ -102,6 +102,7 @@ fun SearchRequest.source(
 
 fun SearchRequest.configure(
     pretty: Boolean = false,
+    debug: Boolean = false,
     settings: Settings = Settings.EMPTY,
     plugins: List<SearchPlugin> = listOf(),
     block: SearchDSL.() -> Unit
@@ -111,6 +112,9 @@ fun SearchRequest.configure(
     searchDSL.toString()
     val query = searchDSL.stringify(pretty)
     source(query, settings = settings, plugins = plugins)
+    if(debug) {
+        logger.info { searchDSL.stringify(pretty = true) }
+    }
     return searchDSL
 }
 

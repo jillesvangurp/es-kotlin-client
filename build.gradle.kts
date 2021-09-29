@@ -16,17 +16,17 @@ buildscript {
         }
     }
     dependencies {
-        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:7.13.0.0")
+        classpath("com.github.jillesvangurp:es-kotlin-codegen-plugin:_")
     }
 }
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.5.10"
-    id("org.jetbrains.dokka") version "1.5.0"
-    id("com.github.ben-manes.versions") version "0.39.0" // gradle dependencyUpdates -Drevision=release
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.dokka")
+    id("com.github.ben-manes.versions") // gradle dependencyUpdates -Drevision=release
     java
 
-    id("com.avast.gradle.docker-compose") version "0.14.0"
+    id("com.avast.gradle.docker-compose")
     `maven-publish`
 }
 
@@ -122,43 +122,43 @@ val jacksonVersion = "2.12.3"
 val ktorVersion = "1.6.2"
 
 dependencies {
-    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.2")
-    api("io.github.microutils:kotlin-logging:2.0.10")
+    api(Kotlin.stdlib.jdk8)
+    api("org.jetbrains.kotlin:kotlin-reflect:_")
+    api(KotlinX.coroutines.jdk8)
+    api("io.github.microutils:kotlin-logging:_")
 
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:_")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:_")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:_")
 
-    api("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticVersion")
-    api("org.elasticsearch.client:elasticsearch-rest-client-sniffer:$elasticVersion")
+    api("org.elasticsearch.client:elasticsearch-rest-high-level-client:_")
+    api("org.elasticsearch.client:elasticsearch-rest-client-sniffer:_")
 
     // bring your own logging, but we need some in tests
-    testImplementation("org.slf4j:slf4j-api:$slf4jVersion")
-    testImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
-    testImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
-    testImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.14.1") // es seems to insist on log4j2
-    testImplementation("ch.qos.logback:logback-classic:1.2.3")
+    testImplementation("org.slf4j:slf4j-api:_")
+    testImplementation("org.slf4j:jcl-over-slf4j:_")
+    testImplementation("org.slf4j:log4j-over-slf4j:_")
+    testImplementation("org.slf4j:jul-to-slf4j:_")
+    testImplementation("org.apache.logging.log4j:log4j-to-slf4j:_") // es seems to insist on log4j2
+    testImplementation("ch.qos.logback:logback-classic:_")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testImplementation(Testing.junit.api)
+    testImplementation(Testing.junit.engine)
 
-    testImplementation("io.mockk:mockk:1.12.0")
-    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
-    testImplementation("com.github.jillesvangurp:kotlin4example:0.2.3")
+    testImplementation(Testing.mockK)
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:_")
+    testImplementation("com.github.jillesvangurp:kotlin4example:_")
 
-    examplesImplementation("io.ktor:ktor-server-netty:$ktorVersion")
-    examplesImplementation("io.ktor:ktor-server-core:$ktorVersion")
-    examplesImplementation("io.ktor:ktor-jackson:$ktorVersion")
+    examplesImplementation(Ktor.server.netty)
+    examplesImplementation(Ktor.server.core)
+    examplesImplementation(Ktor.features.jackson)
 
-    examplesImplementation("org.slf4j:slf4j-api:$slf4jVersion")
-    examplesImplementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
-    examplesImplementation("org.slf4j:log4j-over-slf4j:$slf4jVersion")
-    examplesImplementation("org.slf4j:jul-to-slf4j:$slf4jVersion")
-    examplesImplementation("org.apache.logging.log4j:log4j-to-slf4j:2.14.1") // es seems to insist on log4j2
-    examplesImplementation("ch.qos.logback:logback-classic:1.2.3")
+    examplesImplementation("org.slf4j:slf4j-api:_")
+    examplesImplementation("org.slf4j:jcl-over-slf4j:_")
+    examplesImplementation("org.slf4j:log4j-over-slf4j:_")
+    examplesImplementation("org.slf4j:jul-to-slf4j:_")
+    examplesImplementation("org.apache.logging.log4j:log4j-to-slf4j:_") // es seems to insist on log4j2
+    examplesImplementation("ch.qos.logback:logback-classic:_")
 }
 
 val artifactName = "es-kotlin-client"

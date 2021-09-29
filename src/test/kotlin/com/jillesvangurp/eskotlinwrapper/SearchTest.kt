@@ -15,7 +15,7 @@ import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.source
 import org.elasticsearch.client.multiSearchAsync
-import org.elasticsearch.common.unit.TimeValue
+import org.elasticsearch.core.TimeValue
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders.matchAllQuery

@@ -16,7 +16,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.clearScrollAsync
 import org.elasticsearch.client.scroll
 import org.elasticsearch.client.scrollAsync
-import org.elasticsearch.common.unit.TimeValue
+import org.elasticsearch.core.TimeValue
 import org.elasticsearch.search.SearchHit
 
 /**

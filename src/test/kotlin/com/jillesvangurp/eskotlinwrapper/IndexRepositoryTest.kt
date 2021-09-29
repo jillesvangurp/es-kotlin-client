@@ -1,11 +1,14 @@
 package com.jillesvangurp.eskotlinwrapper
 
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.support.WriteRequest
+import org.elasticsearch.client.configure
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -70,5 +73,31 @@ class IndexRepositoryTest : AbstractElasticSearchTest(indexPrefix = "crud") {
         repository.index("2",TestModel("another one"), refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
         repository.index("3",TestModel("one more"), refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL)
         assertThat(repository.search {  }.total).isEqualTo(3)
+    }
+
+    @Test
+    fun `create and update a mapping`() {
+        repository.deleteIndex()
+        repository.createIndex {
+            configure {
+                mappings {
+                    text("foo")
+                }
+            }
+        }
+        repository.updateIndexMapping {
+            configure {
+                keyword("bar")
+            }
+        }
+        repository.refresh()
+        val mappings = repository.getMappings()
+        val indexMapping = mappings.mappings()[indexName]
+        val source = indexMapping?.source()
+        assertThat(source).isNotNull()
+        source?.let {
+            // the response class API is not great, so lets just do a string contains
+            assertThat(it.toString()).contains("bar")
+        }
     }
 }

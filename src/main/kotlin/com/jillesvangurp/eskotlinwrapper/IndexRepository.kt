@@ -15,11 +15,13 @@ import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.ActiveShardCount
 import org.elasticsearch.action.support.WriteRequest
+import org.elasticsearch.action.support.master.AcknowledgedResponse
 import org.elasticsearch.client.*
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.client.indices.GetMappingsRequest
+import org.elasticsearch.client.indices.PutMappingRequest
 import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.core.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
@@ -103,6 +105,15 @@ class IndexRepository<T : Any>(
                 throw e
             }
         }
+    }
+
+    fun updateIndexMapping(
+        requestOptions: RequestOptions = this.defaultRequestOptions,
+        block: PutMappingRequest.() -> Unit
+    ): AcknowledgedResponse {
+        val updateMappingRequest = PutMappingRequest(indexName)
+        block.invoke(updateMappingRequest)
+        return client.indices().putMapping(updateMappingRequest, requestOptions)
     }
 
     /**

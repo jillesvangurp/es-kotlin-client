@@ -2,12 +2,7 @@
 
 package com.jillesvangurp.eskotlinwrapper
 
-import org.elasticsearch.common.xcontent.XContentBuilder
-import org.elasticsearch.common.xcontent.obj
-import org.elasticsearch.common.xcontent.objField
-import org.elasticsearch.common.xcontent.stringify
-import org.elasticsearch.common.xcontent.writeAny
-import org.elasticsearch.common.xcontent.xContentBuilder
+import org.elasticsearch.common.xcontent.*
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -84,14 +79,14 @@ class FieldMappings : MapBackedProperties() {
     fun keyword(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "keyword", block)
     fun bool(name: String) = field(name, "boolean") {}
     fun bool(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "boolean", block)
-    fun date(name: String) = field(name,"date")
-    fun date(name: String, block: FieldMappingConfig.()->Unit) = field(name,"date", block)
+    fun date(name: String) = field(name, "date")
+    fun date(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "date", block)
 
-    fun geoPoint(name: String) = field(name,"geo_point")
-    fun geoPoint(name: String, block: FieldMappingConfig.()->Unit) = field(name,"geo_point", block)
+    fun geoPoint(name: String) = field(name, "geo_point")
+    fun geoPoint(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "geo_point", block)
 
-    fun geoShape(name: String) = field(name,"geo_shape")
-    fun geoShape(name: String, block: FieldMappingConfig.()->Unit) = field(name,"geo_shape", block)
+    fun geoShape(name: String) = field(name, "geo_shape")
+    fun geoShape(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "geo_shape", block)
 
     inline fun <reified T : Number> number(name: String) = number<T>(name) {}
 
@@ -142,6 +137,17 @@ class FieldMappings : MapBackedProperties() {
             writeAny(_properties)
         }
     }
+
+    internal fun build(pretty: Boolean = false): XContentBuilder {
+        val mappings = this
+        return xContentBuilder {
+            if (pretty) prettyPrint()
+            obj {
+                field("properties")
+                writeAny(mappings)
+            }
+        }
+    }
 }
 
 class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFields: Boolean) {
@@ -173,7 +179,8 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
             // if it did not exist, create it.
             if (meta == null) meta = object : MapBackedProperties() {}
             val mappingJson = xContentBuilder { writeAny(mappings) }.stringify()
-            meta!!["content_hash"] = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(mappingJson.toByteArray()))
+            meta!!["content_hash"] =
+                Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(mappingJson.toByteArray()))
             meta!!["timestamp"] = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
         }
 
@@ -215,4 +222,10 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
             return settingsAndMappings.build(pretty)
         }
     }
+}
+
+fun main() {
+    println(FieldMappings().apply {
+        text("foo")
+    }.build().stringify())
 }

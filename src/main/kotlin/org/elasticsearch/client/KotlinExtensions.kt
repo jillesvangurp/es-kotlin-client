@@ -2,11 +2,7 @@
 
 package org.elasticsearch.client
 
-import com.jillesvangurp.eskotlinwrapper.AsyncIndexRepository
-import com.jillesvangurp.eskotlinwrapper.IndexRepository
-import com.jillesvangurp.eskotlinwrapper.IndexSettingsAndMappingsDSL
-import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
-import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
+import com.jillesvangurp.eskotlinwrapper.*
 import com.jillesvangurp.eskotlinwrapper.SuspendingActionListener.Companion.suspending
 import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -16,6 +12,7 @@ import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.search.*
 import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.indices.PutMappingRequest
 import org.elasticsearch.client.sniff.SniffOnFailureListener
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.core.TimeValue
@@ -292,6 +289,15 @@ fun CreateIndexRequest.configure(
     block: IndexSettingsAndMappingsDSL.() -> Unit
 ) {
     source(IndexSettingsAndMappingsDSL.indexSettingsAndMappings(generateMetaFields = generateMetaFields, pretty = pretty, block = block))
+}
+
+fun PutMappingRequest.configure(
+    pretty: Boolean = false,
+    block: FieldMappings.() -> Unit) {
+
+    val mappings = FieldMappings()
+    block.invoke(mappings)
+    source(mappings.build(pretty))
 }
 
 /**

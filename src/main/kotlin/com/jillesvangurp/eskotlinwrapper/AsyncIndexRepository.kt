@@ -17,9 +17,12 @@ import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.ActiveShardCount
 import org.elasticsearch.action.support.WriteRequest
+import org.elasticsearch.action.support.master.AcknowledgedResponse
 import org.elasticsearch.client.*
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.indices.CreateIndexResponse
+import org.elasticsearch.client.indices.PutMappingRequest
 import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.core.TimeValue
@@ -74,14 +77,23 @@ class AsyncIndexRepository<T : Any>(
         requestOptions: RequestOptions = this.defaultRequestOptions,
         waitForActiveShards: ActiveShardCount? = null,
         block: suspend CreateIndexRequest.() -> Unit
-    ) {
+    ): CreateIndexResponse {
         val indexRequest = CreateIndexRequest(indexName)
         if (waitForActiveShards != null) {
             indexRequest.waitForActiveShards(waitForActiveShards)
         }
         block.invoke(indexRequest)
 
-        client.indices().createAsync(indexRequest, requestOptions)
+        return client.indices().createAsync(indexRequest, requestOptions)
+    }
+
+    suspend fun updateIndexMapping(
+        requestOptions: RequestOptions = this.defaultRequestOptions,
+        block: suspend PutMappingRequest.() -> Unit
+    ): AcknowledgedResponse {
+        val updateMappingRequest = PutMappingRequest(indexName)
+        block.invoke(updateMappingRequest)
+        return client.indices().putMappingAsync(updateMappingRequest, requestOptions)
     }
 
     /**
@@ -89,8 +101,7 @@ class AsyncIndexRepository<T : Any>(
      */
     suspend fun deleteIndex(requestOptions: RequestOptions = this.defaultRequestOptions): Boolean {
         return try {
-            client.indices().deleteAsync(DeleteIndexRequest(indexName), requestOptions)
-            true
+            client.indices().deleteAsync(DeleteIndexRequest(indexName), requestOptions).isAcknowledged
         } catch (e: ElasticsearchStatusException) {
             if (e.status().status == 404) {
                 // 404 means there was nothing to delete
@@ -129,7 +140,7 @@ class AsyncIndexRepository<T : Any>(
         refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.NONE,
         requestOptions: RequestOptions = this.defaultRequestOptions,
         pipeline: String? = null,
-        ): IndexResponse {
+    ): IndexResponse {
         val indexRequest = IndexRequest()
             .index(indexWriteAlias)
             .id(id)
@@ -171,7 +182,7 @@ class AsyncIndexRepository<T : Any>(
         pipeline: String? = null,
         transformFunction: suspend (T) -> T
     ): IndexResponse {
-        return update(0, id, transformFunction, maxUpdateTries, requestOptions, refreshPolicy,pipeline)
+        return update(0, id, transformFunction, maxUpdateTries, requestOptions, refreshPolicy, pipeline)
     }
 
     @Suppress("DEPRECATION")
@@ -183,7 +194,7 @@ class AsyncIndexRepository<T : Any>(
         requestOptions: RequestOptions,
         refreshPolicy: WriteRequest.RefreshPolicy,
         pipeline: String? = null,
-        ): IndexResponse {
+    ): IndexResponse {
         try {
             val getRequest = GetRequest().index(indexWriteAlias).id(id)
 
@@ -220,7 +231,7 @@ class AsyncIndexRepository<T : Any>(
             if (e.status().status == 409) {
                 if (tries < maxUpdateTries) {
                     // we got a version conflict, retry after sleeping a bit (without this failures are more likely
-                    delay(Random.nextLong(50,500))
+                    delay(Random.nextLong(50, 500))
                     return update(
                         tries = tries + 1,
                         id = id,
@@ -397,7 +408,10 @@ class AsyncIndexRepository<T : Any>(
         return AsyncSearchResults(client, modelReaderAndWriter, 1, searchResp, requestOptions)
     }
 
-    suspend fun mSearch(requestOptions: RequestOptions = this.defaultRequestOptions, block: MultiSearchDSL.()->Unit): AsyncMultiSearchResults<T> {
+    suspend fun mSearch(
+        requestOptions: RequestOptions = this.defaultRequestOptions,
+        block: MultiSearchDSL.() -> Unit
+    ): AsyncMultiSearchResults<T> {
         val resp = client.multiSearchAsync(indexName, requestOptions, block)
         return AsyncMultiSearchResults(client, modelReaderAndWriter, 1, resp, requestOptions)
     }

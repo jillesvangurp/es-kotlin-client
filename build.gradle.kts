@@ -100,7 +100,10 @@ configure<ComposeExtension> {
 }
 
 tasks.withType<Test> {
-    dependsOn("examplesClasses", "composeUp")
+    dependsOn(
+        "examplesClasses",
+        "composeUp"
+    )
     useJUnitPlatform()
     testLogging.exceptionFormat = TestExceptionFormat.FULL
     testLogging.events = setOf(

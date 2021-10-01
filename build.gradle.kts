@@ -116,14 +116,6 @@ tasks.withType<Test> {
    this.finalizedBy("composeDown")
 }
 
-val kotlinVersion = "1.5.21"
-// match the version used by the es-kotlin-codegen-plugin
-val elasticVersion = "7.13.4"
-val slf4jVersion = "1.7.30"
-val junitVersion = "5.7.0"
-val jacksonVersion = "2.12.3"
-val ktorVersion = "1.6.2"
-
 dependencies {
     api(Kotlin.stdlib.jdk8)
     api("org.jetbrains.kotlin:kotlin-reflect:_")

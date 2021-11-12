@@ -47,6 +47,12 @@ repositories {
 
 See [release notes](https://github.com/jillesvangurp/es-kotlin-wrapper-client/releases) with each github release tag for an overview what changed.
 
+## Elasticsearch Java client version
+
+This library is always built with and tested against specific versions of the Elasticsearch Java client (see release notes). Since they sometimes change their Java internal APIs, even between minor versions, it is important to match the version you are using with what the es-kotlin-client was built against. Especially with frameworks like Spring, you may end up with older versions of the java client on your classpath. 
+
+If you see class not found or method not found related exceptions, that is probably what is happening. If, so, double check your dependencies and transitive dependencies and add excludes. Also, be careful using e.g. the spring-dependency-management plugin for this reason.
+
 ## Documentation
 
 - [manual](https://www.jillesvangurp.com/es-kotlin-manual/) The manual for this client. I created this using my [kotlin4example](https://github.com/jillesvangurp/kotlin4example) library. So, all the examples in the manual (and the README) are working and correct. The manual covers everything from getting started, doing bulk indexing, working with co-routines, and of course doing searches.

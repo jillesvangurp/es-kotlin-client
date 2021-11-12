@@ -152,8 +152,7 @@ val searchMd : String by withTestIndex<Thing, Lazy<String>>(index = "manual", re
                 }
             }
 
-            println("${mSearchResults.took}ms. and " +
-                    "returned ${mSearchResults.responses.size} sets of results")
+            println("returned ${mSearchResults.responses.size} sets of results")
         }
 
         +"""

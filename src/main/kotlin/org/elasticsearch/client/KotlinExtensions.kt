@@ -6,10 +6,12 @@ import com.jillesvangurp.eskotlinwrapper.*
 import com.jillesvangurp.eskotlinwrapper.SuspendingActionListener.Companion.suspending
 import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
 import kotlinx.coroutines.suspendCancellableCoroutine
+import mu.KotlinLogging
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.search.*
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.PutMappingRequest
@@ -18,10 +20,13 @@ import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.core.TimeValue
 import org.elasticsearch.common.xcontent.NamedXContentRegistry
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
 
+
+private val logger = KotlinLogging.logger {  }
 /**
  * Factory method that gives you sane defaults that will allow you to quickly connect to your cluster whether it is in
  * Elastic Cloud that requires authentication or a local cluster.
@@ -204,7 +209,15 @@ fun RestHighLevelClient.search(
 ): SearchResponse {
     val searchRequest = SearchRequest()
     block.invoke(searchRequest)
-    return this.search(searchRequest, requestOptions)
+    try {
+        return this.search(searchRequest, requestOptions)
+    } catch (e: ElasticsearchStatusException) {
+        if(e.status().status == 400) {
+            val queryBlock = searchRequest.source().stringify(true)
+            logger.warn { "Elasticsearch Bad Exception for query: $queryBlock" }
+        }
+        throw e
+    }
 }
 
 /**
@@ -216,8 +229,16 @@ suspend fun RestHighLevelClient.searchAsync(
 ): SearchResponse {
     val searchRequest = SearchRequest()
     block.invoke(searchRequest)
-    return suspending {
-        this.searchAsync(searchRequest, requestOptions, it)
+    try {
+        return suspending {
+            this.searchAsync(searchRequest, requestOptions, it)
+        }
+    } catch (e: ElasticsearchStatusException) {
+        if(e.status().status == 400) {
+            val queryBlock = searchRequest.source().stringify(true)
+            logger.warn { "Elasticsearch Bad Exception for query: $queryBlock" }
+        }
+        throw e
     }
 }
 
@@ -227,7 +248,15 @@ fun RestHighLevelClient.multiSearch(
 ): MultiSearchResponse {
     val multiSearchRequest = MultiSearchRequest()
     block.invoke(multiSearchRequest)
-    return this.msearch(multiSearchRequest, requestOptions)
+    try {
+        return this.msearch(multiSearchRequest, requestOptions)
+    } catch (e: ElasticsearchStatusException) {
+        if(e.status().status == 400) {
+            val queryBlock = multiSearchRequest.requests().joinToString("\n") { it.source().stringify() }
+            logger.warn { "Elasticsearch Bad Exception for query: $queryBlock" }
+        }
+        throw e
+    }
 }
 
 suspend fun RestHighLevelClient.multiSearchAsync(
@@ -236,19 +265,43 @@ suspend fun RestHighLevelClient.multiSearchAsync(
 ): MultiSearchResponse {
     val multiSearchRequest = MultiSearchRequest()
     block.invoke(multiSearchRequest)
-    return this.msearchAsync(multiSearchRequest, requestOptions)
+    try {
+        return this.msearchAsync(multiSearchRequest, requestOptions)
+    } catch (e: ElasticsearchStatusException) {
+        if(e.status().status == 400) {
+            val queryBlock = multiSearchRequest.requests().joinToString("\n") { it.source().stringify() }
+            logger.warn { "Elasticsearch Bad Exception for query: $queryBlock" }
+        }
+        throw e
+    }
 }
 
 fun RestHighLevelClient.multiSearch(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
     val dsl = MultiSearchDSL()
     block.invoke(dsl)
-    return mSearchDirect(index,dsl.requestBody(),requestOptions)
+    try {
+        return mSearchDirect(index,dsl.requestBody(),requestOptions)
+    } catch (e: ElasticsearchStatusException) {
+        if(e.status().status == 400) {
+            val queryBlock = dsl.requestBody()
+            logger.warn { "Elasticsearch Bad Exception for query: $queryBlock" }
+        }
+        throw e
+    }
 }
 
 suspend fun RestHighLevelClient.multiSearchAsync(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
     val dsl = MultiSearchDSL()
     block.invoke(dsl)
-    return mSearchAsyncDirect(index,dsl.requestBody(),requestOptions)
+    try {
+        return mSearchAsyncDirect(index,dsl.requestBody(),requestOptions)
+    } catch (e: ElasticsearchStatusException) {
+        if(e.status().status == 400) {
+            val queryBlock = dsl.requestBody()
+            logger.warn { "Elasticsearch Bad Exception for query: $queryBlock" }
+        }
+        throw e
+    }
 }
 
 /**

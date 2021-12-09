@@ -10,6 +10,16 @@ Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/
 
 The underlying java functionality is always there should you need it. But, for most commonly used things, this client provides more Kotlin appropriate ways to access the functionality.
 
+## The new Java API Client introduced in 7.15
+
+In Elasticsearch 7.15, a new Java API client was added to replace the Java REST High Level Client on which the kotlin library is based. Given that and the recent fork with Amazon's Opensearch, and the coming Elasticsearch 8.0 release.  
+
+For now, the kotlin client will continue to use the deprecated java RestHighLevel client. I'm currently considering several options for the future of this Kotlin client. I was in any case considering to start work on a major release of this library to rebuild it on top of ktor client and kotlinx serialization and gradually cut loose from the Java client.
+
+With Opensearch and Elasticsearch 8 clearly diverging in terms of API compatibility, features, and indeed compatibility with the Java client, compatibility breaking changes are inevitable. So, cutting loose from the Java client seems like it could be the right strategy and would also enable using this kotlin client on kotlin native, kotlin js, or soon kotlin WASM.
+
+Obviously this is going to be a bit of work and I need to find time to be able to commit to this.
+
 ## Features
 
 - Extensible **Kotlin DSLs for Search, MultiSearch, Mappings, Bulk Indexing, and Object CRUD**. These Kotlin Domain Specific Languages (DSL) provide type safe support for commonly used things such as `match` and `bool` queries, easy boiler-plate free bulk indexing with error handling, and creating mappings and index settings. At this point we support most commonly used queries; including all full-text queries, compound queries, and term-level queries.

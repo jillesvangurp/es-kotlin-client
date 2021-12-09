@@ -12,6 +12,7 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.bulkAsync
 import org.elasticsearch.rest.RestStatus
 import org.elasticsearch.xcontent.XContentType
+import java.time.Duration
 
 private val logger = KotlinLogging.logger {}
 
@@ -35,6 +36,17 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
     private val bulkSize: Int = 100,
     private val refreshPolicy: WriteRequest.RefreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL,
 ) {
+    // expose some statistics
+    var opsCount = 0
+        private set
+    var flushCount = 0
+        private set
+    var successCount = 0
+        private set
+    var failCount = 0
+        private set
+    val startTime = System.currentTimeMillis()
+
     private val buffer = mutableListOf<AsyncBulkOperation<T>>()
 
     companion object {
@@ -74,6 +86,14 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
             block.invoke(session)
             // flush remaining items
             session.flush()
+            if (session.flushCount != session.opsCount) {
+                logger.warn { "Bulk session finished with mismatched ops count of ${session.opsCount} and flushed items count of ${session.flushCount}." }
+            }
+            if (session.successCount + session.failCount < session.opsCount) {
+                logger.warn { "Not all bulk operations are accounted for. Success: ${session.successCount}. Failed: ${session.failCount} out of ${session.opsCount} bulk operations." }
+            }
+            val duration = Duration.ofMillis(System.currentTimeMillis() - session.startTime)
+            logger.debug { "Finished in ${duration.seconds} seconds. Processed ${session.opsCount} ${if (session.failCount == 0) "All items succeeded" else "${session.failCount} failed items, ${session.successCount}"}" }
         }
     }
 
@@ -178,6 +198,7 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
     }
 
     private suspend fun addOp(op: AsyncBulkOperation<T>) {
+        opsCount++
         synchronized(buffer) {
             // just in case somebody decides to use threads, lets guard list modifications
             buffer.add(op)
@@ -200,8 +221,14 @@ class AsyncBulkIndexingSession<T : Any> private constructor(
             ops.forEach { bulkRequest.add(it.operation) }
             repository.client.bulkAsync(bulkRequest, defaultRequestOptions).items?.forEach {
                 val bulkOperation = ops[it.itemId]
+                if (it.isFailed) {
+                    failCount++
+                } else {
+                    successCount++
+                }
                 bulkOperation.itemCallback.invoke(bulkOperation, it)
             }
+            flushCount += ops.size
         }
     }
 }

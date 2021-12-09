@@ -2,15 +2,15 @@
 
 package com.jillesvangurp.eskotlinwrapper
 
-import org.elasticsearch.common.xcontent.*
+import org.elasticsearch.xcontent.*
 import org.elasticsearch.xcontent.XContentBuilder
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+private val re = "(?<=[a-z])[A-Z]".toRegex()
 fun String.snakeCaseToUnderscore(): String {
-    val re = "(?<=[a-z])[A-Z]".toRegex()
     return re.replace(this) { m -> "_${m.value}" }.lowercase(Locale.getDefault())
 }
 

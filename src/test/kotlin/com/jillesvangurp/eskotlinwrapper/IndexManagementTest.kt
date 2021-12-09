@@ -9,7 +9,7 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasA
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.indexRepository
 import org.elasticsearch.client.indices.GetMappingsRequest
-import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.xcontent.XContentType
 import org.elasticsearch.common.xcontent.xContentBuilder
 import org.junit.jupiter.api.Test
 

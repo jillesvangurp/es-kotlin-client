@@ -1,10 +1,10 @@
 package com.jillesvangurp.eskotlinwrapper
 
 import com.jillesvangurp.eskotlinwrapper.dsl.ESQuery
-import org.elasticsearch.common.xcontent.ToXContent
-import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.common.xcontent.writeAny
+import org.elasticsearch.xcontent.ToXContent
+import org.elasticsearch.xcontent.XContentBuilder
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

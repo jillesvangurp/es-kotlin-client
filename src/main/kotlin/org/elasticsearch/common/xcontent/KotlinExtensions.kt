@@ -1,7 +1,12 @@
 package org.elasticsearch.common.xcontent
 
 import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
-import org.elasticsearch.common.xcontent.json.JsonXContent
+import org.elasticsearch.xcontent.ToXContent
+import org.elasticsearch.xcontent.XContentBuilder
+import org.elasticsearch.xcontent.XContentFactory
+import org.elasticsearch.xcontent.XContentType
+import org.elasticsearch.xcontent.json.JsonXContent
+
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets

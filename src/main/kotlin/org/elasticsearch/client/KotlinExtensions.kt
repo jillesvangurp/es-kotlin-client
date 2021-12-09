@@ -18,13 +18,12 @@ import org.elasticsearch.client.indices.PutMappingRequest
 import org.elasticsearch.client.sniff.SniffOnFailureListener
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.core.TimeValue
-import org.elasticsearch.common.xcontent.NamedXContentRegistry
-import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.xcontent.XContentType
 import org.elasticsearch.common.xcontent.stringify
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
+import org.elasticsearch.xcontent.NamedXContentRegistry
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
-
 
 private val logger = KotlinLogging.logger {  }
 /**

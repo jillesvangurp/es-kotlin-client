@@ -92,11 +92,10 @@ sourceSets.main {
 }
 
 configure<ComposeExtension> {
-    buildAdditionalArgs = listOf("--force-rm")
-    forceRecreate = true
-    stopContainers = true
-    removeContainers = true
-
+    buildAdditionalArgs.set(listOf("--force-rm"))
+    stopContainers.set(true)
+    removeContainers.set(true)
+    forceRecreate.set(true)
 }
 
 tasks.withType<Test> {

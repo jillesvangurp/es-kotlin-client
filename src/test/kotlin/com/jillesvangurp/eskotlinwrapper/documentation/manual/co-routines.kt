@@ -18,7 +18,7 @@ import org.elasticsearch.client.asyncIndexRepository
 import org.elasticsearch.client.indices.ReloadAnalyzersRequest
 import org.elasticsearch.client.indices.ReloadAnalyzersResponse
 import org.elasticsearch.client.reloadAnalyzersAsync
-import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.xcontent.XContentType
 
 val coRoutinesMd by withTestIndex<Thing, Lazy<String>> {
     sourceGitRepository.md {

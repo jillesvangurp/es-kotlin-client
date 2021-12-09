@@ -5,7 +5,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.asyncIndexRepository
 import org.elasticsearch.client.create
 import org.elasticsearch.client.indexRepository
-import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.xcontent.XContentType
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import java.util.UUID

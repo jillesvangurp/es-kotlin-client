@@ -156,14 +156,13 @@ val mSearchResults = repo.mSearch {
   }
 }
 
-println("${mSearchResults.took}ms. and " +
-    "returned ${mSearchResults.responses.size} sets of results")
+println("returned ${mSearchResults.responses.size} sets of results")
 ```
 
 Captured Output:
 
 ```
-7ms. and returned 3 sets of results
+returned 3 sets of results
 
 ```
 

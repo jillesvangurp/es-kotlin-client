@@ -3,6 +3,7 @@
 package com.jillesvangurp.eskotlinwrapper
 
 import org.elasticsearch.common.xcontent.*
+import org.elasticsearch.xcontent.XContentBuilder
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.format.DateTimeFormatter

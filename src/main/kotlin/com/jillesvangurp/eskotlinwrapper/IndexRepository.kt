@@ -24,7 +24,7 @@ import org.elasticsearch.client.indices.GetMappingsRequest
 import org.elasticsearch.client.indices.PutMappingRequest
 import org.elasticsearch.cluster.metadata.AliasMetadata
 import org.elasticsearch.core.TimeValue
-import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.xcontent.XContentType
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
 import kotlin.random.Random
 

@@ -10,8 +10,8 @@ import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.bulkAsync
-import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.rest.RestStatus
+import org.elasticsearch.xcontent.XContentType
 
 private val logger = KotlinLogging.logger {}
 

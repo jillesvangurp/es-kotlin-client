@@ -1,12 +1,11 @@
 package org.elasticsearch.action.search
 
-import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
+
 import com.jillesvangurp.eskotlinwrapper.dsl.SearchDSL
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest
 import org.elasticsearch.common.settings.Settings
-import org.elasticsearch.common.xcontent.*
 import org.elasticsearch.plugins.SearchPlugin
 import org.elasticsearch.search.SearchModule
 import org.elasticsearch.search.builder.SearchSourceBuilder

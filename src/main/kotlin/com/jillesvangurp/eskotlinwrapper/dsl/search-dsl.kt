@@ -5,7 +5,7 @@ package com.jillesvangurp.eskotlinwrapper.dsl
 import com.jillesvangurp.eskotlinwrapper.IMapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.mapProps
-import org.elasticsearch.common.xcontent.stringify
+import org.elasticsearch.xcontent.stringify
 import java.util.*
 import kotlin.reflect.KProperty
 
@@ -61,6 +61,7 @@ class SearchDSL : MapBackedProperties() {
 
 enum class SortOrder { ASC, DESC }
 enum class SortMode { MIN, MAX, SUM, AVG, MEDIAN }
+@Suppress("UNUSED_PARAMETER")
 class SortField(field: String, order: SortOrder? = null, mode: SortMode? = null)
 
 class SortBuilder {
@@ -134,9 +135,11 @@ class MultiSearchDSL {
         json.add(query.stringify(false))
     }
 
-    fun add(header: MultiSearchHeader, query: SearchDSL.() -> Unit) {
+    fun add(header: MultiSearchHeader, queryBlock: SearchDSL.() -> Unit) {
         json.add(header.stringify(false))
-
+        val dsl = SearchDSL()
+        queryBlock.invoke(dsl)
+        json.add(dsl.stringify(false))
     }
 
     fun header(headerBlock: MultiSearchHeader.()-> Unit) : MultiSearchHeader {

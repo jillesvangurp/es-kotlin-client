@@ -19,7 +19,7 @@ import org.elasticsearch.client.sniff.SniffOnFailureListener
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.core.TimeValue
 import org.elasticsearch.xcontent.XContentType
-import org.elasticsearch.common.xcontent.stringify
+import org.elasticsearch.xcontent.stringify
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
 import org.elasticsearch.xcontent.NamedXContentRegistry
 import java.lang.Exception

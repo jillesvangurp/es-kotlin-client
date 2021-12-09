@@ -1,4 +1,4 @@
-package org.elasticsearch.common.xcontent
+package org.elasticsearch.xcontent
 
 import org.elasticsearch.xcontent.ToXContent
 import org.elasticsearch.xcontent.XContentBuilder
@@ -19,7 +19,6 @@ import kotlin.reflect.KProperty
  *
  * @param pretty pretty print, defaults to false
  */
-@Deprecated("upstream package changed to org.elasticsearch.xcontent", replaceWith = ReplaceWith("", "org.elasticsearch.xcontent"))
 fun ToXContent.stringify(pretty: Boolean = false): String {
     val bos = ByteArrayOutputStream()
     val builder = XContentFactory.jsonBuilder(bos)
@@ -36,7 +35,6 @@ fun ToXContent.stringify(pretty: Boolean = false): String {
 /**
  * Helper to write json to an output stream. Set [pretty] to true to pretty print the json.
  */
-@Deprecated("upstream package changed to org.elasticsearch.xcontent", replaceWith = ReplaceWith("", "org.elasticsearch.xcontent"))
 fun ToXContent.stringify(out: OutputStream, pretty: Boolean = false) {
     val builder = XContentFactory.jsonBuilder(out)
     if (pretty) {
@@ -51,7 +49,6 @@ fun ToXContent.stringify(out: OutputStream, pretty: Boolean = false) {
  * that on the builder before you start building. Also, this only works if the underlying
  * outputstream is a ByteArrayOutputStream.
  */
-@Deprecated("upstream package changed to org.elasticsearch.xcontent", replaceWith = ReplaceWith("", "org.elasticsearch.xcontent"))
 fun XContentBuilder.stringify(): String {
     if (this.outputStream is ByteArrayOutputStream) {
         this.flush()
@@ -66,7 +63,6 @@ fun XContentBuilder.stringify(): String {
  * Write any of the supported types as a value. Supports primitive and null values, Map, List, Sequence, Array, etc. You
  * can even have another XContentBuilder nested.
  */
-@Deprecated("upstream package changed to org.elasticsearch.xcontent", replaceWith = ReplaceWith("", "org.elasticsearch.xcontent"))
 fun XContentBuilder.writeAny(obj: Any?) {
     if (obj == null) {
         this.nullValue()
@@ -128,7 +124,6 @@ fun XContentBuilder.writeAny(obj: Any?) {
 /**
  * Add an object using a block.
  */
-@Deprecated("upstream package changed to org.elasticsearch.xcontent", replaceWith = ReplaceWith("", "org.elasticsearch.xcontent"))
 fun XContentBuilder.obj(block: XContentBuilder.() -> Unit) {
     this.startObject()
     block.invoke(this)
@@ -138,7 +133,6 @@ fun XContentBuilder.obj(block: XContentBuilder.() -> Unit) {
 /**
  * Add a field with [name] with an object as the value; use the [block] to customise the object.
  */
-@Deprecated("upstream package changed to org.elasticsearch.xcontent", replaceWith = ReplaceWith("", "org.elasticsearch.xcontent"))
 fun XContentBuilder.objField(name: String, block: XContentBuilder.() -> Unit) {
     this.startObject(name)
     block.invoke(this)
@@ -148,7 +142,6 @@ fun XContentBuilder.objField(name: String, block: XContentBuilder.() -> Unit) {
 /**
  * Add a field with [name] with an array as the value; use the [block] to customise the array.
  */
-@Deprecated("upstream package changed to org.elasticsearch.xcontent", replaceWith = ReplaceWith("", "org.elasticsearch.xcontent"))
 fun XContentBuilder.arrField(name: String, block: XContentBuilder.() -> Unit) {
     this.startArray(name)
     block.invoke(this)
@@ -164,7 +157,6 @@ internal fun xContentBuilder(block: XContentBuilder.() -> Unit): XContentBuilder
 /**
  * Turn common objects like maps, lists, values, etc. into an XContentBuilder. Supports whatever is supported in [writeAny].
  */
-@Deprecated("upstream package changed to org.elasticsearch.xcontent", replaceWith = ReplaceWith("", "org.elasticsearch.xcontent"))
 fun xContentBuilder(obj: Any): XContentBuilder {
     return xContentBuilder {
         this.writeAny(obj)

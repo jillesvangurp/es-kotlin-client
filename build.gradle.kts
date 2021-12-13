@@ -22,6 +22,7 @@ buildscript {
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
+    kotlin("plugin.serialization")
     id("org.jetbrains.dokka")
     id("com.github.ben-manes.versions") // gradle dependencyUpdates -Drevision=release
     java

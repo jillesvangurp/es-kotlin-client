@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package org.elasticsearch.common.xcontent
 
 import org.elasticsearch.xcontent.ToXContent

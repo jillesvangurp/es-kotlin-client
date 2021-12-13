@@ -3,6 +3,7 @@ import com.jillesvangurp.escodegen.EsKotlinCodeGenPluginExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URL
 
 buildscript {
     repositories {
@@ -95,10 +96,18 @@ configure<ComposeExtension> {
 }
 
 tasks.withType<Test> {
-    dependsOn(
-        "examplesClasses",
-        "composeUp"
-    )
+    val isUp = try {
+        URL("http://localhost:9999").openConnection().connect()
+        true
+    } catch (e: kotlin.Exception) {
+        false
+    }
+    if(!isUp) {
+        dependsOn(
+            "examplesClasses",
+            "composeUp"
+        )
+    }
     useJUnitPlatform()
     testLogging.exceptionFormat = TestExceptionFormat.FULL
     testLogging.events = setOf(
@@ -108,7 +117,9 @@ tasks.withType<Test> {
         TestLogEvent.STANDARD_ERROR,
         TestLogEvent.STANDARD_OUT
     )
-   this.finalizedBy("composeDown")
+    if(!isUp) {
+        this.finalizedBy("composeDown")
+    }
 }
 
 dependencies {
@@ -116,6 +127,8 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-reflect:_")
     api(KotlinX.coroutines.jdk8)
     api("io.github.microutils:kotlin-logging:_")
+
+    implementation(KotlinX.serialization.json)
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:_")
     implementation("com.fasterxml.jackson.core:jackson-annotations:_")

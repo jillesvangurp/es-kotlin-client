@@ -85,11 +85,7 @@ configure<EsKotlinCodeGenPluginExtension> {
     output = projectDir.absolutePath + "/build/generatedcode"
 }
 
-sourceSets.main {
-    withConvention(KotlinSourceSet::class) {
-        kotlin.srcDirs("src/main/kotlin", "build/generatedcode")
-    }
-}
+kotlin.sourceSets["main"].kotlin.srcDirs("src/main/kotlin", "build/generatedcode")
 
 configure<ComposeExtension> {
     buildAdditionalArgs.set(listOf("--force-rm"))

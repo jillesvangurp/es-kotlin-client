@@ -127,8 +127,6 @@ dependencies {
     api(KotlinX.coroutines.jdk8)
     api("io.github.microutils:kotlin-logging:_")
 
-    implementation(KotlinX.serialization.json)
-
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:_")
     implementation("com.fasterxml.jackson.core:jackson-annotations:_")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:_")

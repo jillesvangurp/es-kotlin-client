@@ -5,7 +5,7 @@ package com.jillesvangurp.eskotlinwrapper.dsl
 import com.jillesvangurp.eskotlinwrapper.IMapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.mapProps
-import org.elasticsearch.xcontent.stringify
+import com.jillesvangurp.eskotlinwrapper.stringify
 import java.util.*
 import kotlin.reflect.KProperty
 

@@ -1,10 +1,11 @@
 package com.jillesvangurp.eskotlinwrapper
 
 import com.jillesvangurp.eskotlinwrapper.dsl.ESQuery
-import org.elasticsearch.xcontent.stringify
-import org.elasticsearch.xcontent.writeAny
-import org.elasticsearch.xcontent.ToXContent
-import org.elasticsearch.xcontent.XContentBuilder
+import kotlinx.serialization.json.*
+import org.elasticsearch.xcontent.*
+import java.io.ByteArrayOutputStream
+import java.nio.charset.StandardCharsets
+import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -16,6 +17,7 @@ fun String.snakeCaseToUnderscore(): String {
 interface IMapBackedProperties : MutableMap<String, Any> {
     fun putNoSnakeCase(key: String, value: Any)
 }
+
 /**
  * Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
  * implementing DSLs for querying, mappings, and other things in Elasticsearch. You may also use this to extend the
@@ -27,8 +29,9 @@ interface IMapBackedProperties : MutableMap<String, Any> {
 @Suppress("UNCHECKED_CAST")
 @MapPropertiesDSLMarker
 open class MapBackedProperties(
-    internal val _properties: MutableMap<String, Any> = mutableMapOf()
-) : MutableMap<String, Any> by _properties, ToXContent, IMapBackedProperties {
+    internal val _properties: MutableMap<String, Any> = mutableMapOf(),
+    internal val useSnakeCaseConversion: Boolean = true
+) : MutableMap<String, Any> by _properties, IMapBackedProperties {
 
     override fun get(key: String) = _properties[key.snakeCaseToUnderscore()]
 
@@ -37,7 +40,11 @@ open class MapBackedProperties(
     }
 
     override fun put(key: String, value: Any) {
-        _properties[key.snakeCaseToUnderscore()] = value
+        if (useSnakeCaseConversion) {
+            _properties[key.snakeCaseToUnderscore()] = value
+        } else {
+            _properties[key] = value
+        }
     }
 
     fun esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
@@ -61,11 +68,21 @@ open class MapBackedProperties(
     fun <T : Any?> property(): ReadWriteProperty<Any, T> {
         return object : ReadWriteProperty<Any, T> {
             override fun getValue(thisRef: Any, property: KProperty<*>): T {
-                return _properties[property.name.snakeCaseToUnderscore()] as T
+                return if(useSnakeCaseConversion) {
+                    _properties[property.name.snakeCaseToUnderscore()] as T
+                } else {
+                    _properties[property.name] as T
+                }
             }
 
             override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-                _properties[property.name.snakeCaseToUnderscore()] = value as Any // cast is needed here apparently
+                if(useSnakeCaseConversion) {
+                    // cast is needed here apparently
+                    _properties[property.name.snakeCaseToUnderscore()] = value as Any // cast is needed here apparently
+                } else
+                {
+                    _properties[property.name] = value as Any // cast is needed here apparently
+                }
             }
         }
     }
@@ -88,10 +105,6 @@ open class MapBackedProperties(
         }
     }
 
-    override fun toXContent(builder: XContentBuilder, params: ToXContent.Params?): XContentBuilder {
-        builder.writeAny(this)
-        return builder
-    }
 
     /**
      * Helper to manipulate list value objects.
@@ -107,6 +120,53 @@ open class MapBackedProperties(
     override fun toString(): String {
         return stringify(true)
     }
+}
+
+fun MapBackedProperties.toXContent(builder: XContentBuilder): XContentBuilder {
+    builder.writeAny(this)
+    return builder
+}
+
+fun MapBackedProperties.stringify(pretty: Boolean = false): String {
+    val bos = ByteArrayOutputStream()
+    val builder = XContentFactory.jsonBuilder(bos)
+    if (pretty) {
+        builder.prettyPrint()
+    }
+    toXContent(builder)
+    builder.close()
+    bos.flush()
+    bos.close()
+    return bos.toByteArray().toString(StandardCharsets.UTF_8)
+}
+
+fun MapBackedProperties.asJsonObject(): JsonObject {
+    val map = this
+    return buildJsonObject {
+        map.entries.forEach { (field, value) ->
+            put(field, toJsonElement(value))
+        }
+    }
+}
+fun toJsonElement(e: Any?): JsonElement {
+    return when (e) {
+        e == null -> JsonNull
+        is Number -> JsonPrimitive(e)
+        is String -> JsonPrimitive(e)
+        is Boolean -> JsonPrimitive(e)
+        is List<*> -> buildJsonArray {
+            e.forEach {
+                this.add(toJsonElement(it))
+            }
+        }
+        is Map<*, *> -> buildJsonObject {
+            e.entries.forEach { (field, value) ->
+                put(field.toString(), toJsonElement(value))
+            }
+        }
+        else -> throw IllegalArgumentException("unhandled element type ${e!!::class.simpleName}")
+    }
+
 }
 
 /**

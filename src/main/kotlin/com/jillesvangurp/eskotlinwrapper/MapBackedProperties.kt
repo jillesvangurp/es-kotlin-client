@@ -1,17 +1,14 @@
 package com.jillesvangurp.eskotlinwrapper
 
-import com.jillesvangurp.eskotlinwrapper.dsl.ESQuery
-import kotlinx.serialization.json.*
-import org.elasticsearch.xcontent.*
-import java.io.ByteArrayOutputStream
-import java.nio.charset.StandardCharsets
-import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+@DslMarker
+annotation class MapPropertiesDSLMarker
+
 private val re = "(?<=[a-z0-9])[A-Z]".toRegex()
 fun String.snakeCaseToUnderscore(): String {
-    return re.replace(this) { m -> "_${m.value}" }.lowercase(Locale.getDefault())
+    return re.replace(this) { m -> "_${m.value}" }.lowercase()
 }
 
 interface IMapBackedProperties : MutableMap<String, Any> {
@@ -47,20 +44,6 @@ open class MapBackedProperties(
         }
     }
 
-    fun esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
-        return object : ReadWriteProperty<Any, ESQuery> {
-            override fun getValue(thisRef: Any, property: KProperty<*>): ESQuery {
-                val map = _properties[property.name] as Map<String, MapBackedProperties>
-                val (name, queryDetails) = map.entries.first()
-                return ESQuery(name, queryDetails)
-            }
-
-            override fun setValue(thisRef: Any, property: KProperty<*>, value: ESQuery) {
-                _properties[property.name] = value.toMap()
-            }
-        }
-    }
-
     /**
      * Property delegate that stores the value in the MapBackedProperties. Use this to create type safe
      * properties.
@@ -91,7 +74,7 @@ open class MapBackedProperties(
      * Property delegate that stores the value in the MapBackedProperties; uses the customPropertyName instead of the
      * kotlin property name. Use this to create type safe properties in case the property name you need overlaps clashes
      * with a kotlin keyword or super class property or method. For example, "size" is also a method on
-     * MapBackedProperties and thus cannot be used as a kotlin property name in sub class.
+     * MapBackedProperties and thus cannot be used as a kotlin property name in a Kotlin class implementing Map.
      */
     fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T> {
         return object : ReadWriteProperty<MapBackedProperties, T> {
@@ -104,7 +87,6 @@ open class MapBackedProperties(
             }
         }
     }
-
 
     /**
      * Helper to manipulate list value objects.
@@ -120,53 +102,6 @@ open class MapBackedProperties(
     override fun toString(): String {
         return stringify(true)
     }
-}
-
-fun MapBackedProperties.toXContent(builder: XContentBuilder): XContentBuilder {
-    builder.writeAny(this)
-    return builder
-}
-
-fun MapBackedProperties.stringify(pretty: Boolean = false): String {
-    val bos = ByteArrayOutputStream()
-    val builder = XContentFactory.jsonBuilder(bos)
-    if (pretty) {
-        builder.prettyPrint()
-    }
-    toXContent(builder)
-    builder.close()
-    bos.flush()
-    bos.close()
-    return bos.toByteArray().toString(StandardCharsets.UTF_8)
-}
-
-fun MapBackedProperties.asJsonObject(): JsonObject {
-    val map = this
-    return buildJsonObject {
-        map.entries.forEach { (field, value) ->
-            put(field, toJsonElement(value))
-        }
-    }
-}
-fun toJsonElement(e: Any?): JsonElement {
-    return when (e) {
-        e == null -> JsonNull
-        is Number -> JsonPrimitive(e)
-        is String -> JsonPrimitive(e)
-        is Boolean -> JsonPrimitive(e)
-        is List<*> -> buildJsonArray {
-            e.forEach {
-                this.add(toJsonElement(it))
-            }
-        }
-        is Map<*, *> -> buildJsonObject {
-            e.entries.forEach { (field, value) ->
-                put(field.toString(), toJsonElement(value))
-            }
-        }
-        else -> throw IllegalArgumentException("unhandled element type ${e!!::class.simpleName}")
-    }
-
 }
 
 /**

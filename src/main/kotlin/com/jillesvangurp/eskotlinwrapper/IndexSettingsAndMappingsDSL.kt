@@ -9,8 +9,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@DslMarker
-annotation class MapPropertiesDSLMarker
+
 
 @MapPropertiesDSLMarker
 class IndexSettings : MapBackedProperties() {
@@ -218,10 +217,4 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
             return settingsAndMappings.build(pretty)
         }
     }
-}
-
-fun main() {
-    println(FieldMappings().apply {
-        text("foo")
-    }.build().stringify())
 }

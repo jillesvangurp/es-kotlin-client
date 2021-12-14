@@ -7,6 +7,7 @@ import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.mapProps
 import com.jillesvangurp.eskotlinwrapper.stringify
 import java.util.*
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 @DslMarker
@@ -20,6 +21,21 @@ open class ESQuery(val name: String, val queryDetails: MapBackedProperties = Map
 
     override fun toString(): String {
         return toMap().toString()
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun MapBackedProperties.esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
+    return object : ReadWriteProperty<Any, ESQuery> {
+        override fun getValue(thisRef: Any, property: KProperty<*>): ESQuery {
+            val map = _properties[property.name] as Map<String, MapBackedProperties>
+            val (name, queryDetails) = map.entries.first()
+            return ESQuery(name, queryDetails)
+        }
+
+        override fun setValue(thisRef: Any, property: KProperty<*>, value: ESQuery) {
+            _properties[property.name] = value.toMap()
+        }
     }
 }
 

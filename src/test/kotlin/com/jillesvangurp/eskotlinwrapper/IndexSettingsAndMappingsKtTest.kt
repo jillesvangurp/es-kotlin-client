@@ -4,15 +4,9 @@ import assertk.assertThat
 import assertk.assertions.contains
 import com.jillesvangurp.eskotlinwrapper.IndexSettingsAndMappingsDSL.Companion.indexSettingsAndMappings
 import org.elasticsearch.xcontent.stringify
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class IndexSettingsAndMappingsKtTest {
-
-    @Test
-    fun `should convert property names`() {
-        Assertions.assertEquals("fooBarFooBar".snakeCaseToUnderscore(), "foo_bar_foo_bar")
-    }
 
     @Test
     fun `should create simple mapping`() {

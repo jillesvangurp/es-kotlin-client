@@ -2,8 +2,8 @@ import com.avast.gradle.dockercompose.ComposeExtension
 import com.jillesvangurp.escodegen.EsKotlinCodeGenPluginExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URL
 
 buildscript {
     repositories {
@@ -95,10 +95,18 @@ configure<ComposeExtension> {
 }
 
 tasks.withType<Test> {
-    dependsOn(
-        "examplesClasses",
-        "composeUp"
-    )
+    val isUp = try {
+        URL("http://localhost:9999").openConnection().connect()
+        true
+    } catch (e: kotlin.Exception) {
+        false
+    }
+    if(!isUp) {
+        dependsOn(
+            "examplesClasses",
+            "composeUp"
+        )
+    }
     useJUnitPlatform()
     testLogging.exceptionFormat = TestExceptionFormat.FULL
     testLogging.events = setOf(
@@ -108,7 +116,9 @@ tasks.withType<Test> {
         TestLogEvent.STANDARD_ERROR,
         TestLogEvent.STANDARD_OUT
     )
-   this.finalizedBy("composeDown")
+    if(!isUp) {
+        this.finalizedBy("composeDown")
+    }
 }
 
 dependencies {

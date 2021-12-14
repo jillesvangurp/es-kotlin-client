@@ -9,11 +9,6 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-private val re = "(?<=[a-z])[A-Z]".toRegex()
-fun String.snakeCaseToUnderscore(): String {
-    return re.replace(this) { m -> "_${m.value}" }.lowercase(Locale.getDefault())
-}
-
 @DslMarker
 annotation class MapPropertiesDSLMarker
 

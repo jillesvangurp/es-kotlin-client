@@ -5,8 +5,14 @@ import org.elasticsearch.xcontent.stringify
 import org.elasticsearch.xcontent.writeAny
 import org.elasticsearch.xcontent.ToXContent
 import org.elasticsearch.xcontent.XContentBuilder
+import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+
+private val re = "(?<=[a-z0-9])[A-Z]".toRegex()
+fun String.snakeCaseToUnderscore(): String {
+    return re.replace(this) { m -> "_${m.value}" }.lowercase(Locale.getDefault())
+}
 
 interface IMapBackedProperties : MutableMap<String, Any> {
     fun putNoSnakeCase(key: String, value: Any)

@@ -1,4 +1,4 @@
-package com.jillesvangurp.eskotlinwrapper
+package com.jillesvangurp.mapbacked
 
 import org.elasticsearch.xcontent.XContentBuilder
 import org.elasticsearch.xcontent.XContentFactory
@@ -11,7 +11,6 @@ fun MapBackedProperties.toXContent(builder: XContentBuilder): XContentBuilder {
     return builder
 }
 
-@Deprecated("", ReplaceWith("stringify(pretty)", "com.jillesvangurp.mapbacked"))
 fun MapBackedProperties.stringify(pretty: Boolean = false): String {
     val bos = ByteArrayOutputStream()
     val builder = XContentFactory.jsonBuilder(bos)

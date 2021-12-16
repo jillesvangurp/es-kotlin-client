@@ -3,6 +3,7 @@ package org.elasticsearch.action.search
 
 import com.jillesvangurp.eskotlinwrapper.dsl.SearchDSL
 import com.jillesvangurp.eskotlinwrapper.stringify
+import com.jillesvangurp.mapbacked.stringify
 import mu.KLogger
 import mu.KotlinLogging
 import org.elasticsearch.client.core.CountRequest

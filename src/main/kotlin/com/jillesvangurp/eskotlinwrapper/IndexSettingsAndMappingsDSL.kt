@@ -9,8 +9,6 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
-
 @MapPropertiesDSLMarker
 class IndexSettings : MapBackedProperties() {
     var replicas: Int by property("index.number_of_replicas")

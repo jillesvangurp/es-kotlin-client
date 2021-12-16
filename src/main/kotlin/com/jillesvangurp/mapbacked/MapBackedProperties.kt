@@ -1,6 +1,4 @@
-@file:Suppress("DEPRECATION")
-
-package com.jillesvangurp.eskotlinwrapper
+package com.jillesvangurp.mapbacked
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -13,62 +11,50 @@ fun String.snakeCaseToUnderscore(): String {
     return re.replace(this) { m -> "_${m.value}" }.lowercase()
 }
 
-interface IMapBackedProperties : MutableMap<String, Any> {
-    fun putNoSnakeCase(key: String, value: Any)
+enum class PropertyNamingConvention {
+    AsIs,
+    ConvertToSnakeCase
 }
 
+fun String.convertPropertyName(namingConvention: PropertyNamingConvention):String {
+    return when(namingConvention) {
+        PropertyNamingConvention.AsIs -> this // e.g. kotlin convention is camelCase
+        PropertyNamingConvention.ConvertToSnakeCase -> this.snakeCaseToUnderscore()
+    }
+}
 /**
- * Mutable Map of String to Any that normalizes the keys to use underscores. This is a key component used for
- * implementing DSLs for querying, mappings, and other things in Elasticsearch. You may also use this to extend the
- * DSL. Either extend directly or use this via e.g. interface delegation.
- *
- * Implements ToXContent so you can use this anywhere the Elasticsearch Java API expects an XContent object.
- * This works together with the xcontent extension functions this library adds.
+ * Mutable Map of String to Any that normalizes the keys to use underscores. You can use this as a base class
+ * for creating Kotlin DSLs for e.g. Json DSLs such as the Elasticsearch query DSL.
  */
 @Suppress("UNCHECKED_CAST")
 @MapPropertiesDSLMarker
-@Deprecated("Switch to using com.jillesvangurp.mapbacked")
 open class MapBackedProperties(
+    internal val namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs,
     internal val _properties: MutableMap<String, Any> = mutableMapOf(),
-    internal val useSnakeCaseConversion: Boolean = true
 ) : MutableMap<String, Any> by _properties, IMapBackedProperties {
 
     override fun get(key: String) = _properties[key.snakeCaseToUnderscore()]
 
-    override fun putNoSnakeCase(key: String, value: Any) {
-        _properties[key] = value
+    override fun put(key: String, value: Any, namingConvention: PropertyNamingConvention) {
+        _properties[key.convertPropertyName(namingConvention)] = value
     }
 
     override fun put(key: String, value: Any) {
-        if (useSnakeCaseConversion) {
-            _properties[key.snakeCaseToUnderscore()] = value
-        } else {
-            _properties[key] = value
-        }
+        _properties[key.convertPropertyName(namingConvention)] = value
     }
 
     /**
      * Property delegate that stores the value in the MapBackedProperties. Use this to create type safe
      * properties.
      */
-    fun <T : Any?> property(): ReadWriteProperty<Any, T> {
+    override fun <T : Any?> property(): ReadWriteProperty<Any, T> {
         return object : ReadWriteProperty<Any, T> {
             override fun getValue(thisRef: Any, property: KProperty<*>): T {
-                return if(useSnakeCaseConversion) {
-                    _properties[property.name.snakeCaseToUnderscore()] as T
-                } else {
-                    _properties[property.name] as T
-                }
+                return _properties[property.name.convertPropertyName(namingConvention)] as T
             }
 
             override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-                if(useSnakeCaseConversion) {
-                    // cast is needed here apparently
-                    _properties[property.name.snakeCaseToUnderscore()] = value as Any // cast is needed here apparently
-                } else
-                {
-                    _properties[property.name] = value as Any // cast is needed here apparently
-                }
+                _properties[property.name.convertPropertyName(namingConvention)] = value as Any
             }
         }
     }
@@ -79,7 +65,7 @@ open class MapBackedProperties(
      * with a kotlin keyword or super class property or method. For example, "size" is also a method on
      * MapBackedProperties and thus cannot be used as a kotlin property name in a Kotlin class implementing Map.
      */
-    fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T> {
+    override fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T> {
         return object : ReadWriteProperty<MapBackedProperties, T> {
             override fun getValue(thisRef: MapBackedProperties, property: KProperty<*>): T {
                 return _properties[customPropertyName] as T
@@ -94,7 +80,7 @@ open class MapBackedProperties(
     /**
      * Helper to manipulate list value objects.
      */
-    fun getOrCreateMutableList(key: String): MutableList<Any> {
+    override fun getOrCreateMutableList(key: String): MutableList<Any> {
         val list = this[key] as MutableList<Any>?
         if (list == null) {
             this[key] = mutableListOf<Any>()
@@ -103,16 +89,19 @@ open class MapBackedProperties(
     }
 
     override fun toString(): String {
-        return stringify(true)
+        return _properties.toString()
+    }
+
+    companion object {
+        /**
+         * Helper function to construct a MapBackedProperties with some content.
+         */
+        fun create(namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs, block: MapBackedProperties.() -> Unit): MapBackedProperties {
+            val mapBackedProperties = MapBackedProperties(namingConvention = namingConvention)
+            block.invoke(mapBackedProperties)
+            return mapBackedProperties
+        }
     }
 }
 
-/**
- * Helper function to construct a MapBackedProperties with some content.
- */
-@Deprecated("",ReplaceWith("mapProps(block)", "com.jillesvangurp.mapbacked"))
-fun mapProps(block: MapBackedProperties.() -> Unit): MapBackedProperties {
-    val mapBackedProperties = MapBackedProperties()
-    block.invoke(mapBackedProperties)
-    return mapBackedProperties
-}
+

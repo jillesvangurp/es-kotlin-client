@@ -1,6 +1,8 @@
 package com.jillesvangurp.eskotlinwrapper
 
 import kotlinx.serialization.json.*
+import java.time.Instant
+import kotlin.reflect.KProperty
 
 fun MapBackedProperties.asJsonObject(): JsonObject {
     val map = this
@@ -10,23 +12,56 @@ fun MapBackedProperties.asJsonObject(): JsonObject {
         }
     }
 }
+
 fun toJsonElement(e: Any?): JsonElement {
     return when (e) {
-        e == null -> JsonNull
-        is Number -> JsonPrimitive(e)
-        is String -> JsonPrimitive(e)
-        is Boolean -> JsonPrimitive(e)
-        is List<*> -> buildJsonArray {
-            e.forEach {
-                this.add(toJsonElement(it))
+        e == null -> {
+            JsonNull
+        }
+        is JsonElement -> {
+            e
+        }
+        is Number -> {
+            JsonPrimitive(e)
+        }
+        is String -> {
+            JsonPrimitive(e)
+        }
+        is Boolean -> {
+            JsonPrimitive(e)
+        }
+        is Instant -> {
+            toJsonElement(e.toString())
+        }
+        is Map<*, *> -> {
+            buildJsonObject {
+                e.entries.forEach { (field, value) ->
+                    put(field.toString(), toJsonElement(value))
+                }
             }
         }
-        is Map<*, *> -> buildJsonObject {
-            e.entries.forEach { (field, value) ->
-                put(field.toString(), toJsonElement(value))
+        is Array<*> -> {
+            buildJsonArray {
+                e.forEach {
+                    add(toJsonElement(it))
+                }
             }
         }
-        else -> throw IllegalArgumentException("unhandled element type ${e!!::class.simpleName}")
+        is Iterable<*> -> {
+            buildJsonArray {
+                e.forEach {
+                    add(toJsonElement(it))
+                }
+            }
+        }
+        is Enum<*> -> {
+            toJsonElement(e.name)
+        }
+        is KProperty<*> -> {
+            toJsonElement(e.name)
+        }
+        else -> {
+            throw IllegalArgumentException("unhandled element type ${e!!::class.simpleName}")
+        }
     }
-
 }

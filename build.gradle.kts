@@ -129,6 +129,11 @@ dependencies {
     api("io.github.microutils:kotlin-logging:_")
 
     implementation(KotlinX.serialization.json)
+    implementation(Ktor.client.core)
+    implementation(Ktor.client.cio)
+    implementation(Ktor.client.logging)
+    implementation(Ktor.client.serialization)
+    implementation("io.ktor:ktor-client-logging-jvm:_")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:_")
     implementation("com.fasterxml.jackson.core:jackson-annotations:_")

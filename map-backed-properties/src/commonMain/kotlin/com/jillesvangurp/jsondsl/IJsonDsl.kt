@@ -7,7 +7,8 @@ import kotlin.properties.ReadWriteProperty
  * can't extend MapBackedProperties class
  */
 interface IMapBackedProperties : MutableMap<String, Any> {
-    fun put(key: String, value: Any, namingConvention: PropertyNamingConvention)
+    val defaultNamingConvention: PropertyNamingConvention
+    fun put(key: String, value: Any, namingConvention: PropertyNamingConvention=defaultNamingConvention)
 
     /**
      * Property delegate that stores the value in the MapBackedProperties. Use this to create type safe
@@ -27,13 +28,15 @@ interface IMapBackedProperties : MutableMap<String, Any> {
      * Helper to manipulate list value objects.
      */
     fun getOrCreateMutableList(key: String): MutableList<Any>
+
 }
 
 /**
  * Helper function to construct a MapBackedProperties with some content.
  */
-fun IMapBackedProperties.create(namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs, block: JsonDsl.() -> Unit): JsonDsl {
+fun IMapBackedProperties.dslObject(namingConvention: PropertyNamingConvention = defaultNamingConvention, block: JsonDsl.() -> Unit): JsonDsl {
     val jsonDsl = JsonDsl(namingConvention = namingConvention)
     block.invoke(jsonDsl)
     return jsonDsl
 }
+

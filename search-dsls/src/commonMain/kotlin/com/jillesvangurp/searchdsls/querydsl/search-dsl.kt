@@ -13,7 +13,7 @@ annotation class SearchDSLMarker
 open class ESQuery(val name: String, val queryDetails: JsonDsl = JsonDsl()) :
     IMapBackedProperties by queryDetails {
 
-    fun toMap(): Map<String, Any> = create { this[name] = queryDetails }
+    fun toMap(): Map<String, Any> = dslObject { this[name] = queryDetails }
 
     override fun toString(): String {
         return toMap().toString()
@@ -90,8 +90,8 @@ class SortBuilder {
         order: SortOrder,
         mode: SortMode?,
         block: (JsonDsl.() -> Unit)?
-    ) = sortFields.add(JsonDsl().apply {
-        this.put(field, create {
+    ) = sortFields.add(withJsonDsl {
+        this.put(field, dslObject {
             this["order"] = order.name
             mode?.let {
                 this["mode"] = mode.name.lowercase()

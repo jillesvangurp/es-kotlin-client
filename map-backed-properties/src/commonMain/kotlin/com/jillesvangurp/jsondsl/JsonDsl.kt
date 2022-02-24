@@ -29,10 +29,10 @@ fun String.convertPropertyName(namingConvention: PropertyNamingConvention):Strin
 @Suppress("UNCHECKED_CAST")
 @MapPropertiesDSLMarker
 open class JsonDsl(
-    internal val namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs,
+    private val namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs,
     internal val _properties: MutableMap<String, Any> = mutableMapOf(),
 ) : MutableMap<String, Any> by _properties, IMapBackedProperties {
-
+    override val defaultNamingConvention: PropertyNamingConvention = namingConvention
 
     override fun get(key: String) = _properties[key.snakeCaseToUnderscore()]
 
@@ -94,6 +94,10 @@ open class JsonDsl(
     override fun toString(): String {
         return _properties.toString()
     }
+}
+
+fun withJsonDsl(namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs, block: JsonDsl.() -> Unit) = JsonDsl(namingConvention=namingConvention).apply {
+    block.invoke(this)
 }
 
 

@@ -1,4 +1,4 @@
-package com.jillesvangurp.mapbackedproperties
+package com.jillesvangurp.jsondsl
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -24,11 +24,11 @@ fun String.convertPropertyName(namingConvention: PropertyNamingConvention):Strin
 }
 /**
  * Mutable Map of String to Any that normalizes the keys to use underscores. You can use this as a base class
- * for creating Kotlin DSLs for e.g. Json DSLs such as the Elasticsearch query DSL.
+ * for creating Kotlin DSLs for Json DSLs such as the Elasticsearch query DSL.
  */
 @Suppress("UNCHECKED_CAST")
 @MapPropertiesDSLMarker
-open class MapBackedProperties(
+open class JsonDsl(
     internal val namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs,
     internal val _properties: MutableMap<String, Any> = mutableMapOf(),
 ) : MutableMap<String, Any> by _properties, IMapBackedProperties {
@@ -66,13 +66,13 @@ open class MapBackedProperties(
      * with a kotlin keyword or super class property or method. For example, "size" is also a method on
      * MapBackedProperties and thus cannot be used as a kotlin property name in a Kotlin class implementing Map.
      */
-    override fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T> {
-        return object : ReadWriteProperty<MapBackedProperties, T> {
-            override fun getValue(thisRef: MapBackedProperties, property: KProperty<*>): T {
+    override fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<JsonDsl, T> {
+        return object : ReadWriteProperty<JsonDsl, T> {
+            override fun getValue(thisRef: JsonDsl, property: KProperty<*>): T {
                 return _properties[customPropertyName] as T
             }
 
-            override fun setValue(thisRef: MapBackedProperties, property: KProperty<*>, value: T) {
+            override fun setValue(thisRef: JsonDsl, property: KProperty<*>, value: T) {
                 _properties[customPropertyName] = value as Any // cast is needed here apparently
             }
         }

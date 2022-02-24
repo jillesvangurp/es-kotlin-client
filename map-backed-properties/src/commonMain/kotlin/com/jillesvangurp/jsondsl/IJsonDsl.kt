@@ -1,4 +1,4 @@
-package com.jillesvangurp.mapbackedproperties
+package com.jillesvangurp.jsondsl
 
 import kotlin.properties.ReadWriteProperty
 
@@ -21,7 +21,7 @@ interface IMapBackedProperties : MutableMap<String, Any> {
      * with a kotlin keyword or super class property or method. For example, "size" is also a method on
      * MapBackedProperties and thus cannot be used as a kotlin property name in a Kotlin class implementing Map.
      */
-    fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<MapBackedProperties, T>
+    fun <T : Any?> property(customPropertyName: String): ReadWriteProperty<JsonDsl, T>
 
     /**
      * Helper to manipulate list value objects.
@@ -32,8 +32,8 @@ interface IMapBackedProperties : MutableMap<String, Any> {
 /**
  * Helper function to construct a MapBackedProperties with some content.
  */
-fun IMapBackedProperties.create(namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs, block: MapBackedProperties.() -> Unit): MapBackedProperties {
-    val mapBackedProperties = MapBackedProperties(namingConvention = namingConvention)
-    block.invoke(mapBackedProperties)
-    return mapBackedProperties
+fun IMapBackedProperties.create(namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs, block: JsonDsl.() -> Unit): JsonDsl {
+    val jsonDsl = JsonDsl(namingConvention = namingConvention)
+    block.invoke(jsonDsl)
+    return jsonDsl
 }

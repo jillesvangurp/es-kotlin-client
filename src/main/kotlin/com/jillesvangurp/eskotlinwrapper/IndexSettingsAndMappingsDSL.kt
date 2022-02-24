@@ -2,10 +2,9 @@
 
 package com.jillesvangurp.eskotlinwrapper
 
-import com.jillesvangurp.mapbackedproperties.MapBackedProperties
-import com.jillesvangurp.mapbackedproperties.MapPropertiesDSLMarker
-import com.jillesvangurp.mapbackedproperties.*
-import com.jillesvangurp.mapbackedproperties.PropertyNamingConvention
+import com.jillesvangurp.jsondsl.JsonDsl
+import com.jillesvangurp.jsondsl.MapPropertiesDSLMarker
+import com.jillesvangurp.jsondsl.PropertyNamingConvention
 import org.elasticsearch.xcontent.*
 
 import org.elasticsearch.xcontent.XContentBuilder
@@ -15,39 +14,39 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 @MapPropertiesDSLMarker
-class IndexSettings : MapBackedProperties() {
+class IndexSettings : JsonDsl() {
     var replicas: Int by property("index.number_of_replicas")
     var shards: Int by property("index.number_of_shards")
 
-    private fun indexObject(type: String, name: String, block: MapBackedProperties.() -> Unit) {
-        val analysis = get("analysis") as MapBackedProperties? ?: MapBackedProperties()
-        val objects = analysis[type] as MapBackedProperties? ?: MapBackedProperties()
-        val objectProperties = MapBackedProperties()
+    private fun indexObject(type: String, name: String, block: JsonDsl.() -> Unit) {
+        val analysis = get("analysis") as JsonDsl? ?: JsonDsl()
+        val objects = analysis[type] as JsonDsl? ?: JsonDsl()
+        val objectProperties = JsonDsl()
         block.invoke(objectProperties)
         objects[name] = objectProperties
         analysis[type] = objects
         put("analysis", analysis)
     }
 
-    fun addAnalyzer(name: String, block: MapBackedProperties.() -> Unit) {
+    fun addAnalyzer(name: String, block: JsonDsl.() -> Unit) {
         indexObject("analyzer", name, block)
     }
 
-    fun addTokenizer(name: String, block: MapBackedProperties.() -> Unit) {
+    fun addTokenizer(name: String, block: JsonDsl.() -> Unit) {
         indexObject("tokenizer", name, block)
     }
 
-    fun addCharFilter(name: String, block: MapBackedProperties.() -> Unit) {
+    fun addCharFilter(name: String, block: JsonDsl.() -> Unit) {
         indexObject("char_filter", name, block)
     }
 
-    fun addFilter(name: String, block: MapBackedProperties.() -> Unit) {
+    fun addFilter(name: String, block: JsonDsl.() -> Unit) {
         indexObject("filter", name, block)
     }
 }
 
 @MapPropertiesDSLMarker
-class FieldMappingConfig(typeName: String) : MapBackedProperties() {
+class FieldMappingConfig(typeName: String) : JsonDsl() {
     var type: String by property()
     var boost by property<Double>()
     var docValues by property<Boolean>()
@@ -70,7 +69,7 @@ class FieldMappingConfig(typeName: String) : MapBackedProperties() {
 }
 
 @MapPropertiesDSLMarker
-class FieldMappings : MapBackedProperties() {
+class FieldMappings : JsonDsl() {
     fun text(name: String) = field(name, "text") {}
     fun text(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "text", block)
     fun keyword(name: String) = field(name, "keyword") {}
@@ -150,7 +149,7 @@ class FieldMappings : MapBackedProperties() {
 
 class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFields: Boolean) {
     private var settings: IndexSettings? = null
-    private var meta: MapBackedProperties? = null
+    private var meta: JsonDsl? = null
     private var mappings: FieldMappings? = null
     private var dynamicEnabled: Boolean? = null
 
@@ -161,8 +160,8 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
         settings = settingsMap
     }
 
-    fun meta(block: MapBackedProperties.() -> Unit) {
-        if (meta == null) meta = MapBackedProperties()
+    fun meta(block: JsonDsl.() -> Unit) {
+        if (meta == null) meta = JsonDsl()
         block.invoke(meta!!)
     }
 
@@ -175,7 +174,7 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
     internal fun build(pretty: Boolean = false): XContentBuilder {
         if (generateMetaFields) {
             // if it did not exist, create it.
-            if (meta == null) meta = object : MapBackedProperties() {}
+            if (meta == null) meta = object : JsonDsl() {}
             val mappingJson = mappings?.stringify(true) ?: "{}"
             meta!!["content_hash"] =
                 Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(mappingJson.toByteArray()))

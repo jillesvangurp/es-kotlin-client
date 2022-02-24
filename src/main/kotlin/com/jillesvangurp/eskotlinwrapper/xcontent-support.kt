@@ -1,12 +1,5 @@
 package com.jillesvangurp.eskotlinwrapper
 
-import com.jillesvangurp.mapbackedproperties.MapBackedProperties
-import org.elasticsearch.xcontent.XContentBuilder
-import org.elasticsearch.xcontent.XContentFactory
-import org.elasticsearch.xcontent.writeAny
-import java.io.ByteArrayOutputStream
-import java.nio.charset.StandardCharsets
-
 //fun MapBackedProperties.toXContent(builder: XContentBuilder): XContentBuilder {
 //    builder.writeAny(this)
 //    return builder

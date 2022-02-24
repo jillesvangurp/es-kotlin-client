@@ -22,7 +22,7 @@ import org.elasticsearch.xcontent.XContentType
 import org.elasticsearch.xcontent.stringify
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
 import org.elasticsearch.xcontent.NamedXContentRegistry
-import org.elasticsearch.xcontent.XContentDslSerializer
+import org.elasticsearch.xcontent.XContentJsonDslSerializer
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
 
@@ -277,7 +277,7 @@ suspend fun RestHighLevelClient.multiSearchAsync(
 }
 
 fun RestHighLevelClient.multiSearch(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
-    val dsl = MultiSearchDSL(XContentDslSerializer())
+    val dsl = MultiSearchDSL(XContentJsonDslSerializer())
     block.invoke(dsl)
     try {
         return mSearchDirect(index,dsl.requestBody(),requestOptions)
@@ -291,7 +291,7 @@ fun RestHighLevelClient.multiSearch(index: String, requestOptions: RequestOption
 }
 
 suspend fun RestHighLevelClient.multiSearchAsync(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
-    val dsl = MultiSearchDSL(XContentDslSerializer())
+    val dsl = MultiSearchDSL(XContentJsonDslSerializer())
     block.invoke(dsl)
     try {
         return mSearchAsyncDirect(index,dsl.requestBody(),requestOptions)

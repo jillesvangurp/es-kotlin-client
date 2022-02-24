@@ -2,7 +2,7 @@
 
 package com.jillesvangurp.searchdsls.querydsl
 
-import com.jillesvangurp.mapbackedproperties.*
+import com.jillesvangurp.jsondsl.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -10,7 +10,7 @@ import kotlin.reflect.KProperty
 annotation class SearchDSLMarker
 
 @SearchDSLMarker
-open class ESQuery(val name: String, val queryDetails: MapBackedProperties = MapBackedProperties()) :
+open class ESQuery(val name: String, val queryDetails: JsonDsl = JsonDsl()) :
     IMapBackedProperties by queryDetails {
 
     fun toMap(): Map<String, Any> = create { this[name] = queryDetails }
@@ -21,10 +21,10 @@ open class ESQuery(val name: String, val queryDetails: MapBackedProperties = Map
 }
 
 @Suppress("UNCHECKED_CAST")
-fun MapBackedProperties.esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
+fun JsonDsl.esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
     return object : ReadWriteProperty<Any, ESQuery> {
         override fun getValue(thisRef: Any, property: KProperty<*>): ESQuery {
-            val map = this@esQueryProperty[property.name] as Map<String, MapBackedProperties>
+            val map = this@esQueryProperty[property.name] as Map<String, JsonDsl>
             val (name, queryDetails) = map.entries.first()
             return ESQuery(name, queryDetails)
         }
@@ -35,14 +35,14 @@ fun MapBackedProperties.esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
     }
 }
 
-fun customQuery(name: String, block: MapBackedProperties.() -> Unit): ESQuery {
+fun customQuery(name: String, block: JsonDsl.() -> Unit): ESQuery {
     val q = ESQuery(name)
     block.invoke(q.queryDetails)
     return q
 }
 
 @Suppress("UNCHECKED_CAST")
-class SearchDSL : MapBackedProperties() {
+class SearchDSL : JsonDsl() {
     var from: Int by property()
     var trackTotalHits: Boolean by property()
 
@@ -52,7 +52,7 @@ class SearchDSL : MapBackedProperties() {
     // Elasticsearch has this object in a object kind of thing that we need to compensate for.
     var query: ESQuery
         get() {
-            val map = this["query"] as Map<String, MapBackedProperties>
+            val map = this["query"] as Map<String, JsonDsl>
             val (name, queryDetails) = map.entries.first()
             return ESQuery(name, queryDetails)
         }
@@ -62,7 +62,7 @@ class SearchDSL : MapBackedProperties() {
 
     var postFilter: ESQuery
         get() {
-            val map = this["post_filter"] as Map<String, MapBackedProperties>
+            val map = this["post_filter"] as Map<String, JsonDsl>
             val (name, queryDetails) = map.entries.first()
             return ESQuery(name, queryDetails)
         }
@@ -82,15 +82,15 @@ class SortBuilder {
     operator fun String.unaryPlus() = sortFields.add(this)
     operator fun KProperty<*>.unaryPlus() = sortFields.add(this)
 
-    fun add(field: KProperty<*>, order: SortOrder = SortOrder.DESC, mode: SortMode? = null, block: (MapBackedProperties.() -> Unit)? = null) =
+    fun add(field: KProperty<*>, order: SortOrder = SortOrder.DESC, mode: SortMode? = null, block: (JsonDsl.() -> Unit)? = null) =
         add(field.name, order, mode, block)
 
     fun add(
         field: String,
         order: SortOrder,
         mode: SortMode?,
-        block: (MapBackedProperties.() -> Unit)?
-    ) = sortFields.add(MapBackedProperties().apply {
+        block: (JsonDsl.() -> Unit)?
+    ) = sortFields.add(JsonDsl().apply {
         this.put(field, create {
             this["order"] = order.name
             mode?.let {
@@ -116,7 +116,7 @@ enum class ExpandWildCards { all, open, closed, hidden, none }
 enum class SearchType { query_then_fetch, dfs_query_then_fetch }
 
 @Suppress("SpellCheckingInspection")
-class MultiSearchHeader : MapBackedProperties() {
+class MultiSearchHeader : JsonDsl() {
     var allowNoIndices by property<Boolean>()
     var ccsMinimizeRoundtrips by property<Boolean>()
     var expandWildcards by property<ExpandWildCards>()
@@ -131,18 +131,18 @@ class MultiSearchHeader : MapBackedProperties() {
     var typedKeys by property<Boolean>()
 }
 
-class MultiSearchDSL(internal val dslSerializer: DslSerializer) {
+class MultiSearchDSL(internal val jsonDslSerializer: JsonDslSerializer) {
     private val json = mutableListOf<String>()
     fun add(header: MultiSearchHeader, query: SearchDSL) {
-        json.add(dslSerializer.serialize(header))
-        json.add(dslSerializer.serialize(query))
+        json.add(jsonDslSerializer.serialize(header))
+        json.add(jsonDslSerializer.serialize(query))
     }
 
     fun add(header: MultiSearchHeader, queryBlock: SearchDSL.() -> Unit) {
         val dsl = SearchDSL()
         queryBlock.invoke(dsl)
-        json.add(dslSerializer.serialize(header))
-        json.add(dslSerializer.serialize(dsl))
+        json.add(jsonDslSerializer.serialize(header))
+        json.add(jsonDslSerializer.serialize(dsl))
     }
 
     fun header(headerBlock: MultiSearchHeader.()-> Unit) : MultiSearchHeader {

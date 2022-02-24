@@ -2,8 +2,8 @@
 
 package com.jillesvangurp.searchdsls.querydsl
 
-import com.jillesvangurp.mapbackedproperties.MapBackedProperties
-import com.jillesvangurp.mapbackedproperties.PropertyNamingConvention
+import com.jillesvangurp.jsondsl.JsonDsl
+import com.jillesvangurp.jsondsl.PropertyNamingConvention
 import kotlin.reflect.KProperty
 
 // Begin MATCH_QUERY
@@ -13,7 +13,7 @@ enum class MatchOperator { AND, OR }
 enum class ZeroTermsQuery { all, none }
 
 @SearchDSLMarker
-class MatchQueryConfig : MapBackedProperties() {
+class MatchQueryConfig : JsonDsl() {
     var query by property<String>()
     var boost by property<Double>()
     var analyzer by property<String>()
@@ -55,7 +55,7 @@ fun SearchDSL.match(
 ) = MatchQuery(field, query, block = block)
 // END MATCH_QUERY
 
-class MatchPhraseQueryConfig : MapBackedProperties() {
+class MatchPhraseQueryConfig : JsonDsl() {
     var query by property<String>()
     var boost by property<Double>()
     var analyzer by property<String>()
@@ -86,7 +86,7 @@ fun SearchDSL.matchPhrase(
     query: String, block: (MatchPhraseQueryConfig.() -> Unit)? = null
 ) = MatchPhraseQuery(field, query, block = block)
 
-class MatchBoolPrefixQueryConfig : MapBackedProperties() {
+class MatchBoolPrefixQueryConfig : JsonDsl() {
     var query by property<String>()
     var boost by property<Double>()
     var analyzer by property<String>()
@@ -122,7 +122,7 @@ fun SearchDSL.matchBoolPrefix(
     query: String, block: (MatchBoolPrefixQueryConfig.() -> Unit)? = null
 ) = MatchBoolPrefixQuery(field, query, block = block)
 
-class MatchPhrasePrefixQueryConfig : MapBackedProperties() {
+class MatchPhrasePrefixQueryConfig : JsonDsl() {
     var query by property<String>()
     var boost by property<Double>()
     var analyzer by property<String>()

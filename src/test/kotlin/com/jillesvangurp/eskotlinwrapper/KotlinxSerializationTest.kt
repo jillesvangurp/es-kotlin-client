@@ -1,6 +1,6 @@
 package com.jillesvangurp.eskotlinwrapper
 
-import com.jillesvangurp.mapbackedproperties.MapBackedProperties
+import com.jillesvangurp.jsondsl.JsonDsl
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ class KotlinxSerializationTest {
     }
 }
 
-class Foo : MapBackedProperties() {
+class Foo : JsonDsl() {
     var aString: String by property()
     var aNumber: Int by property()
     var aList: List<String> by property()

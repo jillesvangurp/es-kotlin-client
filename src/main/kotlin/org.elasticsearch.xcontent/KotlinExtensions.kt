@@ -1,12 +1,8 @@
 package org.elasticsearch.xcontent
 
 import com.jillesvangurp.mapbacked.stringify
-import com.jillesvangurp.mapbackedproperties.DslSerializer
-import com.jillesvangurp.mapbackedproperties.MapBackedProperties
-import org.elasticsearch.xcontent.ToXContent
-import org.elasticsearch.xcontent.XContentBuilder
-import org.elasticsearch.xcontent.XContentFactory
-import org.elasticsearch.xcontent.XContentType
+import com.jillesvangurp.jsondsl.JsonDslSerializer
+import com.jillesvangurp.jsondsl.JsonDsl
 import org.elasticsearch.xcontent.json.JsonXContent
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -47,8 +43,8 @@ fun ToXContent.stringify(out: OutputStream, pretty: Boolean = false) {
     builder.close()
 }
 
-class XContentDslSerializer: DslSerializer {
-    override fun serialize(properties: MapBackedProperties, pretty: Boolean): String {
+class XContentJsonDslSerializer: JsonDslSerializer {
+    override fun serialize(properties: JsonDsl, pretty: Boolean): String {
         return properties.stringify(pretty)
     }
 }

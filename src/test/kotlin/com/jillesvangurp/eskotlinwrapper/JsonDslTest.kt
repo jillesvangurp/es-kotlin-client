@@ -2,10 +2,10 @@ package com.jillesvangurp.eskotlinwrapper
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.jillesvangurp.mapbackedproperties.snakeCaseToUnderscore
+import com.jillesvangurp.jsondsl.snakeCaseToUnderscore
 import org.junit.jupiter.api.Test
 
-class MapBackedPropertiesTest {
+class JsonDslTest {
 
     @Test
     fun `should convert property names`() {

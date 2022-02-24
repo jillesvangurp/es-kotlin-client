@@ -1,18 +1,18 @@
 package com.jillesvangurp.mapbacked
 
-import com.jillesvangurp.mapbackedproperties.MapBackedProperties
+import com.jillesvangurp.jsondsl.JsonDsl
 import org.elasticsearch.xcontent.XContentBuilder
 import org.elasticsearch.xcontent.XContentFactory
 import org.elasticsearch.xcontent.writeAny
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 
-fun MapBackedProperties.toXContent(builder: XContentBuilder): XContentBuilder {
+fun JsonDsl.toXContent(builder: XContentBuilder): XContentBuilder {
     builder.writeAny(this)
     return builder
 }
 
-fun MapBackedProperties.stringify(pretty: Boolean = false): String {
+fun JsonDsl.stringify(pretty: Boolean = false): String {
     val bos = ByteArrayOutputStream()
     val builder = XContentFactory.jsonBuilder(bos)
     if (pretty) {

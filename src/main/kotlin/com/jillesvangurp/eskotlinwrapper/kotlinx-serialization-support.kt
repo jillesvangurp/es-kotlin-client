@@ -1,11 +1,11 @@
 package com.jillesvangurp.eskotlinwrapper
 
-import com.jillesvangurp.mapbackedproperties.MapBackedProperties
+import com.jillesvangurp.jsondsl.JsonDsl
 import kotlinx.serialization.json.*
 import java.time.Instant
 import kotlin.reflect.KProperty
 
-fun MapBackedProperties.asJsonObject(): JsonObject {
+fun JsonDsl.asJsonObject(): JsonObject {
     val map = this
     return buildJsonObject {
         map.entries.forEach { (field, value) ->

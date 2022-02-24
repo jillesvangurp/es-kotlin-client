@@ -1,11 +1,11 @@
 package com.jillesvangurp.eskotlinwrapper.documentation
 
-import com.jillesvangurp.eskotlinwrapper.dsl.*
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
-import kotlinx.coroutines.flow.collect
+import com.jillesvangurp.searchdsls.querydsl.bool
+import com.jillesvangurp.searchdsls.querydsl.match
+import com.jillesvangurp.searchdsls.querydsl.term
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.search.configure
-import org.elasticsearch.action.search.dsl
 import org.elasticsearch.client.asyncIndexRepository
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.indexRepository
@@ -112,15 +112,11 @@ val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllo
                 // Thing is nullable because Elasticsearch allows source to be
                 // disabled on indices.
                 sequence.forEach { (esResult, deserialized) ->
-                    if (deserialized != null) {
-                        // Use the BulkIndexingSession to index a transformed version
-                        // of the original thing
-                        index(
-                            esResult.id, deserialized.copy(amount = deserialized.amount + 1),
-                            // allow updates of existing things
-                            create = false
-                        )
-                    }
+                    index(
+                        esResult.id, deserialized.copy(amount = deserialized.amount + 1),
+                        // allow updates of existing things
+                        create = false
+                    )
                 }
             }
         }

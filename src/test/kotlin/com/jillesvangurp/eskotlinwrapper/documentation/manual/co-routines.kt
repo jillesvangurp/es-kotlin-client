@@ -5,7 +5,7 @@ package com.jillesvangurp.eskotlinwrapper.documentation.manual
 import com.jillesvangurp.eskotlinwrapper.AsyncSearchResults
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing
 import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
-import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import com.jillesvangurp.searchdsls.querydsl.matchAll
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.runBlocking

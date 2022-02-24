@@ -1,4 +1,4 @@
-package com.jillesvangurp.eskotlinwrapper.dsl
+package com.jillesvangurp.searchdsls.querydsl
 
 import kotlin.reflect.KProperty
 

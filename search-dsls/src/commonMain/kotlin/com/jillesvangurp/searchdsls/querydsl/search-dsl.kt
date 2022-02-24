@@ -1,12 +1,8 @@
 @file:Suppress("unused")
 
-package com.jillesvangurp.es.querydsl
+package com.jillesvangurp.searchdsls.querydsl
 
-import com.jillesvangurp.mapbacked.IMapBackedProperties
-import com.jillesvangurp.mapbacked.MapBackedProperties
-import com.jillesvangurp.mapbacked.MapBackedProperties.Companion.create
-import com.jillesvangurp.mapbacked.PropertyNamingConvention
-import java.util.*
+import com.jillesvangurp.mapbackedproperties.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -14,7 +10,7 @@ import kotlin.reflect.KProperty
 annotation class SearchDSLMarker
 
 @SearchDSLMarker
-open class ESQuery(val name: String, val queryDetails: MapBackedProperties = MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase)) :
+open class ESQuery(val name: String, val queryDetails: MapBackedProperties = MapBackedProperties()) :
     IMapBackedProperties by queryDetails {
 
     fun toMap(): Map<String, Any> = create { this[name] = queryDetails }
@@ -28,13 +24,13 @@ open class ESQuery(val name: String, val queryDetails: MapBackedProperties = Map
 fun MapBackedProperties.esQueryProperty(): ReadWriteProperty<Any, ESQuery> {
     return object : ReadWriteProperty<Any, ESQuery> {
         override fun getValue(thisRef: Any, property: KProperty<*>): ESQuery {
-            val map = _properties[property.name] as Map<String, MapBackedProperties>
+            val map = this@esQueryProperty[property.name] as Map<String, MapBackedProperties>
             val (name, queryDetails) = map.entries.first()
             return ESQuery(name, queryDetails)
         }
 
         override fun setValue(thisRef: Any, property: KProperty<*>, value: ESQuery) {
-            _properties[property.name] = value.toMap()
+            this@esQueryProperty[property.name] = value.toMap()
         }
     }
 }
@@ -46,7 +42,7 @@ fun customQuery(name: String, block: MapBackedProperties.() -> Unit): ESQuery {
 }
 
 @Suppress("UNCHECKED_CAST")
-class SearchDSL : MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase) {
+class SearchDSL : MapBackedProperties() {
     var from: Int by property()
     var trackTotalHits: Boolean by property()
 
@@ -94,11 +90,11 @@ class SortBuilder {
         order: SortOrder,
         mode: SortMode?,
         block: (MapBackedProperties.() -> Unit)?
-    ) = sortFields.add(create {
+    ) = sortFields.add(MapBackedProperties().apply {
         this.put(field, create {
             this["order"] = order.name
             mode?.let {
-                this["mode"] = mode.name.lowercase(Locale.getDefault())
+                this["mode"] = mode.name.lowercase()
             }
             block?.invoke(this)
         }, PropertyNamingConvention.AsIs)
@@ -120,7 +116,7 @@ enum class ExpandWildCards { all, open, closed, hidden, none }
 enum class SearchType { query_then_fetch, dfs_query_then_fetch }
 
 @Suppress("SpellCheckingInspection")
-class MultiSearchHeader : MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase) {
+class MultiSearchHeader : MapBackedProperties() {
     var allowNoIndices by property<Boolean>()
     var ccsMinimizeRoundtrips by property<Boolean>()
     var expandWildcards by property<ExpandWildCards>()
@@ -135,4 +131,43 @@ class MultiSearchHeader : MapBackedProperties(PropertyNamingConvention.ConvertTo
     var typedKeys by property<Boolean>()
 }
 
+class MultiSearchDSL(internal val dslSerializer: DslSerializer) {
+    private val json = mutableListOf<String>()
+    fun add(header: MultiSearchHeader, query: SearchDSL) {
+        json.add(dslSerializer.serialize(header))
+        json.add(dslSerializer.serialize(query))
+    }
 
+    fun add(header: MultiSearchHeader, queryBlock: SearchDSL.() -> Unit) {
+        val dsl = SearchDSL()
+        queryBlock.invoke(dsl)
+        json.add(dslSerializer.serialize(header))
+        json.add(dslSerializer.serialize(dsl))
+    }
+
+    fun header(headerBlock: MultiSearchHeader.()-> Unit) : MultiSearchHeader {
+        val header = MultiSearchHeader()
+        headerBlock.invoke(header)
+        return header
+    }
+
+    infix fun MultiSearchHeader.withQuery(queryBlock: SearchDSL.()-> Unit) {
+        val dsl = SearchDSL()
+        queryBlock.invoke(dsl)
+        add(this, dsl)
+    }
+
+    fun withQuery(queryBlock: SearchDSL.()-> Unit) {
+        val dsl = SearchDSL()
+        queryBlock.invoke(dsl)
+        add(MultiSearchHeader(), dsl)
+    }
+
+    fun requestBody(): String {
+        return json.joinToString("\n") + "\n"
+    }
+
+    override fun toString(): String {
+        return requestBody()
+    }
+}

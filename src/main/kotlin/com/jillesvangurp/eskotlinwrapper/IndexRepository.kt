@@ -1,6 +1,6 @@
 package com.jillesvangurp.eskotlinwrapper
 
-import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
+import com.jillesvangurp.searchdsls.querydsl.MultiSearchDSL
 import mu.KotlinLogging
 import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest

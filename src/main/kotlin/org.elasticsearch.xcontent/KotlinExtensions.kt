@@ -1,5 +1,8 @@
 package org.elasticsearch.xcontent
 
+import com.jillesvangurp.mapbacked.stringify
+import com.jillesvangurp.mapbackedproperties.DslSerializer
+import com.jillesvangurp.mapbackedproperties.MapBackedProperties
 import org.elasticsearch.xcontent.ToXContent
 import org.elasticsearch.xcontent.XContentBuilder
 import org.elasticsearch.xcontent.XContentFactory
@@ -42,6 +45,12 @@ fun ToXContent.stringify(out: OutputStream, pretty: Boolean = false) {
     }
     toXContent(builder, ToXContent.EMPTY_PARAMS)
     builder.close()
+}
+
+class XContentDslSerializer: DslSerializer {
+    override fun serialize(properties: MapBackedProperties, pretty: Boolean): String {
+        return properties.stringify(pretty)
+    }
 }
 
 /**

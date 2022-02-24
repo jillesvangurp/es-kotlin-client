@@ -4,7 +4,7 @@ package org.elasticsearch.client
 
 import com.jillesvangurp.eskotlinwrapper.*
 import com.jillesvangurp.eskotlinwrapper.SuspendingActionListener.Companion.suspending
-import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
+import com.jillesvangurp.searchdsls.querydsl.MultiSearchDSL
 import kotlinx.coroutines.suspendCancellableCoroutine
 import mu.KotlinLogging
 import org.apache.http.HttpHost
@@ -22,6 +22,7 @@ import org.elasticsearch.xcontent.XContentType
 import org.elasticsearch.xcontent.stringify
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext
 import org.elasticsearch.xcontent.NamedXContentRegistry
+import org.elasticsearch.xcontent.XContentDslSerializer
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
 
@@ -276,7 +277,7 @@ suspend fun RestHighLevelClient.multiSearchAsync(
 }
 
 fun RestHighLevelClient.multiSearch(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
-    val dsl = MultiSearchDSL()
+    val dsl = MultiSearchDSL(XContentDslSerializer())
     block.invoke(dsl)
     try {
         return mSearchDirect(index,dsl.requestBody(),requestOptions)
@@ -290,7 +291,7 @@ fun RestHighLevelClient.multiSearch(index: String, requestOptions: RequestOption
 }
 
 suspend fun RestHighLevelClient.multiSearchAsync(index: String, requestOptions: RequestOptions = RequestOptions.DEFAULT, block: MultiSearchDSL.() -> Unit): MultiSearchResponse {
-    val dsl = MultiSearchDSL()
+    val dsl = MultiSearchDSL(XContentDslSerializer())
     block.invoke(dsl)
     try {
         return mSearchAsyncDirect(index,dsl.requestBody(),requestOptions)

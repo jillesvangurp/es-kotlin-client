@@ -1,5 +1,6 @@
 package com.jillesvangurp.eskotlinwrapper
 
+import com.jillesvangurp.mapbackedproperties.MapBackedProperties
 import kotlinx.serialization.json.*
 import java.time.Instant
 import kotlin.reflect.KProperty

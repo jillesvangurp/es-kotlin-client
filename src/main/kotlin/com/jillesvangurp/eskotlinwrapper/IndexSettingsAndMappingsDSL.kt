@@ -2,7 +2,12 @@
 
 package com.jillesvangurp.eskotlinwrapper
 
+import com.jillesvangurp.mapbackedproperties.MapBackedProperties
+import com.jillesvangurp.mapbackedproperties.MapPropertiesDSLMarker
+import com.jillesvangurp.mapbackedproperties.*
+import com.jillesvangurp.mapbackedproperties.PropertyNamingConvention
 import org.elasticsearch.xcontent.*
+
 import org.elasticsearch.xcontent.XContentBuilder
 import java.security.MessageDigest
 import java.time.Instant
@@ -15,13 +20,13 @@ class IndexSettings : MapBackedProperties() {
     var shards: Int by property("index.number_of_shards")
 
     private fun indexObject(type: String, name: String, block: MapBackedProperties.() -> Unit) {
-        val analysis = _properties["analysis"] as MapBackedProperties? ?: MapBackedProperties()
+        val analysis = get("analysis") as MapBackedProperties? ?: MapBackedProperties()
         val objects = analysis[type] as MapBackedProperties? ?: MapBackedProperties()
         val objectProperties = MapBackedProperties()
         block.invoke(objectProperties)
         objects[name] = objectProperties
         analysis[type] = objects
-        _properties["analysis"] = analysis
+        put("analysis", analysis)
     }
 
     fun addAnalyzer(name: String, block: MapBackedProperties.() -> Unit) {
@@ -119,16 +124,16 @@ class FieldMappings : MapBackedProperties() {
     fun field(name: String, type: String, block: FieldMappingConfig.() -> Unit) {
         val mapping = FieldMappingConfig(type)
         block.invoke(mapping)
-        putNoSnakeCase(name, mapping)
+        put(name, mapping, PropertyNamingConvention.AsIs)
     }
 
-    fun stringify(pretty: Boolean = false) {
-        xContentBuilder {
+    fun stringify(pretty: Boolean = false):String {
+        return xContentBuilder {
             if (pretty) {
                 this.prettyPrint()
             }
-            writeAny(_properties)
-        }
+            writeAny(this)
+        }.stringify()
     }
 
     internal fun build(pretty: Boolean = false): XContentBuilder {
@@ -171,7 +176,7 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
         if (generateMetaFields) {
             // if it did not exist, create it.
             if (meta == null) meta = object : MapBackedProperties() {}
-            val mappingJson = xContentBuilder { writeAny(mappings) }.stringify()
+            val mappingJson = mappings?.stringify(true) ?: "{}"
             meta!!["content_hash"] =
                 Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(mappingJson.toByteArray()))
             meta!!["timestamp"] = DateTimeFormatter.ISO_INSTANT.format(Instant.now())

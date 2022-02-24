@@ -1,5 +1,6 @@
 package com.jillesvangurp.mapbacked
 
+import com.jillesvangurp.mapbackedproperties.MapBackedProperties
 import org.elasticsearch.xcontent.XContentBuilder
 import org.elasticsearch.xcontent.XContentFactory
 import org.elasticsearch.xcontent.writeAny

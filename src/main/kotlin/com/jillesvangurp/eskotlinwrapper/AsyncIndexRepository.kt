@@ -1,6 +1,6 @@
 package com.jillesvangurp.eskotlinwrapper
 
-import com.jillesvangurp.eskotlinwrapper.dsl.MultiSearchDSL
+import com.jillesvangurp.searchdsls.querydsl.MultiSearchDSL
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.elasticsearch.ElasticsearchStatusException

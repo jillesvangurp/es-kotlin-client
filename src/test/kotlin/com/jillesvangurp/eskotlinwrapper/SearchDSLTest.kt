@@ -5,10 +5,9 @@ import assertk.assertions.contains
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.jillesvangurp.eskotlinwrapper.documentation.Thing
-import com.jillesvangurp.eskotlinwrapper.dsl.*
+import com.jillesvangurp.searchdsls.querydsl.*
+import dsl.*
 import org.elasticsearch.action.search.configure
-import org.elasticsearch.action.search.dsl
 import org.junit.jupiter.api.Test
 
 class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIndex = true) {

@@ -5,9 +5,9 @@ import assertk.assertions.contains
 import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
-import com.jillesvangurp.eskotlinwrapper.dsl.SearchType
-import com.jillesvangurp.eskotlinwrapper.dsl.filterSource
-import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import com.jillesvangurp.searchdsls.querydsl.SearchType
+import com.jillesvangurp.searchdsls.querydsl.filterSource
+import com.jillesvangurp.searchdsls.querydsl.matchAll
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map

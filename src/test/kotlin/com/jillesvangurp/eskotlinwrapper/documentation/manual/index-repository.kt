@@ -9,9 +9,9 @@ import com.jillesvangurp.eskotlinwrapper.ModelReaderAndWriter
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing
 import com.jillesvangurp.eskotlinwrapper.documentation.manualPages
 import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
-import com.jillesvangurp.eskotlinwrapper.dsl.match
-import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
-import com.jillesvangurp.eskotlinwrapper.dsl.term
+import com.jillesvangurp.searchdsls.querydsl.match
+import com.jillesvangurp.searchdsls.querydsl.matchAll
+import com.jillesvangurp.searchdsls.querydsl.term
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import com.jillesvangurp.kotlin4example.mdLink
 import org.elasticsearch.ElasticsearchStatusException

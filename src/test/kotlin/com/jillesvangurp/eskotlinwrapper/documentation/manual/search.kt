@@ -3,9 +3,9 @@
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
 import com.jillesvangurp.eskotlinwrapper.documentation.*
-import com.jillesvangurp.eskotlinwrapper.dsl.SearchType
-import com.jillesvangurp.eskotlinwrapper.dsl.match
-import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import com.jillesvangurp.searchdsls.querydsl.SearchType
+import com.jillesvangurp.searchdsls.querydsl.match
+import com.jillesvangurp.searchdsls.querydsl.matchAll
 import com.jillesvangurp.kotlin4example.mdLink
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
 import org.elasticsearch.action.search.configure

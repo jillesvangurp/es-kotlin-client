@@ -1,4 +1,3 @@
-rootProject.name = "es-kotlin-client"
 
 pluginManagement {
     repositories {
@@ -7,9 +6,12 @@ pluginManagement {
 }
 
 plugins {
-    id("de.fayard.refreshVersions") version "0.23.0"
+    id("de.fayard.refreshVersions") version "0.40.1"
 }
 
 refreshVersions {
-//    extraArtifactVersionKeyRules(file("version_key_rules.txt"))
 }
+
+include(":map-backed-properties")
+include(":search-dsls")
+rootProject.name = "kt-rest"

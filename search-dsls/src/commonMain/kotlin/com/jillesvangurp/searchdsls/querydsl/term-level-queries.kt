@@ -1,15 +1,15 @@
 @file:Suppress("unused")
 
-package com.jillesvangurp.es.querydsl
+package com.jillesvangurp.searchdsls.querydsl
 
-import com.jillesvangurp.mapbacked.MapBackedProperties
-import com.jillesvangurp.mapbacked.PropertyNamingConvention
+import com.jillesvangurp.mapbackedproperties.MapBackedProperties
+import com.jillesvangurp.mapbackedproperties.PropertyNamingConvention
 import kotlin.reflect.KProperty
 
 @SearchDSLMarker
 class ExistsQuery(field: String, block: (ExistsQuery.() -> Unit)? = null) : ESQuery("exists") {
     init {
-        this.put("field", field,PropertyNamingConvention.AsIs)
+        this.put("field", field, PropertyNamingConvention.AsIs)
         block?.invoke(this)
     }
 
@@ -22,7 +22,7 @@ fun SearchDSL.exists(field: KProperty<*>, block: (ExistsQuery.() -> Unit)? = nul
 
 fun SearchDSL.exists(field: String, block: (ExistsQuery.() -> Unit)? = null) = ExistsQuery(field, block)
 
-class FuzzyQueryConfig : MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase) {
+class FuzzyQueryConfig : MapBackedProperties() {
     var boost by property<Double>()
     var value by property<String>()
     var fuzziness by property<String>()
@@ -41,7 +41,7 @@ class FuzzyQuery(
 ) :
     ESQuery("fuzzy") {
     init {
-        put(field, fuzzyQueryConfig,PropertyNamingConvention.AsIs)
+        put(field, fuzzyQueryConfig, PropertyNamingConvention.AsIs)
         fuzzyQueryConfig.value = value
         block?.invoke(fuzzyQueryConfig)
     }
@@ -68,7 +68,7 @@ fun SearchDSL.ids(
     block: (IdsQuery.() -> Unit)? = null
 ) = IdsQuery(*values,block = block)
 
-class PrefixQueryConfig : MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase) {
+class PrefixQueryConfig : MapBackedProperties() {
     var boost by property<Double>()
     var value by property<String>()
 }
@@ -81,7 +81,7 @@ class PrefixQuery(
     block: (PrefixQueryConfig.() -> Unit)? = null
 ) : ESQuery("prefix") {
     init {
-        put(field, prefixQueryConfig,PropertyNamingConvention.AsIs)
+        put(field, prefixQueryConfig, PropertyNamingConvention.AsIs)
         prefixQueryConfig.value = value
         block?.invoke(prefixQueryConfig)
     }
@@ -102,7 +102,7 @@ fun SearchDSL.prefix(
     PrefixQuery(field, value, block = block)
 
 enum class RangeRelation { INTERSECTS, CONTAINS, WITHIN }
-class RangeQueryConfig : MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase) {
+class RangeQueryConfig : MapBackedProperties() {
     var boost by property<Double>()
     var gt by property<Any>()
     var gte by property<Any>()
@@ -132,7 +132,7 @@ fun SearchDSL.range(field: String, block: RangeQueryConfig.() -> Unit) =
     RangeQuery(field, block = block)
 
 
-class RegExpQueryConfig : MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase) {
+class RegExpQueryConfig : MapBackedProperties() {
     var boost by property<Double>()
     var value by property<String>()
     var flags by property<String>()
@@ -169,7 +169,7 @@ fun SearchDSL.regExp(
     RegExpQuery(field,value, block = block)
 
 // BEGIN term-query
-class TermQueryConfig : MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase) {
+class TermQueryConfig : MapBackedProperties() {
     var value by property<String>()
     var boost by property<Double>()
 }
@@ -217,7 +217,7 @@ class TermsQuery(
     var routing by queryDetails.property<String>()
 
     init {
-        put(field, values,PropertyNamingConvention.AsIs)
+        put(field, values, PropertyNamingConvention.AsIs)
         block?.invoke(this)
     }
 }
@@ -236,7 +236,7 @@ fun SearchDSL.terms(
 ) =
     TermsQuery(field,*values, block = block)
 
-class WildCardQueryConfig : MapBackedProperties(PropertyNamingConvention.ConvertToSnakeCase) {
+class WildCardQueryConfig : MapBackedProperties() {
     var value by property<String>()
     var boost by property<Double>()
     var rewrite by property<String>()

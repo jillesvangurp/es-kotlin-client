@@ -3,8 +3,8 @@ package com.jillesvangurp.eskotlinwrapper
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
-import com.jillesvangurp.eskotlinwrapper.dsl.SearchDSL
-import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
+import com.jillesvangurp.searchdsls.querydsl.SearchDSL
+import com.jillesvangurp.searchdsls.querydsl.matchAll
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

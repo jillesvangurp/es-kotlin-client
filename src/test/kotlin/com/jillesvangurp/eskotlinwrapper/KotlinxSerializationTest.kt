@@ -1,5 +1,6 @@
 package com.jillesvangurp.eskotlinwrapper
 
+import com.jillesvangurp.mapbackedproperties.MapBackedProperties
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test

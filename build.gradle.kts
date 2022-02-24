@@ -123,6 +123,9 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation(project(":map-backed-properties"))
+    implementation(project(":search-dsls"))
+
     api(Kotlin.stdlib.jdk8)
     api("org.jetbrains.kotlin:kotlin-reflect:_")
     api(KotlinX.coroutines.jdk8)
@@ -150,8 +153,8 @@ dependencies {
     testImplementation("org.apache.logging.log4j:log4j-to-slf4j:_") // es seems to insist on log4j2
     testImplementation("ch.qos.logback:logback-classic:_")
 
-    testImplementation(Testing.junit.api)
-    testImplementation(Testing.junit.engine)
+    testImplementation(Testing.junit.jupiter.api)
+    testImplementation(Testing.junit.jupiter.engine)
 
     testImplementation(Testing.mockK)
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:_")

@@ -1,13 +1,10 @@
 package com.jillesvangurp.eskotlinwrapper.documentation.manual
 
-import com.jillesvangurp.eskotlinwrapper.MapBackedProperties
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing
 import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
-import com.jillesvangurp.eskotlinwrapper.dsl.ESQuery
-import com.jillesvangurp.eskotlinwrapper.dsl.TermQuery
-import com.jillesvangurp.eskotlinwrapper.dsl.TermQueryConfig
-import com.jillesvangurp.eskotlinwrapper.mapProps
+import com.jillesvangurp.searchdsls.querydsl.TermQuery
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
+import com.jillesvangurp.mapbackedproperties.MapBackedProperties
 
 val dslCustomizationsMd by withTestIndex<Thing, Lazy<String>> {
     sourceGitRepository.md {
@@ -81,12 +78,12 @@ val dslCustomizationsMd by withTestIndex<Thing, Lazy<String>> {
         """.trimIndent()
 
         block(runBlock = true) {
-            val aCustomObject = mapProps {
+            val aCustomObject = MapBackedProperties().apply {
                 // mixed type lists
                 this["icanhasjson"] = listOf(1,2,"4")
                 this["meaning_of_life"] = 42
-                this["nested_object"] = mapProps {
-                    this["another"] = mapProps {
+                this["nested_object"] = MapBackedProperties().apply {
+                    this["another"] = MapBackedProperties().apply {
                         this["nested_object_prop"] = 42
                     }
                     this["some more stuff"] = "you get the point"

@@ -2,6 +2,7 @@ package com.jillesvangurp.eskotlinwrapper
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.jillesvangurp.mapbackedproperties.snakeCaseToUnderscore
 import org.junit.jupiter.api.Test
 
 class MapBackedPropertiesTest {

@@ -3,10 +3,10 @@ package recipesearch
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.jillesvangurp.eskotlinwrapper.AsyncIndexRepository
-import com.jillesvangurp.eskotlinwrapper.dsl.bool
-import com.jillesvangurp.eskotlinwrapper.dsl.match
-import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
-import com.jillesvangurp.eskotlinwrapper.dsl.matchPhrase
+import com.jillesvangurp.searchdsls.querydsl.bool
+import com.jillesvangurp.searchdsls.querydsl.match
+import com.jillesvangurp.searchdsls.querydsl.matchAll
+import com.jillesvangurp.searchdsls.querydsl.matchPhrase
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
 import org.elasticsearch.action.search.configure
 import org.elasticsearch.client.configure

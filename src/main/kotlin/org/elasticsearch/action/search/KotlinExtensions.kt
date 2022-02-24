@@ -1,8 +1,7 @@
 package org.elasticsearch.action.search
 
 
-import com.jillesvangurp.eskotlinwrapper.dsl.SearchDSL
-import com.jillesvangurp.eskotlinwrapper.stringify
+import com.jillesvangurp.searchdsls.querydsl.SearchDSL
 import com.jillesvangurp.mapbacked.stringify
 import mu.KLogger
 import mu.KotlinLogging

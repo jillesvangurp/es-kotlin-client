@@ -1,7 +1,11 @@
-package com.jillesvangurp.mapbacked
+package com.jillesvangurp.mapbackedproperties
 
 import kotlin.properties.ReadWriteProperty
 
+/**
+ * Base interface for IMapBackedProperties; this allows using interface delegation on classes that
+ * can't extend MapBackedProperties class
+ */
 interface IMapBackedProperties : MutableMap<String, Any> {
     fun put(key: String, value: Any, namingConvention: PropertyNamingConvention)
 
@@ -23,4 +27,13 @@ interface IMapBackedProperties : MutableMap<String, Any> {
      * Helper to manipulate list value objects.
      */
     fun getOrCreateMutableList(key: String): MutableList<Any>
+}
+
+/**
+ * Helper function to construct a MapBackedProperties with some content.
+ */
+fun IMapBackedProperties.create(namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs, block: MapBackedProperties.() -> Unit): MapBackedProperties {
+    val mapBackedProperties = MapBackedProperties(namingConvention = namingConvention)
+    block.invoke(mapBackedProperties)
+    return mapBackedProperties
 }

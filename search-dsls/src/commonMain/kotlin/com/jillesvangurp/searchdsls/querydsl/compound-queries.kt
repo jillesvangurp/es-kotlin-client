@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package com.jillesvangurp.es.querydsl
+package com.jillesvangurp.searchdsls.querydsl
 
 @SearchDSLMarker
 class BoolQuery : ESQuery(name = "bool") {

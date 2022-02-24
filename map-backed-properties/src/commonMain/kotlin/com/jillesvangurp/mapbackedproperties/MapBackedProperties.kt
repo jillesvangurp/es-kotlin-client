@@ -1,4 +1,4 @@
-package com.jillesvangurp.mapbacked
+package com.jillesvangurp.mapbackedproperties
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -32,6 +32,7 @@ open class MapBackedProperties(
     internal val namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs,
     internal val _properties: MutableMap<String, Any> = mutableMapOf(),
 ) : MutableMap<String, Any> by _properties, IMapBackedProperties {
+
 
     override fun get(key: String) = _properties[key.snakeCaseToUnderscore()]
 
@@ -88,19 +89,10 @@ open class MapBackedProperties(
         return this[key] as MutableList<Any>
     }
 
+
+
     override fun toString(): String {
         return _properties.toString()
-    }
-
-    companion object {
-        /**
-         * Helper function to construct a MapBackedProperties with some content.
-         */
-        fun create(namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs, block: MapBackedProperties.() -> Unit): MapBackedProperties {
-            val mapBackedProperties = MapBackedProperties(namingConvention = namingConvention)
-            block.invoke(mapBackedProperties)
-            return mapBackedProperties
-        }
     }
 }
 

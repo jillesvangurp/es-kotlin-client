@@ -3,9 +3,10 @@ package com.jillesvangurp.eskotlinwrapper.documentation.manual
 import com.jillesvangurp.eskotlinwrapper.documentation.Thing
 import com.jillesvangurp.eskotlinwrapper.documentation.manualPages
 import com.jillesvangurp.eskotlinwrapper.documentation.sourceGitRepository
-import com.jillesvangurp.eskotlinwrapper.dsl.*
-import com.jillesvangurp.eskotlinwrapper.mapProps
 import com.jillesvangurp.eskotlinwrapper.withTestIndex
+import com.jillesvangurp.searchdsls.querydsl.bool
+import com.jillesvangurp.searchdsls.querydsl.match
+import com.jillesvangurp.searchdsls.querydsl.matchPhrase
 import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.index.query.QueryBuilders.boolQuery

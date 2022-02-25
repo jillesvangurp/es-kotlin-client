@@ -3,7 +3,7 @@
 package com.jillesvangurp.eskotlinwrapper
 
 import com.jillesvangurp.jsondsl.JsonDsl
-import com.jillesvangurp.jsondsl.MapPropertiesDSLMarker
+import com.jillesvangurp.jsondsl.JsonDSL
 import com.jillesvangurp.jsondsl.PropertyNamingConvention
 import org.elasticsearch.xcontent.*
 
@@ -13,7 +13,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@MapPropertiesDSLMarker
+@JsonDSL
 class IndexSettings : JsonDsl() {
     var replicas: Int by property("index.number_of_replicas")
     var shards: Int by property("index.number_of_shards")
@@ -45,7 +45,7 @@ class IndexSettings : JsonDsl() {
     }
 }
 
-@MapPropertiesDSLMarker
+@JsonDSL
 class FieldMappingConfig(typeName: String) : JsonDsl() {
     var type: String by property()
     var boost by property<Double>()
@@ -68,7 +68,7 @@ class FieldMappingConfig(typeName: String) : JsonDsl() {
     }
 }
 
-@MapPropertiesDSLMarker
+@JsonDSL
 class FieldMappings : JsonDsl() {
     fun text(name: String) = field(name, "text") {}
     fun text(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "text", block)

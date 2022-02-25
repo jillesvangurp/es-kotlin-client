@@ -31,7 +31,7 @@ fun String.convertPropertyName(namingConvention: PropertyNamingConvention):Strin
 open class JsonDsl(
     private val namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs,
     internal val _properties: MutableMap<String, Any> = mutableMapOf(),
-) : MutableMap<String, Any> by _properties, IMapBackedProperties {
+) : MutableMap<String, Any> by _properties, IJsonDsl {
     override val defaultNamingConvention: PropertyNamingConvention = namingConvention
 
     override fun get(key: String) = _properties[key.snakeCaseToUnderscore()]
@@ -89,11 +89,10 @@ open class JsonDsl(
         return this[key] as MutableList<Any>
     }
 
+}
 
-
-    override fun toString(): String {
-        return _properties.toString()
-    }
+fun JsonDsl.json(pretty: Boolean=false): String {
+    return SimpleSerializer().serialize(this,pretty)
 }
 
 fun withJsonDsl(namingConvention: PropertyNamingConvention = PropertyNamingConvention.AsIs, block: JsonDsl.() -> Unit) = JsonDsl(namingConvention=namingConvention).apply {

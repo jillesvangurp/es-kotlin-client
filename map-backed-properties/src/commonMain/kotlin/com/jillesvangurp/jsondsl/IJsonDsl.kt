@@ -6,7 +6,7 @@ import kotlin.properties.ReadWriteProperty
  * Base interface for IMapBackedProperties; this allows using interface delegation on classes that
  * can't extend MapBackedProperties class
  */
-interface IMapBackedProperties : MutableMap<String, Any> {
+interface IJsonDsl : MutableMap<String, Any> {
     val defaultNamingConvention: PropertyNamingConvention
     fun put(key: String, value: Any, namingConvention: PropertyNamingConvention=defaultNamingConvention)
 
@@ -34,7 +34,7 @@ interface IMapBackedProperties : MutableMap<String, Any> {
 /**
  * Helper function to construct a MapBackedProperties with some content.
  */
-fun IMapBackedProperties.dslObject(namingConvention: PropertyNamingConvention = defaultNamingConvention, block: JsonDsl.() -> Unit): JsonDsl {
+fun IJsonDsl.dslObject(namingConvention: PropertyNamingConvention = defaultNamingConvention, block: JsonDsl.() -> Unit): JsonDsl {
     val jsonDsl = JsonDsl(namingConvention = namingConvention)
     block.invoke(jsonDsl)
     return jsonDsl

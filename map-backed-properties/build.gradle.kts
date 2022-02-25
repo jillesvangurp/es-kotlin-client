@@ -1,4 +1,6 @@
 import de.fayard.refreshVersions.core.versionFor
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.*
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
     kotlin("multiplatform")
@@ -82,6 +84,42 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    testLogging.exceptionFormat = FULL
+    testLogging.events = setOf(
+        FAILED,
+        PASSED,
+        SKIPPED,
+        STANDARD_ERROR,
+        STANDARD_OUT
+    )
+    addTestListener(object: TestListener {
+        val failures = mutableListOf<String>()
+        override fun beforeSuite(desc: TestDescriptor) {
+        }
+
+        override fun afterSuite(desc: TestDescriptor, result: TestResult) {
+        }
+
+        override fun beforeTest(desc: TestDescriptor) {
+        }
+
+        override fun afterTest(desc: TestDescriptor, result: TestResult) {
+            if(result.resultType == TestResult.ResultType.FAILURE) {
+                val report =
+                    """
+                    TESTFAILURE ${desc.className} - ${desc.name}
+                    ${result.exception?.let { e->
+                        """
+                            ${e::class.simpleName} ${e.message}                            
+                        """.trimIndent()
+                    }}
+                    -----------------
+                    """.trimIndent()
+                failures.add(report)
+            }
+        }
+    })
+
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {

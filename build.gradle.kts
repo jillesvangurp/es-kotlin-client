@@ -123,7 +123,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    implementation(project(":map-backed-properties"))
+    implementation(project(":json-dsl"))
     implementation(project(":search-dsls"))
 
     api(Kotlin.stdlib.jdk8)

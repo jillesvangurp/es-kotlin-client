@@ -40,7 +40,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":map-backed-properties"))
+                implementation(project(":json-dsl"))
                 implementation(kotlin("stdlib-common", "_"))
 
             }

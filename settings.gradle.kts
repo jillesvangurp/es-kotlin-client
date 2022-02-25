@@ -12,6 +12,6 @@ plugins {
 refreshVersions {
 }
 
-include(":map-backed-properties")
+include(":json-dsl")
 include(":search-dsls")
 rootProject.name = "kt-rest"

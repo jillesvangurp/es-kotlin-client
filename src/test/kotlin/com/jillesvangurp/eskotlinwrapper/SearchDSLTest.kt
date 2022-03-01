@@ -6,7 +6,6 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jillesvangurp.searchdsls.querydsl.*
-import dsl.*
 import org.elasticsearch.action.search.configure
 import org.junit.jupiter.api.Test
 

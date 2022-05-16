@@ -161,7 +161,8 @@ val queryDslMd by withTestIndex<Thing, Lazy<String>> {
             this is the implementation of the match we use above: 
         """
 
-        snippetFromSourceFile("src/main/kotlin/com/jillesvangurp/eskotlinwrapper/dsl/full-text-queries.kt", "MATCH_QUERY", wrap = true)
+        // FIXME file moved
+//        snippetFromSourceFile("src/main/kotlin/com/jillesvangurp/eskotlinwrapper/dsl/full-text-queries.kt", "MATCH_QUERY", wrap = true)
 
         +"""
             For more information on how to extend the DSL read ${com.jillesvangurp.eskotlinwrapper.documentation.mdLink(manualPages["dslCustomization"])}

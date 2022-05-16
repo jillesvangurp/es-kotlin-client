@@ -24,42 +24,6 @@ Simply extending this class makes it possible to define class properties that de
 
 As an example, here is the implementation of the TermQuery in our library:
 
-```kotlin
-class TermQueryConfig : MapBackedProperties() {
-  var value by property<String>()
-  var boost by property<Double>()
-}
-
-@SearchDSLMarker
-class TermQuery(
-  field: String,
-  value: String,
-  termQueryConfig: TermQueryConfig = TermQueryConfig(),
-  block: (TermQueryConfig.() -> Unit)? = null
-) : ESQuery("term") {
-
-  init {
-    putNoSnakeCase(field, termQueryConfig)
-    termQueryConfig.value = value
-    block?.invoke(termQueryConfig)
-  }
-}
-
-fun SearchDSL.term(
-  field: KProperty<*>,
-  value: String,
-  block: (TermQueryConfig.() -> Unit)? = null
-) =
-  TermQuery(field.name,value, block = block)
-
-fun SearchDSL.term(
-  field: String,
-  value: String,
-  block: (TermQueryConfig.() -> Unit)? = null
-) =
-  TermQuery(field,value, block = block)
-```
-
 `TermQuery` extends a base class called `ESQuery`, which in turn is a MapBackedProperties with a single field (the query name) mapped to another `MapBackedProperties` (the query details). From there on it is pretty straightforward: TermQuery has two constructor parameters: `field` and `value`. field is used as the key to yet another `MapBackedProperties` object with the `TermConfiguration` which in this case contains things like the value and the boost.
 
 Finally, note that we added a `SearchDSL.term` extension function this makes it easy to find supported queries via autocomplete in your IDE. And of course you can add your own extension functions as well.
@@ -75,14 +39,7 @@ println(termQuery.toString())
 Captured Output:
 
 ```
-{
-  "term" : {
-  "myField" : {
-    "value" : "someValue",
-    "boost" : 10.0
-  }
-  }
-}
+com.jillesvangurp.jsondsl.JsonDsl@5f5c187d
 
 ```
 
@@ -109,15 +66,7 @@ println(termQuery)
 Captured Output:
 
 ```
-{
-  "term" : {
-  "myField" : {
-    "value" : "someValue",
-    "boost" : 2.0,
-    "foo" : "bar"
-  }
-  }
-}
+com.jillesvangurp.jsondsl.JsonDsl@37d6dddc
 
 ```
 
@@ -128,12 +77,12 @@ Obviously, Elasticsearch would reject this query with a bad request because ther
 You can construct arbitrary json pretty easily. If you want to create a json object, you can use `mapProps`
 
 ```kotlin
-val aCustomObject = mapProps {
+val aCustomObject = withJsonDsl {
   // mixed type lists
   this["icanhasjson"] = listOf(1,2,"4")
   this["meaning_of_life"] = 42
-  this["nested_object"] = mapProps {
-    this["another"] = mapProps {
+  this["nested_object"] = dslObject {
+    this["another"] = dslObject {
       this["nested_object_prop"] = 42
     }
     this["some more stuff"] = "you get the point"
@@ -146,20 +95,7 @@ println(aCustomObject)
 Captured Output:
 
 ```
-{
-  "icanhasjson" : [
-  1,
-  2,
-  "4"
-  ],
-  "meaning_of_life" : 42,
-  "nested_object" : {
-  "another" : {
-    "nested_object_prop" : 42
-  },
-  "some more stuff" : "you get the point"
-  }
-}
+com.jillesvangurp.jsondsl.JsonDsl@4bdb04c8
 
 ```
 

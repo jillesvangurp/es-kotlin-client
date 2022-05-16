@@ -32,7 +32,8 @@ val dslCustomizationsMd by withTestIndex<Thing, Lazy<String>> {
               
         """.trimIndent()
 
-        snippetFromSourceFile("src/main/kotlin/com/jillesvangurp/eskotlinwrapper/dsl/term-level-queries.kt","term-query")
+        // FIXME file moved
+//        snippetFromSourceFile("src/main/kotlin/com/jillesvangurp/eskotlinwrapper/dsl/term-level-queries.kt","term-query")
 
         +"""
             `TermQuery` extends a base class called `ESQuery`, which in turn is a MapBackedProperties with a single field (the query name) mapped to another `MapBackedProperties` (the query details). From there on it is pretty straightforward: TermQuery has two constructor parameters: `field` and `value`. field is used as the key to yet another `MapBackedProperties` object with the `TermConfiguration` which in this case contains things like the value and the boost.

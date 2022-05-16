@@ -22,7 +22,8 @@ import org.elasticsearch.index.query.QueryBuilders.matchAllQuery
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.junit.jupiter.api.Test
 
-class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
+class
+SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
 
     @Test
     fun `lets query some things`() {

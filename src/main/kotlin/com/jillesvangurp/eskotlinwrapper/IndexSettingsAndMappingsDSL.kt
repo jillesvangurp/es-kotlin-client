@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 @JsonDSL
-class IndexSettings : JsonDsl() {
+class IndexSettings : JsonDsl(namingConvention = PropertyNamingConvention.ConvertToSnakeCase) {
     var replicas: Int by property("index.number_of_replicas")
     var shards: Int by property("index.number_of_shards")
 
@@ -46,7 +46,7 @@ class IndexSettings : JsonDsl() {
 }
 
 @JsonDSL
-class FieldMappingConfig(typeName: String) : JsonDsl() {
+class FieldMappingConfig(typeName: String) : JsonDsl(namingConvention = PropertyNamingConvention.ConvertToSnakeCase) {
     var type: String by property()
     var boost by property<Double>()
     var docValues by property<Boolean>()
@@ -69,7 +69,7 @@ class FieldMappingConfig(typeName: String) : JsonDsl() {
 }
 
 @JsonDSL
-class FieldMappings : JsonDsl() {
+class FieldMappings : JsonDsl(namingConvention = PropertyNamingConvention.ConvertToSnakeCase) {
     fun text(name: String) = field(name, "text") {}
     fun text(name: String, block: FieldMappingConfig.() -> Unit) = field(name, "text", block)
     fun keyword(name: String) = field(name, "keyword") {}

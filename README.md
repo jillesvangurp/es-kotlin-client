@@ -175,15 +175,11 @@ thingRepository.bulk {
   // Thing is nullable because Elasticsearch allows source to be
   // disabled on indices.
   sequence.forEach { (esResult, deserialized) ->
-    if (deserialized != null) {
-      // Use the BulkIndexingSession to index a transformed version
-      // of the original thing
-      index(
-        esResult.id, deserialized.copy(amount = deserialized.amount + 1),
-        // allow updates of existing things
-        create = false
-      )
-    }
+    index(
+      esResult.id, deserialized.copy(amount = deserialized.amount + 1),
+      // allow updates of existing things
+      create = false
+    )
   }
 }
 ```

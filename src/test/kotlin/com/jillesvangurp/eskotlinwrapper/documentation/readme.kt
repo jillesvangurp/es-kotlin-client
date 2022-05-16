@@ -12,6 +12,23 @@ import org.elasticsearch.client.indexRepository
 
 val readmeMd by withTestIndex<Thing, Lazy<String>>(index = "manual", refreshAllowed = true, createIndex = false) {
     sourceGitRepository.md {
+        +"""
+            This is the 1.x branch of this project. It's currently no longer supported but should still work well with
+             Elasticsearch 7.x. Barring any emergency fixes for things that are broken, there will be no further 
+             updates on this branch.
+             
+             The main development of this project on the master branch is related to version 2.x and beyond. Key changes 
+             in that version relative to 1.x:
+             
+             - kotlin multiplatform support
+             - The Elastics RestHighLevelClient has been deprecated and is no longer needed for the kotlin client
+             - Support Opensearch, and Elasticsearch 7 & 8.
+             - Much more.
+             
+             If you are using 1.x, you should consider migrating to 2.x as soon as you can. I've made some nice changes 
+             in that version. Mostly, updating should be relatively straightforward. However, there are some API 
+             breaking changes. 
+        """.trimIndent()
 
         includeMdFile("readme-introduction.md")
         +"""            

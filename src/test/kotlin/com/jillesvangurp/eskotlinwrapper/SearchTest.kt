@@ -169,7 +169,6 @@ SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
                 { "query":{ "match_all": {}}}
                 
             """.trimIndent())
-            assertThat(response.took).isGreaterThan(0)
             assertThat(response.responses.size).isEqualTo(2)
         }
     }

@@ -89,6 +89,10 @@ open class JsonDsl(
         return this[key] as MutableList<Any>
     }
 
+    override fun toString(): String {
+        return this.json(pretty = true)
+    }
+
 }
 
 fun JsonDsl.json(pretty: Boolean=false): String {

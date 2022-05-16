@@ -39,7 +39,14 @@ println(termQuery.toString())
 Captured Output:
 
 ```
-com.jillesvangurp.jsondsl.JsonDsl@5f5c187d
+{
+  "term": {
+  "myField": {
+    "value": "someValue",
+    "boost": 10.0
+  }
+  }
+}
 
 ```
 
@@ -66,7 +73,15 @@ println(termQuery)
 Captured Output:
 
 ```
-com.jillesvangurp.jsondsl.JsonDsl@37d6dddc
+{
+  "term": {
+  "myField": {
+    "value": "someValue",
+    "boost": 2.0,
+    "foo": "bar"
+  }
+  }
+}
 
 ```
 
@@ -95,7 +110,20 @@ println(aCustomObject)
 Captured Output:
 
 ```
-com.jillesvangurp.jsondsl.JsonDsl@4bdb04c8
+{
+  "icanhasjson": [
+  1, 
+  2, 
+  "4"
+  ],
+  "meaning_of_life": 42,
+  "nested_object": {
+  "another": {
+    "nested_object_prop": 42
+  },
+  "some more stuff": "you get the point"
+  }
+}
 
 ```
 

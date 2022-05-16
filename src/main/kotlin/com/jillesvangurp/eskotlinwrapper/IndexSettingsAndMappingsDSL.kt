@@ -5,6 +5,7 @@ package com.jillesvangurp.eskotlinwrapper
 import com.jillesvangurp.jsondsl.JsonDsl
 import com.jillesvangurp.jsondsl.JsonDSL
 import com.jillesvangurp.jsondsl.PropertyNamingConvention
+import com.jillesvangurp.jsondsl.json
 import org.elasticsearch.xcontent.*
 
 import org.elasticsearch.xcontent.XContentBuilder
@@ -175,7 +176,7 @@ class IndexSettingsAndMappingsDSL private constructor(private val generateMetaFi
         if (generateMetaFields) {
             // if it did not exist, create it.
             if (meta == null) meta = object : JsonDsl() {}
-            val mappingJson = mappings?.stringify(true) ?: "{}"
+            val mappingJson = mappings?.json(true) ?: "{}"
             meta!!["content_hash"] =
                 Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(mappingJson.toByteArray()))
             meta!!["timestamp"] = DateTimeFormatter.ISO_INSTANT.format(Instant.now())

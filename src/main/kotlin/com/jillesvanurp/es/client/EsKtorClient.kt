@@ -2,8 +2,6 @@ package com.jillesvanurp.es.client
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.logging.*
-import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.content.*
@@ -27,12 +25,6 @@ fun createHttpClient(logging: Boolean): HttpClient {
                 connectTimeout = 5_000
                 requestTimeout = 30_000
                 connectAttempts = 3
-            }
-        }
-        install(WebSockets)
-        if (logging) {
-            install(Logging) {
-                level = LogLevel.ALL
             }
         }
     }
@@ -73,7 +65,7 @@ class RestClient(
         contentType: ContentType = ContentType.Application.Json,
     ): RestResponse {
 
-        val response = client.request<HttpResponse> {
+        val response = client.request {
             val node = nextNode()
             method = httpMethod
             url {
@@ -81,18 +73,19 @@ class RestClient(
                 port = node.port
                 user = this@RestClient.user
                 password = this@RestClient.password
-                path(pathComponents)
+                path("/${pathComponents.joinToString("/")}")
                 if (!parameters.isNullOrEmpty()) {
                     parameters.entries.forEach { (key, value) ->
                         parameter(key, value)
                     }
                 }
-            }
-            if (payload != null) {
-                body = TextContent(payload, contentType = contentType)
+                if (payload != null) {
+                    setBody(TextContent(payload, contentType = contentType))
+                }
+
             }
         }
-        
+
         val responseBody = response.readBytes()
         return when (response.status) {
             HttpStatusCode.OK -> RestResponse.Status2XX.OK(responseBody)

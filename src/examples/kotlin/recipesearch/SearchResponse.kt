@@ -1,7 +1,6 @@
 package recipesearch
 
 import com.jillesvangurp.eskotlinwrapper.AsyncSearchResults
-import kotlinx.coroutines.flow.collect
 
 // BEGIN search_response
 data class SearchResponse<T : Any>(val totalHits: Long, val items: List<T>)

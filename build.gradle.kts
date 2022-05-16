@@ -137,6 +137,8 @@ dependencies {
     implementation(Ktor.client.logging)
     implementation(Ktor.client.serialization)
     implementation("io.ktor:ktor-client-logging-jvm:_")
+    implementation("io.ktor:ktor-server-content-negotiation:_")
+    implementation("io.ktor:ktor-serialization-jackson:_")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:_")
     implementation("com.fasterxml.jackson.core:jackson-annotations:_")
@@ -162,7 +164,6 @@ dependencies {
 
     examplesImplementation(Ktor.server.netty)
     examplesImplementation(Ktor.server.core)
-    examplesImplementation(Ktor.features.jackson)
 
     examplesImplementation("org.slf4j:slf4j-api:_")
     examplesImplementation("org.slf4j:jcl-over-slf4j:_")

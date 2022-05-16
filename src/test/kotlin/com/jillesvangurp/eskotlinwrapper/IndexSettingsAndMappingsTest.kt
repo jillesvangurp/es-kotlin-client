@@ -6,7 +6,7 @@ import com.jillesvangurp.eskotlinwrapper.IndexSettingsAndMappingsDSL.Companion.i
 import org.elasticsearch.xcontent.stringify
 import org.junit.jupiter.api.Test
 
-class IndexSettingsAndMappingsKtTest {
+class IndexSettingsAndMappingsTest {
 
     @Test
     fun `should create simple mapping`() {

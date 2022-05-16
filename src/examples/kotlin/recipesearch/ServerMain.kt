@@ -2,24 +2,15 @@ package recipesearch
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.jillesvangurp.eskotlinwrapper.JacksonModelReaderAndWriter
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.DataConversion
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.JacksonConverter
-import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.routing.delete
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.routing
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.netty.NettyApplicationEngine
+import io.ktor.http.*
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elasticsearch.client.asyncIndexRepository
@@ -40,7 +31,7 @@ suspend fun main(vararg args: String) {
     esClient.use {
         val customSerde = JacksonModelReaderAndWriter(Recipe::class, objectMapper)
         val recipeRepository =
-            esClient.asyncIndexRepository<Recipe>(
+            esClient.asyncIndexRepository(
                 index = "recipes",
                 // we override the default because we want to reuse the objectMapper
                 // and reuse our snake case setup
@@ -71,7 +62,6 @@ private fun createServer(
 ): NettyApplicationEngine {
     return embeddedServer(Netty, port = 8080) {
         // this will allow us to serialize data objects to json
-        install(DataConversion)
         install(ContentNegotiation) {
             // lets reuse our mapper for this
             register(ContentType.Application.Json, JacksonConverter(objectMapper))

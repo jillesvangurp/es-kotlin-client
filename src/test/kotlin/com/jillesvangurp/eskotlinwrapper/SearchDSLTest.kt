@@ -57,7 +57,6 @@ class SearchDSLTest : AbstractElasticSearchTest(indexPrefix = "search", createIn
         testQuery {
             query = MatchQuery("title", "foo bar") {
                 operator = MatchOperator.AND
-                zeroTermsQuery = ZeroTermsQuery.none
             }
         }
     }

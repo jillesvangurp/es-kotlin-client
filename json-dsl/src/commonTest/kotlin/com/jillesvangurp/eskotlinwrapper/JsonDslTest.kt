@@ -28,10 +28,10 @@ class JsonDslTest {
         val myDsl = MyDsl().apply {
             foo = "Hello\tWorld"
             meaningOfLife = 42
-            l = listOf("1", 2, 3.0)
+            l = listOf("1", 2, 3)
             m = mapOf(42 to "fortytwo")
         }
-        myDsl.json() shouldBe "{\"foo\":\"Hello\\tWorld\",\"meaning_of_life\":42,\"a_custom_list\":[\"1\",2,3.0],\"m\":{\"42\":\"fortytwo\"}}"
+        myDsl.json() shouldBe "{\"foo\":\"Hello\\tWorld\",\"meaning_of_life\":42,\"a_custom_list\":[\"1\",2,3],\"m\":{\"42\":\"fortytwo\"}}"
         myDsl.json(pretty = true) shouldBe
             """
             {
@@ -40,13 +40,11 @@ class JsonDslTest {
               "a_custom_list": [
                 "1", 
                 2, 
-                3.0
+                3
               ],
               "m": {
                 "42": "fortytwo"
               }
             }""".trimIndent()
-
-
     }
 }

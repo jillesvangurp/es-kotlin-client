@@ -12,11 +12,6 @@ import org.elasticsearch.action.search.configure
 import org.elasticsearch.client.configure
 import org.elasticsearch.client.healthAsync
 import org.elasticsearch.cluster.health.ClusterHealthStatus
-import org.elasticsearch.index.query.QueryBuilders.boolQuery
-import org.elasticsearch.index.query.QueryBuilders.matchAllQuery
-import org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery
-import org.elasticsearch.index.query.QueryBuilders.matchQuery
-import org.elasticsearch.search.builder.SearchSourceBuilder.searchSource
 import java.io.File
 
 class RecipeSearch(

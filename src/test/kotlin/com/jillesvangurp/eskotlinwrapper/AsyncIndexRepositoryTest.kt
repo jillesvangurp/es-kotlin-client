@@ -3,6 +3,7 @@ package com.jillesvangurp.eskotlinwrapper
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
+import com.jillesvangurp.jsondsl.json
 import com.jillesvangurp.searchdsls.querydsl.SearchDSL
 import com.jillesvangurp.searchdsls.querydsl.matchAll
 import kotlinx.coroutines.Deferred
@@ -110,7 +111,7 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
     }
 
     @Test
-    fun `asyn raw json test`() {
+    fun `async raw json test`() {
         runBlocking {
             repository.bulk {
                 (1..10).forEach {
@@ -120,7 +121,7 @@ class AsyncIndexRepositoryTest : AbstractAsyncElasticSearchTest(indexPrefix = "c
             repository.refresh()
             val results = repository.jsonSearch(SearchDSL().apply {
                 query = matchAll()
-            }.toString())
+            }.json())
             assertThat(results.total).isEqualTo(10)
         }
     }

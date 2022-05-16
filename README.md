@@ -3,6 +3,35 @@
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
+## Upcoming Version 2.0 release
+
+**May 16th 2022**
+
+I'm working on a version 2.0 of this library. A lot of things happened recently:
+
+- The Opensearch fork happened last year. Like everyone, I'm dealing with people that use that instead of Elasticsearch. So, I have a need to be able to cover both with 1 library.
+- Elasticsearch 8 was released some time ago. It's largely backwards compatible. But it's a major version nonetheless and of course all of the new stuff is Elasticsearch only.
+- The RestHighLevel client that this project depends on was 1) deprecated 2) cannot be used with OpenSearch in recent versions. The replacement library is Elasticsearch only. 
+- Kotlin Multiplatform is happening. 
+
+As a consequence, version 2.0 of this project will try to preserve the essential and popular features of this project (DSL support, co-routine support, repositories, bulk indexing, etc.) but it will rebuild them on top of a kotlin multiplatform basis.
+
+Specifically:
+
+- All dependencies on the Elastic client will be removed. You may still use them in your onw project and I plan to make it possible to use the Opensearch or Elasticsearch rest client as one of several ways to do http connectivity. That way if you use either of those, adding the kotlin client should be easy.
+- For Json serialization and parsing, the client will continue to provide multiple options. The default will likely be kotlinx.serialization. But you should be able to continue to use jackson, gson, etc.
+- Some of the Elastic specific extension functions may live on in a separate library. Depending on interest and needs of users.
+- Version 2.0 will no longer need the code generation plugin we used to add asynchronous, suspend functions for the RestHighLevel client API. So that project is as of now end of life and will no longer receive any updates.
+- Going forward, all APIs will be non blocking / suspend only. It makes no sense to support blocking IO with modern Kotlin.
+
+Work for this is ongoing on the `search-client-2.0` branch. There will likely be lots of API changes. I expect this project will stabilize over the next few weeks.
+
+Barring any emergencies, I won't provide new releases of the 1.x branch. The latest 1.x version should be fine with most recent versions of Elasticsearch. If people want to fork and fix, that's fine with me but I'm not looking to merge pull requests for 1.x related fixes. 
+
+As soon as the 2.0 branch stabilizes, I will merge it to master. 1.x has already been branched to its own branch.
+
+## Version 1.x README
+
 The Es Kotlin Client provides a friendly Kotlin API on top of the official Elastic Java client.
 Elastic's [`HighLevelRestClient`](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/master/java-rest-high.html) is written in Java and provides access to essentially everything in the REST API that Elasticsearch exposes. This API provides access to the oss and x-pack features. Unfortunately, the Java client is not the easiest thing to work with directly and it also poorly matches idiomatic Kotlin.
 

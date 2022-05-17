@@ -14,4 +14,5 @@ refreshVersions {
 
 include(":json-dsl")
 include(":search-dsls")
+include("search-client")
 rootProject.name = "kt-rest"

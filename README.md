@@ -3,7 +3,11 @@
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
-## Upcoming Version 2.0 release
+**May 16th 2022**
+
+**es-kotlin-client** becomes [kt-search](https://github.com/jillesvangurp/kt-search)
+
+Due to the many compatibility breaking changes, I've moved the work on the 2.0 version of this client to a new repository. Kt-search better reflects that this client will work with both Opensearch and Elasticsearch.
 
 **May 16th 2022**
 
@@ -29,6 +33,8 @@ Work for this is ongoing on the `search-client-2.0` branch. There will likely be
 Barring any emergencies, I won't provide new releases of the 1.x branch. The latest 1.x version should be fine with most recent versions of Elasticsearch. If people want to fork and fix, that's fine with me but I'm not looking to merge pull requests for 1.x related fixes. 
 
 As soon as the 2.0 branch stabilizes, I will merge it to master. 1.x has already been branched to its own branch.
+
+<hr>
 
 ## Version 1.x README
 

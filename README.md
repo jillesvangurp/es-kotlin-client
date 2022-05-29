@@ -3,7 +3,7 @@
 [![](https://jitpack.io/v/jillesvangurp/es-kotlin-client.svg)](https://jitpack.io/#jillesvangurp/es-kotlin-client)
 [![Actions Status](https://github.com/jillesvangurp/es-kotlin-wrapper-client/workflows/CI-gradle-build/badge.svg)](https://github.com/jillesvangurp/es-kotlin-wrapper-client/actions)
 
-**May 16th 2022**
+**29 May 2022**
 
 **es-kotlin-client** becomes [kt-search](https://github.com/jillesvangurp/kt-search)
 
@@ -31,7 +31,7 @@ Additionally:
 
 Development work is ongoing but the client is already usable. I'll update this page with more info once a 2.0 stabilizes and we can freeze the APIs.
 
-**May 16th 2022**
+**16 May 2022**
 
 I'm working on a version 2.0 of this library. A lot of things happened recently:
 

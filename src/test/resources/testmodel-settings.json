@@ -18,6 +18,17 @@
       },
       "number": {
         "type": "double"
+      },
+      "people": {
+        "type": "nested",
+        "properties": {
+          "gender": {
+            "type": "keyword"
+          },
+          "percentage": {
+            "type": "double"
+          }
+        }
       }
     }
   }

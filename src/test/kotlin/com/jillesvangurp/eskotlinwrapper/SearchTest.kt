@@ -6,15 +6,17 @@ import assertk.assertions.endsWith
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import com.jillesvangurp.eskotlinwrapper.dsl.SearchType
-import com.jillesvangurp.eskotlinwrapper.dsl.filterSource
+import com.jillesvangurp.eskotlinwrapper.dsl.bool
 import com.jillesvangurp.eskotlinwrapper.dsl.matchAll
-import kotlinx.coroutines.flow.count
+import com.jillesvangurp.eskotlinwrapper.dsl.nested
+import com.jillesvangurp.eskotlinwrapper.dsl.range
+import com.jillesvangurp.eskotlinwrapper.dsl.term
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.runBlocking
 import org.elasticsearch.action.search.configure
 import org.elasticsearch.action.search.source
-import org.elasticsearch.client.multiSearchAsync
 import org.elasticsearch.core.TimeValue
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MatchQueryBuilder
@@ -207,6 +209,41 @@ class SearchTest : AbstractElasticSearchTest(indexPrefix = "search") {
             }.first()
 
             assertThat(msg).isEqualTo("foo bar")
+        }
+    }
+
+    @Test
+    fun `should found right people by nested query`() {
+        runBlocking {
+            asyncRepository.index("1", TestModel("foo bar", "tt", 42.0, listOf(
+                PeopleModel("MALE", 10), PeopleModel("FEMALE", 30), PeopleModel("UNKNOWN", 60),
+            )))
+            asyncRepository.index("2", TestModel("bar bar", "tt", 43.0, listOf(
+                PeopleModel("MALE", 0), PeopleModel("FEMALE", 100), PeopleModel("UNKNOWN", 0),
+            )))
+            asyncRepository.index("3", TestModel("foo foo", "tt", 34.0, listOf(
+                PeopleModel("MALE", 50), PeopleModel("FEMALE", 50), PeopleModel("UNKNOWN", 0),
+            )))
+            asyncRepository.refresh()
+            val result = asyncRepository.search {
+                configure {
+                    query = nested {
+                        path = "people"
+                        query = bool {
+                            filter(
+                                listOf(
+                                    term("people.gender", "MALE"),
+                                    range("people.percentage") {
+                                        gte = 10
+                                    }
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            assertThat(result.total).isEqualTo(2L)
         }
     }
 }

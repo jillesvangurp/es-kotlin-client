@@ -7,14 +7,13 @@
 
 **es-kotlin-client** becomes [kt-search](https://github.com/jillesvangurp/kt-search)
 
-The 2.0 version of this client lives in [a new repository](https://github.com/jillesvangurp/kt-search). The name `kt-search` better reflects that this client works with both Opensearch 1 & 2 and Elasticsearch 7 & 8. Additionally, changes in the ecosystem (Opensearch fork, compatibility with os/es clients, deprecation of RestHighLevelClient) necessitated some major internal changes. 
+The 2.0 version of this client lives in [a new repository](https://github.com/jillesvangurp/kt-search). The name `kt-search` better reflects that this client works with both Opensearch 1 & 2 and Elasticsearch 7 & 8. Additionally, changes in the ecosystem (Opensearch fork, compatibility with os/es clients, deprecation of RestHighLevelClient) necessitated some major internal changes. If you still need it, you can use the old client next to the new one and migrate your code as you go. This is what I do myself on the main project where I use this. If you are a new user, use kt-search.
 
-**As of now, es-kotlin-client is deprecated and no longer maintained.** However, it lives on as the `legacy-client` module in `kt-search`. When we release kt-search, using that will be your upgrade path.
+**As of now, es-kotlin-client is deprecated and no longer maintained.** 
 
 **Why?** Elasticsearch was forked by Amazon as Opensearch and there are now two products that implement almost identical REST APIs that require separate Java clients. Additionally, Elastic deprecated their client and wrote a completely new one. And finally they also released a major new version with many changes. As of now, es-kotlin-client is only compatible with Elasticsearch v7. The Elastic RestHighLevel client does not work with Opensearch anymore and the Opensearch fork of this client has renamed packages. And because it never was very usable and now deprecated on the Elastic side, an extensive rewrite of this library could not be avoided.
 
-
-Relative to es-kotlin-client, kt-search is a complete rewrite that preserves the best features:
+Relative to es-kotlin-client, kt-search is a complete rewrite with many improvements that preserves the best features:
 
 - friendly DSLs for search, bulk indexing, mappings, etc.
 - kotlin friendly
@@ -24,11 +23,13 @@ Relative to es-kotlin-client, kt-search is a complete rewrite that preserves the
 Additionally:
 
 - no more dependencies on a Java client
-- kotlin multi platform. This will work on jvm, ios, android, and the web.
-- support for Elasticsearch 7 & 8 and Opensearch
+- kotlin multi platform. This work son jvm, ios, android, and the web (including wasm when ready).
+- support for Elasticsearch 7 & 8 and Opensearch and API compatible future versions & forks.
 - designed to be extensible
 
-Development work is ongoing but the client is already usable. I'll update this page with more info once a 2.0 stabilizes and we can freeze the APIs.
+## February 2023 ##
+
+Kt-search has had several release candidates and should be preferred over this client.
 
 **16 May 2022**
 
